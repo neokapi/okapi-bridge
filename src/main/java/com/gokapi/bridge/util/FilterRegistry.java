@@ -66,6 +66,23 @@ public class FilterRegistry {
             }
         }
 
+        // Fallback for shaded/uber JARs: scan the JAR containing this class.
+        // In a shaded JAR, all okapi-filter classes are merged into the single
+        // uber JAR, so the okapi-filter-* filename scan above finds nothing.
+        if (filterClasses.isEmpty()) {
+            try {
+                java.security.CodeSource cs = FilterRegistry.class.getProtectionDomain().getCodeSource();
+                if (cs != null) {
+                    File jarFile = new File(cs.getLocation().toURI());
+                    if (jarFile.isFile() && jarFile.getName().endsWith(".jar")) {
+                        scanJarForFilters(jarFile.getPath(), filterClasses);
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("[bridge] Could not scan uber JAR for filters: " + e.getMessage());
+            }
+        }
+
         // Check availability and create FilterInfo for each
         for (String filterClass : filterClasses) {
             FilterInfo info = createFilterInfo(filterClass);
