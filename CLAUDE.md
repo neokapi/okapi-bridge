@@ -64,6 +64,24 @@ Commands: `open`, `read`, `write`, `close`, `list_filters`, `info`. Content is b
 - `ParameterConverter` — Bidirectional codeFinderRules format conversion (clean JSON ↔ Okapi #v1 format)
 - `model/` — DTOs: CommandMessage, ResponseMessage, PartDTO, BlockDTO, LayerDTO, SegmentDTO, SpanDTO, FragmentDTO, etc.
 
+### Plugin Manifest
+
+A single `manifest.json` serves as both the install-time and runtime descriptor. It uses an MCP-inspired `command`/`args`/`env` pattern for process launching:
+
+```json
+{
+  "name": "okapi-bridge",
+  "version": "1.6.0",
+  "plugin_type": "bundle",
+  "install_type": "bridge",
+  "command": "java",
+  "args": ["-jar", "gokapi-bridge-jar-with-dependencies.jar"],
+  "capabilities": [...]
+}
+```
+
+The CI release workflow generates this manifest at build time by querying the bridge for filter capabilities and embedding the runtime launch configuration.
+
 ### Three-Layer Schema Architecture
 
 1. **Base schemas** (`schemas/base/okf_*.vN.schema.json`) — Auto-generated from Okapi filter introspection. Versioned per-filter.

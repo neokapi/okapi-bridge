@@ -69,9 +69,8 @@ jobs:
             exit 1
           fi
           cp "$JAR_FILE" staging/gokapi-bridge-jar-with-dependencies.jar
-          cp okapi.bridge.json staging/
 
-          # Generate manifest.json with capabilities from the built JAR
+          # Generate unified manifest.json with capabilities and runtime config
           CAPABILITIES=$(echo '{"command":"list_filters"}' | java -jar "$JAR_FILE" 2>/dev/null \
             | tail -1 \
             | jq '[.data.filters[] | {
@@ -89,6 +88,9 @@ jobs:
                   name: $name,
                   version: $version,
                   plugin_type: "bundle",
+                  install_type: "bridge",
+                  command: "java",
+                  args: ["-jar", "gokapi-bridge-jar-with-dependencies.jar"],
                   capabilities: $capabilities
                 }' > staging/manifest.json
 
