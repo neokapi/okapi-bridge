@@ -11,7 +11,18 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-messageformat"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_messageformat",
+        "name": "ICU Message Format",
+        "description": "ICU Message Format Text",
+        "mimeType": "text/x-messageformat",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "addPluralForms": {
@@ -97,7 +108,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "0bb9e7077f8e",
-  "x-compositeHash": "12661bdb5c89"
+  "x-baseVersion": 4,
+  "x-baseHash": "9fcde3537d12",
+  "x-compositeHash": "b2e7f4200fcb",
+  "x-introducedInOkapi": "1.46.0"
 }

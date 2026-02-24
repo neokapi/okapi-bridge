@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_xliff2.schema.json",
   "$version": "6.0.0",
-  "title": "XLIFF-2 Filter Filter",
-  "description": "Configuration for the Okapi XLIFF-2 Filter Filter",
+  "title": "XLIFF-2 Filter (BETA) Filter",
+  "description": "Configuration for the Okapi XLIFF-2 Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_xliff2",
@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/xliff+xml"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_xliff2",
+        "name": "XLIFF-2",
+        "description": "Configuration for XLIFF-2 documents.",
+        "mimeType": "application/xliff+xml",
+        "extensions": ".xlf",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.xliff2.XLIFF2Filter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "maxValidation": {
@@ -20,11 +32,13 @@
       "title": "Perform maximum validation when parsing",
       "x-widget": "checkbox"
     },
+    "mergeAsParagraph": {
+      "type": "boolean",
+      "default": false
+    },
     "useCodeFinder": {
       "type": "boolean",
-      "default": false,
-      "title": "Has inline codes as defined below:",
-      "x-widget": "checkbox"
+      "default": false
     },
     "codeFinderRules": {
       "type": "object",
@@ -60,42 +74,11 @@
     },
     "simplifyTags": {
       "type": "boolean",
-      "default": false
+      "default": true
     },
     "needsSegmentation": {
       "type": "boolean",
       "default": false
-    },
-    "forceUniqueIds": {
-      "type": "boolean",
-      "default": false,
-      "title": "Ensure tag IDs are unique within units",
-      "x-widget": "checkbox"
-    },
-    "ignoreTagTypeMatch": {
-      "type": "boolean",
-      "default": false,
-      "title": "Ignore tag type mismatch between source and target",
-      "x-widget": "checkbox"
-    },
-    "discardInvalidTargets": {
-      "type": "boolean",
-      "default": false,
-      "title": "Discard invalid targets rather than rejecting the file",
-      "x-widget": "checkbox"
-    },
-    "writeOriginalData": {
-      "type": "boolean",
-      "default": true,
-      "title": "Output includes original data when available",
-      "x-widget": "checkbox"
-    },
-    "subfilterOverwriteTarget": {
-      "type": "boolean",
-      "default": false,
-      "title": "Subfilter: Always Overwrite Target?",
-      "description": "Should the writer always overwrite an existing target even if state is final?",
-      "x-widget": "checkbox"
     }
   },
   "additionalProperties": false,
@@ -146,7 +129,8 @@
     }
   ],
   "x-schemaVersion": 6,
-  "x-baseVersion": 6,
-  "x-baseHash": "041e0bce940c",
-  "x-compositeHash": "b6bc648eba2d"
+  "x-baseVersion": 8,
+  "x-baseHash": "39dc7cbf5961",
+  "x-compositeHash": "f619014245f1",
+  "x-introducedInOkapi": "0.38"
 }

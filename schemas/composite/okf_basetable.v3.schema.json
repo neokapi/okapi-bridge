@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_basetable.schema.json",
   "$version": "3.0.0",
-  "title": "Plain Text Filter (BETA) Filter",
-  "description": "Configuration for the Okapi Plain Text Filter (BETA) Filter",
+  "title": "Plain Text Filter Filter",
+  "description": "Configuration for the Okapi Plain Text Filter Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_basetable",
@@ -62,7 +62,8 @@
         "isDefault": false,
         "filterClass": "net.sf.okapi.filters.table.base.BaseTableFilter"
       }
-    ]
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "columnNamesLineNum": {
@@ -96,6 +97,10 @@
     "recordIdColumn": {
       "type": "integer",
       "default": 0
+    },
+    "exposeCommentsAsMetadata": {
+      "type": "boolean",
+      "default": false
     },
     "sourceColumns": {
       "type": "string",
@@ -192,8 +197,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "e2130ee3df0a",
-  "x-compositeHash": "dc5def4f8e8c",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 6,
+  "x-baseHash": "345fd1d39549",
+  "x-compositeHash": "5b6ad249ad57",
+  "x-introducedInOkapi": "1.47.0"
 }

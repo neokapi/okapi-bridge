@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/vnd.adobe.indesign-idml-package"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_idml",
+        "name": "IDML",
+        "description": "Adobe InDesign IDML documents",
+        "mimeType": "application/vnd.adobe.indesign-idml-package",
+        "extensions": ".idml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.idml.IDMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "maxAttributeSize": {
@@ -41,6 +53,12 @@
       "type": "boolean",
       "default": false,
       "title": "Extract hidden layers",
+      "x-widget": "checkbox"
+    },
+    "extractHiddenPasteboardItems": {
+      "type": "boolean",
+      "default": false,
+      "title": "Extract hidden pasteboard items",
       "x-widget": "checkbox"
     },
     "skipDiscretionaryHyphens": {
@@ -184,7 +202,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "9f89c49bba2d",
-  "x-compositeHash": "fc5ed8823c0b"
+  "x-baseVersion": 11,
+  "x-baseHash": "38eef7a78e19",
+  "x-compositeHash": "6735cc3010b6",
+  "x-introducedInOkapi": "1.41.0"
 }

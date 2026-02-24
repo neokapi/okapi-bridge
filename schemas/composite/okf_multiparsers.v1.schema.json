@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/x-multiparsers"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_multiparsers",
+        "name": "Multi-Parsers: CSV with Plain-Text",
+        "description": "Configuration for CSV files with plain-text on all columns",
+        "mimeType": "text/csv",
+        "extensions": ".csv;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.multiparsers.MultiParsersFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "csvNoExtractCols": {
@@ -88,7 +100,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "88224234e5d8",
-  "x-compositeHash": "fe57ff56aa82"
+  "x-baseVersion": 2,
+  "x-baseHash": "31ff8cbbd6ff",
+  "x-compositeHash": "35317dd3681d",
+  "x-introducedInOkapi": "0.38"
 }

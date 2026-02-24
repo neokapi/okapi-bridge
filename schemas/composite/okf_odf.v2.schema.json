@@ -11,7 +11,18 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-odf"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_odf",
+        "name": "OpenDocument",
+        "description": "XML OpenDocument files (e.g. use inside OpenOffice.org documents).",
+        "mimeType": "text/x-odf",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.openoffice.ODFFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "extractNotes": {
@@ -78,7 +89,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "765d2508852e",
-  "x-compositeHash": "2ca2f3210eac"
+  "x-baseVersion": 5,
+  "x-baseHash": "8d521caa0239",
+  "x-compositeHash": "537713d89450",
+  "x-introducedInOkapi": "1.46.0"
 }

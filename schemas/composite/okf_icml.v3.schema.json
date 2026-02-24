@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/x-icml+xml"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_icml",
+        "name": "ICML",
+        "description": "Adobe InDesign ICML documents",
+        "mimeType": "application/x-icml+xml",
+        "extensions": ".wcml;.icml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.icml.ICMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "extractNotes": {
@@ -46,14 +58,6 @@
       "type": "boolean",
       "default": false,
       "title": "Create new paragraphs on hard returns (<Br/> elements)"
-    },
-    "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "object",
-      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
-    },
-    "mergeAdjacentCodes": {
-      "type": "object",
-      "description": "Merge consecutive inline codes into a single placeholder"
     },
     "simplifierRules": {
       "type": "string",
@@ -103,7 +107,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "fb4fc1a4631b",
-  "x-compositeHash": "8a773c026c5b"
+  "x-baseVersion": 7,
+  "x-baseHash": "99806e859642",
+  "x-compositeHash": "b5b7210de546",
+  "x-introducedInOkapi": "1.46.0"
 }

@@ -11,56 +11,28 @@
     "extensions": [],
     "mimeTypes": [
       "text/xml"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_openxml",
+        "name": "Microsoft Office Document",
+        "description": "Microsoft Office documents (DOCX, DOCM, DOTX, DOTM, PPTX, PPTM, PPSX, PPSM, POTX, POTM, XLSX, XLSM, XLTX, XLTM, VSDX, VSDM).",
+        "mimeType": "text/xml",
+        "extensions": ".docx;.docm;.dotx;.dotm;.pptx;.pptm;.ppsx;.ppsm;.potx;.potm;.xlsx;.xlsm;.xltx;.xltm;.vsdx;.vsdm;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.openxml.OpenXMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
-    "maxAttributeSize": {
-      "type": "integer",
-      "default": 4194304
-    },
     "bPreferenceTranslateDocProperties": {
       "type": "boolean",
       "default": true
     },
-    "translatePowerpointDocProperties": {
-      "type": "boolean",
-      "default": true
-    },
-    "reorderPowerpointDocProperties": {
-      "type": "boolean",
-      "default": false
-    },
-    "reorderPowerpointRelationships": {
-      "type": "boolean",
-      "default": false
-    },
-    "translatePowerpointDiagramData": {
-      "type": "boolean",
-      "default": true
-    },
-    "reorderPowerpointDiagramData": {
-      "type": "boolean",
-      "default": false
-    },
-    "translatePowerpointCharts": {
-      "type": "boolean",
-      "default": true
-    },
-    "reorderPowerpointCharts": {
-      "type": "boolean",
-      "default": false
-    },
     "bPreferenceTranslateComments": {
       "type": "boolean",
       "default": true
-    },
-    "translatePowerpointComments": {
-      "type": "boolean",
-      "default": true
-    },
-    "reorderPowerpointComments": {
-      "type": "boolean",
-      "default": false
     },
     "bPreferenceAggressiveCleanup": {
       "type": "boolean",
@@ -74,10 +46,6 @@
       "type": "boolean",
       "default": true,
       "description": "Extract speaker notes in PowerPoint presentations."
-    },
-    "bPreferenceReorderPowerpointNotes": {
-      "type": "boolean",
-      "default": false
     },
     "bPreferenceTranslatePowerpointMasters": {
       "type": "boolean",
@@ -93,10 +61,6 @@
       "default": true,
       "description": "Extract text from headers and footers in Word documents."
     },
-    "translateWordNumberingLevelText": {
-      "type": "boolean",
-      "default": false
-    },
     "bPreferenceTranslateWordHidden": {
       "type": "boolean",
       "default": false
@@ -105,14 +69,14 @@
       "type": "boolean",
       "default": false
     },
+    "bPreferenceTranslateExcelExcludeColumns": {
+      "type": "boolean",
+      "default": false
+    },
     "bPreferenceTranslateExcelSheetNames": {
       "type": "boolean",
       "default": false,
       "description": "Extract sheet names in Excel workbooks."
-    },
-    "translateExcelCellsCopied": {
-      "type": "boolean",
-      "default": true
     },
     "bPreferenceTranslateExcelDiagramData": {
       "type": "boolean",
@@ -180,34 +144,15 @@
       "type": "boolean",
       "default": false
     },
-    "ignoreWordFontColors": {
-      "type": "boolean",
-      "default": false
-    },
-    "wordFontColorsMinIgnoranceThreshold": {
+    "nFileType": {
       "type": "string",
-      "default": ""
-    },
-    "wordFontColorsMaxIgnoranceThreshold": {
-      "type": "string",
-      "default": ""
-    },
-    "allowWordStyleOptimisation": {
-      "type": "boolean",
-      "default": true
-    },
-    "preserveExcelStylesInTargetColumns": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceAllowEmptyTargets": {
-      "type": "boolean",
-      "default": false
-    },
-    "simplifierRules": {
-      "type": "string",
-      "description": "Rules for simplifying inline code representation",
-      "x-widget": "simplifierRulesEditor"
+      "default": "MSWORD",
+      "enum": [
+        "MSWORD",
+        "MSEXCEL",
+        "MSWORDDOCPROPERTIES",
+        "MSPOWERPOINTCOMMENTS"
+      ]
     }
   },
   "additionalProperties": false,
@@ -272,7 +217,8 @@
     }
   ],
   "x-schemaVersion": 6,
-  "x-baseVersion": 6,
-  "x-baseHash": "d148b6d7f6ed",
-  "x-compositeHash": "780582d01754"
+  "x-baseVersion": 8,
+  "x-baseHash": "c485f7f2b6a2",
+  "x-compositeHash": "2dd8654b367e",
+  "x-introducedInOkapi": "0.38"
 }

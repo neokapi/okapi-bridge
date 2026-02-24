@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/x-xliff+xml"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_autoxliff",
+        "name": "XLIFF 1.2 and 2.0 Filter",
+        "description": "Calls the appropriate filter for any version of XLIFF",
+        "mimeType": "application/xliff+xml",
+        "extensions": ".xlf;.xliff",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.autoxliff.AutoXLIFFFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "xliff_config": {
@@ -36,7 +48,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "6a45f1e4163a",
-  "x-compositeHash": "c4e7b52b90bc"
+  "x-baseVersion": 3,
+  "x-baseHash": "77eef26d3caa",
+  "x-compositeHash": "3caf7db80c2a",
+  "x-introducedInOkapi": "0.38"
 }

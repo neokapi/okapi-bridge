@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/x-wsxzpackage"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_wsxzpackage",
+        "name": "WSXZ Package Files",
+        "description": "WorldServer WSXZ Files",
+        "mimeType": "application/x-wsxzpackage",
+        "extensions": ".wsxz;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.wsxzpackage.WsxzPackageFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "mimeType": {
@@ -74,7 +86,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "17de56330ea5",
-  "x-compositeHash": "b1559572679b"
+  "x-baseVersion": 5,
+  "x-baseHash": "6a7a722d97c3",
+  "x-compositeHash": "66c205275bf1",
+  "x-introducedInOkapi": "1.46.0"
 }

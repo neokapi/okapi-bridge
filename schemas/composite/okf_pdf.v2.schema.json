@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/pdf"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_pdf",
+        "name": "PDF (Portable Document Format)",
+        "description": "Configuration for PDF documents",
+        "mimeType": "application/pdf",
+        "extensions": ".pdf;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.pdf.PdfFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "useCodeFinder": {
@@ -57,11 +69,11 @@
       "x-widget": "checkbox"
     },
     "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "object",
+      "type": "boolean",
       "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
     },
     "mergeAdjacentCodes": {
-      "type": "object",
+      "type": "boolean",
       "description": "Merge consecutive inline codes into a single placeholder"
     },
     "simplifierRules": {
@@ -112,7 +124,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "1988138efac9",
-  "x-compositeHash": "5cd5d84ae72b"
+  "x-baseVersion": 4,
+  "x-baseHash": "29e85c30df18",
+  "x-compositeHash": "ec296cba7b02",
+  "x-introducedInOkapi": "1.48.0"
 }

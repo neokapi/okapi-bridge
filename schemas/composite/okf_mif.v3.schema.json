@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/vnd.mif"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_mif",
+        "name": "MIF",
+        "description": "Adobe FrameMaker MIF documents",
+        "mimeType": "application/vnd.mif",
+        "extensions": ".mif;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.mif.MIFFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "extractBodyPages": {
@@ -88,6 +100,18 @@
       "type": "boolean",
       "default": false
     },
+    "extractHardReturnsAsText": {
+      "type": "boolean",
+      "default": true
+    },
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "type": "boolean",
+      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
+    },
+    "mergeAdjacentCodes": {
+      "type": "boolean",
+      "description": "Merge consecutive inline codes into a single placeholder"
+    },
     "simplifierRules": {
       "type": "string",
       "description": "Rules for simplifying inline code representation",
@@ -111,7 +135,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "08d875cba92e",
-  "x-compositeHash": "f84611e5453f"
+  "x-baseVersion": 12,
+  "x-baseHash": "beebee6965c0",
+  "x-compositeHash": "94f4e8073f3b",
+  "x-introducedInOkapi": "1.48.0"
 }

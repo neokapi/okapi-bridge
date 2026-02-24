@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/x-php"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_phpcontent",
+        "name": "PHP Content Default",
+        "description": "Default PHP Content configuration.",
+        "mimeType": "application/x-php",
+        "extensions": ".php;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.php.PHPContentFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "useCodeFinder": {
@@ -101,7 +113,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "b55a1d6b8628",
-  "x-compositeHash": "b67601bcf04d"
+  "x-baseVersion": 3,
+  "x-baseHash": "26084884674a",
+  "x-compositeHash": "7bd916c35e9d",
+  "x-introducedInOkapi": "0.38"
 }

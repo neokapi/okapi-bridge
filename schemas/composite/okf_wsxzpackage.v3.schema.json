@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/x-wsxzpackage"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_wsxzpackage",
+        "name": "WSXZ Package Files",
+        "description": "WorldServer WSXZ Files",
+        "mimeType": "application/x-wsxzpackage",
+        "extensions": ".wsxz;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.wsxzpackage.WsxzPackageFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "mimeType": {
@@ -35,11 +47,11 @@
       "x-widget": "text"
     },
     "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "object",
+      "type": "boolean",
       "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
     },
     "mergeAdjacentCodes": {
-      "type": "object",
+      "type": "boolean",
       "description": "Merge consecutive inline codes into a single placeholder"
     },
     "simplifierRules": {
@@ -82,7 +94,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "b8ba628739b7",
-  "x-compositeHash": "3a2e1c7a359c"
+  "x-baseVersion": 6,
+  "x-baseHash": "b307befcffb6",
+  "x-compositeHash": "9808996c8024",
+  "x-introducedInOkapi": "1.48.0"
 }

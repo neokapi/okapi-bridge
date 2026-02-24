@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/pdf"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_pdf",
+        "name": "PDF (Portable Document Format)",
+        "description": "Configuration for PDF documents",
+        "mimeType": "application/pdf",
+        "extensions": ".pdf;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.pdf.PdfFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "useCodeFinder": {
@@ -98,7 +110,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "2728a590126e",
-  "x-compositeHash": "b4f638586bb0"
+  "x-baseVersion": 3,
+  "x-baseHash": "eaf407c3d4b7",
+  "x-compositeHash": "769fdad5981f",
+  "x-introducedInOkapi": "0.38"
 }

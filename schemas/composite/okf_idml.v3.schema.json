@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/vnd.adobe.indesign-idml-package"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_idml",
+        "name": "IDML",
+        "description": "Adobe InDesign IDML documents",
+        "mimeType": "application/vnd.adobe.indesign-idml-package",
+        "extensions": ".idml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.idml.IDMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "maxAttributeSize": {
@@ -20,118 +32,88 @@
     },
     "untagXmlStructures": {
       "type": "boolean",
-      "default": true,
-      "title": "Untag XML structures",
-      "x-widget": "checkbox"
+      "default": true
     },
     "extractNotes": {
       "type": "boolean",
       "default": false,
-      "title": "Extract notes",
-      "x-widget": "checkbox",
       "description": "Extract notes/comments as translator notes"
     },
     "extractMasterSpreads": {
       "type": "boolean",
-      "default": true,
-      "title": "Extract master spreads",
-      "x-widget": "checkbox"
+      "default": true
     },
     "extractHiddenLayers": {
       "type": "boolean",
-      "default": false,
-      "title": "Extract hidden layers",
-      "x-widget": "checkbox"
+      "default": false
     },
     "extractHiddenPasteboardItems": {
       "type": "boolean",
-      "default": false,
-      "title": "Extract hidden pasteboard items",
-      "x-widget": "checkbox"
+      "default": false
     },
     "skipDiscretionaryHyphens": {
       "type": "boolean",
-      "default": false,
-      "title": "Skip discretionary hyphens",
-      "x-widget": "checkbox"
+      "default": false
     },
     "extractBreaksInline": {
       "type": "boolean",
-      "default": false,
-      "title": "Extract breaks inline",
-      "x-widget": "checkbox"
+      "default": false
+    },
+    "extractCustomTextVariables": {
+      "type": "boolean",
+      "default": false
+    },
+    "extractIndexTopics": {
+      "type": "boolean",
+      "default": false
     },
     "ignoreCharacterKerning": {
       "type": "boolean",
-      "default": false,
-      "title": "Ignore character kerning",
-      "x-widget": "checkbox"
+      "default": false
     },
     "characterKerningMinIgnoranceThreshold": {
       "type": "string",
-      "default": "",
-      "title": "Character kerning minimum ignorance threshold",
-      "x-widget": "text"
+      "default": ""
     },
     "characterKerningMaxIgnoranceThreshold": {
       "type": "string",
-      "default": "",
-      "title": "Character kerning maximum ignorance threshold",
-      "x-widget": "text"
+      "default": ""
     },
     "ignoreCharacterTracking": {
       "type": "boolean",
-      "default": false,
-      "title": "Ignore character tracking",
-      "x-widget": "checkbox"
+      "default": false
     },
     "characterTrackingMinIgnoranceThreshold": {
       "type": "string",
-      "default": "",
-      "title": "Character tracking minimum ignorance threshold",
-      "x-widget": "text"
+      "default": ""
     },
     "characterTrackingMaxIgnoranceThreshold": {
       "type": "string",
-      "default": "",
-      "title": "Character tracking maximum ignorance threshold",
-      "x-widget": "text"
+      "default": ""
     },
     "ignoreCharacterLeading": {
       "type": "boolean",
-      "default": false,
-      "title": "Ignore character leading",
-      "x-widget": "checkbox"
+      "default": false
     },
     "characterLeadingMinIgnoranceThreshold": {
       "type": "string",
-      "default": "",
-      "title": "Character leading minimum ignorance threshold",
-      "x-widget": "text"
+      "default": ""
     },
     "characterLeadingMaxIgnoranceThreshold": {
       "type": "string",
-      "default": "",
-      "title": "Character leading maximum ignorance threshold",
-      "x-widget": "text"
+      "default": ""
     },
     "ignoreCharacterBaselineShift": {
       "type": "boolean",
-      "default": false,
-      "title": "Ignore character baseline shift",
-      "x-widget": "checkbox"
+      "default": false
     },
     "characterBaselineShiftMinIgnoranceThreshold": {
       "type": "string",
-      "default": "",
-      "title": "Character baseline shift minimum ignorance threshold",
-      "x-widget": "text"
+      "default": ""
     },
     "characterBaselineShiftMaxIgnoranceThreshold": {
       "type": "string",
-      "default": "",
-      "title": "Character baseline shift maximum ignorance threshold",
-      "x-widget": "text"
+      "default": ""
     }
   },
   "additionalProperties": false,
@@ -190,7 +172,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "78df38845fe0",
-  "x-compositeHash": "ac79192e31d1"
+  "x-baseVersion": 12,
+  "x-baseHash": "eb5aaf71fa4b",
+  "x-compositeHash": "f4c15f1fd51e",
+  "x-introducedInOkapi": "1.44.0"
 }

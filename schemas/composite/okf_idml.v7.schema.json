@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/vnd.adobe.indesign-idml-package"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_idml",
+        "name": "IDML",
+        "description": "Adobe InDesign IDML documents",
+        "mimeType": "application/vnd.adobe.indesign-idml-package",
+        "extensions": ".idml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.idml.IDMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "maxAttributeSize": {
@@ -25,6 +37,10 @@
     "untagXmlStructures": {
       "type": "boolean",
       "default": true
+    },
+    "mergeAdjacentCodes": {
+      "type": "boolean",
+      "description": "Merge consecutive inline codes into a single placeholder"
     },
     "extractNotes": {
       "type": "boolean",
@@ -64,6 +80,14 @@
       "default": false
     },
     "extractExternalHyperlinks": {
+      "type": "boolean",
+      "default": false
+    },
+    "extractMathZones": {
+      "type": "boolean",
+      "default": true
+    },
+    "excludedStyleConfigurations": {
       "type": "boolean",
       "default": false
     },
@@ -153,6 +177,10 @@
       "x-okapiFormat": "inlineCodeFinder",
       "x-widget": "codeFinderRules"
     },
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "type": "boolean",
+      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
+    },
     "simplifierRules": {
       "type": "string",
       "description": "Rules for simplifying inline code representation",
@@ -215,7 +243,8 @@
     }
   ],
   "x-schemaVersion": 7,
-  "x-baseVersion": 7,
-  "x-baseHash": "cc6cf2e749c7",
-  "x-compositeHash": "af5a66fc3f95"
+  "x-baseVersion": 16,
+  "x-baseHash": "5a40ee1a6ef2",
+  "x-compositeHash": "07c64e8bf142",
+  "x-introducedInOkapi": "1.48.0"
 }

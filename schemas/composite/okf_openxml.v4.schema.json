@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "text/xml"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_openxml",
+        "name": "Microsoft Office Document",
+        "description": "Microsoft Office documents (DOCX, DOCM, DOTX, DOTM, PPTX, PPTM, PPSX, PPSM, POTX, POTM, XLSX, XLSM, XLTX, XLTM, VSDX, VSDM).",
+        "mimeType": "text/xml",
+        "extensions": ".docx;.docm;.dotx;.dotm;.pptx;.pptm;.ppsx;.ppsm;.potx;.potm;.xlsx;.xlsm;.xltx;.xltm;.vsdx;.vsdm;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.openxml.OpenXMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "maxAttributeSize": {
@@ -93,6 +105,10 @@
       "default": true,
       "description": "Extract text from headers and footers in Word documents."
     },
+    "translateWordNumberingLevelText": {
+      "type": "boolean",
+      "default": false
+    },
     "bPreferenceTranslateWordHidden": {
       "type": "boolean",
       "default": false
@@ -105,6 +121,10 @@
       "type": "boolean",
       "default": false,
       "description": "Extract sheet names in Excel workbooks."
+    },
+    "translateExcelCellsCopied": {
+      "type": "boolean",
+      "default": true
     },
     "bPreferenceTranslateExcelDiagramData": {
       "type": "boolean",
@@ -172,9 +192,44 @@
       "type": "boolean",
       "default": false
     },
+    "ignoreWordFontColors": {
+      "type": "boolean",
+      "default": false
+    },
+    "wordFontColorsMinIgnoranceThreshold": {
+      "type": "string",
+      "default": ""
+    },
+    "wordFontColorsMaxIgnoranceThreshold": {
+      "type": "string",
+      "default": ""
+    },
+    "allowWordStyleOptimisation": {
+      "type": "boolean",
+      "default": true
+    },
+    "preserveExcelStylesInTargetColumns": {
+      "type": "boolean",
+      "default": false
+    },
     "bPreferenceAllowEmptyTargets": {
       "type": "boolean",
       "default": false
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    },
+    "nFileType": {
+      "type": "string",
+      "default": "MSWORD",
+      "enum": [
+        "MSWORD",
+        "MSEXCEL",
+        "MSWORDDOCPROPERTIES",
+        "MSPOWERPOINTCOMMENTS"
+      ]
     }
   },
   "additionalProperties": false,
@@ -239,7 +294,8 @@
     }
   ],
   "x-schemaVersion": 4,
-  "x-baseVersion": 4,
-  "x-baseHash": "c3fa3b21c818",
-  "x-compositeHash": "9279c13a52c1"
+  "x-baseVersion": 13,
+  "x-baseHash": "21a9146896a2",
+  "x-compositeHash": "e86e167c15f6",
+  "x-introducedInOkapi": "1.47.0"
 }

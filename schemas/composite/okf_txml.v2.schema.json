@@ -11,7 +11,33 @@
     "extensions": [],
     "mimeTypes": [
       "text/xml"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_txml",
+        "name": "TXML",
+        "description": "Wordfast Pro TXML documents",
+        "mimeType": "text/xml",
+        "extensions": ".txml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.txml.TXMLFilter"
+      },
+      {
+        "configId": "okf_txml-fillEmptyTargets",
+        "name": "TXML (Fill empty targets in output)",
+        "description": "Wordfast Pro TXML documents with empty targets filled on output.",
+        "mimeType": "text/xml",
+        "extensions": ".txml;",
+        "parametersLocation": "fillEmptyTargets.fprm",
+        "parametersRaw": "#v1\nallowEmptyOutputTarget.b=false\n",
+        "parameters": {
+          "allowEmptyOutputTarget": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.txml.TXMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "allowEmptyOutputTarget": {
@@ -22,11 +48,11 @@
       "description": "Allow empty target in output when no translation."
     },
     "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "object",
+      "type": "boolean",
       "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
     },
     "mergeAdjacentCodes": {
-      "type": "object",
+      "type": "boolean",
       "description": "Merge consecutive inline codes into a single placeholder"
     },
     "simplifierRules": {
@@ -60,7 +86,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "18fb2e7a310c",
-  "x-compositeHash": "4fd367898db1"
+  "x-baseVersion": 4,
+  "x-baseHash": "217540ddcb06",
+  "x-compositeHash": "4cbffe46beb9",
+  "x-introducedInOkapi": "1.48.0"
 }

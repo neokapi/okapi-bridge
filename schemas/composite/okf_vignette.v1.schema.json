@@ -11,7 +11,38 @@
     "extensions": [],
     "mimeTypes": [
       "text/xml"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_vignette",
+        "name": "Vignette Export/Import Content",
+        "description": "Default Vignette Export/Import Content configuration.",
+        "mimeType": "text/xml",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.vignette.VignetteFilter"
+      },
+      {
+        "configId": "okf_vignette-nocdata",
+        "name": "Vignette Export/Import Content (escaped HTML)",
+        "description": "Vignette files without CDATA sections.",
+        "mimeType": "text/xml",
+        "parametersLocation": "nocdata.fprm",
+        "parametersRaw": "#v1\npartsNames=SMCCONTENT-TITLE, SMCCONTENT-ABSTRACT, SMCCONTENT-BODY, SMCCONTENT-ALT, SMCCHANNELDESCRIPTOR-TITLE, SMCCHANNELDESCRIPTOR-ABSTRACT, SMCCHANNELDESCRIPTOR-ALT, SMCLINKCOLLECTIONS-LINKCOLLECTION-TITLE, SMCLINKCOLLECTIONS-LINKCOLLECTION-DESCRIPTION, SMCLINKS-TITLE, SMCLINKS-ABSTRACT, SMCLINKS-BODY, SMCLINKS-ALT\npartsConfigurations=default, okf_html, okf_html, default, default, okf_html, default, default, okf_html, default, okf_html, okf_html, default\nsourceId=SOURCE_ID\nlocaleId=LOCALE_ID\nmonolingual.b=false\nuseCDATA.b=false\nquoteModeDefined.b=true\nquoteMode.i=0\n",
+        "parameters": {
+          "partsNames": "SMCCONTENT-TITLE, SMCCONTENT-ABSTRACT, SMCCONTENT-BODY, SMCCONTENT-ALT, SMCCHANNELDESCRIPTOR-TITLE, SMCCHANNELDESCRIPTOR-ABSTRACT, SMCCHANNELDESCRIPTOR-ALT, SMCLINKCOLLECTIONS-LINKCOLLECTION-TITLE, SMCLINKCOLLECTIONS-LINKCOLLECTION-DESCRIPTION, SMCLINKS-TITLE, SMCLINKS-ABSTRACT, SMCLINKS-BODY, SMCLINKS-ALT",
+          "partsConfigurations": "default, okf_html, okf_html, default, default, okf_html, default, default, okf_html, default, okf_html, okf_html, default",
+          "sourceId": "SOURCE_ID",
+          "localeId": "LOCALE_ID",
+          "monolingual": false,
+          "useCDATA": false,
+          "quoteModeDefined": true,
+          "quoteMode": 0
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.vignette.VignetteFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "partsConfigurations": {
@@ -123,7 +154,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "bb77674a3986",
-  "x-compositeHash": "9f8f63b7c4c6"
+  "x-baseVersion": 3,
+  "x-baseHash": "9b3cc9c32958",
+  "x-compositeHash": "674c47c91575",
+  "x-introducedInOkapi": "0.38"
 }

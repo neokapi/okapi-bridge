@@ -11,168 +11,127 @@
     "extensions": [],
     "mimeTypes": [
       "application/vnd.adobe.indesign-idml-package"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_idml",
+        "name": "IDML",
+        "description": "Adobe InDesign IDML documents",
+        "mimeType": "application/vnd.adobe.indesign-idml-package",
+        "extensions": ".idml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.idml.IDMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "maxAttributeSize": {
       "type": "integer",
       "default": 4194304
     },
-    "specialCharacterPattern": {
-      "type": "boolean",
-      "default": false
-    },
     "untagXmlStructures": {
       "type": "boolean",
-      "default": true
-    },
-    "mergeAdjacentCodes": {
-      "type": "object",
-      "description": "Merge consecutive inline codes into a single placeholder"
+      "default": true,
+      "title": "Untag XML structures",
+      "x-widget": "checkbox"
     },
     "extractNotes": {
       "type": "boolean",
       "default": false,
+      "title": "Extract notes",
+      "x-widget": "checkbox",
       "description": "Extract notes/comments as translator notes"
     },
     "extractMasterSpreads": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Extract master spreads",
+      "x-widget": "checkbox"
     },
     "extractHiddenLayers": {
       "type": "boolean",
-      "default": false
-    },
-    "extractHiddenPasteboardItems": {
-      "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Extract hidden layers",
+      "x-widget": "checkbox"
     },
     "skipDiscretionaryHyphens": {
       "type": "boolean",
-      "default": false
-    },
-    "extractBreaksInline": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractHyperlinkTextSourcesInline": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractCustomTextVariables": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractIndexTopics": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractExternalHyperlinks": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractMathZones": {
-      "type": "boolean",
-      "default": true
-    },
-    "excludedStyleConfigurations": {
-      "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Skip discretionary hyphens",
+      "x-widget": "checkbox"
     },
     "ignoreCharacterKerning": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Ignore character kerning",
+      "x-widget": "checkbox"
     },
     "characterKerningMinIgnoranceThreshold": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Character kerning minimum ignorance threshold",
+      "x-widget": "text"
     },
     "characterKerningMaxIgnoranceThreshold": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Character kerning maximum ignorance threshold",
+      "x-widget": "text"
     },
     "ignoreCharacterTracking": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Ignore character tracking",
+      "x-widget": "checkbox"
     },
     "characterTrackingMinIgnoranceThreshold": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Character tracking minimum ignorance threshold",
+      "x-widget": "text"
     },
     "characterTrackingMaxIgnoranceThreshold": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Character tracking maximum ignorance threshold",
+      "x-widget": "text"
     },
     "ignoreCharacterLeading": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Ignore character leading",
+      "x-widget": "checkbox"
     },
     "characterLeadingMinIgnoranceThreshold": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Character leading minimum ignorance threshold",
+      "x-widget": "text"
     },
     "characterLeadingMaxIgnoranceThreshold": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Character leading maximum ignorance threshold",
+      "x-widget": "text"
     },
     "ignoreCharacterBaselineShift": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Ignore character baseline shift",
+      "x-widget": "checkbox"
     },
     "characterBaselineShiftMinIgnoranceThreshold": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Character baseline shift minimum ignorance threshold",
+      "x-widget": "text"
     },
     "characterBaselineShiftMaxIgnoranceThreshold": {
       "type": "string",
-      "default": ""
-    },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": false,
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
-    },
-    "codeFinderRules": {
-      "type": "object",
-      "description": "Regex patterns to identify inline codes in translatable text",
-      "properties": {
-        "rules": {
-          "type": "array",
-          "description": "List of regex patterns to detect inline codes",
-          "items": {
-            "type": "object",
-            "properties": {
-              "pattern": {
-                "type": "string",
-                "description": "Regex pattern for inline code detection"
-              }
-            },
-            "required": [
-              "pattern"
-            ]
-          }
-        },
-        "sample": {
-          "type": "string",
-          "description": "Sample text to test patterns against"
-        },
-        "useAllRulesWhenTesting": {
-          "type": "boolean",
-          "default": true,
-          "description": "Test all rules together or individually"
-        }
-      },
-      "x-okapiFormat": "inlineCodeFinder",
-      "x-widget": "codeFinderRules"
-    },
-    "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "object",
-      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
-    },
-    "simplifierRules": {
-      "type": "string",
-      "description": "Rules for simplifying inline code representation",
-      "x-widget": "simplifierRulesEditor"
+      "default": "",
+      "title": "Character baseline shift maximum ignorance threshold",
+      "x-widget": "text"
     }
   },
   "additionalProperties": false,
@@ -231,7 +190,8 @@
     }
   ],
   "x-schemaVersion": 8,
-  "x-baseVersion": 8,
-  "x-baseHash": "c15f05a0a0d9",
-  "x-compositeHash": "0e20e80ab85b"
+  "x-baseVersion": 9,
+  "x-baseHash": "1463486ab1f0",
+  "x-compositeHash": "aa8206e17263",
+  "x-introducedInOkapi": "0.38"
 }

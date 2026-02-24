@@ -11,12 +11,24 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-xini"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_rainbowkitxini",
+        "name": "XINI (Rainbow T-Kit)",
+        "description": "Configuration for XINI documents from ONTRAM T-Kits.",
+        "mimeType": "text/x-xini",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.xini.rainbowkit.XINIRainbowkitFilter"
+      }
+    ],
+    "serializationFormat": "yaml"
   },
   "properties": {},
   "additionalProperties": false,
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "3ba808c2ad3f",
-  "x-compositeHash": "3ba808c2ad3f"
+  "x-baseVersion": 2,
+  "x-baseHash": "7ccd06b9f67b",
+  "x-compositeHash": "7ccd06b9f67b",
+  "x-introducedInOkapi": "0.38"
 }

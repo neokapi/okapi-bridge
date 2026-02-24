@@ -11,21 +11,25 @@
     "extensions": [],
     "mimeTypes": [
       "application/xml+dtd"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_dtd",
+        "name": "DTD (Document Type Definition)",
+        "description": "Configuration for XML DTD documents (entities content)",
+        "mimeType": "application/xml+dtd",
+        "extensions": ".dtd;.ent;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.dtd.DTDFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "useCodeFinder": {
       "type": "boolean",
       "default": true,
       "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
-    },
-    "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "object",
-      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
-    },
-    "mergeAdjacentCodes": {
-      "type": "object",
-      "description": "Merge consecutive inline codes into a single placeholder"
     },
     "simplifierRules": {
       "type": "string",
@@ -50,7 +54,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "e4f5e52404aa",
-  "x-compositeHash": "99aab111d82d"
+  "x-baseVersion": 5,
+  "x-baseHash": "15a48d063b4b",
+  "x-compositeHash": "56ff688d7b11",
+  "x-introducedInOkapi": "1.46.0"
 }

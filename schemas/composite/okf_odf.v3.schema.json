@@ -11,7 +11,18 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-odf"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_odf",
+        "name": "OpenDocument",
+        "description": "XML OpenDocument files (e.g. use inside OpenOffice.org documents).",
+        "mimeType": "text/x-odf",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.openoffice.ODFFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "extractNotes": {
@@ -33,11 +44,11 @@
       "default": true
     },
     "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "object",
+      "type": "boolean",
       "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
     },
     "mergeAdjacentCodes": {
-      "type": "object",
+      "type": "boolean",
       "description": "Merge consecutive inline codes into a single placeholder"
     },
     "simplifierRules": {
@@ -86,7 +97,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "e9845baf52a0",
-  "x-compositeHash": "63892f4e6834"
+  "x-baseVersion": 6,
+  "x-baseHash": "4e19d685c87b",
+  "x-compositeHash": "cddc9ad35fa6",
+  "x-introducedInOkapi": "1.48.0"
 }

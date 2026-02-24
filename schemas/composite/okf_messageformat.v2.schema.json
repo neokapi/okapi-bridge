@@ -11,7 +11,48 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-messageformat"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_messageformat",
+        "name": "ICU Message Format",
+        "description": "ICU Message Format Text",
+        "mimeType": "text/x-messageformat",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
+      },
+      {
+        "configId": "okf_messageformat-json",
+        "name": "ICU Message Format",
+        "description": "ICU Message Format From JSON",
+        "mimeType": "text/x-messageformat",
+        "parametersLocation": "okf_messageformat@json.fprm",
+        "parametersRaw": "#v1\naddPluralForms.b=true\nnormalize.b=true\nprettyPrint.b=false\n",
+        "parameters": {
+          "addPluralForms": true,
+          "normalize": true,
+          "prettyPrint": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
+      },
+      {
+        "configId": "okf_messageformat-yaml",
+        "name": "ICU Message Format",
+        "description": "ICU Message Format From YAML",
+        "mimeType": "text/x-messageformat",
+        "parametersLocation": "okf_messageformat@yaml.fprm",
+        "parametersRaw": "#v1\naddPluralForms.b=true\nnormalize.b=true\nprettyPrint.b=true\n",
+        "parameters": {
+          "addPluralForms": true,
+          "normalize": true,
+          "prettyPrint": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "addPluralForms": {
@@ -64,14 +105,6 @@
       "default": false,
       "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
     },
-    "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "object",
-      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
-    },
-    "mergeAdjacentCodes": {
-      "type": "object",
-      "description": "Merge consecutive inline codes into a single placeholder"
-    },
     "simplifierRules": {
       "type": "string",
       "description": "Rules for simplifying inline code representation",
@@ -105,7 +138,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "22e8645aef28",
-  "x-compositeHash": "a501a2b085b8"
+  "x-baseVersion": 5,
+  "x-baseHash": "478f4e689f19",
+  "x-compositeHash": "430e446c925e",
+  "x-introducedInOkapi": "1.47.0"
 }

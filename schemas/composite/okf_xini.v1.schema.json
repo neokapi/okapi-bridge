@@ -11,7 +11,32 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-xini"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_xini",
+        "name": "XINI",
+        "description": "Configuration for XINI documents from ONTRAM",
+        "mimeType": "text/x-xini",
+        "extensions": ".xini;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.xini.XINIFilter"
+      },
+      {
+        "configId": "okf_xini-noOutputSegmentation",
+        "name": "XINI (no output segmentation)",
+        "description": "Configuration for XINI documents from ONTRAM (fields in the output are not segmented)",
+        "mimeType": "text/x-xini",
+        "parametersLocation": "noOutputSegmentation.fprm",
+        "parametersRaw": "#v1\nuseOkapiSegmentation.b=false\n",
+        "parameters": {
+          "useOkapiSegmentation": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xini.XINIFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "useOkapiSegmentation": {
@@ -51,7 +76,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "0235524cc8fd",
-  "x-compositeHash": "ad4ee7228f79"
+  "x-baseVersion": 3,
+  "x-baseHash": "0b3ab6877f44",
+  "x-compositeHash": "2454a2d47fa2",
+  "x-introducedInOkapi": "0.38"
 }

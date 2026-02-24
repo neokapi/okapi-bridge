@@ -11,7 +11,33 @@
     "extensions": [],
     "mimeTypes": [
       "text/xml"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_txml",
+        "name": "TXML",
+        "description": "Wordfast Pro TXML documents",
+        "mimeType": "text/xml",
+        "extensions": ".txml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.txml.TXMLFilter"
+      },
+      {
+        "configId": "okf_txml-fillEmptyTargets",
+        "name": "TXML (Fill empty targets in output)",
+        "description": "Wordfast Pro TXML documents with empty targets filled on output.",
+        "mimeType": "text/xml",
+        "extensions": ".txml;",
+        "parametersLocation": "fillEmptyTargets.fprm",
+        "parametersRaw": "#v1\nallowEmptyOutputTarget.b=false\n",
+        "parameters": {
+          "allowEmptyOutputTarget": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.txml.TXMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "allowEmptyOutputTarget": {
@@ -52,7 +78,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "64cf2b2a1860",
-  "x-compositeHash": "f18472c275ff"
+  "x-baseVersion": 3,
+  "x-baseHash": "44e7bb0a992f",
+  "x-compositeHash": "629bd4ad02ce",
+  "x-introducedInOkapi": "0.38"
 }

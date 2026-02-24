@@ -11,7 +11,24 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-wiki-txt"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_wiki",
+        "name": "Wiki Markup",
+        "description": "Text with wiki-style markup",
+        "mimeType": "text/x-wiki-txt",
+        "extensions": ".txt;",
+        "parametersLocation": "wikiConfiguration.yml",
+        "parametersRaw": "preserve_whitespace: false\n",
+        "parameters": {
+          "preserve_whitespace": false
+        },
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.wiki.WikiFilter"
+      }
+    ],
+    "serializationFormat": "yaml"
   },
   "properties": {
     "simplifierRules": {
@@ -21,6 +38,10 @@
     },
     "path": {
       "type": "string"
+    },
+    "preserve_whitespace": {
+      "type": "boolean",
+      "default": false
     }
   },
   "additionalProperties": false,
@@ -48,7 +69,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "6466e25a2bd4",
-  "x-compositeHash": "9be25e2a1d90"
+  "x-baseVersion": 3,
+  "x-baseHash": "982e51424e87",
+  "x-compositeHash": "2a2bcddafcbc",
+  "x-introducedInOkapi": "0.38"
 }

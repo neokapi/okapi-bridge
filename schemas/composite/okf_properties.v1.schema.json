@@ -11,7 +11,104 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-properties"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_properties",
+        "name": "Java Properties",
+        "description": "Java properties files (Output used \\uHHHH escapes)",
+        "mimeType": "text/x-properties",
+        "extensions": ".properties;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.properties.PropertiesFilter"
+      },
+      {
+        "configId": "okf_properties-outputNotEscaped",
+        "name": "Java Properties (Output not escaped)",
+        "description": "Java properties files (Characters in the output encoding are not escaped)",
+        "mimeType": "text/x-properties",
+        "parametersLocation": "outputNotEscaped.fprm",
+        "parametersRaw": "#v1\nuseLD.b=true\nlocalizeOutside.b=true\nuseKeyCondition.b=false\nextractOnlyMatchingKey.b=true\nkeyCondition=.*text.*\nextraComments.b=false\ncommentsAreNotes.b=true\nescapeExtendedChars.b=false\nuseCodeFinder.b=true\ncodeFinderRules.count.i=4\ncodeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\ncodeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\ncodeFinderRules.rule2=\\{\\d.*?\\}\ncodeFinderRules.rule3=\\<(/?)\\w+[^>]*?>\ncodeFinderRules.sample=%s, %d, {1}, \\n, \\r, \\t, etc.\ncodeFinderRules.useAllRulesWhenTesting.b=true\n",
+        "parameters": {
+          "useLD": true,
+          "localizeOutside": true,
+          "useKeyCondition": false,
+          "extractOnlyMatchingKey": true,
+          "keyCondition": ".*text.*",
+          "extraComments": false,
+          "commentsAreNotes": true,
+          "escapeExtendedChars": false,
+          "useCodeFinder": true,
+          "codeFinderRules.count": 4,
+          "codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
+          "codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "codeFinderRules.rule2": "\\{\\d.*?\\}",
+          "codeFinderRules.rule3": "\\<(/?)\\w+[^>]*?>",
+          "codeFinderRules.sample": "%s, %d, {1}, \\n, \\r, \\t, etc.",
+          "codeFinderRules.useAllRulesWhenTesting": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.properties.PropertiesFilter"
+      },
+      {
+        "configId": "okf_properties-skypeLang",
+        "name": "Skype Language Files",
+        "description": "Skype language properties files (including support for HTML codes)",
+        "mimeType": "text/x-properties",
+        "extensions": ".lang;",
+        "parametersLocation": "skypeLang.fprm",
+        "parametersRaw": "#v1\nuseLD.b=true\nlocalizeOutside.b=true\nuseKeyCondition.b=false\nextractOnlyMatchingKey.b=true\nkeyCondition=.*text.*\nextraComments.b=false\ncommentsAreNotes.b=true\nescapeExtendedChars.b=false\nuseCodeFinder.b=true\ncodeFinderRules.count.i=4\ncodeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\ncodeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\ncodeFinderRules.rule2=\\{\\d.*?\\}\ncodeFinderRules.rule3=\\<(/?)\\w+[^>]*?>\ncodeFinderRules.sample=%s, %d, {1}, \\n, \\r, \\t, etc.$0a$<a attr=\"qwerty\">text</a>text<img/>$0a$Test &tl; and more.\ncodeFinderRules.useAllRulesWhenTesting.b=true\n",
+        "parameters": {
+          "useLD": true,
+          "localizeOutside": true,
+          "useKeyCondition": false,
+          "extractOnlyMatchingKey": true,
+          "keyCondition": ".*text.*",
+          "extraComments": false,
+          "commentsAreNotes": true,
+          "escapeExtendedChars": false,
+          "useCodeFinder": true,
+          "codeFinderRules.count": 4,
+          "codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
+          "codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "codeFinderRules.rule2": "\\{\\d.*?\\}",
+          "codeFinderRules.rule3": "\\<(/?)\\w+[^>]*?>",
+          "codeFinderRules.sample": "%s, %d, {1}, \\n, \\r, \\t, etc.$0a$<a attr=\"qwerty\">text</a>text<img/>$0a$Test &tl; and more.",
+          "codeFinderRules.useAllRulesWhenTesting": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.properties.PropertiesFilter"
+      },
+      {
+        "configId": "okf_properties-html-subfilter",
+        "name": "Properties with complex HTML Content",
+        "description": "Java Property content processed by an HTML subfilter",
+        "mimeType": "text/x-properties",
+        "parametersLocation": "html-subfilter.fprm",
+        "parametersRaw": "#v1\nuseLD.b=true\nlocalizeOutside.b=true\nuseKeyCondition.b=false\nextractOnlyMatchingKey.b=true\nkeyCondition=.*text.*\nextraComments.b=false\ncommentsAreNotes.b=true\nescapeExtendedChars.b=false\nuseCodeFinder.b=true\ncodeFinderRules.count.i=3\ncodeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\ncodeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\ncodeFinderRules.rule2=\\{\\d.*?\\}\ncodeFinderRules.sample=%s, %d, {1}, \\n, \\r, \\t.\ncodeFinderRules.useAllRulesWhenTesting.b=true\nsubfilter=okf_html\n",
+        "parameters": {
+          "useLD": true,
+          "localizeOutside": true,
+          "useKeyCondition": false,
+          "extractOnlyMatchingKey": true,
+          "keyCondition": ".*text.*",
+          "extraComments": false,
+          "commentsAreNotes": true,
+          "escapeExtendedChars": false,
+          "useCodeFinder": true,
+          "codeFinderRules.count": 3,
+          "codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
+          "codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "codeFinderRules.rule2": "\\{\\d.*?\\}",
+          "codeFinderRules.sample": "%s, %d, {1}, \\n, \\r, \\t.",
+          "codeFinderRules.useAllRulesWhenTesting": true,
+          "subfilter": "okf_html"
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.properties.PropertiesFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "useLd": {
@@ -154,7 +251,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "a94ec5697636",
-  "x-compositeHash": "286fbfb0f074"
+  "x-baseVersion": 4,
+  "x-baseHash": "ad1c65a9e581",
+  "x-compositeHash": "cb51410b698e",
+  "x-introducedInOkapi": "0.38"
 }

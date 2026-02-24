@@ -11,12 +11,25 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-mosestext"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_mosestext",
+        "name": "Moses Text Default",
+        "description": "Default Moses Text configuration.",
+        "mimeType": "text/x-mosestext",
+        "extensions": ".txt;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.mosestext.MosesTextFilter"
+      }
+    ],
+    "serializationFormat": "yaml"
   },
   "properties": {},
   "additionalProperties": false,
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "7baf291dfbc4",
-  "x-compositeHash": "7baf291dfbc4"
+  "x-baseVersion": 2,
+  "x-baseHash": "01e319894ed2",
+  "x-compositeHash": "01e319894ed2",
+  "x-introducedInOkapi": "0.38"
 }

@@ -60,7 +60,8 @@
           "_parametersClass": "net.sf.okapi.filters.table.csv.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.table.TableFilter"
+        "filterClass": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter",
+        "schemaRef": "okf_commaseparatedvalues.schema.json"
       },
       {
         "configId": "okf_table_catkeys",
@@ -100,7 +101,8 @@
           "_parametersClass": "net.sf.okapi.filters.table.csv.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.table.TableFilter"
+        "filterClass": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter",
+        "schemaRef": "okf_commaseparatedvalues.schema.json"
       },
       {
         "configId": "okf_table_src-tab-trg",
@@ -141,7 +143,8 @@
           "_parametersClass": "net.sf.okapi.filters.table.csv.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.table.TableFilter"
+        "filterClass": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter",
+        "schemaRef": "okf_commaseparatedvalues.schema.json"
       },
       {
         "configId": "okf_table_fwc",
@@ -180,7 +183,8 @@
           "_parametersClass": "net.sf.okapi.filters.table.fwc.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.table.TableFilter"
+        "filterClass": "net.sf.okapi.filters.table.fwc.FixedWidthColumnsFilter",
+        "schemaRef": "okf_fixedwidthcolumns.schema.json"
       },
       {
         "configId": "okf_table_tsv",
@@ -217,9 +221,11 @@
           "_parametersClass": "net.sf.okapi.filters.table.tsv.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.table.TableFilter"
+        "filterClass": "net.sf.okapi.filters.table.tsv.TabSeparatedValuesFilter",
+        "schemaRef": "okf_tabseparatedvalues.schema.json"
       }
-    ]
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "simplifierRules": {
@@ -245,8 +251,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "969188749602",
-  "x-compositeHash": "dfd5021e55ac",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 4,
+  "x-baseHash": "1b450d3ad06d",
+  "x-compositeHash": "16f9ab1fd156",
+  "x-introducedInOkapi": "1.42.0"
 }

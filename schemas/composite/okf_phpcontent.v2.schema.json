@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/x-php"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_phpcontent",
+        "name": "PHP Content Default",
+        "description": "Default PHP Content configuration.",
+        "mimeType": "application/x-php",
+        "extensions": ".php;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.php.PHPContentFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "useCodeFinder": {
@@ -71,11 +83,11 @@
       }
     },
     "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "object",
+      "type": "boolean",
       "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
     },
     "mergeAdjacentCodes": {
-      "type": "object",
+      "type": "boolean",
       "description": "Merge consecutive inline codes into a single placeholder"
     },
     "simplifierRules": {
@@ -109,7 +121,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "7bd215ed6f7e",
-  "x-compositeHash": "4f97ede14d2d"
+  "x-baseVersion": 4,
+  "x-baseHash": "fe61f365c672",
+  "x-compositeHash": "6f1213ce8974",
+  "x-introducedInOkapi": "1.48.0"
 }

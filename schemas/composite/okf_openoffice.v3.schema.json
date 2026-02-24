@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/x-openoffice"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_openoffice",
+        "name": "OpenOffice.org Documents",
+        "description": "OpenOffice.org ODT, ODS, ODP, ODG, OTT, OTS, OTP, OTG, SWC, SWX, SXD, SXI documents",
+        "mimeType": "application/x-openoffice",
+        "extensions": ".odt;.ods;.odg;.odp;.ott;.ots;.otp;.otg;.swc;.swx;.sxd;.sxi;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.openoffice.OpenOfficeFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "extractNotes": {
@@ -33,11 +45,11 @@
       "default": true
     },
     "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "object",
+      "type": "boolean",
       "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
     },
     "mergeAdjacentCodes": {
-      "type": "object",
+      "type": "boolean",
       "description": "Merge consecutive inline codes into a single placeholder"
     },
     "simplifierRules": {
@@ -86,7 +98,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "41b5d2e8a075",
-  "x-compositeHash": "9611df5a6707"
+  "x-baseVersion": 6,
+  "x-baseHash": "e27bc06b10c2",
+  "x-compositeHash": "a45e79f2b435",
+  "x-introducedInOkapi": "1.48.0"
 }

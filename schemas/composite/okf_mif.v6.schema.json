@@ -22,7 +22,8 @@
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.mif.MIFFilter"
       }
-    ]
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "extractBodyPages": {
@@ -91,6 +92,14 @@
       "type": "boolean",
       "default": false
     },
+    "extractPgfNumFormatsInline": {
+      "type": "boolean",
+      "default": false
+    },
+    "extractReferenceFormats": {
+      "type": "boolean",
+      "default": false
+    },
     "simplifierRules": {
       "type": "string",
       "description": "Rules for simplifying inline code representation",
@@ -114,8 +123,8 @@
     }
   ],
   "x-schemaVersion": 6,
-  "x-baseVersion": 6,
-  "x-baseHash": "6eeb2fea0de5",
-  "x-compositeHash": "5979666ac068",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 9,
+  "x-baseHash": "888dde0745e0",
+  "x-compositeHash": "59a837e99ceb",
+  "x-introducedInOkapi": "1.40.0"
 }

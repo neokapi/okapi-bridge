@@ -20,8 +20,39 @@
         "mimeType": "text/x-messageformat",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
+      },
+      {
+        "configId": "okf_messageformat-json",
+        "name": "ICU Message Format",
+        "description": "ICU Message Format From JSON",
+        "mimeType": "text/x-messageformat",
+        "parametersLocation": "okf_messageformat@json.fprm",
+        "parametersRaw": "#v1\naddPluralForms.b=true\nnormalize.b=true\nprettyPrint.b=false\n",
+        "parameters": {
+          "addPluralForms": true,
+          "normalize": true,
+          "prettyPrint": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
+      },
+      {
+        "configId": "okf_messageformat-yaml",
+        "name": "ICU Message Format",
+        "description": "ICU Message Format From YAML",
+        "mimeType": "text/x-messageformat",
+        "parametersLocation": "okf_messageformat@yaml.fprm",
+        "parametersRaw": "#v1\naddPluralForms.b=true\nnormalize.b=true\nprettyPrint.b=true\n",
+        "parameters": {
+          "addPluralForms": true,
+          "normalize": true,
+          "prettyPrint": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
       }
-    ]
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "addPluralForms": {
@@ -74,6 +105,14 @@
       "default": false,
       "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
     },
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "type": "boolean",
+      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
+    },
+    "mergeAdjacentCodes": {
+      "type": "boolean",
+      "description": "Merge consecutive inline codes into a single placeholder"
+    },
     "simplifierRules": {
       "type": "string",
       "description": "Rules for simplifying inline code representation",
@@ -107,8 +146,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "a4e4128fd033",
-  "x-compositeHash": "966b6b325a70",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 6,
+  "x-baseHash": "3894fe578b80",
+  "x-compositeHash": "a177bfa3c126",
+  "x-introducedInOkapi": "1.48.0"
 }

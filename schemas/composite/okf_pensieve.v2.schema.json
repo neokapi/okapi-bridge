@@ -23,13 +23,13 @@
         "filterClass": "net.sf.okapi.filters.pensieve.PensieveFilter"
       }
     ],
-    "serializationFormat": "yaml"
+    "serializationFormat": "stringParameters"
   },
   "properties": {},
   "additionalProperties": false,
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "730956b7be2e",
-  "x-compositeHash": "730956b7be2e",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 3,
+  "x-baseHash": "8aafbbd3fec9",
+  "x-compositeHash": "8aafbbd3fec9",
+  "x-introducedInOkapi": "1.46.0"
 }

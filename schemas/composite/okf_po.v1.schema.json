@@ -11,7 +11,43 @@
     "extensions": [],
     "mimeTypes": [
       "application/x-gettext"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_po",
+        "name": "PO (Standard)",
+        "description": "Standard bilingual PO files",
+        "mimeType": "application/x-gettext",
+        "extensions": ".po;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.po.POFilter"
+      },
+      {
+        "configId": "okf_po-monolingual",
+        "name": "PO (Monolingual)",
+        "description": "Monolingual PO files (msgid is a real ID, not the source text).",
+        "mimeType": "application/x-gettext",
+        "extensions": ".po;",
+        "parametersLocation": "monolingual.fprm",
+        "parametersRaw": "#v1\nbilingualMode.b=false\nmakeID.b=true\nuseLD.b=true\nlocalizeOutside.b=true\nuseCodeFinder.b=true\ncodeFinderRules.count.i=3\ncodeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\ncodeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\ncodeFinderRules.rule2=\\{\\d.*?\\}\ncodeFinderRules.sample=%s, %d, {1}, \\n, \\r, \\t, etc.\ncodeFinderRules.useAllRulesWhenTesting.b=true\n",
+        "parameters": {
+          "bilingualMode": false,
+          "makeID": true,
+          "useLD": true,
+          "localizeOutside": true,
+          "useCodeFinder": true,
+          "codeFinderRules.count": 3,
+          "codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
+          "codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "codeFinderRules.rule2": "\\{\\d.*?\\}",
+          "codeFinderRules.sample": "%s, %d, {1}, \\n, \\r, \\t, etc.",
+          "codeFinderRules.useAllRulesWhenTesting": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.po.POFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "protectApproved": {
@@ -79,6 +115,14 @@
       "type": "string",
       "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
+    },
+    "wrapContent": {
+      "type": "boolean",
+      "default": true
+    },
+    "outputGeneric": {
+      "type": "boolean",
+      "default": false
     }
   },
   "additionalProperties": false,
@@ -123,7 +167,8 @@
     }
   ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "c84197001d8b",
-  "x-compositeHash": "bb83bf110304"
+  "x-baseVersion": 4,
+  "x-baseHash": "42b93f725942",
+  "x-compositeHash": "0a466bc13c6b",
+  "x-introducedInOkapi": "0.38"
 }

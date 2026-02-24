@@ -23,13 +23,13 @@
         "filterClass": "net.sf.okapi.filters.mosestext.MosesTextFilter"
       }
     ],
-    "serializationFormat": "yaml"
+    "serializationFormat": "stringParameters"
   },
   "properties": {},
   "additionalProperties": false,
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "01e319894ed2",
-  "x-compositeHash": "01e319894ed2",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 3,
+  "x-baseHash": "13d8b859bca5",
+  "x-compositeHash": "13d8b859bca5",
+  "x-introducedInOkapi": "1.46.0"
 }

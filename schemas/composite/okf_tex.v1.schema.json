@@ -11,12 +11,25 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-tex-text"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_tex",
+        "name": "Tex",
+        "description": "Tex files",
+        "mimeType": "text/x-tex-text",
+        "extensions": ".tex",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.tex.TEXFilter"
+      }
+    ],
+    "serializationFormat": "yaml"
   },
   "properties": {},
   "additionalProperties": false,
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "a485a351c1d5",
-  "x-compositeHash": "a485a351c1d5"
+  "x-baseVersion": 3,
+  "x-baseHash": "974d930a96d9",
+  "x-compositeHash": "974d930a96d9",
+  "x-introducedInOkapi": "0.38"
 }

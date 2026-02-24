@@ -11,12 +11,28 @@
     "extensions": [],
     "mimeTypes": [
       "application/vnd.adobe.indesign-idml-package"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_idml",
+        "name": "IDML",
+        "description": "Adobe InDesign IDML documents",
+        "mimeType": "application/vnd.adobe.indesign-idml-package",
+        "extensions": ".idml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.idml.IDMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "maxAttributeSize": {
       "type": "integer",
       "default": 4194304
+    },
+    "specialCharacterPattern": {
+      "type": "boolean",
+      "default": false
     },
     "untagXmlStructures": {
       "type": "boolean",
@@ -56,6 +72,10 @@
       "default": false
     },
     "extractIndexTopics": {
+      "type": "boolean",
+      "default": false
+    },
+    "extractExternalHyperlinks": {
       "type": "boolean",
       "default": false
     },
@@ -106,6 +126,11 @@
     "characterBaselineShiftMaxIgnoranceThreshold": {
       "type": "string",
       "default": ""
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
     }
   },
   "additionalProperties": false,
@@ -164,7 +189,8 @@
     }
   ],
   "x-schemaVersion": 5,
-  "x-baseVersion": 5,
-  "x-baseHash": "7f89747527b9",
-  "x-compositeHash": "09aed1468399"
+  "x-baseVersion": 14,
+  "x-baseHash": "e07b6264b0a2",
+  "x-compositeHash": "5496d2cac170",
+  "x-introducedInOkapi": "1.46.0"
 }

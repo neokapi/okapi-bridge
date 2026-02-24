@@ -160,7 +160,7 @@
         "description": "Configuration for DocBook v5 files",
         "mimeType": "text/xml",
         "parametersLocation": "okf_xml-docbook.fprm",
-        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<its:rules version=\"1.0\" xmlns:its=\"http://www.w3.org/2005/11/its\"\n\t\t   xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\"\n\t\t   xmlns:db=\"http://docbook.org/ns/docbook\">\n\t<!-- Inline elements -->\n\t<its:withinTextRule selector=\"\n\t//db:abbrev|//db:acronym|//db:emphasis|//db:phrase|//db:quote|//db:trademark|\n\t//db:ancor|//db:citation|//db:citerefentry|//db:citetitle|//db:firstterm|//db:glossterm|//db:link|//db:olink|//db:xref|\n\t//db:foreignphrase|//db:wordasword|//db:computeroutput|//db:literal|//db:markup|//db:prompt|//db:replaceable|//db:tag|//db:userinput|\n\t//db:inlineequation|//db:mathphrase|//db:subscript|//db:superscript|\n\t//db:accel|//db:guibutton|//db:guiicon|//db:guilabel|//db:guimenu|//db:guimenuitem|//db:guisubmenu|\n\t//db:keycap|//db:keycode|//db:keycombo|//db:keysym|//db:menuchoice|//db:mousebutton|//db:shortcut|\n\t//db:classname|//db:constant|//db:errorcode|//db:errorname|//db:errortype|//db:function|\n\t//db:msgtext|//db:parameter|//db:property|//db:replaceable|//db:returnvalue|//db:symbol|//db:token|//db:type|//db:varname|\n\t//db:application|//db:comand|//db:envar|//db:filename|//db:msgtext|//db:option|//db:parameter|//db:prompt|//db:systemitem|\n\t//db:database|//db:email|//db:hardware|//db:optional\"\n\t\t\t\t\t\twithinText=\"yes\"/>\n\n\t<!-- Elements that should not be translated. -->\n\t<its:translateRule selector=\"\n\t//db:computeroutput|//db:programlisting|//db:screen|//db:screenshot|//db:synopsis|\n\t//db:literallayout|\n\t//db:mathphrase/*|//db:inlineequation/*\" translate=\"no\"/>\n\n\t<!-- These should be translated and the spaces have to be preserved. -->\n\t<!-- Currently, literallayout would be the only one where the spaces should be preserved\n\t\t but it is set not to be translated, as it is listed in translateRule/@selector above.\n\t     To make literallayout translatable, remove it from the selector and uncomment the line below. -->\n\t<!-- its:preserveSpaceRule selector=\"//db:literallayout\" space=\"preserve\"/ -->\n\n\t<!-- These elements should generate a separate flaw of text.\n\t\t Based on https://www.w3.org/TR/xml-i18n-bp/#docbook\n\t     ITSFilter DOES NOT HANDLE withinText=\"nested\" as of March 2021, however,\n\t     and this has no real effect. -->\n\t<its:withinTextRule withinText=\"nested\" selector=\"\n\t//db:alt|\n\t//db:footnote|\n\t//db:remark|\n\t//db:indexterm|\n\t//db:primary|\n\t//db:secondary|\n\t//db:tertiary\"/>\n</its:rules>\n",
+        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<its:rules version=\"1.0\" xmlns:its=\"http://www.w3.org/2005/11/its\"\n    xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\"\n    xmlns:db=\"http://docbook.org/ns/docbook\">\n    <!-- Inline elements -->\n    <its:withinTextRule selector=\"\n        //db:abbrev|//db:acronym|//db:emphasis|//db:phrase|//db:quote|//db:trademark|\n        //db:anchor|//db:citation|//db:citerefentry|//db:citetitle|//db:firstterm|//db:glossterm|//db:link|//db:olink|//db:xref|\n        //db:foreignphrase|//db:wordasword|//db:computeroutput|//db:literal|//db:markup|//db:prompt|//db:replaceable|//db:tag|//db:userinput|\n        //db:inlineequation|//db:mathphrase|//db:subscript|//db:superscript|\n        //db:accel|//db:guibutton|//db:guiicon|//db:guilabel|//db:guimenu|//db:guimenuitem|//db:guisubmenu|\n        //db:keycap|//db:keycode|//db:keycombo|//db:keysym|//db:menuchoice|//db:mousebutton|//db:shortcut|\n        //db:classname|//db:constant|//db:errorcode|//db:errorname|//db:errortype|//db:function|\n        //db:msgtext|//db:parameter|//db:property|//db:replaceable|//db:returnvalue|//db:symbol|//db:token|//db:type|//db:varname|\n        //db:application|//db:command|//db:envar|//db:filename|//db:msgtext|//db:option|//db:parameter|//db:prompt|//db:systemitem|\n        //db:database|//db:email|//db:hardware|//db:optional|//db:cover|//db:comment\"\n        withinText=\"yes\"/>\n\n    <!-- Elements that should not be translated. -->\n    <its:translateRule selector=\"\n        //db:computeroutput|//db:programlisting|//db:screen|//db:screenshot|//db:synopsis|\n        //db:literallayout|\n        //db:mathphrase/*|//db:inlineequation/*\" translate=\"no\"/>\n\n    <!-- These should be translated and the spaces have to be preserved. -->\n    <!-- Currently, literallayout would be the only one where the spaces should be preserved\n         but it is set not to be translated, as it is listed in translateRule/@selector above.\n         To make literallayout translatable, remove it from the selector and uncomment the line below. -->\n    <!-- its:preserveSpaceRule selector=\"//db:literallayout\" space=\"preserve\"/ -->\n\n    <!-- These elements should generate a separate flow of text.\n         Based on https://www.w3.org/TR/xml-i18n-bp/#docbook\n         ITSFilter DOES NOT HANDLE withinText=\"nested\" as of March 2021, however,\n         and this has no real effect. -->\n    <its:withinTextRule withinText=\"nested\" selector=\"\n        //db:alt|\n        //db:footnote|\n        //db:remark|\n        //db:indexterm|\n        //db:primary|\n        //db:secondary|\n        //db:tertiary\"/>\n</its:rules>\n",
         "parameters": {
           "<?xml version": "\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>",
           "<its:rules version": "\"1.0\" xmlns:its=\"http://www.w3.org/2005/11/its\"",
@@ -177,7 +177,8 @@
         "isDefault": false,
         "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
       }
-    ]
+    ],
+    "serializationFormat": "yaml"
   },
   "properties": {
     "simplifierRules": {
@@ -214,8 +215,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "182dc8a8b339",
-  "x-compositeHash": "aff97bfc5734",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 6,
+  "x-baseHash": "503940b8e7e7",
+  "x-compositeHash": "4bf82500b76d",
+  "x-introducedInOkapi": "1.47.0"
 }

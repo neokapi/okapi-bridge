@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "text/markdown"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_markdown",
+        "name": "Markdown",
+        "description": "Markdown files",
+        "mimeType": "text/markdown",
+        "extensions": ".md;.markdown;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.markdown.MarkdownFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "htmlSubfilter": {
@@ -149,7 +161,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "e0ecb5a825d1",
-  "x-compositeHash": "611517555fef"
+  "x-baseVersion": 7,
+  "x-baseHash": "e7adffcfa920",
+  "x-compositeHash": "fd403d9471b4",
+  "x-introducedInOkapi": "1.43.0"
 }

@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_tabseparatedvalues.schema.json",
   "$version": "3.0.0",
-  "title": "Plain Text Filter (BETA) Filter",
-  "description": "Configuration for the Okapi Plain Text Filter (BETA) Filter",
+  "title": "Plain Text Filter Filter",
+  "description": "Configuration for the Okapi Plain Text Filter Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_tabseparatedvalues",
@@ -50,7 +50,8 @@
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.table.tsv.TabSeparatedValuesFilter"
       }
-    ]
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "columnNamesLineNum": {
@@ -84,6 +85,10 @@
     "recordIdColumn": {
       "type": "integer",
       "default": 0
+    },
+    "exposeCommentsAsMetadata": {
+      "type": "boolean",
+      "default": false
     },
     "sourceColumns": {
       "type": "string",
@@ -180,8 +185,8 @@
     }
   ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 3,
-  "x-baseHash": "b6bdd9e28fc7",
-  "x-compositeHash": "9d5c44aaf831",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 6,
+  "x-baseHash": "d909969941ff",
+  "x-compositeHash": "1900909012fe",
+  "x-introducedInOkapi": "1.47.0"
 }

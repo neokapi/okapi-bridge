@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/xliff+xml"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_xliff2",
+        "name": "XLIFF-2",
+        "description": "Configuration for XLIFF-2 documents.",
+        "mimeType": "application/xliff+xml",
+        "extensions": ".xlf;.xliff;.xlf2;.xliff2",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.xliff2.XLIFF2Filter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "maxValidation": {
@@ -77,6 +89,25 @@
       "default": false,
       "title": "Ignore tag type mismatch between source and target",
       "x-widget": "checkbox"
+    },
+    "discardInvalidTargets": {
+      "type": "boolean",
+      "default": false,
+      "title": "Discard invalid targets rather than rejecting the file",
+      "x-widget": "checkbox"
+    },
+    "writeOriginalData": {
+      "type": "boolean",
+      "default": true,
+      "title": "Output includes original data when available",
+      "x-widget": "checkbox"
+    },
+    "subfilterOverwriteTarget": {
+      "type": "boolean",
+      "default": false,
+      "title": "Subfilter: Always Overwrite Target?",
+      "description": "Should the writer always overwrite an existing target even if state is final?",
+      "x-widget": "checkbox"
     }
   },
   "additionalProperties": false,
@@ -127,7 +158,8 @@
     }
   ],
   "x-schemaVersion": 5,
-  "x-baseVersion": 5,
-  "x-baseHash": "9b9f2efdbfcd",
-  "x-compositeHash": "9041740e00c7"
+  "x-baseVersion": 14,
+  "x-baseHash": "2fec3dc2446c",
+  "x-compositeHash": "efe7ed12f1b7",
+  "x-introducedInOkapi": "1.47.0"
 }

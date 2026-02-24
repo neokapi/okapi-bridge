@@ -11,12 +11,24 @@
     "extensions": [],
     "mimeTypes": [
       "text/x-transtable"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_transtable",
+        "name": "Translation Table Default",
+        "description": "Default TransTable configuration.",
+        "mimeType": "text/x-transtable",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.transtable.TransTableFilter"
+      }
+    ],
+    "serializationFormat": "yaml"
   },
   "properties": {},
   "additionalProperties": false,
   "x-schemaVersion": 1,
-  "x-baseVersion": 1,
-  "x-baseHash": "90cd8e0bdcf1",
-  "x-compositeHash": "90cd8e0bdcf1"
+  "x-baseVersion": 2,
+  "x-baseHash": "3982e44d9cf1",
+  "x-compositeHash": "3982e44d9cf1",
+  "x-introducedInOkapi": "0.38"
 }

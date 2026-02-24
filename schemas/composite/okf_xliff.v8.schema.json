@@ -66,7 +66,7 @@
         "mimeType": "application/x-xliff+xml",
         "extensions": ".xlf",
         "parametersLocation": "iws.fprm",
-        "parametersRaw": "#v1\nuseCustomParser.b=true\nfactoryClass=com.ctc.wstx.stax.WstxInputFactory\nfallbackToID.b=false\nescapeGT.b=false\naddTargetLanguage.b=true\noverrideTargetLanguage.b=false\noutputSegmentationType.i=0\nignoreInputSegmentation.b=false\naddAltTrans.b=false\naddAltTransGMode.b=true\neditAltTrans.b=false\nincludeExtensions.b=true\nincludeIts.b=true\nbalanceCodes.b=true\nallowEmptyTargets.b=false\ntargetStateMode.i=0\ntargetStateValue=needs-translation\nalwaysUseSegSource.b=false\nquoteModeDefined.b=true\nquoteMode.i=0\nuseSdlXliffWriter.b=false\npreserveSpaceByDefault.b=true\nuseSegsForSdlProps.b=false\nuseIwsXliffWriter.b=true\niwsBlockFinished.b=true\niwsTransStatusValue=pending\niwsTransTypeValue=manual_translation\niwsRemoveTmOrigin.b=false\niwsBlockLockStatus.b=false\niwsBlockTmScore.b=false\niwsBlockTmScoreValue=100.00\niwsIncludeMultipleExact.b=false\niwsBlockMultipleExact.b=false\ninlineCdata.b=false\nskipNoMrkSegSource.b=true\nuseCodeFinder.b=false\nsdlSegConfValue=Translated\ncodeFinderRules.count.i=0\ncodeFinderRules.sample=\ncodeFinderRules.useAllRulesWhenTesting.b=false\n",
+        "parametersRaw": "#v1\nuseCustomParser.b=true\nfactoryClass=com.ctc.wstx.stax.WstxInputFactory\nfallbackToID.b=false\nescapeGT.b=false\naddTargetLanguage.b=true\noverrideTargetLanguage.b=false\noutputSegmentationType.i=0\nignoreInputSegmentation.b=false\naddAltTrans.b=false\naddAltTransGMode.b=true\neditAltTrans.b=false\nincludeExtensions.b=true\nincludeIts.b=true\nbalanceCodes.b=true\nallowEmptyTargets.b=false\ntargetStateMode.i=0\ntargetStateValue=needs-translation\nalwaysUseSegSource.b=false\nquoteModeDefined.b=true\nquoteMode.i=0\nuseSdlXliffWriter.b=false\nsdlSegConfValue=Translated\npreserveSpaceByDefault.b=true\nskipNoMrkSegSource.b=true\nuseIwsXliffWriter.b=true\niwsBlockFinished.b=true\niwsTransStatusValue=pending\niwsTransTypeValue=manual_translation\n",
         "parameters": {
           "useCustomParser": true,
           "factoryClass": "com.ctc.wstx.stax.WstxInputFactory",
@@ -89,30 +89,19 @@
           "quoteModeDefined": true,
           "quoteMode": 0,
           "useSdlXliffWriter": false,
+          "sdlSegConfValue": "Translated",
           "preserveSpaceByDefault": true,
-          "useSegsForSdlProps": false,
+          "skipNoMrkSegSource": true,
           "useIwsXliffWriter": true,
           "iwsBlockFinished": true,
           "iwsTransStatusValue": "pending",
-          "iwsTransTypeValue": "manual_translation",
-          "iwsRemoveTmOrigin": false,
-          "iwsBlockLockStatus": false,
-          "iwsBlockTmScore": false,
-          "iwsBlockTmScoreValue": 100.0,
-          "iwsIncludeMultipleExact": false,
-          "iwsBlockMultipleExact": false,
-          "inlineCdata": false,
-          "skipNoMrkSegSource": true,
-          "useCodeFinder": false,
-          "sdlSegConfValue": "Translated",
-          "codeFinderRules.count": 0,
-          "codeFinderRules.sample": "",
-          "codeFinderRules.useAllRulesWhenTesting": false
+          "iwsTransTypeValue": "manual_translation"
         },
         "isDefault": false,
         "filterClass": "net.sf.okapi.filters.xliff.XLIFFFilter"
       }
-    ]
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "addAltTrans": {
@@ -348,8 +337,8 @@
     }
   ],
   "x-schemaVersion": 8,
-  "x-baseVersion": 8,
-  "x-baseHash": "8ec97b9374d1",
-  "x-compositeHash": "f52197049263",
-  "x-introducedInOkapi": "1.39.0"
+  "x-baseVersion": 9,
+  "x-baseHash": "eedb2943f309",
+  "x-compositeHash": "c85b68e67f72",
+  "x-introducedInOkapi": "0.38"
 }

@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "text/xml"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_openxml",
+        "name": "Microsoft Office Document",
+        "description": "Microsoft Office documents (DOCX, DOCM, DOTX, DOTM, PPTX, PPTM, PPSX, PPSM, POTX, POTM, XLSX, XLSM, XLTX, XLTM, VSDX, VSDM).",
+        "mimeType": "text/xml",
+        "extensions": ".docx;.docm;.dotx;.dotm;.pptx;.pptm;.ppsx;.ppsm;.potx;.potm;.xlsx;.xlsm;.xltx;.xltm;.vsdx;.vsdm;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.openxml.OpenXMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "maxAttributeSize": {
@@ -22,9 +34,45 @@
       "type": "boolean",
       "default": true
     },
+    "translatePowerpointDocProperties": {
+      "type": "boolean",
+      "default": true
+    },
+    "reorderPowerpointDocProperties": {
+      "type": "boolean",
+      "default": false
+    },
+    "reorderPowerpointRelationships": {
+      "type": "boolean",
+      "default": false
+    },
+    "translatePowerpointDiagramData": {
+      "type": "boolean",
+      "default": true
+    },
+    "reorderPowerpointDiagramData": {
+      "type": "boolean",
+      "default": false
+    },
+    "translatePowerpointCharts": {
+      "type": "boolean",
+      "default": true
+    },
+    "reorderPowerpointCharts": {
+      "type": "boolean",
+      "default": false
+    },
     "bPreferenceTranslateComments": {
       "type": "boolean",
       "default": true
+    },
+    "translatePowerpointComments": {
+      "type": "boolean",
+      "default": true
+    },
+    "reorderPowerpointComments": {
+      "type": "boolean",
+      "default": false
     },
     "bPreferenceAggressiveCleanup": {
       "type": "boolean",
@@ -38,6 +86,10 @@
       "type": "boolean",
       "default": true,
       "description": "Extract speaker notes in PowerPoint presentations."
+    },
+    "bPreferenceReorderPowerpointNotes": {
+      "type": "boolean",
+      "default": false
     },
     "bPreferenceTranslatePowerpointMasters": {
       "type": "boolean",
@@ -58,10 +110,6 @@
       "default": false
     },
     "bPreferenceTranslateExcelExcludeColors": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceTranslateExcelExcludeColumns": {
       "type": "boolean",
       "default": false
     },
@@ -135,6 +183,20 @@
     "bReorderPowerpointNotesAndComments": {
       "type": "boolean",
       "default": false
+    },
+    "bPreferenceAllowEmptyTargets": {
+      "type": "boolean",
+      "default": false
+    },
+    "nFileType": {
+      "type": "string",
+      "default": "MSWORD",
+      "enum": [
+        "MSWORD",
+        "MSEXCEL",
+        "MSWORDDOCPROPERTIES",
+        "MSPOWERPOINTCOMMENTS"
+      ]
     }
   },
   "additionalProperties": false,
@@ -199,7 +261,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "da8945f8a9c0",
-  "x-compositeHash": "41ba242ff6b1"
+  "x-baseVersion": 11,
+  "x-baseHash": "8dc11dd07aee",
+  "x-compositeHash": "9a5b7952e658",
+  "x-introducedInOkapi": "1.45.0"
 }

@@ -11,7 +11,19 @@
     "extensions": [],
     "mimeTypes": [
       "application/x-openoffice"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_openoffice",
+        "name": "OpenOffice.org Documents",
+        "description": "OpenOffice.org ODT, ODS, ODP, ODG, OTT, OTS, OTP, OTG, SWC, SWX, SXD, SXI documents",
+        "mimeType": "application/x-openoffice",
+        "extensions": ".odt;.ods;.odg;.odp;.ott;.ots;.otp;.otg;.swc;.swx;.sxd;.sxi;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.openoffice.OpenOfficeFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "extractNotes": {
@@ -78,7 +90,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "4b00193effd8",
-  "x-compositeHash": "09d56030de1d"
+  "x-baseVersion": 5,
+  "x-baseHash": "60efde04d80f",
+  "x-compositeHash": "13c5c8aa22d5",
+  "x-introducedInOkapi": "1.46.0"
 }

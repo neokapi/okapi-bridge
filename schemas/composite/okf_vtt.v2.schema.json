@@ -11,7 +11,27 @@
     "extensions": [],
     "mimeTypes": [
       "text/vtt"
-    ]
+    ],
+    "configurations": [
+      {
+        "configId": "okf_vtt",
+        "name": "VTT",
+        "description": "VTT Documents",
+        "mimeType": "text/vtt",
+        "extensions": ".vtt;.srt",
+        "parametersLocation": "okf_vtt.fprm",
+        "parametersRaw": "#v1\ntimeFormat=HH:mm:ss.SSS\nmaxLinesPerCaption.i=2\nmaxCharsPerLine.i=47\ncjkCharsPerLine.i=18\n",
+        "parameters": {
+          "timeFormat": "HH:mm:ss.SSS",
+          "maxLinesPerCaption": 2,
+          "maxCharsPerLine": 47,
+          "cjkCharsPerLine": 18
+        },
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.vtt.VTTFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
   },
   "properties": {
     "cueSettings": {
@@ -136,7 +156,8 @@
     }
   ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 2,
-  "x-baseHash": "4dffe05502bd",
-  "x-compositeHash": "5103514605f4"
+  "x-baseVersion": 4,
+  "x-baseHash": "47e936419df4",
+  "x-compositeHash": "1cec439d2294",
+  "x-introducedInOkapi": "1.48.0"
 }
