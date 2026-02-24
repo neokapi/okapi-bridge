@@ -14,7 +14,7 @@
 
     <groupId>com.gokapi</groupId>
     <artifactId>gokapi-bridge-okapi-1.43.0</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.0</version>
     <packaging>jar</packaging>
     <name>Okapi Bridge - Okapi 1.43.0</name>
 

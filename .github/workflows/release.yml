@@ -58,11 +58,16 @@ jobs:
         run: |
           TAG="${GITHUB_REF_NAME}"
           OKAPI_VERSION="${{ matrix.okapi-version }}"
-          VERSION="${TAG#v}"
           ARCHIVE_NAME="okapi-bridge-${TAG}-okapi${OKAPI_VERSION}"
 
           mkdir -p staging/schemas
-          cp okapi-releases/${OKAPI_VERSION}/target/gokapi-bridge-${VERSION}-jar-with-dependencies.jar staging/gokapi-bridge-jar-with-dependencies.jar
+          JAR_FILE=$(ls okapi-releases/${OKAPI_VERSION}/target/gokapi-bridge-*-jar-with-dependencies.jar 2>/dev/null | head -1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "Error: No jar-with-dependencies found in okapi-releases/${OKAPI_VERSION}/target/"
+            ls -la okapi-releases/${OKAPI_VERSION}/target/
+            exit 1
+          fi
+          cp "$JAR_FILE" staging/gokapi-bridge-jar-with-dependencies.jar
           cp okapi.bridge.json staging/
           
           # Include composite schemas for this Okapi version from centralized location
@@ -81,9 +86,9 @@ jobs:
         if: matrix.okapi-version == needs.setup.outputs.latest
         run: |
           OKAPI_VERSION="${{ matrix.okapi-version }}"
-          VERSION="${GITHUB_REF_NAME#v}"
           # Send list_filters command via stdin, parse JSON response (skip ready message)
-          echo '{"command":"list_filters"}' | java -jar okapi-releases/${OKAPI_VERSION}/target/gokapi-bridge-${VERSION}-jar-with-dependencies.jar 2>/dev/null \
+          JAR_FILE=$(ls okapi-releases/${OKAPI_VERSION}/target/gokapi-bridge-*-jar-with-dependencies.jar | head -1)
+          echo '{"command":"list_filters"}' | java -jar "$JAR_FILE" 2>/dev/null \
             | tail -1 \
             | jq '.data.filters | [.[] | {
                 type: "format",

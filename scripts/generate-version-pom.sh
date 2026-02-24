@@ -74,6 +74,14 @@ KNOWN_FILTERS=(
     okapi-filter-yaml
 )
 
+# Read bridge version from root pom.xml
+BRIDGE_VERSION=$(sed -n '/<artifactId>gokapi-bridge<\/artifactId>/{n;s/.*<version>\(.*\)<\/version>.*/\1/p;}' "$(dirname "$0")/../pom.xml")
+if [ -z "$BRIDGE_VERSION" ]; then
+    echo "Error: could not read version from root pom.xml"
+    exit 1
+fi
+echo "Bridge version: $BRIDGE_VERSION"
+
 echo "Discovering available filters for Okapi $VERSION..."
 
 # Create a temp file for results
@@ -135,7 +143,7 @@ cat > "$OUTPUT_FILE" << EOF
 
     <groupId>com.gokapi</groupId>
     <artifactId>gokapi-bridge-okapi-$VERSION</artifactId>
-    <version>1.5.0</version>
+    <version>$BRIDGE_VERSION</version>
     <packaging>jar</packaging>
     <name>Okapi Bridge - Okapi $VERSION</name>
 

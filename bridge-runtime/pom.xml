@@ -15,7 +15,7 @@
 
     <groupId>com.gokapi</groupId>
     <artifactId>gokapi-bridge-runtime</artifactId>
-    <version>1.5.0</version>
+    <version>1.6.0</version>
     <packaging>jar</packaging>
     <name>Okapi Bridge Runtime</name>
     <description>Java bridge for Okapi Framework filters, communicating via NDJSON over stdin/stdout</description>
