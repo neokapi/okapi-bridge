@@ -127,6 +127,7 @@ jobs:
 
   release:
     needs: build
+    if: always() && !cancelled()
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -147,6 +148,7 @@ jobs:
 
   update-registry:
     needs: [setup, release]
+    if: always() && !cancelled() && needs.release.result == 'success'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
