@@ -193,12 +193,19 @@ cat >> "$OUTPUT_FILE" << 'EOF'
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
-        
+
         <!-- SnakeYAML for parsing filter parameter files -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
             <version>${snakeyaml.version}</version>
+        </dependency>
+
+        <!-- SLF4J NOP binding — silences "No SLF4J providers" warnings from Okapi -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.0.16</version>
         </dependency>
     </dependencies>
 
@@ -241,8 +248,21 @@ cat >> "$OUTPUT_FILE" << 'EOF'
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.gokapi.bridge.OkapiBridgeServer</mainClass>
                                 </transformer>
+                                <!-- Merge META-INF/services files (SLF4J provider discovery, Okapi services) -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
-                            <finalName>gokapi-bridge-\${project.version}-jar-with-dependencies</finalName>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <finalName>gokapi-bridge-${project.version}-jar-with-dependencies</finalName>
                         </configuration>
                     </execution>
                 </executions>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Okapi Bridge - Filter Dependencies for Okapi 1.48.0
-    Generated: 2026-02-17T10:41:14Z
+    Generated: 2026-02-25T14:32:59Z
     Filters: 46
     
     This pom.xml is used for schema generation only.
@@ -14,7 +14,7 @@
 
     <groupId>com.gokapi</groupId>
     <artifactId>gokapi-bridge-okapi-1.48.0</artifactId>
-    <version>1.6.0</version>
+    <version>1.8.0</version>
     <packaging>jar</packaging>
     <name>Okapi Bridge - Okapi 1.48.0</name>
 
@@ -41,13 +41,6 @@
             <groupId>net.sf.okapi</groupId>
             <artifactId>okapi-core</artifactId>
             <version>${okapi.version}</version>
-        </dependency>
-        
-        <!-- SnakeYAML for parsing filter parameter files -->
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml.version}</version>
         </dependency>
 
         <!-- Okapi Filters -->
@@ -288,6 +281,20 @@
             <artifactId>gson</artifactId>
             <version>${gson.version}</version>
         </dependency>
+
+        <!-- SnakeYAML for parsing filter parameter files -->
+        <dependency>
+            <groupId>org.yaml</groupId>
+            <artifactId>snakeyaml</artifactId>
+            <version>${snakeyaml.version}</version>
+        </dependency>
+
+        <!-- SLF4J NOP binding — silences "No SLF4J providers" warnings from Okapi -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.0.16</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -329,7 +336,20 @@
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.gokapi.bridge.OkapiBridgeServer</mainClass>
                                 </transformer>
+                                <!-- Merge META-INF/services files (SLF4J provider discovery, Okapi services) -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <finalName>gokapi-bridge-${project.version}-jar-with-dependencies</finalName>
                         </configuration>
                     </execution>

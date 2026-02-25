@@ -63,7 +63,7 @@ public class FilterRegistry {
             }
         }
 
-        System.out.println("[bridge] Discovered " + FILTERS.size() + " available filters from Okapi");
+        System.err.println("[bridge] Discovered " + FILTERS.size() + " available filters from Okapi");
     }
 
     /**

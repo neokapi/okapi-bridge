@@ -6,7 +6,7 @@
 
     <groupId>com.gokapi</groupId>
     <artifactId>gokapi-bridge</artifactId>
-    <version>1.6.0</version>
+    <version>1.8.0</version>
     <packaging>jar</packaging>
 
     <name>gokapi-bridge</name>
@@ -109,6 +109,15 @@
             <version>2.2</version>
         </dependency>
 
+        <!-- SLF4J NOP binding — Okapi uses SLF4J internally; without a binding
+             the shaded JAR emits noisy "No SLF4J providers were found" warnings
+             to stderr on every startup. The NOP binding silences these. -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-nop</artifactId>
+            <version>2.0.16</version>
+        </dependency>
+
         <!-- Testing -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -135,7 +144,21 @@
                                 <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>com.gokapi.bridge.OkapiBridgeServer</mainClass>
                                 </transformer>
+                                <!-- Merge META-INF/services files (required for SLF4J
+                                     provider discovery and Okapi filter services). -->
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
                             </transformers>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>META-INF/*.SF</exclude>
+                                        <exclude>META-INF/*.DSA</exclude>
+                                        <exclude>META-INF/*.RSA</exclude>
+                                        <exclude>META-INF/MANIFEST.MF</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
                             <finalName>gokapi-bridge-${project.version}-jar-with-dependencies</finalName>
                         </configuration>
                     </execution>
