@@ -1,6 +1,7 @@
 package com.gokapi.bridge.model;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.Map;
 
 /**
  * Wire representation of a segment (gokapi model.Segment).
@@ -12,6 +13,9 @@ public class SegmentDTO {
 
     @SerializedName("content")
     private FragmentDTO content;
+
+    @SerializedName("properties")
+    private Map<String, String> properties;
 
     public String getId() {
         return id;
@@ -27,5 +31,13 @@ public class SegmentDTO {
 
     public void setContent(FragmentDTO content) {
         this.content = content;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 }

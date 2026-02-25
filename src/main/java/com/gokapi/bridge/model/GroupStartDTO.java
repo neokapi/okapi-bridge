@@ -1,6 +1,7 @@
 package com.gokapi.bridge.model;
 
 import com.google.gson.annotations.SerializedName;
+import java.util.Map;
 
 /**
  * Wire representation of a group start event (gokapi model.GroupStart).
@@ -15,6 +16,9 @@ public class GroupStartDTO {
 
     @SerializedName("type")
     private String type;
+
+    @SerializedName("properties")
+    private Map<String, String> properties;
 
     public String getId() {
         return id;
@@ -38,5 +42,13 @@ public class GroupStartDTO {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public Map<String, String> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, String> properties) {
+        this.properties = properties;
     }
 }

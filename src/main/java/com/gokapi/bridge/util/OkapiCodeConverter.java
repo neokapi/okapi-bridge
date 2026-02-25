@@ -40,6 +40,9 @@ public class OkapiCodeConverter {
     private static final int SPAN_CLOSING = 1;
     private static final int SPAN_PLACEHOLDER = 2;
 
+    // gokapi SpanFlag values (must match model.SpanFlag* constants)
+    private static final int SPAN_FLAG_HAS_REF = 1;
+
     /**
      * Convert an Okapi TextFragment to a gokapi FragmentDTO.
      */
@@ -83,6 +86,26 @@ public class OkapiCodeConverter {
                         span.setType(code.getType());
                         span.setDeletable(code.isDeleteable());
                         span.setCloneable(code.isCloneable());
+
+                        // Enriched fields
+                        String displayText = code.getDisplayText();
+                        if (displayText != null && !displayText.isEmpty()) {
+                            span.setDisplayText(displayText);
+                        }
+
+                        String originalId = code.getOriginalId();
+                        if (originalId != null && !originalId.isEmpty()) {
+                            span.setOriginalId(originalId);
+                        }
+
+                        // Flags
+                        int flags = 0;
+                        if (code.hasReference()) {
+                            flags |= SPAN_FLAG_HAS_REF;
+                        }
+                        if (flags != 0) {
+                            span.setFlags(flags);
+                        }
                     }
 
                     spans.add(span);
@@ -156,6 +179,17 @@ public class OkapiCodeConverter {
                     }
                     code.setDeleteable(span.isDeletable());
                     code.setCloneable(span.isCloneable());
+
+                    // Restore enriched fields
+                    if (span.getDisplayText() != null && !span.getDisplayText().isEmpty()) {
+                        code.setDisplayText(span.getDisplayText());
+                    }
+                    if (span.getOriginalId() != null && !span.getOriginalId().isEmpty()) {
+                        code.setOriginalId(span.getOriginalId());
+                    }
+                    if ((span.getFlags() & SPAN_FLAG_HAS_REF) != 0) {
+                        code.setReferenceFlag(true);
+                    }
                 }
 
                 int idx = codes.size();

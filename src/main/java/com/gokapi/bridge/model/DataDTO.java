@@ -17,6 +17,9 @@ public class DataDTO {
     @SerializedName("properties")
     private Map<String, String> properties;
 
+    @SerializedName("is_referent")
+    private boolean isReferent;
+
     public String getId() {
         return id;
     }
@@ -39,5 +42,13 @@ public class DataDTO {
 
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    public boolean isReferent() {
+        return isReferent;
+    }
+
+    public void setReferent(boolean referent) {
+        isReferent = referent;
     }
 }

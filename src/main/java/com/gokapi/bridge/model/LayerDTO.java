@@ -38,6 +38,9 @@ public class LayerDTO {
     @SerializedName("properties")
     private Map<String, String> properties;
 
+    @SerializedName("has_bom")
+    private boolean hasBom;
+
     public String getId() {
         return id;
     }
@@ -116,5 +119,13 @@ public class LayerDTO {
 
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    public boolean isHasBom() {
+        return hasBom;
+    }
+
+    public void setHasBom(boolean hasBom) {
+        this.hasBom = hasBom;
     }
 }

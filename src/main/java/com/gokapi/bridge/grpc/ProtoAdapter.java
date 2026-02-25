@@ -107,7 +107,9 @@ public class ProtoAdapter {
                 .setName(nullSafe(dto.getName()))
                 .setType(nullSafe(dto.getType()))
                 .setMimeType(nullSafe(dto.getMimeType()))
-                .setTranslatable(dto.isTranslatable());
+                .setTranslatable(dto.isTranslatable())
+                .setPreserveWhitespace(dto.isPreserveWhitespace())
+                .setIsReferent(dto.isReferent());
 
         if (dto.getSource() != null) {
             for (SegmentDTO seg : dto.getSource()) {
@@ -142,6 +144,8 @@ public class ProtoAdapter {
         dto.setType(msg.getType());
         dto.setMimeType(msg.getMimeType());
         dto.setTranslatable(msg.getTranslatable());
+        dto.setPreserveWhitespace(msg.getPreserveWhitespace());
+        dto.setReferent(msg.getIsReferent());
 
         if (msg.getSourceCount() > 0) {
             List<SegmentDTO> source = new ArrayList<>();
@@ -185,7 +189,8 @@ public class ProtoAdapter {
                 .setMimeType(nullSafe(dto.getMimeType()))
                 .setLineBreak(nullSafe(dto.getLineBreak()))
                 .setIsMultilingual(dto.isMultilingual())
-                .setParentId(nullSafe(dto.getParentId()));
+                .setParentId(nullSafe(dto.getParentId()))
+                .setHasBom(dto.isHasBom());
 
         if (dto.getProperties() != null) {
             b.putAllProperties(dto.getProperties());
@@ -205,6 +210,12 @@ public class ProtoAdapter {
         dto.setLineBreak(msg.getLineBreak());
         dto.setMultilingual(msg.getIsMultilingual());
         dto.setParentId(msg.getParentId());
+        dto.setHasBom(msg.getHasBom());
+
+        if (msg.getPropertiesCount() > 0) {
+            dto.setProperties(new LinkedHashMap<>(msg.getPropertiesMap()));
+        }
+
         return dto;
     }
 
@@ -213,7 +224,8 @@ public class ProtoAdapter {
     public static DataMessage toProto(DataDTO dto) {
         DataMessage.Builder b = DataMessage.newBuilder()
                 .setId(nullSafe(dto.getId()))
-                .setName(nullSafe(dto.getName()));
+                .setName(nullSafe(dto.getName()))
+                .setIsReferent(dto.isReferent());
 
         if (dto.getProperties() != null) {
             b.putAllProperties(dto.getProperties());
@@ -226,6 +238,7 @@ public class ProtoAdapter {
         DataDTO dto = new DataDTO();
         dto.setId(msg.getId());
         dto.setName(msg.getName());
+        dto.setReferent(msg.getIsReferent());
         if (msg.getPropertiesCount() > 0) {
             dto.setProperties(new LinkedHashMap<>(msg.getPropertiesMap()));
         }
@@ -235,11 +248,16 @@ public class ProtoAdapter {
     // ── GroupStartDTO ↔ GroupStartMessage ────────────────────────────────────
 
     public static GroupStartMessage toProto(GroupStartDTO dto) {
-        return GroupStartMessage.newBuilder()
+        GroupStartMessage.Builder b = GroupStartMessage.newBuilder()
                 .setId(nullSafe(dto.getId()))
                 .setName(nullSafe(dto.getName()))
-                .setType(nullSafe(dto.getType()))
-                .build();
+                .setType(nullSafe(dto.getType()));
+
+        if (dto.getProperties() != null) {
+            b.putAllProperties(dto.getProperties());
+        }
+
+        return b.build();
     }
 
     public static GroupStartDTO fromProto(GroupStartMessage msg) {
@@ -247,6 +265,9 @@ public class ProtoAdapter {
         dto.setId(msg.getId());
         dto.setName(msg.getName());
         dto.setType(msg.getType());
+        if (msg.getPropertiesCount() > 0) {
+            dto.setProperties(new LinkedHashMap<>(msg.getPropertiesMap()));
+        }
         return dto;
     }
 
@@ -302,6 +323,10 @@ public class ProtoAdapter {
             b.setContent(toProto(dto.getContent()));
         }
 
+        if (dto.getProperties() != null) {
+            b.putAllProperties(dto.getProperties());
+        }
+
         return b.build();
     }
 
@@ -310,6 +335,9 @@ public class ProtoAdapter {
         dto.setId(msg.getId());
         if (msg.hasContent()) {
             dto.setContent(fromProto(msg.getContent()));
+        }
+        if (msg.getPropertiesCount() > 0) {
+            dto.setProperties(new LinkedHashMap<>(msg.getPropertiesMap()));
         }
         return dto;
     }
@@ -353,6 +381,11 @@ public class ProtoAdapter {
                 .setOuterData(nullSafe(dto.getOuterData()))
                 .setDeletable(dto.isDeletable())
                 .setCloneable(dto.isCloneable())
+                .setOriginalId(nullSafe(dto.getOriginalId()))
+                .setDisplayText(nullSafe(dto.getDisplayText()))
+                .setFlags(dto.getFlags())
+                .setEquivText(nullSafe(dto.getEquivText()))
+                .setCanReorder(dto.isCanReorder())
                 .build();
     }
 
@@ -365,6 +398,11 @@ public class ProtoAdapter {
         dto.setOuterData(msg.getOuterData());
         dto.setDeletable(msg.getDeletable());
         dto.setCloneable(msg.getCloneable());
+        dto.setOriginalId(msg.getOriginalId());
+        dto.setDisplayText(msg.getDisplayText());
+        dto.setFlags(msg.getFlags());
+        dto.setEquivText(msg.getEquivText());
+        dto.setCanReorder(msg.getCanReorder());
         return dto;
     }
 

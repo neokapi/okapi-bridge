@@ -28,6 +28,21 @@ public class SpanDTO {
     @SerializedName("cloneable")
     private boolean cloneable;
 
+    @SerializedName("original_id")
+    private String originalId;
+
+    @SerializedName("display_text")
+    private String displayText;
+
+    @SerializedName("flags")
+    private int flags;
+
+    @SerializedName("equiv_text")
+    private String equivText;
+
+    @SerializedName("can_reorder")
+    private boolean canReorder;
+
     public int getSpanType() {
         return spanType;
     }
@@ -82,5 +97,45 @@ public class SpanDTO {
 
     public void setCloneable(boolean cloneable) {
         this.cloneable = cloneable;
+    }
+
+    public String getOriginalId() {
+        return originalId;
+    }
+
+    public void setOriginalId(String originalId) {
+        this.originalId = originalId;
+    }
+
+    public String getDisplayText() {
+        return displayText;
+    }
+
+    public void setDisplayText(String displayText) {
+        this.displayText = displayText;
+    }
+
+    public int getFlags() {
+        return flags;
+    }
+
+    public void setFlags(int flags) {
+        this.flags = flags;
+    }
+
+    public String getEquivText() {
+        return equivText;
+    }
+
+    public void setEquivText(String equivText) {
+        this.equivText = equivText;
+    }
+
+    public boolean isCanReorder() {
+        return canReorder;
+    }
+
+    public void setCanReorder(boolean canReorder) {
+        this.canReorder = canReorder;
     }
 }

@@ -81,6 +81,23 @@ public class EventConverter {
         layer.setMimeType(sd.getMimeType());
         layer.setLineBreak(sd.getLineBreak());
         layer.setMultilingual(sd.isMultilingual());
+        layer.setFormat(sd.getFilterId());
+        layer.setHasBom(sd.hasUTF8BOM());
+
+        // Extract layer properties.
+        if (sd.getPropertyNames() != null && !sd.getPropertyNames().isEmpty()) {
+            Map<String, String> props = new LinkedHashMap<>();
+            for (String propName : sd.getPropertyNames()) {
+                Property prop = sd.getProperty(propName);
+                if (prop != null) {
+                    props.put(propName, prop.getValue());
+                }
+            }
+            if (!props.isEmpty()) {
+                layer.setProperties(props);
+            }
+        }
+
         part.setLayer(layer);
         return part;
     }
@@ -105,6 +122,21 @@ public class EventConverter {
         gs.setId(sg.getId());
         gs.setName(sg.getName());
         gs.setType(sg.getType());
+
+        // Extract group properties.
+        if (sg.getPropertyNames() != null && !sg.getPropertyNames().isEmpty()) {
+            Map<String, String> props = new LinkedHashMap<>();
+            for (String propName : sg.getPropertyNames()) {
+                Property prop = sg.getProperty(propName);
+                if (prop != null) {
+                    props.put(propName, prop.getValue());
+                }
+            }
+            if (!props.isEmpty()) {
+                gs.setProperties(props);
+            }
+        }
+
         part.setGroupStart(gs);
         return part;
     }
@@ -131,6 +163,8 @@ public class EventConverter {
         block.setType(tu.getType());
         block.setMimeType(tu.getMimeType());
         block.setTranslatable(tu.isTranslatable());
+        block.setPreserveWhitespace(tu.preserveWhitespaces());
+        block.setReferent(tu.isReferent());
 
         // Convert source segments.
         TextContainer source = tu.getSource();
@@ -177,6 +211,7 @@ public class EventConverter {
         DataDTO data = new DataDTO();
         data.setId(dp.getId());
         data.setName(dp.getName());
+        data.setReferent(dp.isReferent());
 
         // Convert properties.
         if (dp.getPropertyNames() != null && !dp.getPropertyNames().isEmpty()) {

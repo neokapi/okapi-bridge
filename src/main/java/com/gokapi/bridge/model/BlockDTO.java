@@ -33,6 +33,12 @@ public class BlockDTO {
     @SerializedName("properties")
     private Map<String, String> properties;
 
+    @SerializedName("preserve_whitespace")
+    private boolean preserveWhitespace;
+
+    @SerializedName("is_referent")
+    private boolean isReferent;
+
     public String getId() {
         return id;
     }
@@ -95,5 +101,21 @@ public class BlockDTO {
 
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    public boolean isPreserveWhitespace() {
+        return preserveWhitespace;
+    }
+
+    public void setPreserveWhitespace(boolean preserveWhitespace) {
+        this.preserveWhitespace = preserveWhitespace;
+    }
+
+    public boolean isReferent() {
+        return isReferent;
+    }
+
+    public void setReferent(boolean referent) {
+        isReferent = referent;
     }
 }
