@@ -1,6 +1,7 @@
 package com.gokapi.bridge;
 
 import com.gokapi.bridge.model.*;
+import com.gokapi.bridge.util.AnnotationExtractor;
 import com.gokapi.bridge.util.OkapiCodeConverter;
 
 import net.sf.okapi.common.Event;
@@ -198,6 +199,9 @@ public class EventConverter {
                 block.setProperties(props);
             }
         }
+
+        // Extract annotations (notes, alt-translations, ITS metadata).
+        block.setAnnotations(AnnotationExtractor.extractAnnotations(tu));
 
         part.setBlock(block);
         return part;

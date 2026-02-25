@@ -33,6 +33,9 @@ public class BlockDTO {
     @SerializedName("properties")
     private Map<String, String> properties;
 
+    @SerializedName("annotations")
+    private Map<String, AnnotationEntryDTO> annotations;
+
     @SerializedName("preserve_whitespace")
     private boolean preserveWhitespace;
 
@@ -101,6 +104,14 @@ public class BlockDTO {
 
     public void setProperties(Map<String, String> properties) {
         this.properties = properties;
+    }
+
+    public Map<String, AnnotationEntryDTO> getAnnotations() {
+        return annotations;
+    }
+
+    public void setAnnotations(Map<String, AnnotationEntryDTO> annotations) {
+        this.annotations = annotations;
     }
 
     public boolean isPreserveWhitespace() {

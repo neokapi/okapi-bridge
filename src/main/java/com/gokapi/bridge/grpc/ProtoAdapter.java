@@ -3,6 +3,8 @@ package com.gokapi.bridge.grpc;
 import com.gokapi.bridge.model.*;
 import com.gokapi.bridge.proto.*;
 
+import com.google.protobuf.ByteString;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -134,6 +136,19 @@ public class ProtoAdapter {
             b.putAllProperties(dto.getProperties());
         }
 
+        if (dto.getAnnotations() != null) {
+            for (Map.Entry<String, AnnotationEntryDTO> entry : dto.getAnnotations().entrySet()) {
+                AnnotationEntryDTO ae = entry.getValue();
+                com.gokapi.bridge.proto.AnnotationEntry.Builder ab =
+                        com.gokapi.bridge.proto.AnnotationEntry.newBuilder()
+                                .setType(nullSafe(ae.getType()));
+                if (ae.getData() != null) {
+                    ab.setData(ByteString.copyFrom(ae.getData()));
+                }
+                b.putAnnotations(entry.getKey(), ab.build());
+            }
+        }
+
         return b.build();
     }
 
@@ -172,6 +187,15 @@ public class ProtoAdapter {
 
         if (msg.getPropertiesCount() > 0) {
             dto.setProperties(new LinkedHashMap<>(msg.getPropertiesMap()));
+        }
+
+        if (msg.getAnnotationsCount() > 0) {
+            Map<String, AnnotationEntryDTO> annotations = new LinkedHashMap<>();
+            for (Map.Entry<String, com.gokapi.bridge.proto.AnnotationEntry> entry : msg.getAnnotationsMap().entrySet()) {
+                com.gokapi.bridge.proto.AnnotationEntry ae = entry.getValue();
+                annotations.put(entry.getKey(), new AnnotationEntryDTO(ae.getType(), ae.getData().toByteArray()));
+            }
+            dto.setAnnotations(annotations);
         }
 
         return dto;
