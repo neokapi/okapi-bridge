@@ -43,13 +43,47 @@ public class AnnotationExtractor {
     }
 
     private static void extractNotes(ITextUnit tu, Map<String, AnnotationEntryDTO> result) {
+        // Okapi stores NoteAnnotation at different levels depending on the annotates attribute:
+        // - annotates="general" or no attribute → TextUnit level
+        // - annotates="source" → source TextContainer level
+        // - annotates="target" → target TextContainer level
+        // We collect from all levels.
+        List<Note> collected = new ArrayList<>();
+
         NoteAnnotation noteAnnotation = tu.getAnnotation(NoteAnnotation.class);
-        if (noteAnnotation == null) {
+        if (noteAnnotation != null) {
+            for (Note n : noteAnnotation) {
+                collected.add(n);
+            }
+        }
+
+        TextContainer source = tu.getSource();
+        if (source != null) {
+            noteAnnotation = source.getAnnotation(NoteAnnotation.class);
+            if (noteAnnotation != null) {
+                for (Note n : noteAnnotation) {
+                    collected.add(n);
+                }
+            }
+        }
+
+        for (LocaleId locale : tu.getTargetLocales()) {
+            TextContainer target = tu.getTarget(locale);
+            if (target == null) continue;
+            noteAnnotation = target.getAnnotation(NoteAnnotation.class);
+            if (noteAnnotation != null) {
+                for (Note n : noteAnnotation) {
+                    collected.add(n);
+                }
+            }
+        }
+
+        if (collected.isEmpty()) {
             return;
         }
 
         int idx = 0;
-        for (Note note : noteAnnotation) {
+        for (Note note : collected) {
             Map<String, Object> payload = new LinkedHashMap<>();
             payload.put("text", note.getNoteText());
             if (note.getFrom() != null && !note.getFrom().isEmpty()) {
