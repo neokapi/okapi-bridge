@@ -154,6 +154,8 @@ cat > "$OUTPUT_FILE" << EOF
         <okapi.version>$VERSION</okapi.version>
         <gson.version>2.11.0</gson.version>
         <snakeyaml.version>2.3</snakeyaml.version>
+        <grpc.version>1.65.1</grpc.version>
+        <protobuf.version>3.25.3</protobuf.version>
     </properties>
 
     <repositories>
@@ -207,11 +209,70 @@ cat >> "$OUTPUT_FILE" << 'EOF'
             <artifactId>slf4j-nop</artifactId>
             <version>2.0.16</version>
         </dependency>
+
+        <!-- gRPC -->
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-protobuf</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>${grpc.version}</version>
+        </dependency>
+
+        <!-- Protobuf -->
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>${protobuf.version}</version>
+        </dependency>
+
+        <!-- Required by gRPC generated code -->
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.3.2</version>
+        </dependency>
     </dependencies>
 
     <build>
         <sourceDirectory>../../src/main/java</sourceDirectory>
+        <extensions>
+            <!-- OS detection for protobuf compiler -->
+            <extension>
+                <groupId>kr.motd.maven</groupId>
+                <artifactId>os-maven-plugin</artifactId>
+                <version>1.7.1</version>
+            </extension>
+        </extensions>
         <plugins>
+            <!-- Protobuf + gRPC code generation -->
+            <plugin>
+                <groupId>org.xolstice.maven.plugins</groupId>
+                <artifactId>protobuf-maven-plugin</artifactId>
+                <version>0.6.1</version>
+                <configuration>
+                    <protoSourceRoot>../../src/main/proto</protoSourceRoot>
+                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
+                    <pluginId>grpc-java</pluginId>
+                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>compile</goal>
+                            <goal>compile-custom</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- Add tools/schema-generator source root for schema generation classes -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
