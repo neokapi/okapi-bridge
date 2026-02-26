@@ -9,6 +9,7 @@ import net.sf.okapi.common.Event;
 import net.sf.okapi.common.EventType;
 import net.sf.okapi.common.LocaleId;
 import net.sf.okapi.common.resource.*;
+import net.sf.okapi.common.resource.StartSubfilter;
 
 import java.util.*;
 
@@ -269,8 +270,26 @@ public class EventConverter {
     }
 
     private static PartDTO convertStartSubFilter(Event event) {
-        // Treated the same as StartSubDocument.
-        return convertStartSubDocument(event);
+        PartDTO part = new PartDTO();
+        part.setPartType(PartDTO.TYPE_LAYER_START);
+
+        StartSubfilter ssf = (StartSubfilter) event.getResource();
+        LayerDTO layer = new LayerDTO();
+        layer.setId(ssf.getId());
+        layer.setName(ssf.getName());
+        if (ssf.getParentId() != null) {
+            layer.setParentId(ssf.getParentId());
+        }
+        layer.setLocale(ssf.getLocale() != null ? ssf.getLocale().toString() : "");
+        layer.setEncoding(ssf.getEncoding());
+        layer.setMimeType(ssf.getMimeType());
+        layer.setLineBreak(ssf.getLineBreak());
+        layer.setMultilingual(ssf.isMultilingual());
+        layer.setFormat(ssf.getFilterId());
+        layer.setHasBom(ssf.hasUTF8BOM());
+
+        part.setLayer(layer);
+        return part;
     }
 
     private static PartDTO convertEndSubFilter(Event event) {

@@ -96,6 +96,21 @@
             <artifactId>okapi-filter-xmlstream</artifactId>
             <version>${okapi.version}</version>
         </dependency>
+        <dependency>
+            <groupId>net.sf.okapi.filters</groupId>
+            <artifactId>okapi-filter-plaintext</artifactId>
+            <version>${okapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.okapi.filters</groupId>
+            <artifactId>okapi-filter-markdown</artifactId>
+            <version>${okapi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.okapi.filters</groupId>
+            <artifactId>okapi-filter-xliff2</artifactId>
+            <version>${okapi.version}</version>
+        </dependency>
 
         <!-- gRPC -->
         <dependency>
