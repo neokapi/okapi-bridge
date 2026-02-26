@@ -1,5 +1,16 @@
 #!/bin/bash
-# Generate pom.xml for a specific Okapi version by discovering available filters
+# Generate pom.xml for a specific Okapi version by discovering available filters.
+#
+# The generated pom inherits from the parent (okapi-bridge-parent) which provides:
+#   - All infrastructure dependencies (gRPC, Gson, SnakeYAML, etc.)
+#   - Plugin configuration (protobuf, shade, exec, build-helper)
+#
+# The generated pom only declares:
+#   - Parent reference
+#   - Okapi version + Java version properties
+#   - Version-specific Okapi filter dependencies
+#   - Build section with source paths and plugin references
+#
 # Usage: ./scripts/generate-version-pom.sh <version>
 
 set -e
@@ -75,7 +86,7 @@ KNOWN_FILTERS=(
 )
 
 # Read bridge version from root pom.xml
-BRIDGE_VERSION=$(sed -n '/<artifactId>gokapi-bridge<\/artifactId>/{n;s/.*<version>\(.*\)<\/version>.*/\1/p;}' "$(dirname "$0")/../pom.xml")
+BRIDGE_VERSION=$(sed -n '/<artifactId>okapi-bridge-parent<\/artifactId>/{n;s/.*<version>\(.*\)<\/version>.*/\1/p;}' "$(dirname "$0")/../pom.xml")
 if [ -z "$BRIDGE_VERSION" ]; then
     echo "Error: could not read version from root pom.xml"
     exit 1
@@ -125,56 +136,44 @@ echo "Found ${#AVAILABLE_FILTERS[@]} filters for Okapi $VERSION"
 # Sort filters for consistent output
 IFS=$'\n' SORTED_FILTERS=($(sort <<<"${AVAILABLE_FILTERS[*]}")); unset IFS
 
-# Generate pom.xml (standalone, not inheriting from parent)
+# Generate pom.xml — inherits from parent, only declares filters + build paths
 cat > "$OUTPUT_FILE" << EOF
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-    Okapi Bridge - Filter Dependencies for Okapi $VERSION
+    Okapi Bridge - Build for Okapi $VERSION
     Generated: $(date -u +%Y-%m-%dT%H:%M:%SZ)
     Filters: ${#SORTED_FILTERS[@]}
-    
-    This pom.xml is used for schema generation only.
-    Usage: mvn -f okapi-releases/$VERSION/pom.xml exec:java@generate-schemas -Dexec.args="okapi-releases/$VERSION/schemas"
+
+    Inherits infrastructure deps (gRPC, Gson, etc.) and plugin config from parent.
+    Only version-specific Okapi filter dependencies are declared here.
 -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.gokapi</groupId>
+    <parent>
+        <groupId>com.gokapi</groupId>
+        <artifactId>okapi-bridge-parent</artifactId>
+        <version>$BRIDGE_VERSION</version>
+        <relativePath>../../pom.xml</relativePath>
+    </parent>
+
     <artifactId>gokapi-bridge-okapi-$VERSION</artifactId>
-    <version>$BRIDGE_VERSION</version>
     <packaging>jar</packaging>
     <name>Okapi Bridge - Okapi $VERSION</name>
 
     <properties>
+        <okapi.version>$VERSION</okapi.version>
         <maven.compiler.source>$JAVA_VERSION</maven.compiler.source>
         <maven.compiler.target>$JAVA_VERSION</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <okapi.version>$VERSION</okapi.version>
-        <gson.version>2.11.0</gson.version>
-        <snakeyaml.version>2.3</snakeyaml.version>
-        <grpc.version>1.65.1</grpc.version>
-        <protobuf.version>3.25.3</protobuf.version>
     </properties>
 
-    <repositories>
-        <repository>
-            <id>okapi</id>
-            <name>Okapi Framework Repository</name>
-            <url>https://okapiframework.org/maven2/</url>
-        </repository>
-    </repositories>
-
     <dependencies>
-        <!-- Okapi Core -->
-        <dependency>
-            <groupId>net.sf.okapi</groupId>
-            <artifactId>okapi-core</artifactId>
-            <version>\${okapi.version}</version>
-        </dependency>
+        <!-- Infrastructure deps (okapi-core, gRPC, Gson, etc.) inherited from parent.
+             okapi-core version resolves via \${okapi.version} override above. -->
 
-        <!-- Okapi Filters -->
+        <!-- Okapi Filters for $VERSION -->
 EOF
 
 for filter in "${SORTED_FILTERS[@]}"; do
@@ -188,64 +187,12 @@ EOF
 done
 
 cat >> "$OUTPUT_FILE" << 'EOF'
-
-        <!-- JSON (for schema generator) -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${gson.version}</version>
-        </dependency>
-
-        <!-- SnakeYAML for parsing filter parameter files -->
-        <dependency>
-            <groupId>org.yaml</groupId>
-            <artifactId>snakeyaml</artifactId>
-            <version>${snakeyaml.version}</version>
-        </dependency>
-
-        <!-- SLF4J NOP binding — silences "No SLF4J providers" warnings from Okapi -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-nop</artifactId>
-            <version>2.0.16</version>
-        </dependency>
-
-        <!-- gRPC -->
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-netty-shaded</artifactId>
-            <version>${grpc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-protobuf</artifactId>
-            <version>${grpc.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-stub</artifactId>
-            <version>${grpc.version}</version>
-        </dependency>
-
-        <!-- Protobuf -->
-        <dependency>
-            <groupId>com.google.protobuf</groupId>
-            <artifactId>protobuf-java</artifactId>
-            <version>${protobuf.version}</version>
-        </dependency>
-
-        <!-- Required by gRPC generated code -->
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <version>1.3.2</version>
-        </dependency>
     </dependencies>
 
     <build>
-        <sourceDirectory>../../src/main/java</sourceDirectory>
+        <!-- Compile bridge source from bridge-core module -->
+        <sourceDirectory>../../bridge-core/src/main/java</sourceDirectory>
         <extensions>
-            <!-- OS detection for protobuf compiler -->
             <extension>
                 <groupId>kr.motd.maven</groupId>
                 <artifactId>os-maven-plugin</artifactId>
@@ -253,31 +200,18 @@ cat >> "$OUTPUT_FILE" << 'EOF'
             </extension>
         </extensions>
         <plugins>
-            <!-- Protobuf + gRPC code generation -->
+            <!-- Protobuf + gRPC codegen (config inherited from parent) -->
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
-                <version>0.6.1</version>
                 <configuration>
-                    <protoSourceRoot>../../src/main/proto</protoSourceRoot>
-                    <protocArtifact>com.google.protobuf:protoc:${protobuf.version}:exe:${os.detected.classifier}</protocArtifact>
-                    <pluginId>grpc-java</pluginId>
-                    <pluginArtifact>io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}</pluginArtifact>
+                    <protoSourceRoot>../../bridge-core/src/main/proto</protoSourceRoot>
                 </configuration>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>compile</goal>
-                            <goal>compile-custom</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
-            <!-- Add tools/schema-generator source root for schema generation classes -->
+            <!-- Add schema-generator source for exec:java -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>3.5.0</version>
                 <executions>
                     <execution>
                         <id>add-tools-source</id>
@@ -293,57 +227,15 @@ cat >> "$OUTPUT_FILE" << 'EOF'
                     </execution>
                 </executions>
             </plugin>
-            <!-- Shade plugin for creating fat JAR with all dependencies -->
+            <!-- Shade: fat JAR (config inherited from parent) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.6.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>shade</goal>
-                        </goals>
-                        <configuration>
-                            <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-                                    <mainClass>com.gokapi.bridge.OkapiBridgeServer</mainClass>
-                                </transformer>
-                                <!-- Merge META-INF/services files (SLF4J provider discovery, Okapi services) -->
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ServicesResourceTransformer"/>
-                            </transformers>
-                            <filters>
-                                <filter>
-                                    <artifact>*:*</artifact>
-                                    <excludes>
-                                        <exclude>META-INF/*.SF</exclude>
-                                        <exclude>META-INF/*.DSA</exclude>
-                                        <exclude>META-INF/*.RSA</exclude>
-                                        <exclude>META-INF/MANIFEST.MF</exclude>
-                                    </excludes>
-                                </filter>
-                            </filters>
-                            <finalName>gokapi-bridge-${project.version}-jar-with-dependencies</finalName>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
-            <!-- Exec plugin for schema generation -->
+            <!-- Exec: schema generation (config inherited from parent) -->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>exec-maven-plugin</artifactId>
-                <version>3.1.0</version>
-                <executions>
-                    <execution>
-                        <id>generate-schemas</id>
-                        <goals>
-                            <goal>java</goal>
-                        </goals>
-                        <configuration>
-                            <mainClass>com.gokapi.bridge.tools.SchemaGenerator</mainClass>
-                        </configuration>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

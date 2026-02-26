@@ -34,8 +34,8 @@ jobs:
       - name: Build with latest Okapi (${{ needs.setup.outputs.latest }})
         run: mvn -B package -f okapi-releases/${{ needs.setup.outputs.latest }}/pom.xml
 
-      - name: Run tests
-        run: mvn -B test -Dokapi.version=${{ needs.setup.outputs.latest }}
+      - name: Run tests (bridge-core)
+        run: mvn -B test -pl bridge-core -Dokapi.version=${{ needs.setup.outputs.latest }}
 
   verify-schemas:
     needs: setup

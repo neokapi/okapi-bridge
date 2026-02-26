@@ -4,31 +4,46 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-Okapi Bridge is a Java bridge that enables [gokapi](https://github.com/gokapi/gokapi) (a Go tool) to access [Okapi Framework](https://okapiframework.org/) document format filters (57+) via an NDJSON protocol over stdin/stdout. It supports 11 Okapi versions (0.38 through 1.48.0).
+Okapi Bridge is a Java bridge that enables [gokapi](https://github.com/gokapi/gokapi) (a Go tool) to access [Okapi Framework](https://okapiframework.org/) document format filters (57+) via gRPC. It supports 11 Okapi versions (0.38 through 1.48.0).
+
+## Project Structure (Multi-Module Maven)
+
+```
+okapi-bridge/                      (parent pom — shared deps, plugin config)
+├── bridge-core/                   (bridge source + protobuf, compiled for dev/test)
+│   └── src/main/java/             (all bridge Java source)
+│   └── src/main/proto/            (gRPC protobuf definitions)
+│   └── src/test/java/             (unit tests)
+├── tools/schema-generator/        (schema gen tool, depends on bridge-core)
+├── okapi-releases/{version}/      (per-version build, inherits parent config)
+│   ├── pom.xml                    (auto-generated: parent ref + filter deps)
+│   ├── meta.json                  (version metadata)
+│   └── schemas/                   (generated JSON schemas)
+└── schemas/                       (centralized composite schemas)
+```
+
+**Key design**: Infrastructure deps (gRPC, Gson, etc.) and plugin config live in the parent pom. Per-version poms only declare Okapi filter dependencies. Adding a new dep to the bridge only requires updating the parent — zero per-version pom changes needed.
 
 ## Build & Test Commands
 
 ```bash
-# Build (always specify Okapi version)
-mvn package -Dokapi.version=1.47.0
-
-# Run all tests
-mvn test -Dokapi.version=1.47.0
-
-# Run single test class
-mvn test -Dokapi.version=1.47.0 -Dtest=ParameterApplierTest
-
-# Run single test method
-mvn test -Dokapi.version=1.47.0 -Dtest=ParameterApplierTest#applyParameters_booleanValue_shouldApply
-
-# Build for a specific version (reads Java version from meta.json)
+# Build for a specific Okapi version (compiles bridge source + shades with version's filters)
 make build V=1.47.0
 
-# Run tests against latest version
+# Run tests (bridge-core against latest Okapi)
 make test
+
+# Run single test class
+mvn test -pl bridge-core -Dokapi.version=1.47.0 -Dtest=ParameterApplierTest
+
+# Run single test method
+mvn test -pl bridge-core -Dokapi.version=1.47.0 -Dtest=ParameterApplierTest#applyParameters_booleanValue_shouldApply
+
+# Build reactor (bridge-core + schema-generator)
+mvn install -DskipTests
 ```
 
-Java 11 for Okapi 0.38–1.47.0, Java 17 for 1.48.0+. The Okapi version **must** be passed via `-Dokapi.version=X.Y.Z`.
+Java 11 for Okapi 0.38–1.47.0, Java 17 for 1.48.0+. Each per-version build compiles against its exact Okapi version and Java target.
 
 ## Schema Management
 
@@ -41,22 +56,21 @@ make schema-matrix              # Update README schema matrix
 
 ## Architecture
 
-### NDJSON Protocol (stdin/stdout)
+### gRPC Protocol
 
-`OkapiBridgeServer` → `CommandHandler` → Okapi filters. All logging to stderr.
-
-Commands: `open`, `read`, `write`, `close`, `list_filters`, `info`. Content is base64-encoded in JSON to handle binary formats.
+`OkapiBridgeServer` → `BridgeServiceImpl` → Okapi filters. All logging to stderr.
 
 ### Data Flow
 
-1. **Inbound**: `CommandHandler` receives NDJSON commands, uses `FilterRegistry` to find/instantiate filters, applies parameters via `ParameterApplier`
+1. **Inbound**: `BridgeServiceImpl` receives gRPC commands, uses `FilterRegistry` to find/instantiate filters, applies parameters via `ParameterApplier`
 2. **Read path**: `EventConverter` transforms Okapi `Event` objects into `PartDTO` trees (Block, Layer, GroupStart/End, Data, Media)
 3. **Write path**: `PartDTOConverter` applies translations from `PartDTO`s back onto Okapi Events, then the filter writer produces the translated document
 
 ### Key Classes
 
-- `OkapiBridgeServer` — Entry point, NDJSON read loop
-- `CommandHandler` — Command dispatch, filter lifecycle management
+- `OkapiBridgeServer` — Entry point, gRPC server
+- `BridgeServiceImpl` — gRPC service implementation
+- `ProtoAdapter` — DTO ↔ Protobuf message conversion
 - `FilterRegistry` — Dynamic filter discovery by scanning okapi-filter-* JARs on classpath
 - `EventConverter` — Okapi Event → PartDTO (JSON-serializable)
 - `PartDTOConverter` — PartDTO translations → Okapi Event (for writing)
@@ -71,7 +85,7 @@ A single `manifest.json` serves as both the install-time and runtime descriptor.
 ```json
 {
   "name": "okapi-bridge",
-  "version": "1.6.0",
+  "version": "2.0.0",
   "plugin_type": "bundle",
   "install_type": "bridge",
   "command": "java",
@@ -93,15 +107,15 @@ The CI release workflow generates this manifest at build time by querying the br
 ### Multi-Version Support
 
 Each `okapi-releases/{version}/` directory contains:
-- `pom.xml` — Auto-generated by `scripts/generate-version-pom.sh` (discovers available filter artifacts from Maven Central)
+- `pom.xml` — Auto-generated by `scripts/generate-version-pom.sh` (discovers available filter artifacts from Maven Central). Inherits from parent pom — only declares version-specific filter deps.
 - `meta.json` — Version metadata (okapiVersion, javaVersion, filterCount)
 - `schemas/` — Per-version generated schemas
 
-The root `pom.xml` has a core set of filter dependencies for runtime and tests. Version-specific poms include all 45+ filter artifacts available for that version.
+The parent `pom.xml` declares all infrastructure dependencies (gRPC, Gson, SnakeYAML, etc.) and plugin configurations. Per-version poms inherit these and add only their Okapi filter dependencies. This means adding a new infrastructure dep only touches the parent pom.
 
 ## Conventions
 
-- stdout is **only** for NDJSON protocol; all logging to stderr
+- stdout is **only** for gRPC; all logging to stderr
 - Filter IDs use `okf_` prefix (e.g., `okf_html`, `okf_json`)
 - YAML 1.2 boolean resolution: `FilterRegistry` uses a custom SnakeYAML Resolver so `yes`/`no` are strings, not booleans
 - Schema `$version` format is `N.0.0` where N increments on content change

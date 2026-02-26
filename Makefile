@@ -4,7 +4,7 @@
 SHELL := /bin/bash
 .PHONY: help list-upstream list-local add-release regenerate regenerate-all \
         version-schemas build clean test generate-pom generate-all-poms \
-        centralize regenerate-composites build-runtime build-tools \
+        centralize regenerate-composites build-tools \
         download-filter-docs parse-filter-docs parse-filter-docs-force \
         bundle-filter-docs clean-filter-docs
 
@@ -29,7 +29,7 @@ help:
 	@echo "Build:"
 	@echo "  make build V=1.47.0       Build JAR for specific Okapi version"
 	@echo "  make build-tools          Build schema generator tools (Java 17)"
-	@echo "  make test                 Run tests"
+	@echo "  make test                 Run tests (bridge-core)"
 	@echo "  make clean                Clean build artifacts"
 	@echo ""
 	@echo "Documentation:"
@@ -79,12 +79,6 @@ schema-matrix:
 # ============================================================================
 # Legacy Schema Management
 # ============================================================================
-
-# Ensure schema generator is compiled
-.compile-generator:
-	@echo "Compiling schema generator..."
-	@mvn -B -q compile -Dokapi.version=1.47.0
-	@touch .compile-generator
 
 # Add a new Okapi release
 add-release:
@@ -149,15 +143,11 @@ ifndef V
 endif
 	@./scripts/generate-version-pom.sh $(V)
 
-# Generate pom.xml files for all versions
+# Generate pom.xml files for all versions (always regenerates)
 generate-all-poms:
 	@echo "Generating pom.xml for all supported versions..."
 	@for version in $(SUPPORTED_VERSIONS); do \
-		if [ ! -f "okapi-releases/$$version/pom.xml" ]; then \
-			./scripts/generate-version-pom.sh $$version; \
-		else \
-			echo "okapi-releases/$$version/pom.xml already exists"; \
-		fi; \
+		./scripts/generate-version-pom.sh $$version; \
 	done
 
 # Regenerate schemas for all supported versions
@@ -183,10 +173,10 @@ version-schemas:
 # Build
 # ============================================================================
 
-# Build tools (schema generator, Java 17+)
+# Build tools (schema generator, Java 17+ — builds bridge-core first via reactor)
 build-tools:
 	@echo "Building schema generator tools (Java 17)..."
-	@mvn -B -f tools/schema-generator/pom.xml compile
+	@mvn -B compile -pl tools/schema-generator -am
 
 # Build runtime JAR for a specific Okapi version
 build:
@@ -200,12 +190,14 @@ endif
 	mvn -B package -f okapi-releases/$(V)/pom.xml -DskipTests
 
 test:
-	@mvn -B test -Dokapi.version=$(LATEST_VERSION)
+	@echo "Running tests (bridge-core against Okapi $(LATEST_VERSION))..."
+	@mvn -B test -pl bridge-core -Dokapi.version=$(LATEST_VERSION)
 
 clean:
-	@mvn -B clean
-	@mvn -B -f tools/schema-generator/pom.xml clean 2>/dev/null || true
-	@mvn -B -f bridge-runtime/pom.xml clean 2>/dev/null || true
+	@mvn -B clean 2>/dev/null || true
+	@for version in $(SUPPORTED_VERSIONS); do \
+		mvn -B clean -f okapi-releases/$$version/pom.xml 2>/dev/null || true; \
+	done
 	@rm -f .compile-generator
 
 # ============================================================================
