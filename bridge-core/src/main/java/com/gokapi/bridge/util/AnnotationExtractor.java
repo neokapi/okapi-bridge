@@ -1,11 +1,18 @@
 package com.gokapi.bridge.util;
 
+import com.gokapi.bridge.compat.NoteData;
+import com.gokapi.bridge.compat.OkapiCompat;
+import com.gokapi.bridge.compat.OkapiCompatFactory;
 import com.gokapi.bridge.model.AnnotationEntryDTO;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import net.sf.okapi.common.LocaleId;
-import net.sf.okapi.common.annotation.*;
+import net.sf.okapi.common.annotation.AltTranslation;
+import net.sf.okapi.common.annotation.AltTranslationsAnnotation;
+import net.sf.okapi.common.annotation.GenericAnnotation;
+import net.sf.okapi.common.annotation.GenericAnnotations;
+import net.sf.okapi.common.annotation.XLIFFTool;
 import net.sf.okapi.common.resource.ITextUnit;
 import net.sf.okapi.common.resource.Segment;
 import net.sf.okapi.common.resource.TextContainer;
@@ -43,57 +50,25 @@ public class AnnotationExtractor {
     }
 
     private static void extractNotes(ITextUnit tu, Map<String, AnnotationEntryDTO> result) {
-        // Okapi stores NoteAnnotation at different levels depending on the annotates attribute:
-        // - annotates="general" or no attribute → TextUnit level
-        // - annotates="source" → source TextContainer level
-        // - annotates="target" → target TextContainer level
-        // We collect from all levels.
-        List<Note> collected = new ArrayList<>();
-
-        NoteAnnotation noteAnnotation = tu.getAnnotation(NoteAnnotation.class);
-        if (noteAnnotation != null) {
-            for (Note n : noteAnnotation) {
-                collected.add(n);
-            }
-        }
-
-        TextContainer source = tu.getSource();
-        if (source != null) {
-            noteAnnotation = source.getAnnotation(NoteAnnotation.class);
-            if (noteAnnotation != null) {
-                for (Note n : noteAnnotation) {
-                    collected.add(n);
-                }
-            }
-        }
-
-        for (LocaleId locale : tu.getTargetLocales()) {
-            TextContainer target = tu.getTarget(locale);
-            if (target == null) continue;
-            noteAnnotation = target.getAnnotation(NoteAnnotation.class);
-            if (noteAnnotation != null) {
-                for (Note n : noteAnnotation) {
-                    collected.add(n);
-                }
-            }
-        }
+        OkapiCompat compat = OkapiCompatFactory.get();
+        List<NoteData> collected = compat.extractNotes(tu);
 
         if (collected.isEmpty()) {
             return;
         }
 
         int idx = 0;
-        for (Note note : collected) {
+        for (NoteData note : collected) {
             Map<String, Object> payload = new LinkedHashMap<>();
-            payload.put("text", note.getNoteText());
+            payload.put("text", note.getText());
             if (note.getFrom() != null && !note.getFrom().isEmpty()) {
                 payload.put("from", note.getFrom());
             }
             if (note.getPriority() != null) {
-                payload.put("priority", note.getPriority().value());
+                payload.put("priority", note.getPriority());
             }
             if (note.getAnnotates() != null) {
-                payload.put("annotates", note.getAnnotates().value());
+                payload.put("annotates", note.getAnnotates());
             }
 
             String key = idx == 0 ? "note" : "note-" + idx;
@@ -214,8 +189,9 @@ public class AnnotationExtractor {
     }
 
     private static void extractGenericAnnotations(ITextUnit tu, Map<String, AnnotationEntryDTO> result) {
+        OkapiCompat compat = OkapiCompatFactory.get();
         GenericAnnotations ga = tu.getAnnotation(GenericAnnotations.class);
-        if (ga == null || ga.isEmpty()) {
+        if (ga == null || compat.isEmpty(ga)) {
             return;
         }
 
@@ -227,7 +203,7 @@ public class AnnotationExtractor {
 
             Map<String, Object> payload = new LinkedHashMap<>();
             for (String fieldName : ann.getNames()) {
-                Object value = ann.getValue(fieldName);
+                Object value = compat.getValue(ann, fieldName);
                 if (value != null) {
                     payload.put(fieldName, value);
                 }
