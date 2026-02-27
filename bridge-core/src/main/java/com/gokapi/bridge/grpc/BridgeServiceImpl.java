@@ -21,7 +21,7 @@ import net.sf.okapi.common.resource.RawDocument;
 import java.io.*;
 import java.nio.file.Files;
 import java.util.*;
-import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.*;
 
 /**
  * gRPC implementation of the BridgeService.
@@ -29,10 +29,13 @@ import java.util.concurrent.CountDownLatch;
  */
 public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
+    private static final int QUEUE_CAPACITY = 1024;
+
     private IFilter currentFilter;
     private byte[] currentContent;
 
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
+    private final ExecutorService mergeExecutor = Executors.newCachedThreadPool();
 
     /**
      * Block until the Shutdown RPC is called.
@@ -203,21 +206,61 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     public StreamObserver<WriteChunk> write(StreamObserver<WriteResponse> responseObserver) {
         return new StreamObserver<WriteChunk>() {
             private WriteHeader header;
-            private final List<PartDTO> parts = new ArrayList<>();
+            private final BlockingQueue<TranslationEntry> queue =
+                    new LinkedBlockingQueue<>(QUEUE_CAPACITY);
+            private Future<byte[]> mergeFuture;
 
             @Override
             public void onNext(WriteChunk chunk) {
                 if (chunk.hasHeader()) {
                     header = chunk.getHeader();
+                    // Start merge thread immediately — it blocks on queue.poll()
+                    // until parts arrive. Filter setup happens while Go is still
+                    // streaming parts.
+                    mergeFuture = mergeExecutor.submit(() -> {
+                        try {
+                            return performWriteStreaming(header, queue);
+                        } catch (Exception e) {
+                            // Drain the queue so onNext's queue.put() doesn't block
+                            // the gRPC thread indefinitely.
+                            queue.clear();
+                            queue.offer(TranslationEntry.END);
+                            throw e;
+                        }
+                    });
                 } else if (chunk.hasPart()) {
-                    parts.add(ProtoAdapter.fromProto(chunk.getPart()));
+                    PartMessage msg = chunk.getPart();
+                    if (msg.getPartType() == PartDTO.TYPE_BLOCK && msg.hasBlock()) {
+                        BlockMessage blockMsg = msg.getBlock();
+                        String locale = header != null ? header.getLocale() : "";
+                        List<FragmentDTO> fragments = extractTargetFragments(blockMsg, locale);
+                        if (fragments != null) {
+                            try {
+                                // Use offer with timeout instead of blocking put.
+                                // If the merge thread failed early, the queue is drained
+                                // and the END sentinel is placed. Offer will succeed after
+                                // the queue drains, or time out gracefully.
+                                if (!queue.offer(new TranslationEntry(blockMsg.getId(), fragments),
+                                        5, TimeUnit.SECONDS)) {
+                                    System.err.println("[bridge] Write queue full, dropping part");
+                                }
+                            } catch (InterruptedException e) {
+                                Thread.currentThread().interrupt();
+                            }
+                        }
+                    }
+                    // Non-block parts discarded — skeleton provides structure.
                 }
             }
 
             @Override
             public void onError(Throwable t) {
                 System.err.println("[bridge] Write stream error: " + t.getMessage());
-                // Client errored, nothing to respond to.
+                queue.clear(); // Make room for sentinel.
+                queue.offer(TranslationEntry.END); // Unblock merge thread.
+                if (mergeFuture != null) {
+                    mergeFuture.cancel(true); // Interrupt merge thread.
+                }
             }
 
             @Override
@@ -231,16 +274,19 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                         return;
                     }
 
-                    byte[] output = performWrite(header, parts);
+                    // Signal end of stream and wait for merge to complete.
+                    queue.put(TranslationEntry.END);
+                    byte[] output = mergeFuture.get();
                     responseObserver.onNext(WriteResponse.newBuilder()
                             .setOutput(ByteString.copyFrom(output))
                             .build());
                     responseObserver.onCompleted();
                 } catch (Exception e) {
-                    System.err.println("[bridge] Write error: " + e.getMessage());
-                    e.printStackTrace(System.err);
+                    Throwable cause = e instanceof ExecutionException ? e.getCause() : e;
+                    System.err.println("[bridge] Write error: " + cause.getMessage());
+                    cause.printStackTrace(System.err);
                     responseObserver.onNext(WriteResponse.newBuilder()
-                            .setError(e.getMessage())
+                            .setError(cause.getMessage())
                             .build());
                     responseObserver.onCompleted();
                 }
@@ -288,6 +334,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     @Override
     public void shutdown(ShutdownRequest request, StreamObserver<ShutdownResponse> responseObserver) {
         System.err.println("[bridge] Shutdown requested");
+        mergeExecutor.shutdownNow();
         responseObserver.onNext(ShutdownResponse.newBuilder().build());
         responseObserver.onCompleted();
         shutdownLatch.countDown();
@@ -380,6 +427,104 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
         System.err.println("[bridge] Wrote output (" + outputStream.size() + " bytes)");
         return outputStream.toByteArray();
+    }
+
+    /**
+     * Perform the streaming write (roundtrip) operation: re-read the original document
+     * through the filter, apply translations on-demand from the queue, and write output.
+     * The merge thread runs concurrently with part arrival from Go.
+     */
+    private byte[] performWriteStreaming(WriteHeader header,
+                                         BlockingQueue<TranslationEntry> queue) throws Exception {
+        String filterClass = header.getFilterClass();
+        String locale = header.getLocale().isEmpty() ? "en" : header.getLocale();
+        String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
+        byte[] originalContent = header.getOriginalContent().toByteArray();
+        String sourcePath = header.getSourcePath();
+
+        // XLIFF empty target-language stripping (same as performWrite).
+        if (isXliffFilter(filterClass)) {
+            originalContent = stripEmptyTargetLanguage(originalContent, sourcePath);
+            if (sourcePath != null && !sourcePath.isEmpty()) {
+                File sourceDir = new File(sourcePath).getParentFile();
+                if (sourceDir != null && sourceDir.isDirectory()) {
+                    File siblingTemp = File.createTempFile("gokapi-bridge-", ".xlf", sourceDir);
+                    siblingTemp.deleteOnExit();
+                    Files.write(siblingTemp.toPath(), originalContent);
+                    sourcePath = siblingTemp.getAbsolutePath();
+                } else {
+                    sourcePath = "";
+                }
+            }
+        }
+
+        IFilter filter = FilterRegistry.createFilter(filterClass);
+        if (filter == null) {
+            throw new IllegalStateException("cannot instantiate filter: " + filterClass);
+        }
+
+        Map<String, String> filterParams = header.getFilterParamsMap();
+        if (filterParams != null && !filterParams.isEmpty()) {
+            applyFilterParams(filter, filterParams);
+        }
+
+        IFilterWriter writer = filter.createFilterWriter();
+        if (writer == null) {
+            throw new IllegalStateException("filter does not support writing: " + filterClass);
+        }
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        writer.setOptions(LocaleId.fromString(locale), encoding);
+        writer.setOutput(outputStream);
+
+        File inputFile;
+        if (sourcePath != null && !sourcePath.isEmpty()) {
+            inputFile = new File(sourcePath);
+            if (!inputFile.exists()) {
+                inputFile = writeTempFile(originalContent, "");
+            }
+        } else {
+            inputFile = writeTempFile(originalContent, "");
+        }
+
+        LocaleId srcLocale = LocaleId.fromString("en");
+        LocaleId tgtLocale = LocaleId.fromString(locale);
+        RawDocument rawDoc = new RawDocument(inputFile.toURI(), encoding, srcLocale, tgtLocale);
+        filter.open(rawDoc);
+
+        // Stream translations on-demand from the queue.
+        StreamingTranslationApplier applier =
+                new StreamingTranslationApplier(queue, LocaleId.fromString(locale));
+        while (filter.hasNext()) {
+            Event event = filter.next();
+            Event modified = applier.applyTranslations(event);
+            writer.handleEvent(modified);
+        }
+
+        filter.close();
+        writer.close();
+
+        System.err.println("[bridge] Wrote output (" + outputStream.size() + " bytes, streaming)");
+        return outputStream.toByteArray();
+    }
+
+    /**
+     * Extract target fragments for the given locale directly from a proto BlockMessage.
+     * Works on proto messages without converting to DTOs, avoiding intermediate allocations.
+     */
+    private static List<FragmentDTO> extractTargetFragments(BlockMessage block, String locale) {
+        for (TargetEntry target : block.getTargetsList()) {
+            if (target.getLocale().equals(locale)) {
+                List<FragmentDTO> fragments = new ArrayList<>(target.getSegmentsCount());
+                for (SegmentMessage seg : target.getSegmentsList()) {
+                    if (seg.hasContent()) {
+                        fragments.add(ProtoAdapter.fromProto(seg.getContent()));
+                    }
+                }
+                return fragments;
+            }
+        }
+        return null;
     }
 
     /**
