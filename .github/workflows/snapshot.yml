@@ -1,0 +1,122 @@
+name: Snapshot Build
+
+on:
+  schedule:
+    - cron: '0 4 * * *'  # 4:00 UTC daily (before 6:00 UTC release check)
+  workflow_dispatch:
+    inputs:
+      okapi_ref:
+        description: 'Okapi git ref to build (branch, tag, or commit)'
+        type: string
+        default: 'main'
+
+permissions:
+  contents: read
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout okapi-bridge
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Restore shared Maven cache
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2/repository
+          key: maven-snapshot-no-exact-match
+          restore-keys: maven-okapi-
+
+      - name: Clone Okapi
+        env:
+          OKAPI_REF: ${{ inputs.okapi_ref || 'main' }}
+        run: git clone --depth 1 --branch "$OKAPI_REF" https://gitlab.com/okapiframework/Okapi.git okapi-source
+
+      - name: Extract Okapi version
+        id: okapi-version
+        run: |
+          version=$(sed -n '/<parent>/,/<\/parent>/s/.*<version>\(.*\)<\/version>.*/\1/p' okapi-source/pom.xml | head -1)
+          echo "version=$version" >> "$GITHUB_OUTPUT"
+          echo "Okapi version: $version"
+
+      - name: Build Okapi from source
+        working-directory: okapi-source
+        run: |
+          echo "::group::Install root pom"
+          mvn -B install -N -DskipTests
+          echo "::endgroup::"
+
+          echo "::group::Install superpom"
+          mvn -B install -N -f superpom/pom.xml -DskipTests
+          echo "::endgroup::"
+
+          echo "::group::Build core + filters"
+          mvn -B install -f okapi/pom.xml -DskipTests -T 1C
+          echo "::endgroup::"
+
+      - name: Generate SNAPSHOT pom
+        env:
+          OKAPI_VERSION: ${{ steps.okapi-version.outputs.version }}
+        run: |
+          SNAPSHOT_DIR=$(mktemp -d)
+          echo "SNAPSHOT_DIR=$SNAPSHOT_DIR" >> "$GITHUB_ENV"
+          ./scripts/generate-version-pom.sh --local --output-dir "$SNAPSHOT_DIR" "$OKAPI_VERSION"
+
+      - name: Build okapi-bridge
+        run: mvn -B package -f "$SNAPSHOT_DIR/pom.xml"
+
+      - name: Run bridge-core tests
+        env:
+          OKAPI_VERSION: ${{ steps.okapi-version.outputs.version }}
+        run: mvn -B test -pl bridge-core -Dokapi.version="$OKAPI_VERSION"
+
+      - name: Smoke test
+        run: |
+          JAR=$(ls "$SNAPSHOT_DIR"/target/gokapi-bridge-*-jar-with-dependencies.jar)
+          FILTERS=$(java -jar "$JAR" --list-filters)
+          FILTER_COUNT=$(echo "$FILTERS" | wc -l | tr -d ' ')
+          echo "Filters found: $FILTER_COUNT"
+          echo "$FILTERS"
+          if [ "$FILTER_COUNT" -lt 1 ]; then
+            echo "::error::No filters found in SNAPSHOT build"
+            exit 1
+          fi
+
+      - name: Build summary
+        if: always()
+        env:
+          OKAPI_VERSION: ${{ steps.okapi-version.outputs.version }}
+          OKAPI_REF: ${{ inputs.okapi_ref || 'main' }}
+        run: |
+          JAR=$(ls "$SNAPSHOT_DIR"/target/gokapi-bridge-*-jar-with-dependencies.jar 2>/dev/null || echo "")
+          JAR_SIZE=""
+          FILTER_COUNT="N/A"
+          if [ -n "$JAR" ]; then
+            JAR_SIZE=$(du -h "$JAR" | cut -f1)
+            FILTER_COUNT=$(java -jar "$JAR" --list-filters 2>/dev/null | wc -l | tr -d ' ' || echo "N/A")
+          fi
+          cat >> "$GITHUB_STEP_SUMMARY" << EOF
+          ## Snapshot Build Results
+
+          | Field | Value |
+          |-------|-------|
+          | Okapi Version | \`${OKAPI_VERSION}\` |
+          | Okapi Ref | \`${OKAPI_REF}\` |
+          | Filter Count | ${FILTER_COUNT} |
+          | JAR Size | ${JAR_SIZE} |
+          EOF
+
+      - name: Upload JAR
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gokapi-bridge-snapshot
+          path: ${{ env.SNAPSHOT_DIR }}/target/gokapi-bridge-*-jar-with-dependencies.jar
+          retention-days: 7
+          if-no-files-found: ignore

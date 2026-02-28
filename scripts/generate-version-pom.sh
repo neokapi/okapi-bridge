@@ -11,19 +11,54 @@
 #   - Version-specific Okapi filter dependencies
 #   - Build section with source paths and plugin references
 #
-# Usage: ./scripts/generate-version-pom.sh <version>
+# Usage: ./scripts/generate-version-pom.sh [--local] [--output-dir DIR] <version>
+#
+# Options:
+#   --local         Discover filters from local Maven repo (~/.m2) instead of Maven Central
+#   --output-dir    Write pom.xml to a custom directory (uses absolute path references)
 
 set -e
 
-VERSION=$1
+REPO_ROOT=$(cd "$(dirname "$0")/.." && pwd)
+
+# Parse flags
+LOCAL_MODE=false
+CUSTOM_OUTPUT_DIR=""
+while [[ $# -gt 0 ]]; do
+    case "$1" in
+        --local)
+            LOCAL_MODE=true
+            shift
+            ;;
+        --output-dir)
+            CUSTOM_OUTPUT_DIR="$2"
+            shift 2
+            ;;
+        -*)
+            echo "Unknown option: $1"
+            exit 1
+            ;;
+        *)
+            VERSION="$1"
+            shift
+            ;;
+    esac
+done
+
 if [ -z "$VERSION" ]; then
-    echo "Usage: $0 <okapi-version>"
+    echo "Usage: $0 [--local] [--output-dir DIR] <okapi-version>"
     exit 1
 fi
 
-OUTPUT_DIR="okapi-releases/$VERSION"
+if [ -n "$CUSTOM_OUTPUT_DIR" ]; then
+    OUTPUT_DIR="$CUSTOM_OUTPUT_DIR"
+    PATH_PREFIX="$REPO_ROOT/"
+else
+    OUTPUT_DIR="okapi-releases/$VERSION"
+    PATH_PREFIX="../../"
+fi
 OUTPUT_FILE="$OUTPUT_DIR/pom.xml"
-META_FILE="$OUTPUT_DIR/meta.json"
+META_FILE="okapi-releases/$VERSION/meta.json"
 
 # Read Java version from meta.json if it exists, default to 11
 JAVA_VERSION="11"
@@ -98,7 +133,7 @@ echo "Discovering available filters for Okapi $VERSION..."
 # Create a temp file for results
 TEMP_RESULTS=$(mktemp)
 
-# Function to check a single filter
+# Function to check a single filter via Maven Central / Okapi repo
 check_filter() {
     local filter=$1
     local version=$2
@@ -111,12 +146,28 @@ check_filter() {
     fi
 }
 
-export -f check_filter
+# Function to check a single filter in local Maven repo (~/.m2)
+check_filter_local() {
+    local filter=$1
+    local version=$2
+    if [ -f "$HOME/.m2/repository/net/sf/okapi/filters/$filter/$version/$filter-$version.jar" ]; then
+        echo "$filter"
+    fi
+}
 
-# Check filters in parallel (up to 10 at a time)
-for filter in "${KNOWN_FILTERS[@]}"; do
-    echo "$filter"
-done | xargs -I {} -P 10 bash -c "check_filter {} $VERSION" > "$TEMP_RESULTS"
+if [ "$LOCAL_MODE" = true ]; then
+    export -f check_filter_local
+    # Check filters in parallel (up to 10 at a time)
+    for filter in "${KNOWN_FILTERS[@]}"; do
+        echo "$filter"
+    done | xargs -I {} -P 10 bash -c "check_filter_local {} $VERSION" > "$TEMP_RESULTS"
+else
+    export -f check_filter
+    # Check filters in parallel (up to 10 at a time)
+    for filter in "${KNOWN_FILTERS[@]}"; do
+        echo "$filter"
+    done | xargs -I {} -P 10 bash -c "check_filter {} $VERSION" > "$TEMP_RESULTS"
+fi
 
 # Read results into array
 AVAILABLE_FILTERS=()
@@ -135,6 +186,9 @@ echo "Found ${#AVAILABLE_FILTERS[@]} filters for Okapi $VERSION"
 
 # Sort filters for consistent output
 IFS=$'\n' SORTED_FILTERS=($(sort <<<"${AVAILABLE_FILTERS[*]}")); unset IFS
+
+# Ensure output directory exists
+mkdir -p "$OUTPUT_DIR"
 
 # Generate pom.xml — inherits from parent, only declares filters + build paths
 cat > "$OUTPUT_FILE" << EOF
@@ -156,7 +210,7 @@ cat > "$OUTPUT_FILE" << EOF
         <groupId>com.gokapi</groupId>
         <artifactId>okapi-bridge-parent</artifactId>
         <version>$BRIDGE_VERSION</version>
-        <relativePath>../../pom.xml</relativePath>
+        <relativePath>${PATH_PREFIX}pom.xml</relativePath>
     </parent>
 
     <artifactId>gokapi-bridge-okapi-$VERSION</artifactId>
@@ -186,12 +240,12 @@ for filter in "${SORTED_FILTERS[@]}"; do
 EOF
 done
 
-cat >> "$OUTPUT_FILE" << 'EOF'
+cat >> "$OUTPUT_FILE" << EOF
     </dependencies>
 
     <build>
         <!-- Compile bridge source from bridge-core module -->
-        <sourceDirectory>../../bridge-core/src/main/java</sourceDirectory>
+        <sourceDirectory>${PATH_PREFIX}bridge-core/src/main/java</sourceDirectory>
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -205,7 +259,7 @@ cat >> "$OUTPUT_FILE" << 'EOF'
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
                 <configuration>
-                    <protoSourceRoot>../../bridge-core/src/main/proto</protoSourceRoot>
+                    <protoSourceRoot>${PATH_PREFIX}bridge-core/src/main/proto</protoSourceRoot>
                 </configuration>
             </plugin>
             <!-- Add schema-generator source for exec:java -->
@@ -221,7 +275,7 @@ cat >> "$OUTPUT_FILE" << 'EOF'
                         </goals>
                         <configuration>
                             <sources>
-                                <source>../../tools/schema-generator/src/main/java</source>
+                                <source>${PATH_PREFIX}tools/schema-generator/src/main/java</source>
                             </sources>
                         </configuration>
                     </execution>

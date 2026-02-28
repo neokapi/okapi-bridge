@@ -6,7 +6,7 @@ SHELL := /bin/bash
         version-schemas build clean test generate-pom generate-all-poms \
         centralize regenerate-composites build-tools \
         download-filter-docs parse-filter-docs parse-filter-docs-force \
-        bundle-filter-docs clean-filter-docs
+        bundle-filter-docs clean-filter-docs snapshot
 
 # Configuration - derived from okapi-releases directory
 SUPPORTED_VERSIONS := $(shell ls -1 okapi-releases 2>/dev/null | sort -V)
@@ -28,6 +28,7 @@ help:
 	@echo ""
 	@echo "Build:"
 	@echo "  make build V=1.47.0       Build JAR for specific Okapi version"
+	@echo "  make snapshot V=1.49.0-SNAPSHOT  Build against locally-installed Okapi"
 	@echo "  make build-tools          Build schema generator tools (Java 17)"
 	@echo "  make test                 Run tests (bridge-core)"
 	@echo "  make clean                Clean build artifacts"
@@ -188,6 +189,19 @@ endif
 	@java_version=$$(jq -r '.javaVersion // "11"' okapi-releases/$(V)/meta.json 2>/dev/null || echo "11"); \
 	echo "Using Java $$java_version for Okapi $(V)"; \
 	mvn -B package -f okapi-releases/$(V)/pom.xml -DskipTests
+
+# Build against locally-installed Okapi (e.g. from source)
+snapshot:
+ifndef V
+	$(error V is required. Usage: make snapshot V=1.49.0-SNAPSHOT)
+endif
+	@echo "Building against local Okapi $(V)..."
+	@SNAPSHOT_DIR=$$(mktemp -d) && \
+	./scripts/generate-version-pom.sh --local --output-dir "$$SNAPSHOT_DIR" $(V) && \
+	mvn -B package -f "$$SNAPSHOT_DIR/pom.xml" -DskipTests && \
+	echo "" && \
+	echo "Built: $$(ls $$SNAPSHOT_DIR/target/gokapi-bridge-*-jar-with-dependencies.jar)" && \
+	echo "Test:  mvn -B test -pl bridge-core -Dokapi.version=$(V)"
 
 test:
 	@echo "Running tests (bridge-core against Okapi $(LATEST_VERSION))..."
