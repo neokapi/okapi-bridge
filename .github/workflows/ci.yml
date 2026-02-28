@@ -5,6 +5,12 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+    inputs:
+      rebuild-cache:
+        description: 'Force rebuild Maven cache'
+        type: boolean
+        default: false
 
 jobs:
   setup:
@@ -21,6 +27,9 @@ jobs:
   build:
     needs: setup
     runs-on: ubuntu-latest
+    permissions:
+      actions: write
+      contents: read
     steps:
       - uses: actions/checkout@v4
 
@@ -29,7 +38,29 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-          cache: maven
+
+      - name: Delete Maven cache for rebuild
+        if: inputs.rebuild-cache == true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for id in $(gh cache list --key "maven-okapi-${{ needs.setup.outputs.latest }}-" --json id -q '.[].id'); do
+            gh cache delete "$id" || true
+          done
+
+      - name: Cache Maven repository (Okapi ${{ needs.setup.outputs.latest }})
+        uses: actions/cache@v4
+        id: maven-cache
+        with:
+          path: ~/.m2/repository
+          key: maven-okapi-${{ needs.setup.outputs.latest }}-${{ hashFiles('pom.xml', 'bridge-core/pom.xml', format('okapi-releases/{0}/pom.xml', needs.setup.outputs.latest)) }}
+          restore-keys: maven-okapi-${{ needs.setup.outputs.latest }}-
+
+      - name: Resolve dependencies
+        if: steps.maven-cache.outputs.cache-hit != 'true'
+        run: |
+          mvn -B dependency:go-offline -f okapi-releases/${{ needs.setup.outputs.latest }}/pom.xml
+          mvn -B dependency:go-offline -pl bridge-core -Dokapi.version=${{ needs.setup.outputs.latest }}
 
       - name: Build with latest Okapi (${{ needs.setup.outputs.latest }})
         run: mvn -B package -f okapi-releases/${{ needs.setup.outputs.latest }}/pom.xml

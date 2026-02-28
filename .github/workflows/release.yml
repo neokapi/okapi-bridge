@@ -4,8 +4,15 @@ on:
   push:
     tags:
       - 'v*'
+  workflow_dispatch:
+    inputs:
+      rebuild-cache:
+        description: 'Force rebuild all Maven caches (does not run a release)'
+        type: boolean
+        default: false
 
 permissions:
+  actions: write
   contents: write
 
 jobs:
@@ -23,7 +30,7 @@ jobs:
           echo "versions=$VERSIONS" >> $GITHUB_OUTPUT
           echo "latest=$LATEST" >> $GITHUB_OUTPUT
 
-  build:
+  cache-deps:
     needs: setup
     runs-on: ubuntu-latest
     strategy:
@@ -33,18 +40,62 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Determine Java version for Okapi ${{ matrix.okapi-version }}
-        id: java-version
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Delete Maven cache for rebuild
+        if: inputs.rebuild-cache == true
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
-          # Always use Java 17 (LTS) - it can cross-compile to Java 11 target
-          echo "version=17" >> $GITHUB_OUTPUT
+          for id in $(gh cache list --key "maven-okapi-${{ matrix.okapi-version }}-" --json id -q '.[].id'); do
+            gh cache delete "$id" || true
+          done
+
+      - name: Cache Maven repository (Okapi ${{ matrix.okapi-version }})
+        uses: actions/cache@v4
+        id: maven-cache
+        with:
+          path: ~/.m2/repository
+          key: maven-okapi-${{ matrix.okapi-version }}-${{ hashFiles('pom.xml', format('okapi-releases/{0}/pom.xml', matrix.okapi-version)) }}
+          restore-keys: maven-okapi-${{ matrix.okapi-version }}-
+
+      - name: Generate version pom if missing
+        run: |
+          if [ ! -f "okapi-releases/${{ matrix.okapi-version }}/pom.xml" ]; then
+            ./scripts/generate-version-pom.sh ${{ matrix.okapi-version }}
+          fi
+
+      - name: Resolve dependencies
+        if: steps.maven-cache.outputs.cache-hit != 'true'
+        run: mvn -B dependency:go-offline -f okapi-releases/${{ matrix.okapi-version }}/pom.xml
+
+  build:
+    if: github.event_name == 'push'
+    needs: [setup, cache-deps]
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        okapi-version: ${{ fromJson(needs.setup.outputs.versions) }}
+    steps:
+      - uses: actions/checkout@v4
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-          cache: maven
+
+      - name: Restore Maven cache (Okapi ${{ matrix.okapi-version }})
+        uses: actions/cache/restore@v4
+        with:
+          path: ~/.m2/repository
+          key: maven-okapi-${{ matrix.okapi-version }}-${{ hashFiles('pom.xml', format('okapi-releases/{0}/pom.xml', matrix.okapi-version)) }}
+          restore-keys: maven-okapi-${{ matrix.okapi-version }}-
 
       - name: Generate version pom if missing
         run: |
@@ -127,7 +178,7 @@ jobs:
 
   release:
     needs: build
-    if: always() && !cancelled()
+    if: always() && !cancelled() && github.event_name == 'push'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -173,18 +224,18 @@ jobs:
           TAG="${GITHUB_REF_NAME}"
           VERSION="${TAG#v}"
           BASE_URL="https://github.com/gokapi/okapi-bridge/releases/download/${TAG}"
-          
+
           # Read capabilities generated from the bridge JAR
           CAPABILITIES=$(cat artifacts/capabilities.json)
-          
+
           cd registry
           echo '{"version":1,"plugins":[]}' > plugins.json
-          
+
           # Add each Okapi version as a plugin entry (derived from okapi-releases/)
           for okapi_version in $(ls -1 ../okapi-releases | sort -V); do
             CHECKSUM=$(cat ../artifacts/okapi-bridge-${TAG}-okapi${okapi_version}.tar.gz.sha256 | awk '{print $1}')
             URL="${BASE_URL}/okapi-bridge-${TAG}-okapi${okapi_version}.tar.gz"
-            
+
             # Determine plugin name (latest gets "okapi-bridge", others get version suffix)
             if [ "$okapi_version" = "$OKAPI_LATEST" ]; then
               PLUGIN_NAME="okapi-bridge"
@@ -193,7 +244,7 @@ jobs:
               PLUGIN_NAME="okapi-bridge-${okapi_version}"
               DESCRIPTION="Okapi filters (v${okapi_version})"
             fi
-            
+
             jq --arg name "$PLUGIN_NAME" \
                --arg version "$VERSION" \
                --arg desc "$DESCRIPTION" \
