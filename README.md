@@ -226,6 +226,27 @@ A scheduled workflow runs daily to check Maven Central for new Okapi releases. I
 - Regenerates composite schemas if overrides changed
 - Auto-commits regenerated files
 
+### Snapshot Builds (Nightly)
+
+A daily workflow builds okapi-bridge against the latest unreleased Okapi source (`main` branch):
+1. Clones and builds Okapi from source
+2. Generates a version pom and builds the bridge JAR
+3. Runs bridge-core tests and a smoke test
+4. Packages a release archive and creates/updates a `snapshot` pre-release on GitHub
+5. Updates `channels/snapshot.json` in the plugin registry
+
+Only one snapshot release exists at a time — each run replaces the previous one. To install:
+
+```bash
+kapi plugins install okapi-bridge --channel snapshot
+```
+
+The workflow can also be triggered manually with a custom Okapi git ref:
+
+```bash
+gh workflow run snapshot.yml -f okapi_ref=some-branch
+```
+
 ### On Tag Push (Release)
 
 1. **Setup job** scans `okapi-releases/` to get version list

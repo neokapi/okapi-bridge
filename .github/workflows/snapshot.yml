@@ -11,7 +11,7 @@ on:
         default: 'main'
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   snapshot:
@@ -123,3 +123,105 @@ jobs:
           path: ${{ env.SNAPSHOT_DIR }}/target/gokapi-bridge-*-jar-with-dependencies.jar
           retention-days: 7
           if-no-files-found: ignore
+
+      - name: Package release archive
+        env:
+          OKAPI_VERSION: ${{ steps.okapi-version.outputs.version }}
+        run: |
+          ARCHIVE_NAME="okapi-bridge-snapshot-okapi${OKAPI_VERSION}"
+
+          mkdir -p staging
+          JAR_FILE=$(ls "$SNAPSHOT_DIR"/target/gokapi-bridge-*-jar-with-dependencies.jar 2>/dev/null | head -1)
+          if [ -z "$JAR_FILE" ]; then
+            echo "Error: No jar-with-dependencies found"
+            exit 1
+          fi
+          cp "$JAR_FILE" staging/gokapi-bridge-jar-with-dependencies.jar
+
+          # Generate manifest.json with capabilities
+          CAPABILITIES=$(java -jar "$JAR_FILE" --list-filters 2>/dev/null \
+            | jq '[.filters[] | {
+                type: "format",
+                name: .name,
+                display_name: .display_name,
+                mime_types: (if (.mime_types | length) > 0 then .mime_types else null end),
+                extensions: (if (.extensions | length) > 0 then .extensions else null end)
+              } | with_entries(select(.value != null))]')
+
+          jq -n --arg version "snapshot-${OKAPI_VERSION}" \
+                --argjson capabilities "$CAPABILITIES" \
+                '{
+                  name: "okapi-bridge",
+                  version: $version,
+                  plugin_type: "bundle",
+                  install_type: "bridge",
+                  command: "java",
+                  args: ["-jar", "gokapi-bridge-jar-with-dependencies.jar"],
+                  capabilities: $capabilities
+                }' > staging/manifest.json
+
+          cd staging
+          tar czf "../${ARCHIVE_NAME}.tar.gz" .
+          cd ..
+
+          sha256sum "${ARCHIVE_NAME}.tar.gz" > "${ARCHIVE_NAME}.tar.gz.sha256"
+          echo "ARCHIVE_NAME=${ARCHIVE_NAME}" >> "$GITHUB_ENV"
+
+      - name: Create snapshot pre-release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          OKAPI_VERSION: ${{ steps.okapi-version.outputs.version }}
+        run: |
+          # Delete existing snapshot release if present
+          gh release delete snapshot --yes 2>/dev/null || true
+          git push origin :refs/tags/snapshot 2>/dev/null || true
+
+          gh release create snapshot \
+            --prerelease \
+            --title "Snapshot (Okapi ${OKAPI_VERSION})" \
+            --notes "Automated snapshot build against unreleased Okapi \`${OKAPI_VERSION}\`.
+
+          This is a pre-release for testing — not for production use.
+          Built from Okapi ref: \`${{ inputs.okapi_ref || 'main' }}\`" \
+            "${ARCHIVE_NAME}.tar.gz"
+
+      - name: Update snapshot registry channel
+        env:
+          OKAPI_VERSION: ${{ steps.okapi-version.outputs.version }}
+        run: |
+          CHECKSUM=$(awk '{print $1}' "${ARCHIVE_NAME}.tar.gz.sha256")
+          CAPABILITIES=$(jq '.capabilities' staging/manifest.json)
+          DOWNLOAD_URL="https://github.com/gokapi/okapi-bridge/releases/download/snapshot/${ARCHIVE_NAME}.tar.gz"
+
+          # Checkout registry
+          git clone "https://x-access-token:${{ secrets.GOKAPI_REGISTRY_TOKEN }}@github.com/gokapi/registry.git" registry
+
+          cd registry
+          mkdir -p channels
+
+          jq -n --arg version "snapshot-${OKAPI_VERSION}" \
+                --arg desc "Okapi filters (${OKAPI_VERSION}, snapshot)" \
+                --arg checksum "$CHECKSUM" \
+                --arg url "$DOWNLOAD_URL" \
+                --argjson capabilities "$CAPABILITIES" \
+                '{
+                  version: 1,
+                  plugins: [{
+                    name: "okapi-bridge",
+                    version: $version,
+                    description: $desc,
+                    plugin_type: "bundle",
+                    install_type: "bridge",
+                    platform: "",
+                    checksum: $checksum,
+                    download_url: $url,
+                    min_host_version: "0.1.0",
+                    capabilities: $capabilities
+                  }]
+                }' > channels/snapshot.json
+
+          git config user.name "gokapi-bot"
+          git config user.email "bot@gokapi.dev"
+          git add channels/snapshot.json
+          git commit -m "Update snapshot channel (Okapi ${OKAPI_VERSION})"
+          git push
