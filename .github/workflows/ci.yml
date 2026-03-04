@@ -56,11 +56,43 @@ jobs:
           key: maven-okapi-${{ needs.setup.outputs.latest }}-${{ hashFiles('pom.xml', 'bridge-core/pom.xml', format('okapi-releases/{0}/pom.xml', needs.setup.outputs.latest)) }}
           restore-keys: maven-okapi-${{ needs.setup.outputs.latest }}-
 
+      - name: Validate cached Okapi JARs
+        id: validate-cache
+        run: |
+          CORRUPT=0
+          if [ -d ~/.m2/repository/net/sf/okapi ]; then
+            while IFS= read -r -d '' jar; do
+              if ! jar tf "$jar" > /dev/null 2>&1; then
+                echo "::warning::Corrupt JAR detected, removing: $jar"
+                rm -f "$jar"
+                CORRUPT=$((CORRUPT + 1))
+              fi
+            done < <(find ~/.m2/repository/net/sf/okapi -name '*.jar' -type f -print0)
+          fi
+          echo "corrupt=$CORRUPT" >> $GITHUB_OUTPUT
+          if [ "$CORRUPT" -gt 0 ]; then
+            echo "Removed $CORRUPT corrupt JAR(s) from Maven cache — will re-resolve"
+          fi
+
       - name: Resolve dependencies
-        if: steps.maven-cache.outputs.cache-hit != 'true'
+        if: steps.maven-cache.outputs.cache-hit != 'true' || steps.validate-cache.outputs.corrupt != '0'
         run: |
           mvn -B dependency:go-offline -f okapi-releases/${{ needs.setup.outputs.latest }}/pom.xml
           mvn -B dependency:go-offline -pl bridge-core -Dokapi.version=${{ needs.setup.outputs.latest }}
+
+      - name: Verify resolved JARs are valid
+        run: |
+          CORRUPT=0
+          while IFS= read -r -d '' jar; do
+            if ! jar tf "$jar" > /dev/null 2>&1; then
+              echo "::error::Corrupt JAR after resolution: $jar"
+              CORRUPT=$((CORRUPT + 1))
+            fi
+          done < <(find ~/.m2/repository/net/sf/okapi -name '*.jar' -type f -print0)
+          if [ "$CORRUPT" -gt 0 ]; then
+            echo "::error::$CORRUPT corrupt JAR(s) after dependency resolution — aborting to prevent caching bad artifacts"
+            exit 1
+          fi
 
       - name: Build with latest Okapi (${{ needs.setup.outputs.latest }})
         run: mvn -B package -f okapi-releases/${{ needs.setup.outputs.latest }}/pom.xml

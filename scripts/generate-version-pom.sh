@@ -133,15 +133,12 @@ echo "Discovering available filters for Okapi $VERSION..."
 # Create a temp file for results
 TEMP_RESULTS=$(mktemp)
 
-# Function to check a single filter via Maven Central / Okapi repo
+# Function to check a single filter via Maven Central
 check_filter() {
     local filter=$1
     local version=$2
-    # Check Okapi's repo first (more reliable), then Maven Central
-    local url1="https://okapiframework.org/maven2/net/sf/okapi/filters/$filter/$version/$filter-$version.pom"
-    local url2="https://repo1.maven.org/maven2/net/sf/okapi/filters/$filter/$version/$filter-$version.pom"
-    if curl --output /dev/null --silent --head --fail --max-time 5 "$url1" 2>/dev/null || \
-       curl --output /dev/null --silent --head --fail --max-time 5 "$url2" 2>/dev/null; then
+    local url="https://repo1.maven.org/maven2/net/sf/okapi/filters/$filter/$version/$filter-$version.pom"
+    if curl --output /dev/null --silent --head --fail --max-time 5 "$url" 2>/dev/null; then
         echo "$filter"
     fi
 }

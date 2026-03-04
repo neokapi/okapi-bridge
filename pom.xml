@@ -6,7 +6,7 @@
 
     <groupId>com.gokapi</groupId>
     <artifactId>okapi-bridge-parent</artifactId>
-    <version>2.3.3</version>
+    <version>2.3.4</version>
     <packaging>pom</packaging>
 
     <name>Okapi Bridge</name>
@@ -29,14 +29,6 @@
         <slf4j.version>2.0.16</slf4j.version>
         <junit.version>5.10.2</junit.version>
     </properties>
-
-    <repositories>
-        <repository>
-            <id>okapi</id>
-            <name>Okapi Framework Repository</name>
-            <url>https://okapiframework.org/maven2/</url>
-        </repository>
-    </repositories>
 
     <!--
         Infrastructure dependencies inherited by ALL children (bridge-core,

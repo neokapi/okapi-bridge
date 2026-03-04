@@ -33,6 +33,22 @@ jobs:
           key: maven-snapshot-no-exact-match
           restore-keys: maven-okapi-
 
+      - name: Validate cached Okapi JARs
+        run: |
+          CORRUPT=0
+          if [ -d ~/.m2/repository/net/sf/okapi ]; then
+            while IFS= read -r -d '' jar; do
+              if ! jar tf "$jar" > /dev/null 2>&1; then
+                echo "::warning::Corrupt JAR in snapshot cache, removing: $jar"
+                rm -f "$jar"
+                CORRUPT=$((CORRUPT + 1))
+              fi
+            done < <(find ~/.m2/repository/net/sf/okapi -name '*.jar' -type f -print0)
+          fi
+          if [ "$CORRUPT" -gt 0 ]; then
+            echo "Removed $CORRUPT corrupt JAR(s) — Maven will re-download during build"
+          fi
+
       - name: Clone Okapi
         env:
           OKAPI_REF: ${{ inputs.okapi_ref || 'main' }}
