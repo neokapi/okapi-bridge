@@ -2,15 +2,14 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_archive.schema.json",
   "$version": "1.0.0",
-  "title": "Archive Filter Filter",
-  "description": "Configuration for the Okapi Archive Filter Filter",
+  "title": "Archive Filter (BETA) Filter",
+  "description": "Configuration for the Okapi Archive Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_archive",
     "class": "net.sf.okapi.filters.archive.ArchiveFilter",
     "extensions": [
-      ".archive",
-      ".zip"
+      ".archive"
     ],
     "mimeTypes": [
       "application/x-archive"
@@ -21,7 +20,7 @@
         "name": "Archive Files",
         "description": "Configuration for archive files",
         "mimeType": "application/x-archive",
-        "extensions": ".archive;.zip;",
+        "extensions": ".archive;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.archive.ArchiveFilter"
       }
@@ -137,8 +136,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 7,
-  "x-baseHash": "02970d5ecf63",
-  "x-compositeHash": "a394e7cd374e",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "8dd8ddc211d6",
+  "x-compositeHash": "13be1e4f51e0"
 }

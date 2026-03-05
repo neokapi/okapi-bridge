@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_odf.schema.json",
   "$version": "1.0.0",
-  "title": "ODF-Content Filter Filter",
-  "description": "Configuration for the Okapi ODF-Content Filter Filter",
+  "title": "ODF-Content Filter (BETA) Filter",
+  "description": "Configuration for the Okapi ODF-Content Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_odf",
@@ -133,8 +133,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 7,
-  "x-baseHash": "61d0ee740c72",
-  "x-compositeHash": "035603c87d5f",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "13d0c437076e",
+  "x-compositeHash": "0ba194e22356"
 }

@@ -76,6 +76,12 @@
           "default": false,
           "x-flattenPath": "extractLinks",
           "description": "Extract cross-reference links"
+        },
+        "extractPgfNumFormatsInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractPgfNumFormatsInline",
+          "description": "Extract paragraph number formats inline"
         }
       }
     }
@@ -154,8 +160,8 @@
     }
   },
   "x-schemaVersion": 2,
-  "x-baseVersion": 14,
-  "x-baseHash": "c42257c49697",
-  "x-compositeHash": "91da0a3997fc",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.39.0",
+  "x-baseHash": "222d8fbdc728",
+  "x-compositeHash": "b1c50677c8c6"
 }

@@ -178,6 +178,12 @@
           "default": false,
           "x-flattenPath": "fallbackToID",
           "description": "Fall back to trans-unit ID"
+        },
+        "forceUniqueIds": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "forceUniqueIds",
+          "description": "Force unique text unit IDs"
         }
       }
     },
@@ -477,8 +483,8 @@
     }
   },
   "x-schemaVersion": 7,
-  "x-baseVersion": 23,
-  "x-baseHash": "82e03b6f87ec",
-  "x-compositeHash": "33b92ef8efc2",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 7,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "d1c0c71edfe8",
+  "x-compositeHash": "bd313f98adeb"
 }

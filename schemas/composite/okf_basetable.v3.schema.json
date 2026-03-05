@@ -176,6 +176,12 @@
           "default": "1",
           "x-flattenPath": "targetSourceRefs",
           "description": "Target source references"
+        },
+        "exposeCommentsAsMetadata": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "exposeCommentsAsMetadata",
+          "description": "Expose comments as metadata"
         }
       }
     },
@@ -301,8 +307,8 @@
     }
   },
   "x-schemaVersion": 3,
-  "x-baseVersion": 9,
-  "x-baseHash": "50a687c0f975",
-  "x-compositeHash": "1c8a7555cb81",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "fd13fc6972ce",
+  "x-compositeHash": "183b948ebd7a"
 }

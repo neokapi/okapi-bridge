@@ -227,6 +227,12 @@
           "x-flattenPath": "sPreferenceLineSeparatorReplacement",
           "description": "Line separator replacement string"
         },
+        "maxAttributeSize": {
+          "type": "integer",
+          "default": 4194304,
+          "x-flattenPath": "maxAttributeSize",
+          "description": "Max attribute size"
+        },
         "fileType": {
           "type": "string",
           "default": "MSWORD",
@@ -248,8 +254,8 @@
   },
   "additionalProperties": false,
   "x-schemaVersion": 2,
-  "x-baseVersion": 16,
-  "x-baseHash": "78d4d965569e",
-  "x-compositeHash": "5dec370d8299",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.41.0",
+  "x-baseHash": "35a006cdf57a",
+  "x-compositeHash": "ecb06028bab2"
 }

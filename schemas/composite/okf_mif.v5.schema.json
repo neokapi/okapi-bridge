@@ -17,7 +17,7 @@
     "configurations": [
       {
         "configId": "okf_mif",
-        "name": "MIF (BETA)",
+        "name": "MIF",
         "description": "Adobe FrameMaker MIF documents",
         "mimeType": "application/vnd.mif",
         "extensions": ".mif;",
@@ -172,8 +172,8 @@
     }
   },
   "x-schemaVersion": 5,
-  "x-baseVersion": 17,
-  "x-baseHash": "8cb332170472",
-  "x-compositeHash": "ecdb053d73ce",
-  "x-introducedInOkapi": "1.41.0"
+  "x-baseVersion": 5,
+  "x-introducedInOkapi": "1.46.0",
+  "x-baseHash": "ea222d7146dc",
+  "x-compositeHash": "a3a337561726"
 }

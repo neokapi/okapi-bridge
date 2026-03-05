@@ -21,7 +21,7 @@
         "name": "YAML",
         "description": "YAML files",
         "mimeType": "text/x-yaml",
-        "extensions": ".yml;.yaml",
+        "extensions": ".yml;.yaml;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.yaml.YamlFilter"
       }
@@ -190,8 +190,8 @@
     }
   },
   "x-schemaVersion": 2,
-  "x-baseVersion": 8,
-  "x-baseHash": "a8e753570cad",
-  "x-compositeHash": "3105eed00833",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.46.0",
+  "x-baseHash": "4bc67f87f29a",
+  "x-compositeHash": "c7f7fab75ae8"
 }

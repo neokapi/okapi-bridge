@@ -62,6 +62,12 @@
           "description": "Comma-separated list of keys to exclude from extraction.",
           "x-widget": "tagList",
           "x-placeholder": "key1,key2,key3"
+        },
+        "subfilterRules": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "subfilterRules",
+          "description": "Sub-filter rules for embedded content"
         }
       }
     },
@@ -230,8 +236,8 @@
     }
   },
   "x-schemaVersion": 2,
-  "x-baseVersion": 10,
-  "x-baseHash": "bf76f4aa49d6",
-  "x-compositeHash": "4e1bfb798a53",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.42.0",
+  "x-baseHash": "8069fb498a4c",
+  "x-compositeHash": "694177b14516"
 }

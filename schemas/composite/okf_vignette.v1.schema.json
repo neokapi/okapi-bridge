@@ -203,8 +203,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 5,
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
   "x-baseHash": "9215cf54f6af",
-  "x-compositeHash": "c31a711a97ea",
-  "x-introducedInOkapi": "0.38"
+  "x-compositeHash": "c31a711a97ea"
 }

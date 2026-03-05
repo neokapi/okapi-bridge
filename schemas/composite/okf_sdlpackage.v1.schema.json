@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_sdlpackage.schema.json",
   "$version": "1.0.0",
-  "title": "SDLPPX and SDLRPX Filter Filter",
-  "description": "Configuration for the Okapi SDLPPX and SDLRPX Filter Filter",
+  "title": "SDLPPX and SDLRPX Filter (BETA) Filter",
+  "description": "Configuration for the Okapi SDLPPX and SDLRPX Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_sdlpackage",
@@ -137,8 +137,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 7,
-  "x-baseHash": "c877f8c97b89",
-  "x-compositeHash": "203f97ecd5e4",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "028ab747f86a",
+  "x-compositeHash": "1fffcd14432d"
 }

@@ -65,10 +65,6 @@
           "description": "Maximum validation level"
         }
       }
-    },
-    "mergeAsParagraph": {
-      "type": "boolean",
-      "default": false
     }
   },
   "additionalProperties": false,
@@ -142,8 +138,8 @@
     }
   },
   "x-schemaVersion": 5,
-  "x-baseVersion": 19,
-  "x-baseHash": "4b415f401bdf",
-  "x-compositeHash": "4b415f401bdf",
-  "x-introducedInOkapi": "1.43.0"
+  "x-baseVersion": 5,
+  "x-introducedInOkapi": "1.45.0",
+  "x-baseHash": "b3b09fc072b0",
+  "x-compositeHash": "b3b09fc072b0"
 }

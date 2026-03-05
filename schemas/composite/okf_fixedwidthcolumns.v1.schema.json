@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_fixedwidthcolumns.schema.json",
   "$version": "1.0.0",
-  "title": "Plain Text Filter Filter",
-  "description": "Configuration for the Okapi Plain Text Filter Filter",
+  "title": "Plain Text Filter (BETA) Filter",
+  "description": "Configuration for the Okapi Plain Text Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_fixedwidthcolumns",
@@ -108,10 +108,6 @@
     "recordIdColumn": {
       "type": "integer",
       "default": 0
-    },
-    "exposeCommentsAsMetadata": {
-      "type": "boolean",
-      "default": false
     },
     "sourceColumns": {
       "type": "string",
@@ -249,8 +245,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 7,
-  "x-baseHash": "f4a874d041d8",
-  "x-compositeHash": "92a4d741bdbd",
-  "x-introducedInOkapi": "1.47.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "1f5b8d7c97b2",
+  "x-compositeHash": "ced60853d9c9"
 }

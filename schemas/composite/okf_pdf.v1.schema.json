@@ -187,8 +187,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 5,
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
   "x-baseHash": "02364fe01d78",
-  "x-compositeHash": "70f32174e885",
-  "x-introducedInOkapi": "0.38"
+  "x-compositeHash": "70f32174e885"
 }

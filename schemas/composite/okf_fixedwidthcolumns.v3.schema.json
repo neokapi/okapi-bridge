@@ -109,6 +109,10 @@
       "type": "integer",
       "default": 0
     },
+    "exposeCommentsAsMetadata": {
+      "type": "boolean",
+      "default": false
+    },
     "sourceColumns": {
       "type": "string",
       "default": "1"
@@ -245,8 +249,8 @@
     }
   },
   "x-schemaVersion": 3,
-  "x-baseVersion": 9,
-  "x-baseHash": "22f4d24abce8",
-  "x-compositeHash": "c4abfd600f8b",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "f4a874d041d8",
+  "x-compositeHash": "92a4d741bdbd"
 }

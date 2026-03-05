@@ -55,7 +55,7 @@
         "newTuOnBr": {
           "type": "boolean",
           "default": false,
-          "title": "Create new paragraphs on hard returns (<Br/> elements) [BETA]",
+          "title": "Create new paragraphs on hard returns (<Br/> elements)",
           "x-flattenPath": "newTuOnBr",
           "description": "Start new text unit on line break"
         },
@@ -154,8 +154,8 @@
     }
   },
   "x-schemaVersion": 3,
-  "x-baseVersion": 11,
-  "x-baseHash": "4a38fb5d693a",
-  "x-compositeHash": "b70997b038fb",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.46.0",
+  "x-baseHash": "7a43dc382e10",
+  "x-compositeHash": "1ca841883acf"
 }

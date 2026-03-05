@@ -9,7 +9,10 @@
     "id": "okf_xliff2",
     "class": "net.sf.okapi.filters.xliff2.XLIFF2Filter",
     "extensions": [
-      ".xlf"
+      ".xlf",
+      ".xliff",
+      ".xlf2",
+      ".xliff2"
     ],
     "mimeTypes": [
       "application/xliff+xml"
@@ -20,7 +23,7 @@
         "name": "XLIFF-2",
         "description": "Configuration for XLIFF-2 documents.",
         "mimeType": "application/xliff+xml",
-        "extensions": ".xlf;",
+        "extensions": ".xlf;.xliff;.xlf2;.xliff2",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.xliff2.XLIFF2Filter"
       }
@@ -43,7 +46,7 @@
         },
         "simplifyTags": {
           "type": "boolean",
-          "default": true,
+          "default": false,
           "x-flattenPath": "simplifyTags",
           "description": "Simplify inline tags"
         }
@@ -139,8 +142,8 @@
     }
   },
   "x-schemaVersion": 4,
-  "x-baseVersion": 18,
-  "x-baseHash": "b5bd62d4fbfa",
-  "x-compositeHash": "b5bd62d4fbfa",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 4,
+  "x-introducedInOkapi": "1.43.0",
+  "x-baseHash": "4b415f401bdf",
+  "x-compositeHash": "4b415f401bdf"
 }

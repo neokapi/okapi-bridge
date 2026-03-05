@@ -31,17 +31,16 @@
         "mimeType": "application/x-gettext",
         "extensions": ".po;",
         "parametersLocation": "monolingual.fprm",
-        "parametersRaw": "#v1\nbilingualMode.b=false\nmakeID.b=true\nuseLD.b=true\nlocalizeOutside.b=true\nuseCodeFinder.b=true\ncodeFinderRules.count.i=3\ncodeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\ncodeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\ncodeFinderRules.rule2=\\{\\d.*?\\}\ncodeFinderRules.sample=%s, %d, {1}, \\n, \\r, \\t, etc.\ncodeFinderRules.useAllRulesWhenTesting.b=true\n",
+        "parametersRaw": "#v1\nbilingualMode.b=false\nmakeID.b=true\nuseLD.b=true\nlocalizeOutside.b=true\nuseCodeFinder.b=true\ncodeFinderRules.count.i=2\ncodeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\ncodeFinderRules.rule1=\\{\\d[^\\\\]*?\\}\ncodeFinderRules.sample=%s, %d, {1}, \\n, \\r, \\t, etc.\ncodeFinderRules.useAllRulesWhenTesting.b=true\n",
         "parameters": {
           "bilingualMode": false,
           "makeID": true,
           "useLD": true,
           "localizeOutside": true,
           "useCodeFinder": true,
-          "codeFinderRules.count": 3,
+          "codeFinderRules.count": 2,
           "codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
-          "codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
-          "codeFinderRules.rule2": "\\{\\d.*?\\}",
+          "codeFinderRules.rule1": "\\{\\d[^\\\\]*?\\}",
           "codeFinderRules.sample": "%s, %d, {1}, \\n, \\r, \\t, etc.",
           "codeFinderRules.useAllRulesWhenTesting": true
         },
@@ -190,8 +189,8 @@
     }
   },
   "x-schemaVersion": 2,
-  "x-baseVersion": 8,
-  "x-baseHash": "3f5e160807f9",
-  "x-compositeHash": "9cdea581c749",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.42.0",
+  "x-baseHash": "44a97c3beaaf",
+  "x-compositeHash": "eab4e3332f22"
 }

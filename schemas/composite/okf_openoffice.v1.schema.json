@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_openoffice.schema.json",
   "$version": "1.0.0",
-  "title": "OpenOffice.org Filter Filter",
-  "description": "Configuration for the Okapi OpenOffice.org Filter Filter",
+  "title": "OpenOffice.org Filter (BETA) Filter",
+  "description": "Configuration for the Okapi OpenOffice.org Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_openoffice",
@@ -16,11 +16,7 @@
       ".ott",
       ".ots",
       ".otp",
-      ".otg",
-      ".swc",
-      ".swx",
-      ".sxd",
-      ".sxi"
+      ".otg"
     ],
     "mimeTypes": [
       "application/x-openoffice"
@@ -29,9 +25,9 @@
       {
         "configId": "okf_openoffice",
         "name": "OpenOffice.org Documents",
-        "description": "OpenOffice.org ODT, ODS, ODP, ODG, OTT, OTS, OTP, OTG, SWC, SWX, SXD, SXI documents",
+        "description": "OpenOffice.org ODT, ODS, ODP, ODG, OTT, OTS, OTP, OTG documents",
         "mimeType": "application/x-openoffice",
-        "extensions": ".odt;.ods;.odg;.odp;.ott;.ots;.otp;.otg;.swc;.swx;.sxd;.sxi;",
+        "extensions": ".odt;.ods;.odg;.odp;.ott;.ots;.otp;.otg;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.openoffice.OpenOfficeFilter"
       }
@@ -147,8 +143,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 7,
-  "x-baseHash": "3c6ba9fea34e",
-  "x-compositeHash": "847874423d6e",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "73c8a6ec587c",
+  "x-compositeHash": "fb96383e2c11"
 }

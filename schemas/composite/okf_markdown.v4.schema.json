@@ -83,6 +83,12 @@
           "default": "",
           "x-flattenPath": "nonTranslateBlocks",
           "description": "Regex for non-translatable blocks"
+        },
+        "parseMdx": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "parseMdx",
+          "description": "Parse MDX syntax"
         }
       }
     },
@@ -90,6 +96,12 @@
       "type": "object",
       "description": "Output formatting",
       "properties": {
+        "generateHeaderAnchors": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "generateHeaderAnchors",
+          "description": "Generate header anchor IDs"
+        },
         "charactersToEscape": {
           "type": "string",
           "default": "*_`{}[]<>()#+\\-.!|",
@@ -203,8 +215,8 @@
     }
   },
   "x-schemaVersion": 4,
-  "x-baseVersion": 12,
-  "x-baseHash": "1cd194f831e0",
-  "x-compositeHash": "0721aa605c91",
-  "x-introducedInOkapi": "1.43.0"
+  "x-baseVersion": 4,
+  "x-introducedInOkapi": "1.45.0",
+  "x-baseHash": "ce7d25102b05",
+  "x-compositeHash": "837e391176e6"
 }

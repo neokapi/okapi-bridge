@@ -487,8 +487,8 @@
     }
   },
   "x-schemaVersion": 8,
-  "x-baseVersion": 24,
+  "x-baseVersion": 8,
+  "x-introducedInOkapi": "1.48.0",
   "x-baseHash": "f4d4b659a359",
-  "x-compositeHash": "3a0c6eccc76d",
-  "x-introducedInOkapi": "1.48.0"
+  "x-compositeHash": "3a0c6eccc76d"
 }

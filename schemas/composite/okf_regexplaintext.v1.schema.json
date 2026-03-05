@@ -227,8 +227,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 3,
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
   "x-baseHash": "d47ed018ef46",
-  "x-compositeHash": "fdba17073269",
-  "x-introducedInOkapi": "0.38"
+  "x-compositeHash": "fdba17073269"
 }

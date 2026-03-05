@@ -193,12 +193,6 @@
           "x-flattenPath": "escapeExtendedChars",
           "description": "Escape extended Unicode characters in output."
         },
-        "useJavaEscapes": {
-          "type": "boolean",
-          "default": false,
-          "x-flattenPath": "useJavaEscapes",
-          "description": "Use Java-style unicode escapes"
-        },
         "convertLFandTab": {
           "type": "boolean",
           "default": true,
@@ -282,8 +276,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 7,
-  "x-baseHash": "be790da1abcd",
-  "x-compositeHash": "96914fde26b6",
-  "x-introducedInOkapi": "1.40.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "c6fe373c51ef",
+  "x-compositeHash": "c089b3512044"
 }

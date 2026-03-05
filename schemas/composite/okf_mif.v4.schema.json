@@ -77,6 +77,12 @@
           "x-flattenPath": "extractLinks",
           "description": "Extract cross-reference links"
         },
+        "extractHardReturnsAsText": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractHardReturnsAsText",
+          "description": "Extract hard returns as text"
+        },
         "extractPgfNumFormatsInline": {
           "type": "boolean",
           "default": false,
@@ -166,8 +172,8 @@
     }
   },
   "x-schemaVersion": 4,
-  "x-baseVersion": 16,
-  "x-baseHash": "196db18fdbd0",
-  "x-compositeHash": "b1d9cba7dd95",
-  "x-introducedInOkapi": "1.40.0"
+  "x-baseVersion": 4,
+  "x-introducedInOkapi": "1.41.0",
+  "x-baseHash": "8cb332170472",
+  "x-compositeHash": "ecdb053d73ce"
 }

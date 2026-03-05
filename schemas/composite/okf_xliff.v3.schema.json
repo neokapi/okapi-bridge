@@ -153,6 +153,12 @@
           "x-flattenPath": "inlineCdata",
           "description": "Treat CDATA sections as inline"
         },
+        "subAsTextUnit": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "subAsTextUnit",
+          "description": "Process sub elements as text units"
+        },
         "ignoreInputSegmentation": {
           "type": "boolean",
           "default": false,
@@ -241,6 +247,18 @@
           "type": "string",
           "x-flattenPath": "outputSegmentationType",
           "description": "Output segmentation type"
+        }
+      }
+    },
+    "subfilters": {
+      "type": "object",
+      "description": "Sub-filter configuration",
+      "properties": {
+        "cdataSubfilter": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "cdataSubfilter",
+          "description": "Sub-filter for CDATA content"
         }
       }
     },
@@ -443,8 +461,8 @@
     }
   },
   "x-schemaVersion": 3,
-  "x-baseVersion": 19,
-  "x-baseHash": "c2164a8cf6eb",
-  "x-compositeHash": "2d0f51274c40",
-  "x-introducedInOkapi": "1.39.0"
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.41.0",
+  "x-baseHash": "b0f004fed0ca",
+  "x-compositeHash": "1ba5d832fc0f"
 }

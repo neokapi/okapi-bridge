@@ -56,6 +56,14 @@
           "x-flattenPath": "extractHiddenLayers",
           "description": "Extract hidden layers"
         },
+        "extractHiddenPasteboardItems": {
+          "type": "boolean",
+          "default": false,
+          "title": "Extract hidden pasteboard items",
+          "x-widget": "checkbox",
+          "x-flattenPath": "extractHiddenPasteboardItems",
+          "description": "Extract hidden pasteboard items"
+        },
         "extractBreaksInline": {
           "type": "boolean",
           "default": false,
@@ -193,8 +201,8 @@
   },
   "additionalProperties": false,
   "x-schemaVersion": 3,
-  "x-baseVersion": 19,
-  "x-baseHash": "e6eaf7733457",
-  "x-compositeHash": "52ce56dbc430",
-  "x-introducedInOkapi": "1.39.0"
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.41.0",
+  "x-baseHash": "d3b317c11e11",
+  "x-compositeHash": "cc1e1e0a06e5"
 }

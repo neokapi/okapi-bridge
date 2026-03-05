@@ -22,7 +22,7 @@
         "filterClass": "net.sf.okapi.filters.transtable.TransTableFilter"
       }
     ],
-    "serializationFormat": "stringParameters"
+    "serializationFormat": "yaml"
   },
   "properties": {},
   "additionalProperties": false

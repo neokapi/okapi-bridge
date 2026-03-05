@@ -96,6 +96,12 @@
           "x-flattenPath": "charactersToEscape",
           "description": "Characters to escape in output"
         },
+        "htmlEntitiesToEscape": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "htmlEntitiesToEscape",
+          "description": "HTML entities to escape"
+        },
         "unescapeBackslashCharacters": {
           "type": "boolean",
           "default": false,
@@ -197,8 +203,8 @@
     }
   },
   "x-schemaVersion": 3,
-  "x-baseVersion": 11,
-  "x-baseHash": "5e1a89486359",
-  "x-compositeHash": "994417bae4cf",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.43.0",
+  "x-baseHash": "1cd194f831e0",
+  "x-compositeHash": "0721aa605c91"
 }

@@ -138,7 +138,7 @@
         "mimeType": "text/x-regex",
         "extensions": ".strings;",
         "parametersLocation": "macStrings.fprm",
-        "parametersRaw": "#v1\nuseLd.b=true\nlocalizeOutside.b=true\nstartString=\"\nendString=\"\nextractOuterStrings.b=false\nuseBSlashEscape.b=true\nuseDoubleCharEscape.b=false\noneLevelGroups.b=false\nregexOptions.i=40\nmimeType=text/plain\nruleCount.i=4\nrule0.ruleName=Comments+String\nrule0.ruleType.i=0\nrule0.expr=/\\*(.*?)\\*/\\n\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule0.groupSource.i=3\nrule0.groupTarget.i=-1\nrule0.groupName.i=2\nrule0.groupNote.i=1\nrule0.preserveWS.b=true\nrule0.useCodeFinder.b=true\nrule0.sample=/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$\nrule0.codeFinderRules.count.i=3\nrule0.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule0.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule0.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule0.codeFinderRules.sample=\nrule0.codeFinderRules.useAllRulesWhenTesting.b=false\nrule1.ruleName=Bracketing Comments\nrule1.ruleType.i=3\nrule1.expr=/\\*(.*?)\\*/\nrule1.groupSource.i=1\nrule1.groupTarget.i=-1\nrule1.groupName.i=-1\nrule1.groupNote.i=-1\nrule1.preserveWS.b=true\nrule1.useCodeFinder.b=false\nrule1.sample=test /* test */\nrule1.codeFinderRules.count.i=0\nrule1.codeFinderRules.sample=\nrule1.codeFinderRules.useAllRulesWhenTesting.b=false\nrule2.ruleName=Line Comments\nrule2.ruleType.i=3\nrule2.expr=//(.*?)\\n\nrule2.groupSource.i=-1\nrule2.groupTarget.i=-1\nrule2.groupName.i=-1\nrule2.groupNote.i=-1\nrule2.preserveWS.b=true\nrule2.useCodeFinder.b=false\nrule2.sample=// test$0a$test // bbb$0a$\nrule2.codeFinderRules.count.i=0\nrule2.codeFinderRules.sample=\nrule2.codeFinderRules.useAllRulesWhenTesting.b=false\nrule3.ruleName=String\nrule3.ruleType.i=0\nrule3.expr=\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule3.groupSource.i=2\nrule3.groupTarget.i=-1\nrule3.groupName.i=1\nrule3.groupNote.i=-1\nrule3.preserveWS.b=true\nrule3.useCodeFinder.b=true\nrule3.sample=/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$\nrule3.codeFinderRules.count.i=3\nrule3.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule3.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule3.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule3.codeFinderRules.sample=\nrule3.codeFinderRules.useAllRulesWhenTesting.b=false\n",
+        "parametersRaw": "#v1\nuseLd.b=true\nlocalizeOutside.b=true\nstartString=\"\nendString=\"\nextractOuterStrings.b=false\nuseBSlashEscape.b=true\nuseDoubleCharEscape.b=false\nremoveBSlashEscape.b=true\noneLevelGroups.b=false\nregexOptions.i=40\nmimeType=text/plain\nruleCount.i=4\nrule0.ruleName=Comments+String\nrule0.ruleType.i=0\nrule0.expr=/\\*(.*?)\\*/\\n\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule0.groupSource.i=3\nrule0.groupTarget.i=-1\nrule0.groupName.i=2\nrule0.groupNote.i=1\nrule0.preserveWS.b=true\nrule0.useCodeFinder.b=true\nrule0.sample=/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$\nrule0.codeFinderRules.count.i=3\nrule0.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule0.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule0.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule0.codeFinderRules.sample=\nrule0.codeFinderRules.useAllRulesWhenTesting.b=false\nrule1.ruleName=Bracketing Comments\nrule1.ruleType.i=3\nrule1.expr=/\\*(.*?)\\*/\nrule1.groupSource.i=1\nrule1.groupTarget.i=-1\nrule1.groupName.i=-1\nrule1.groupNote.i=-1\nrule1.preserveWS.b=true\nrule1.useCodeFinder.b=false\nrule1.sample=test /* test */\nrule1.codeFinderRules.count.i=0\nrule1.codeFinderRules.sample=\nrule1.codeFinderRules.useAllRulesWhenTesting.b=false\nrule2.ruleName=Line Comments\nrule2.ruleType.i=3\nrule2.expr=//(.*?)\\n\nrule2.groupSource.i=-1\nrule2.groupTarget.i=-1\nrule2.groupName.i=-1\nrule2.groupNote.i=-1\nrule2.preserveWS.b=true\nrule2.useCodeFinder.b=false\nrule2.sample=// test$0a$test // bbb$0a$\nrule2.codeFinderRules.count.i=0\nrule2.codeFinderRules.sample=\nrule2.codeFinderRules.useAllRulesWhenTesting.b=false\nrule3.ruleName=String\nrule3.ruleType.i=0\nrule3.expr=\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule3.groupSource.i=2\nrule3.groupTarget.i=-1\nrule3.groupName.i=1\nrule3.groupNote.i=-1\nrule3.preserveWS.b=true\nrule3.useCodeFinder.b=true\nrule3.sample=/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$\nrule3.codeFinderRules.count.i=3\nrule3.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule3.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule3.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule3.codeFinderRules.sample=\nrule3.codeFinderRules.useAllRulesWhenTesting.b=false\n",
         "parameters": {
           "useLd": true,
           "localizeOutside": true,
@@ -147,6 +147,7 @@
           "extractOuterStrings": false,
           "useBSlashEscape": true,
           "useDoubleCharEscape": false,
+          "removeBSlashEscape": true,
           "oneLevelGroups": false,
           "regexOptions": 40,
           "mimeType": "text/plain",
@@ -278,6 +279,12 @@
           "x-flattenPath": "useBSlashEscape",
           "description": "Use backslash escaping"
         },
+        "removeBSlashEscape": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "removeBSlashEscape",
+          "description": "Remove backslash escaping"
+        },
         "useDoubleCharEscape": {
           "type": "boolean",
           "default": false,
@@ -367,8 +374,8 @@
     }
   },
   "x-schemaVersion": 2,
-  "x-baseVersion": 12,
-  "x-baseHash": "b4b5c41be8d7",
-  "x-compositeHash": "3ca19b5aca5f",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.42.0",
+  "x-baseHash": "97d10677ce0c",
+  "x-compositeHash": "d3df1e810a11"
 }

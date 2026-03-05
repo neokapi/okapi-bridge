@@ -62,6 +62,12 @@
           "x-flattenPath": "extractHiddenPasteboardItems",
           "description": "Extract hidden pasteboard items"
         },
+        "extractHyperlinkTextSourcesInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHyperlinkTextSourcesInline",
+          "description": "Extract hyperlink text inline"
+        },
         "extractIndexTopics": {
           "type": "boolean",
           "default": false,
@@ -175,8 +181,8 @@
   },
   "additionalProperties": false,
   "x-schemaVersion": 5,
-  "x-baseVersion": 21,
-  "x-baseHash": "c4c0476b0d01",
-  "x-compositeHash": "d7d4d182b5a5",
-  "x-introducedInOkapi": "1.44.0"
+  "x-baseVersion": 5,
+  "x-introducedInOkapi": "1.45.0",
+  "x-baseHash": "fb8e30f8995c",
+  "x-compositeHash": "bfa170a92872"
 }

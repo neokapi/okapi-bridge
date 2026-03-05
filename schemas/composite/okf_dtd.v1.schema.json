@@ -9,8 +9,7 @@
     "id": "okf_dtd",
     "class": "net.sf.okapi.filters.dtd.DTDFilter",
     "extensions": [
-      ".dtd",
-      ".ent"
+      ".dtd"
     ],
     "mimeTypes": [
       "application/xml+dtd"
@@ -21,7 +20,7 @@
         "name": "DTD (Document Type Definition)",
         "description": "Configuration for XML DTD documents (entities content)",
         "mimeType": "application/xml+dtd",
-        "extensions": ".dtd;.ent;",
+        "extensions": ".dtd;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.dtd.DTDFilter"
       }
@@ -42,8 +41,8 @@
   },
   "additionalProperties": false,
   "x-schemaVersion": 1,
-  "x-baseVersion": 7,
-  "x-baseHash": "b4d5eb5ea577",
-  "x-compositeHash": "e06a57bf7176",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "17a3d34dc1ed",
+  "x-compositeHash": "54f4d5159ad0"
 }

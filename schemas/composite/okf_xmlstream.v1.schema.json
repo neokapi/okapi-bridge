@@ -69,7 +69,7 @@
         "mimeType": "text/xml",
         "extensions": ".dita;.ditamap;",
         "parametersLocation": "dita.yml",
-        "parametersRaw": "assumeWellformed: true\npreserve_whitespace: false\n\nattributes:\n  # attributes that can appear anywhere\n  'xml:lang':\n    ruleTypes: [ATTRIBUTE_WRITABLE]\n  \n  # This rule will not apply unless TEXT_UNIT element rules are defined which may have an id\n  'xml:id':\n    ruleTypes: [ATTRIBUTE_ID]\n  'id':\n    ruleTypes: [ATTRIBUTE_ID]\n  \n  'xml:space':\n    ruleTypes: [ATTRIBUTE_PRESERVE_WHITESPACE]\n    preserve: ['xml:space', EQUALS, preserve]\n    default: ['xml:space', EQUALS, default]\n\nelements:\n  # translatable attributes\n  othermeta:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [content]\n  \n  topicref:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n  \n  topicgroup:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n  \n  topichead:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n    \n  note:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [othertype]\n  \n  lq:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [reftitle]\n  \n  object:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [standby]\n  \n  map:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [title]\n   \n  state:\n    ruleTypes: [ATTRIBUTES_ONLY, INLINE]\n    translatableAttributes: [value]\n\n  data:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [label]\n  \n  vrm:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [version]\n    \n  # pre-formatted elements\n  pre:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  lines:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  screen:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  msgblock:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  codeblock:\n    ruleTypes: [PRESERVE_WHITESPACE]\n\n  # exclusion rules\n  '.*':\n    ruleTypes: [EXCLUDE]\n    conditions: [translate, EQUALS, 'no']\n\n  # '.+' is a trick to have same regex as above.\n  # hashmap doesn't allow duplicates\n  '.+':\n    ruleTypes: [INCLUDE]\n    conditions: [translate, EQUALS, 'yes']\n  \n  stylesheet:\n    ruleTypes: [EXCLUDE]\n  \n  coords:\n    ruleTypes: [EXCLUDE]\n    \n  draft-comment:\n    ruleTypes: [EXCLUDE]\n    \n  required-cleanup:\n    ruleTypes: [EXCLUDE]\n    \n  shape:\n    ruleTypes: [EXCLUDE]\n    \n  # inline elements\n  alt:\n    ruleTypes: [INLINE]\n  \n  apiname:\n    ruleTypes: [INLINE]\n  \n  b:\n    ruleTypes: [INLINE]\n  \n  boolean:\n    ruleTypes: [INLINE]\n  \n  cite:\n    ruleTypes: [INLINE]\n  \n  cmdname:\n    ruleTypes: [INLINE]\n  \n  codeph:\n    ruleTypes: [INLINE]\n  \n  delim:\n    ruleTypes: [INLINE]\n  \n  filepath:\n    ruleTypes: [INLINE]\n  \n  fragref:\n    ruleTypes: [INLINE]\n  \n  i:\n    ruleTypes: [INLINE]\n  \n  image:\n    ruleTypes: [INLINE]\n    translatableAttributes: [alt]\n    conditions: [placement, NOT_EQUALS, break]\n  \n  itemgroup:\n    ruleTypes: [INLINE]\n  \n  keyword:\n    ruleTypes: [INLINE]\n  \n  kwd:\n    ruleTypes: [INLINE]\n  \n  menucascade:\n    ruleTypes: [INLINE]\n  \n  msgnum:\n    ruleTypes: [INLINE]\n  \n  msgph:\n    ruleTypes: [INLINE]\n  \n  oper:\n    ruleTypes: [INLINE]\n  \n  option:\n    ruleTypes: [INLINE]\n  \n  parmname:\n    ruleTypes: [INLINE]\n  \n  ph:\n    ruleTypes: [INLINE]\n  \n  q:\n    ruleTypes: [INLINE]\n  \n  repsep:\n    ruleTypes: [INLINE]\n  \n  sep:\n    ruleTypes: [INLINE]\n  \n  shortcut:\n    ruleTypes: [INLINE]\n\n  sub:\n    ruleTypes: [INLINE]\n  \n  sup:\n    ruleTypes: [INLINE]\n  \n  synnoteref:\n    ruleTypes: [INLINE]\n  \n  synph:\n    ruleTypes: [INLINE]\n  \n  systemoutput:\n    ruleTypes: [INLINE]\n  \n  term:\n    ruleTypes: [INLINE]\n  \n  tm:\n    ruleTypes: [INLINE]\n  \n  tt:\n    ruleTypes: [INLINE]\n  \n  u:\n    ruleTypes: [INLINE]\n  \n  uicontrol:\n    ruleTypes: [INLINE]\n  \n  userinput:\n    ruleTypes: [INLINE]\n  \n  var:\n    ruleTypes: [INLINE]\n  \n  varname:\n    ruleTypes: [INLINE]\n  \n  wintitle:\n    ruleTypes: [INLINE]\n  \n  xref:\n    ruleTypes: [INLINE]                              \n",
+        "parametersRaw": "assumeWellformed: true\npreserve_whitespace: false\n\nattributes:\n  # attributes that can appear anywhere\n  'xml:lang':\n    ruleTypes: [ATTRIBUTE_WRITABLE]\n  \n  # This rule will not apply unless TEXT_UNIT element rules are defined which may have an id\n  'xml:id':\n    ruleTypes: [ATTRIBUTE_ID]\n  'id':\n    ruleTypes: [ATTRIBUTE_ID]\n  \n  'xml:space':\n    ruleTypes: [ATTRIBUTE_PRESERVE_WHITESPACE]\n    preserve: ['xml:space', EQUALS, preserve]\n    default: ['xml:space', EQUALS, default]\n\nelements:\n  # translatable attributes\n  othermeta:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [content]\n  \n  topicref:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n  \n  topicgroup:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n  \n  topichead:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n    \n  note:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [othertype]\n  \n  lq:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [reftitle]\n  \n  object:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [standby]\n  \n  map:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [title]\n   \n  state:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [value]\n  \n  data:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [label]\n  \n  vrm:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [version]\n    \n  # pre-formatted elements\n  pre:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  lines:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  screen:\n    ruleTypes: [PRESERVE_WHITESPACE]\n\n  # exclusion rules\n  '.*':\n    ruleTypes: [EXCLUDE]\n    conditions: [translate, EQUALS, 'no']\n  \n  stylesheet:\n    ruleTypes: [EXCLUDE]\n  \n  coords:\n    ruleTypes: [EXCLUDE]\n    \n  draft-comment:\n    ruleTypes: [EXCLUDE]\n    \n  required-cleanup:\n    ruleTypes: [EXCLUDE]\n    \n  shape:\n    ruleTypes: [EXCLUDE]\n    \n  # inline elements\n  alt:\n    ruleTypes: [INLINE]\n  \n  apiname:\n    ruleTypes: [INLINE]\n  \n  b:\n    ruleTypes: [INLINE]\n  \n  boolean:\n    ruleTypes: [INLINE]\n  \n  cite:\n    ruleTypes: [INLINE]\n  \n  cmdname:\n    ruleTypes: [INLINE]\n  \n  codeph:\n    ruleTypes: [INLINE]\n  \n  delim:\n    ruleTypes: [INLINE]\n  \n  filepath:\n    ruleTypes: [INLINE]\n  \n  fragref:\n    ruleTypes: [INLINE]\n  \n  i:\n    ruleTypes: [INLINE]\n  \n  image:\n    ruleTypes: [INLINE]\n    translatableAttributes: [alt]\n    conditions: [placement, NOT_EQUALS, break]\n  \n  itemgroup:\n    ruleTypes: [INLINE]\n  \n  keyword:\n    ruleTypes: [INLINE]\n  \n  kwd:\n    ruleTypes: [INLINE]\n  \n  menucascade:\n    ruleTypes: [INLINE]\n  \n  msgnum:\n    ruleTypes: [INLINE]\n  \n  msgph:\n    ruleTypes: [INLINE]\n  \n  oper:\n    ruleTypes: [INLINE]\n  \n  option:\n    ruleTypes: [INLINE]\n  \n  parmname:\n    ruleTypes: [INLINE]\n  \n  ph:\n    ruleTypes: [INLINE]\n  \n  q:\n    ruleTypes: [INLINE]\n  \n  repsep:\n    ruleTypes: [INLINE]\n  \n  sep:\n    ruleTypes: [INLINE]\n  \n  shortcut:\n    ruleTypes: [INLINE]\n  \n  state:\n    ruleTypes: [INLINE]\n  \n  sub:\n    ruleTypes: [INLINE]\n  \n  sup:\n    ruleTypes: [INLINE]\n  \n  synnoteref:\n    ruleTypes: [INLINE]\n  \n  synph:\n    ruleTypes: [INLINE]\n  \n  systemoutput:\n    ruleTypes: [INLINE]\n  \n  term:\n    ruleTypes: [INLINE]\n  \n  tm:\n    ruleTypes: [INLINE]\n  \n  tt:\n    ruleTypes: [INLINE]\n  \n  u:\n    ruleTypes: [INLINE]\n  \n  uicontrol:\n    ruleTypes: [INLINE]\n  \n  userinput:\n    ruleTypes: [INLINE]\n  \n  var:\n    ruleTypes: [INLINE]\n  \n  varname:\n    ruleTypes: [INLINE]\n  \n  wintitle:\n    ruleTypes: [INLINE]\n  \n  xref:\n    ruleTypes: [INLINE]                              \n",
         "parameters": {
           "assumeWellformed": true,
           "preserve_whitespace": false,
@@ -170,15 +170,6 @@
                 "title"
               ]
             },
-            "state": {
-              "ruleTypes": [
-                "ATTRIBUTES_ONLY",
-                "INLINE"
-              ],
-              "translatableAttributes": [
-                "value"
-              ]
-            },
             "data": {
               "ruleTypes": [
                 "ATTRIBUTES_ONLY"
@@ -210,16 +201,6 @@
                 "PRESERVE_WHITESPACE"
               ]
             },
-            "msgblock": {
-              "ruleTypes": [
-                "PRESERVE_WHITESPACE"
-              ]
-            },
-            "codeblock": {
-              "ruleTypes": [
-                "PRESERVE_WHITESPACE"
-              ]
-            },
             ".*": {
               "ruleTypes": [
                 "EXCLUDE"
@@ -228,16 +209,6 @@
                 "translate",
                 "EQUALS",
                 "no"
-              ]
-            },
-            ".+": {
-              "ruleTypes": [
-                "INCLUDE"
-              ],
-              "conditions": [
-                "translate",
-                "EQUALS",
-                "yes"
               ]
             },
             "stylesheet": {
@@ -399,6 +370,11 @@
               ]
             },
             "shortcut": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "state": {
               "ruleTypes": [
                 "INLINE"
               ]
@@ -810,8 +786,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 7,
-  "x-baseHash": "ce38715d9485",
-  "x-compositeHash": "c5f58b9b29ea",
-  "x-introducedInOkapi": "1.43.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "dacc86936829",
+  "x-compositeHash": "8298deb5a236"
 }

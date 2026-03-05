@@ -298,6 +298,18 @@
           "description": "Use localization directives"
         }
       }
+    },
+    "subfilters": {
+      "type": "object",
+      "description": "Sub-filter configuration",
+      "properties": {
+        "subFilter": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "subFilter",
+          "description": "Sub-filter for content processing"
+        }
+      }
     }
   },
   "additionalProperties": false,
@@ -374,8 +386,8 @@
     }
   },
   "x-schemaVersion": 3,
-  "x-baseVersion": 13,
-  "x-baseHash": "97d10677ce0c",
-  "x-compositeHash": "d3df1e810a11",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.43.0",
+  "x-baseHash": "ccd8eedf5b0a",
+  "x-compositeHash": "062219721c04"
 }

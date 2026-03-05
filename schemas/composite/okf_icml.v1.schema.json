@@ -21,7 +21,7 @@
         "name": "ICML",
         "description": "Adobe InDesign ICML documents",
         "mimeType": "application/x-icml+xml",
-        "extensions": ".wcml;.icml;",
+        "extensions": ".wcml;.icml",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.icml.ICMLFilter"
       }
@@ -55,7 +55,7 @@
         "newTuOnBr": {
           "type": "boolean",
           "default": false,
-          "title": "Create new paragraphs on hard returns (<Br/> elements)",
+          "title": "Create new paragraphs on hard returns (<Br/> elements) [BETA]",
           "x-flattenPath": "newTuOnBr",
           "description": "Start new text unit on line break"
         },
@@ -154,8 +154,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 9,
-  "x-baseHash": "7a43dc382e10",
-  "x-compositeHash": "1ca841883acf",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "8acce6be6c05",
+  "x-compositeHash": "3214c652bd3a"
 }

@@ -159,29 +159,6 @@
         },
         "isDefault": false,
         "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
-      },
-      {
-        "configId": "okf_xml-docbook",
-        "name": "DocBook",
-        "description": "Configuration for DocBook v5 files",
-        "mimeType": "text/xml",
-        "parametersLocation": "okf_xml-docbook.fprm",
-        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<its:rules version=\"1.0\" xmlns:its=\"http://www.w3.org/2005/11/its\"\n    xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\"\n    xmlns:db=\"http://docbook.org/ns/docbook\">\n    <!-- Inline elements -->\n    <its:withinTextRule selector=\"\n        //db:abbrev|//db:acronym|//db:emphasis|//db:phrase|//db:quote|//db:trademark|\n        //db:anchor|//db:citation|//db:citerefentry|//db:citetitle|//db:firstterm|//db:glossterm|//db:link|//db:olink|//db:xref|\n        //db:foreignphrase|//db:wordasword|//db:computeroutput|//db:literal|//db:markup|//db:prompt|//db:replaceable|//db:tag|//db:userinput|\n        //db:inlineequation|//db:mathphrase|//db:subscript|//db:superscript|\n        //db:accel|//db:guibutton|//db:guiicon|//db:guilabel|//db:guimenu|//db:guimenuitem|//db:guisubmenu|\n        //db:keycap|//db:keycode|//db:keycombo|//db:keysym|//db:menuchoice|//db:mousebutton|//db:shortcut|\n        //db:classname|//db:constant|//db:errorcode|//db:errorname|//db:errortype|//db:function|\n        //db:msgtext|//db:parameter|//db:property|//db:replaceable|//db:returnvalue|//db:symbol|//db:token|//db:type|//db:varname|\n        //db:application|//db:command|//db:envar|//db:filename|//db:msgtext|//db:option|//db:parameter|//db:prompt|//db:systemitem|\n        //db:database|//db:email|//db:hardware|//db:optional|//db:cover|//db:comment\"\n        withinText=\"yes\"/>\n\n    <!-- Elements that should not be translated. -->\n    <its:translateRule selector=\"\n        //db:computeroutput|//db:programlisting|//db:screen|//db:screenshot|//db:synopsis|\n        //db:literallayout|\n        //db:mathphrase/*|//db:inlineequation/*\" translate=\"no\"/>\n\n    <!-- These should be translated and the spaces have to be preserved. -->\n    <!-- Currently, literallayout would be the only one where the spaces should be preserved\n         but it is set not to be translated, as it is listed in translateRule/@selector above.\n         To make literallayout translatable, remove it from the selector and uncomment the line below. -->\n    <!-- its:preserveSpaceRule selector=\"//db:literallayout\" space=\"preserve\"/ -->\n\n    <!-- These elements should generate a separate flow of text.\n         Based on https://www.w3.org/TR/xml-i18n-bp/#docbook\n         ITSFilter DOES NOT HANDLE withinText=\"nested\" as of March 2021, however,\n         and this has no real effect. -->\n    <its:withinTextRule withinText=\"nested\" selector=\"\n        //db:alt|\n        //db:footnote|\n        //db:remark|\n        //db:indexterm|\n        //db:primary|\n        //db:secondary|\n        //db:tertiary\"/>\n</its:rules>\n",
-        "parameters": {
-          "<?xml version": "\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>",
-          "<its:rules version": "\"1.0\" xmlns:its=\"http://www.w3.org/2005/11/its\"",
-          "xmlns:itsx": "\"http://www.w3.org/2008/12/its-extensions\"",
-          "xmlns:db": "\"http://docbook.org/ns/docbook\">",
-          "<its:withinTextRule selector": "\"",
-          "withinText": "\"yes\"/>",
-          "<its:translateRule selector": "\"",
-          "//db:mathphrase/*|//db:inlineequation/*\" translate": "\"no\"/>",
-          "<!-- its:preserveSpaceRule selector": "\"//db:literallayout\" space=\"preserve\"/ -->",
-          "ITSFilter DOES NOT HANDLE withinText": "\"nested\" as of March 2021, however,",
-          "<its:withinTextRule withinText": "\"nested\" selector=\""
-        },
-        "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
       }
     ],
     "serializationFormat": "yaml"
@@ -198,8 +175,8 @@
   },
   "additionalProperties": false,
   "x-schemaVersion": 1,
-  "x-baseVersion": 7,
-  "x-baseHash": "d65edc3c49fc",
-  "x-compositeHash": "d49e9909ec9a",
-  "x-introducedInOkapi": "1.47.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "f019c0380a0d",
+  "x-compositeHash": "ff81e79c4a91"
 }

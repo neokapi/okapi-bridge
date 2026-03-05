@@ -17,7 +17,7 @@
     "configurations": [
       {
         "configId": "okf_mif",
-        "name": "MIF",
+        "name": "MIF (BETA)",
         "description": "Adobe FrameMaker MIF documents",
         "mimeType": "application/vnd.mif",
         "extensions": ".mif;",
@@ -76,24 +76,6 @@
           "default": false,
           "x-flattenPath": "extractLinks",
           "description": "Extract cross-reference links"
-        },
-        "extractHardReturnsAsText": {
-          "type": "boolean",
-          "default": true,
-          "x-flattenPath": "extractHardReturnsAsText",
-          "description": "Extract hard returns as text"
-        },
-        "extractPgfNumFormatsInline": {
-          "type": "boolean",
-          "default": false,
-          "x-flattenPath": "extractPgfNumFormatsInline",
-          "description": "Extract paragraph number formats inline"
-        },
-        "extractReferenceFormats": {
-          "type": "boolean",
-          "default": false,
-          "x-flattenPath": "extractReferenceFormats",
-          "description": "Extract reference formats"
         }
       }
     }
@@ -172,8 +154,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 13,
-  "x-baseHash": "ea222d7146dc",
-  "x-compositeHash": "a3a337561726",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "c42257c49697",
+  "x-compositeHash": "91da0a3997fc"
 }

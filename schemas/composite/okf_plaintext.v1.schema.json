@@ -22,8 +22,7 @@
         "mimeType": "text/plain",
         "extensions": ".txt;",
         "isDefault": true,
-        "filterClass": "net.sf.okapi.filters.plaintext.base.BasePlainTextFilter",
-        "schemaRef": "okf_baseplaintext.schema.json"
+        "filterClass": "net.sf.okapi.filters.plaintext.PlainTextFilter"
       },
       {
         "configId": "okf_plaintext_trim_trail",
@@ -43,8 +42,7 @@
           "_parametersClass": "net.sf.okapi.filters.plaintext.base.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.plaintext.base.BasePlainTextFilter",
-        "schemaRef": "okf_baseplaintext.schema.json"
+        "filterClass": "net.sf.okapi.filters.plaintext.PlainTextFilter"
       },
       {
         "configId": "okf_plaintext_trim_all",
@@ -64,8 +62,7 @@
           "_parametersClass": "net.sf.okapi.filters.plaintext.base.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.plaintext.base.BasePlainTextFilter",
-        "schemaRef": "okf_baseplaintext.schema.json"
+        "filterClass": "net.sf.okapi.filters.plaintext.PlainTextFilter"
       },
       {
         "configId": "okf_plaintext_paragraphs",
@@ -86,8 +83,7 @@
           "_parametersClass": "net.sf.okapi.filters.plaintext.paragraphs.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.plaintext.paragraphs.ParaPlainTextFilter",
-        "schemaRef": "okf_paraplaintext.schema.json"
+        "filterClass": "net.sf.okapi.filters.plaintext.PlainTextFilter"
       },
       {
         "configId": "okf_plaintext_spliced_backslash",
@@ -109,8 +105,7 @@
           "_parametersClass": "net.sf.okapi.filters.plaintext.spliced.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.plaintext.spliced.SplicedLinesFilter",
-        "schemaRef": "okf_splicedlines.schema.json"
+        "filterClass": "net.sf.okapi.filters.plaintext.PlainTextFilter"
       },
       {
         "configId": "okf_plaintext_spliced_underscore",
@@ -132,8 +127,7 @@
           "_parametersClass": "net.sf.okapi.filters.plaintext.spliced.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.plaintext.spliced.SplicedLinesFilter",
-        "schemaRef": "okf_splicedlines.schema.json"
+        "filterClass": "net.sf.okapi.filters.plaintext.PlainTextFilter"
       },
       {
         "configId": "okf_plaintext_spliced_custom",
@@ -155,8 +149,7 @@
           "_parametersClass": "net.sf.okapi.filters.plaintext.spliced.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.plaintext.spliced.SplicedLinesFilter",
-        "schemaRef": "okf_splicedlines.schema.json"
+        "filterClass": "net.sf.okapi.filters.plaintext.PlainTextFilter"
       },
       {
         "configId": "okf_plaintext_regex_lines",
@@ -180,8 +173,7 @@
           "_parametersClass": "net.sf.okapi.filters.plaintext.regex.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.plaintext.regex.RegexPlainTextFilter",
-        "schemaRef": "okf_regexplaintext.schema.json"
+        "filterClass": "net.sf.okapi.filters.plaintext.PlainTextFilter"
       },
       {
         "configId": "okf_plaintext_regex_paragraphs",
@@ -205,8 +197,7 @@
           "_parametersClass": "net.sf.okapi.filters.plaintext.regex.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.plaintext.regex.RegexPlainTextFilter",
-        "schemaRef": "okf_regexplaintext.schema.json"
+        "filterClass": "net.sf.okapi.filters.plaintext.PlainTextFilter"
       }
     ],
     "serializationFormat": "stringParameters"
@@ -220,8 +211,8 @@
   },
   "additionalProperties": false,
   "x-schemaVersion": 1,
-  "x-baseVersion": 5,
-  "x-baseHash": "a3e71336568d",
-  "x-compositeHash": "eb46657fcb5d",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "8d455f272593",
+  "x-compositeHash": "93b9148c9458"
 }

@@ -10,6 +10,7 @@
     "class": "net.sf.okapi.filters.xliff.XLIFFFilter",
     "extensions": [
       ".xlf",
+      ".xlif",
       ".xliff",
       ".mxliff",
       ".mqxliff",
@@ -24,7 +25,7 @@
         "name": "XLIFF",
         "description": "Configuration for XML Localisation Interchange File Format (XLIFF) documents.",
         "mimeType": "application/x-xliff+xml",
-        "extensions": ".xlf;.xliff;.mxliff;.mqxliff;",
+        "extensions": ".xlf;.xlif;.xliff;.mxliff;.mqxliff;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.xliff.XLIFFFilter"
       },
@@ -244,6 +245,12 @@
           "x-flattenPath": "allowEmptyTargets",
           "description": "Allow empty target elements"
         },
+        "alwaysAddTargets": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "alwaysAddTargets",
+          "description": "Always add target elements"
+        },
         "alwaysUseSegSource": {
           "type": "boolean",
           "default": false,
@@ -266,6 +273,12 @@
           "default": "",
           "x-flattenPath": "cdataSubfilter",
           "description": "Sub-filter for CDATA content"
+        },
+        "pcdataSubfilter": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "pcdataSubfilter",
+          "description": "Sub-filter for PCDATA content"
         }
       }
     },
@@ -464,8 +477,8 @@
     }
   },
   "x-schemaVersion": 6,
-  "x-baseVersion": 22,
-  "x-baseHash": "ac3307c5f436",
-  "x-compositeHash": "8e67d0666ca4",
-  "x-introducedInOkapi": "1.43.0"
+  "x-baseVersion": 6,
+  "x-introducedInOkapi": "1.46.0",
+  "x-baseHash": "82e03b6f87ec",
+  "x-compositeHash": "33b92ef8efc2"
 }

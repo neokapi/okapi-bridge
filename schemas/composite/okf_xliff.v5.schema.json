@@ -35,7 +35,7 @@
         "mimeType": "application/x-xliff+xml",
         "extensions": ".sdlxliff;",
         "parametersLocation": "sdl.fprm",
-        "parametersRaw": "#v1\nuseCustomParser.b=true\nfactoryClass=com.ctc.wstx.stax.WstxInputFactory\nfallbackToID.b=false\nescapeGT.b=false\naddTargetLanguage.b=true\noverrideTargetLanguage.b=false\noutputSegmentationType.i=0\nignoreInputSegmentation.b=false\naddAltTrans.b=false\naddAltTransGMode.b=true\neditAltTrans.b=false\nincludeExtensions.b=true\nincludeIts.b=true\nbalanceCodes.b=true\nallowEmptyTargets.b=false\ntargetStateMode.i=0\ntargetStateValue=needs-translation\nalwaysUseSegSource.b=false\nquoteModeDefined.b=true\nquoteMode.i=0\nuseSdlXliffWriter.b=true\nsdlSegConfValue=Translated\npreserveSpaceByDefault.b=true\nskipNoMrkSegSource.b=true\n",
+        "parametersRaw": "#v1\nuseCustomParser.b=true\nfactoryClass=com.ctc.wstx.stax.WstxInputFactory\nfallbackToID.b=false\nescapeGT.b=false\naddTargetLanguage.b=true\noverrideTargetLanguage.b=false\noutputSegmentationType.i=0\nignoreInputSegmentation.b=false\naddAltTrans.b=false\naddAltTransGMode.b=true\neditAltTrans.b=false\nincludeExtensions.b=true\nincludeIts.b=true\nbalanceCodes.b=true\nallowEmptyTargets.b=false\ntargetStateMode.i=0\ntargetStateValue=needs-translation\nalwaysUseSegSource.b=false\nquoteModeDefined.b=true\nquoteMode.i=0\nuseSdlXliffWriter.b=true\nsdlSegConfValue=Translated\npreserveSpaceByDefault.b=true\nskipNoMrkSegSource.b=true\nuseTranslationTargetState.b=false\n",
         "parameters": {
           "useCustomParser": true,
           "factoryClass": "com.ctc.wstx.stax.WstxInputFactory",
@@ -60,7 +60,8 @@
           "useSdlXliffWriter": true,
           "sdlSegConfValue": "Translated",
           "preserveSpaceByDefault": true,
-          "skipNoMrkSegSource": true
+          "skipNoMrkSegSource": true,
+          "useTranslationTargetState": false
         },
         "isDefault": false,
         "filterClass": "net.sf.okapi.filters.xliff.XLIFFFilter"
@@ -194,6 +195,12 @@
           "default": "needs-translation",
           "x-flattenPath": "targetStateValue",
           "description": "State value to set on targets"
+        },
+        "useTranslationTargetState": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "useTranslationTargetState",
+          "description": "Use translation-specific target state"
         },
         "editAltTrans": {
           "type": "boolean",
@@ -381,10 +388,6 @@
           "description": "IWS translation type value"
         }
       }
-    },
-    "balanceCodes": {
-      "type": "boolean",
-      "default": true
     }
   },
   "additionalProperties": false,
@@ -461,8 +464,8 @@
     }
   },
   "x-schemaVersion": 5,
-  "x-baseVersion": 21,
-  "x-baseHash": "6f76d74ef63e",
-  "x-compositeHash": "c1f1ef8b88fd",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 5,
+  "x-introducedInOkapi": "1.43.0",
+  "x-baseHash": "ac3307c5f436",
+  "x-compositeHash": "8e67d0666ca4"
 }

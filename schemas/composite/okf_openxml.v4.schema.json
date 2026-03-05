@@ -161,11 +161,71 @@
           "x-flattenPath": "bPreferenceIgnorePlaceholdersInPowerpointMasters",
           "description": "Ignore placeholders in masters"
         },
+        "reorderNotes": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceReorderPowerpointNotes",
+          "description": "Reorder notes"
+        },
+        "reorderCharts": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "reorderPowerpointCharts",
+          "description": "Reorder charts"
+        },
+        "reorderComments": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "reorderPowerpointComments",
+          "description": "Reorder comments"
+        },
+        "reorderDiagramData": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "reorderPowerpointDiagramData",
+          "description": "Reorder diagram data"
+        },
+        "reorderDocProperties": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "reorderPowerpointDocProperties",
+          "description": "Reorder doc properties"
+        },
+        "reorderRelationships": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "reorderPowerpointRelationships",
+          "description": "Reorder relationships"
+        },
         "reorderNotesAndComments": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "bReorderPowerpointNotesAndComments",
           "description": "Reorder notes and comments"
+        },
+        "translateCharts": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translatePowerpointCharts",
+          "description": "Translate chart text"
+        },
+        "translateComments": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translatePowerpointComments",
+          "description": "Translate comments"
+        },
+        "translateDiagramData": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translatePowerpointDiagramData",
+          "description": "Translate diagram data"
+        },
+        "translateDocProperties": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translatePowerpointDocProperties",
+          "description": "Translate doc properties"
         }
       }
     },
@@ -252,16 +312,12 @@
           "description": "File type identifier"
         }
       }
-    },
-    "bPreferenceTranslateExcelExcludeColumns": {
-      "type": "boolean",
-      "default": false
     }
   },
   "additionalProperties": false,
   "x-schemaVersion": 4,
-  "x-baseVersion": 18,
-  "x-baseHash": "d6b2e6c2d800",
-  "x-compositeHash": "f3247aa58cf0",
-  "x-introducedInOkapi": "1.43.0"
+  "x-baseVersion": 4,
+  "x-introducedInOkapi": "1.45.0",
+  "x-baseHash": "621680368337",
+  "x-compositeHash": "5cc818263f2c"
 }

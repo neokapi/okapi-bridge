@@ -276,8 +276,8 @@
     }
   },
   "x-schemaVersion": 7,
-  "x-baseVersion": 23,
+  "x-baseVersion": 7,
+  "x-introducedInOkapi": "1.48.0",
   "x-baseHash": "106a1dc7eef3",
-  "x-compositeHash": "1d20d66a5f87",
-  "x-introducedInOkapi": "1.48.0"
+  "x-compositeHash": "1d20d66a5f87"
 }

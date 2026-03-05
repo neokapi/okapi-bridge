@@ -2,17 +2,14 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_xliff2.schema.json",
   "$version": "1.0.0",
-  "title": "XLIFF-2 Filter Filter",
-  "description": "Configuration for the Okapi XLIFF-2 Filter Filter",
+  "title": "XLIFF-2 Filter (BETA) Filter",
+  "description": "Configuration for the Okapi XLIFF-2 Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_xliff2",
     "class": "net.sf.okapi.filters.xliff2.XLIFF2Filter",
     "extensions": [
-      ".xlf",
-      ".xliff",
-      ".xlf2",
-      ".xliff2"
+      ".xlf"
     ],
     "mimeTypes": [
       "application/xliff+xml"
@@ -23,7 +20,7 @@
         "name": "XLIFF-2",
         "description": "Configuration for XLIFF-2 documents.",
         "mimeType": "application/xliff+xml",
-        "extensions": ".xlf;.xliff;.xlf2;.xliff2",
+        "extensions": ".xlf",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.xliff2.XLIFF2Filter"
       }
@@ -44,49 +41,11 @@
           "x-flattenPath": "needsSegmentation",
           "description": "Apply segmentation to content"
         },
-        "forceUniqueIds": {
-          "type": "boolean",
-          "default": false,
-          "title": "Ensure tag IDs are unique within units",
-          "x-widget": "checkbox",
-          "x-flattenPath": "forceUniqueIds",
-          "description": "Force unique text unit IDs"
-        },
         "simplifyTags": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "x-flattenPath": "simplifyTags",
           "description": "Simplify inline tags"
-        },
-        "ignoreTagTypeMatch": {
-          "type": "boolean",
-          "default": false,
-          "title": "Ignore tag type mismatch between source and target",
-          "x-widget": "checkbox",
-          "x-flattenPath": "ignoreTagTypeMatch",
-          "description": "Ignore tag type matching"
-        }
-      }
-    },
-    "states": {
-      "type": "object",
-      "description": "Translation state handling",
-      "properties": {
-        "discardInvalidTargets": {
-          "type": "boolean",
-          "default": false,
-          "title": "Discard invalid targets rather than rejecting the file",
-          "x-widget": "checkbox",
-          "x-flattenPath": "discardInvalidTargets",
-          "description": "Discard invalid target elements"
-        },
-        "subfilterOverwriteTarget": {
-          "type": "boolean",
-          "default": false,
-          "title": "Subfilter: Always Overwrite Target?",
-          "description": "Sub-filter overwrites target",
-          "x-widget": "checkbox",
-          "x-flattenPath": "subfilterOverwriteTarget"
         }
       }
     },
@@ -94,14 +53,6 @@
       "type": "object",
       "description": "Output settings",
       "properties": {
-        "writeOriginalData": {
-          "type": "boolean",
-          "default": true,
-          "title": "Output includes original data when available",
-          "x-widget": "checkbox",
-          "x-flattenPath": "writeOriginalData",
-          "description": "Write original data to output"
-        },
         "maxValidation": {
           "type": "boolean",
           "default": true,
@@ -111,6 +62,10 @@
           "description": "Maximum validation level"
         }
       }
+    },
+    "mergeAsParagraph": {
+      "type": "boolean",
+      "default": false
     }
   },
   "additionalProperties": false,
@@ -184,8 +139,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 15,
-  "x-baseHash": "81c85cca248b",
-  "x-compositeHash": "81c85cca248b",
-  "x-introducedInOkapi": "1.47.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "d9f45854bad5",
+  "x-compositeHash": "d9f45854bad5"
 }

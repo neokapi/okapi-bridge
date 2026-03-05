@@ -20,36 +20,6 @@
         "mimeType": "text/x-messageformat",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
-      },
-      {
-        "configId": "okf_messageformat-json",
-        "name": "ICU Message Format",
-        "description": "ICU Message Format From JSON",
-        "mimeType": "text/x-messageformat",
-        "parametersLocation": "okf_messageformat@json.fprm",
-        "parametersRaw": "#v1\naddPluralForms.b=true\nnormalize.b=true\nprettyPrint.b=false\n",
-        "parameters": {
-          "addPluralForms": true,
-          "normalize": true,
-          "prettyPrint": false
-        },
-        "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
-      },
-      {
-        "configId": "okf_messageformat-yaml",
-        "name": "ICU Message Format",
-        "description": "ICU Message Format From YAML",
-        "mimeType": "text/x-messageformat",
-        "parametersLocation": "okf_messageformat@yaml.fprm",
-        "parametersRaw": "#v1\naddPluralForms.b=true\nnormalize.b=true\nprettyPrint.b=true\n",
-        "parameters": {
-          "addPluralForms": true,
-          "normalize": true,
-          "prettyPrint": true
-        },
-        "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
       }
     ],
     "serializationFormat": "stringParameters"
@@ -157,8 +127,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 7,
-  "x-baseHash": "e8214fa55c62",
-  "x-compositeHash": "4256972230f0",
-  "x-introducedInOkapi": "1.47.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "1.46.0",
+  "x-baseHash": "d463c148be5f",
+  "x-compositeHash": "75f6a6b70d54"
 }

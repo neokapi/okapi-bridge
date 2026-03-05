@@ -86,6 +86,12 @@
           "x-flattenPath": "bPreferenceTranslateWordExcludeColors",
           "description": "Exclude specific font colors"
         },
+        "allowStyleOptimisation": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "allowWordStyleOptimisation",
+          "description": "Allow style optimization"
+        },
         "translateNumberingLevelText": {
           "type": "boolean",
           "default": false,
@@ -151,6 +157,12 @@
           "default": false,
           "x-flattenPath": "bPreferenceTranslateExcelExcludeColors",
           "description": "Exclude specific cell colors"
+        },
+        "preserveStylesInTargetColumns": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "preserveExcelStylesInTargetColumns",
+          "description": "Preserve styles in target columns"
         },
         "translateCellsCopied": {
           "type": "boolean",
@@ -438,8 +450,8 @@
     }
   },
   "x-schemaVersion": 6,
-  "x-baseVersion": 20,
-  "x-baseHash": "876340857b54",
-  "x-compositeHash": "67b3fdad7180",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 6,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "2179ca9f5dbb",
+  "x-compositeHash": "ae425f66a75a"
 }

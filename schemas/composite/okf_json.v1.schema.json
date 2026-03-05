@@ -62,12 +62,6 @@
           "description": "Comma-separated list of keys to exclude from extraction.",
           "x-widget": "tagList",
           "x-placeholder": "key1,key2,key3"
-        },
-        "subfilterRules": {
-          "type": "string",
-          "default": "",
-          "x-flattenPath": "subfilterRules",
-          "description": "Sub-filter rules for embedded content"
         }
       }
     },
@@ -92,12 +86,6 @@
           "default": true,
           "x-flattenPath": "useLeadingSlashOnKeyPath",
           "description": "Include leading slash in key path names."
-        },
-        "useIdStack": {
-          "type": "boolean",
-          "default": false,
-          "x-flattenPath": "useIdStack",
-          "description": "Build TextUnit IDs from nested key stack."
         },
         "idRules": {
           "type": "string",
@@ -126,13 +114,6 @@
           "default": "",
           "x-flattenPath": "genericMetaRules",
           "description": "Regex for keys whose values become generic metadata.",
-          "x-widget": "regexBuilder"
-        },
-        "maxwidthRules": {
-          "type": "string",
-          "default": "",
-          "x-flattenPath": "maxwidthRules",
-          "description": "Regex for keys whose values set max width constraints.",
           "x-widget": "regexBuilder"
         }
       }
@@ -249,8 +230,8 @@
     }
   },
   "x-schemaVersion": 1,
-  "x-baseVersion": 9,
-  "x-baseHash": "557ea6484b81",
-  "x-compositeHash": "e5fef5d3331d",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "bf76f4aa49d6",
+  "x-compositeHash": "4e1bfb798a53"
 }

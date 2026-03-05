@@ -68,10 +68,40 @@
         }
       }
     },
+    "states": {
+      "type": "object",
+      "description": "Translation state handling",
+      "properties": {
+        "discardInvalidTargets": {
+          "type": "boolean",
+          "default": false,
+          "title": "Discard invalid targets rather than rejecting the file",
+          "x-widget": "checkbox",
+          "x-flattenPath": "discardInvalidTargets",
+          "description": "Discard invalid target elements"
+        },
+        "subfilterOverwriteTarget": {
+          "type": "boolean",
+          "default": false,
+          "title": "Subfilter: Always Overwrite Target?",
+          "description": "Sub-filter overwrites target",
+          "x-widget": "checkbox",
+          "x-flattenPath": "subfilterOverwriteTarget"
+        }
+      }
+    },
     "output": {
       "type": "object",
       "description": "Output settings",
       "properties": {
+        "writeOriginalData": {
+          "type": "boolean",
+          "default": true,
+          "title": "Output includes original data when available",
+          "x-widget": "checkbox",
+          "x-flattenPath": "writeOriginalData",
+          "description": "Write original data to output"
+        },
         "maxValidation": {
           "type": "boolean",
           "default": true,
@@ -154,8 +184,8 @@
     }
   },
   "x-schemaVersion": 7,
-  "x-baseVersion": 21,
-  "x-baseHash": "2758d0505de7",
-  "x-compositeHash": "2758d0505de7",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 7,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "81c85cca248b",
+  "x-compositeHash": "81c85cca248b"
 }

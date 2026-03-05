@@ -93,6 +93,12 @@
           "x-flattenPath": "useLeadingSlashOnKeyPath",
           "description": "Include leading slash in key path names."
         },
+        "useIdStack": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useIdStack",
+          "description": "Build TextUnit IDs from nested key stack."
+        },
         "idRules": {
           "type": "string",
           "default": "",
@@ -120,6 +126,13 @@
           "default": "",
           "x-flattenPath": "genericMetaRules",
           "description": "Regex for keys whose values become generic metadata.",
+          "x-widget": "regexBuilder"
+        },
+        "maxwidthRules": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "maxwidthRules",
+          "description": "Regex for keys whose values set max width constraints.",
           "x-widget": "regexBuilder"
         }
       }
@@ -236,8 +249,8 @@
     }
   },
   "x-schemaVersion": 3,
-  "x-baseVersion": 11,
-  "x-baseHash": "8069fb498a4c",
-  "x-compositeHash": "694177b14516",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.46.0",
+  "x-baseHash": "557ea6484b81",
+  "x-compositeHash": "e5fef5d3331d"
 }

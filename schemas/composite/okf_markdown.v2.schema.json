@@ -13,15 +13,15 @@
       ".markdown"
     ],
     "mimeTypes": [
-      "text/x-markdown"
+      "text/markdown"
     ],
     "configurations": [
       {
         "configId": "okf_markdown",
         "name": "Markdown",
         "description": "Markdown files",
-        "mimeType": "text/x-markdown",
-        "extensions": ".md;.markdown",
+        "mimeType": "text/markdown",
+        "extensions": ".md;.markdown;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.markdown.MarkdownFilter"
       }
@@ -60,6 +60,12 @@
           "x-flattenPath": "translateCodeBlocks",
           "description": "Translate fenced code blocks"
         },
+        "translateIndentedCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translateIndentedCodeBlocks",
+          "description": "Translate indented code blocks"
+        },
         "translateInlineCodeBlocks": {
           "type": "boolean",
           "default": true,
@@ -77,6 +83,24 @@
           "default": "",
           "x-flattenPath": "nonTranslateBlocks",
           "description": "Regex for non-translatable blocks"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Output formatting",
+      "properties": {
+        "charactersToEscape": {
+          "type": "string",
+          "default": "*_`{}[]<>()#+\\-.!|",
+          "x-flattenPath": "charactersToEscape",
+          "description": "Characters to escape in output"
+        },
+        "unescapeBackslashCharacters": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "unescapeBackslashCharacters",
+          "description": "Unescape backslash characters"
         }
       }
     },
@@ -173,8 +197,8 @@
     }
   },
   "x-schemaVersion": 2,
-  "x-baseVersion": 10,
-  "x-baseHash": "665d97653deb",
-  "x-compositeHash": "e2ab7055cfac",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.42.0",
+  "x-baseHash": "5e1a89486359",
+  "x-compositeHash": "994417bae4cf"
 }

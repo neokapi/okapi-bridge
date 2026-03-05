@@ -20,7 +20,7 @@
         "name": "XLIFF-2",
         "description": "Configuration for XLIFF-2 documents.",
         "mimeType": "application/xliff+xml",
-        "extensions": ".xlf",
+        "extensions": ".xlf;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.xliff2.XLIFF2Filter"
       }
@@ -139,8 +139,8 @@
     }
   },
   "x-schemaVersion": 3,
-  "x-baseVersion": 17,
-  "x-baseHash": "3d9fcbe6a595",
-  "x-compositeHash": "3d9fcbe6a595",
-  "x-introducedInOkapi": "1.41.0"
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.42.0",
+  "x-baseHash": "b5bd62d4fbfa",
+  "x-compositeHash": "b5bd62d4fbfa"
 }

@@ -21,7 +21,7 @@
         "name": "ICML",
         "description": "Adobe InDesign ICML documents",
         "mimeType": "application/x-icml+xml",
-        "extensions": ".wcml;.icml",
+        "extensions": ".wcml;.icml;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.icml.ICMLFilter"
       }
@@ -154,8 +154,8 @@
     }
   },
   "x-schemaVersion": 2,
-  "x-baseVersion": 10,
-  "x-baseHash": "8acce6be6c05",
-  "x-compositeHash": "3214c652bd3a",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.42.0",
+  "x-baseHash": "4a38fb5d693a",
+  "x-compositeHash": "b70997b038fb"
 }

@@ -10,7 +10,9 @@
     "class": "net.sf.okapi.filters.autoxliff.AutoXLIFFFilter",
     "extensions": [
       ".xlf",
-      ".xliff"
+      ".xliff",
+      ".xlf2",
+      ".xliff2"
     ],
     "mimeTypes": [
       "application/xliff+xml"
@@ -21,7 +23,7 @@
         "name": "XLIFF 1.2 and 2.0 Filter",
         "description": "Calls the appropriate filter for any version of XLIFF",
         "mimeType": "application/xliff+xml",
-        "extensions": ".xlf;.xliff",
+        "extensions": ".xlf;.xliff;.xlf2;.xliff2",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.autoxliff.AutoXLIFFFilter"
       }
@@ -50,8 +52,8 @@
   },
   "additionalProperties": false,
   "x-schemaVersion": 2,
-  "x-baseVersion": 6,
-  "x-baseHash": "17f931cb4746",
-  "x-compositeHash": "17f931cb4746",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.45.0",
+  "x-baseHash": "41eb971e9440",
+  "x-compositeHash": "41eb971e9440"
 }

@@ -44,11 +44,27 @@
           "x-flattenPath": "needsSegmentation",
           "description": "Apply segmentation to content"
         },
+        "forceUniqueIds": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ensure tag IDs are unique within units",
+          "x-widget": "checkbox",
+          "x-flattenPath": "forceUniqueIds",
+          "description": "Force unique text unit IDs"
+        },
         "simplifyTags": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "simplifyTags",
           "description": "Simplify inline tags"
+        },
+        "ignoreTagTypeMatch": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ignore tag type mismatch between source and target",
+          "x-widget": "checkbox",
+          "x-flattenPath": "ignoreTagTypeMatch",
+          "description": "Ignore tag type matching"
         }
       }
     },
@@ -138,8 +154,8 @@
     }
   },
   "x-schemaVersion": 6,
-  "x-baseVersion": 20,
-  "x-baseHash": "b3b09fc072b0",
-  "x-compositeHash": "b3b09fc072b0",
-  "x-introducedInOkapi": "1.45.0"
+  "x-baseVersion": 6,
+  "x-introducedInOkapi": "1.46.0",
+  "x-baseHash": "2758d0505de7",
+  "x-compositeHash": "2758d0505de7"
 }

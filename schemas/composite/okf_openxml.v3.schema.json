@@ -209,6 +209,12 @@
           "x-flattenPath": "bPreferenceAggressiveCleanup",
           "description": "Aggressive code cleanup"
         },
+        "allowEmptyTargets": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAllowEmptyTargets",
+          "description": "Allow empty targets"
+        },
         "ignoreSoftHyphenTag": {
           "type": "boolean",
           "default": false,
@@ -254,8 +260,8 @@
   },
   "additionalProperties": false,
   "x-schemaVersion": 3,
-  "x-baseVersion": 17,
-  "x-baseHash": "35a006cdf57a",
-  "x-compositeHash": "ecb06028bab2",
-  "x-introducedInOkapi": "1.41.0"
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.43.0",
+  "x-baseHash": "d6b2e6c2d800",
+  "x-compositeHash": "f3247aa58cf0"
 }

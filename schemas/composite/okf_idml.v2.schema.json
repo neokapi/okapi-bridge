@@ -56,6 +56,14 @@
           "x-flattenPath": "extractHiddenLayers",
           "description": "Extract hidden layers"
         },
+        "extractBreaksInline": {
+          "type": "boolean",
+          "default": false,
+          "title": "Extract breaks inline",
+          "x-widget": "checkbox",
+          "x-flattenPath": "extractBreaksInline",
+          "description": "Extract breaks inline"
+        },
         "untagXmlStructures": {
           "type": "boolean",
           "default": true,
@@ -185,8 +193,8 @@
   },
   "additionalProperties": false,
   "x-schemaVersion": 2,
-  "x-baseVersion": 18,
-  "x-baseHash": "ccab863dcb31",
-  "x-compositeHash": "290fef70e44d",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.39.0",
+  "x-baseHash": "e6eaf7733457",
+  "x-compositeHash": "52ce56dbc430"
 }
