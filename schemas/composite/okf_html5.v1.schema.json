@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_html5",
     "class": "net.sf.okapi.filters.its.html5.HTML5Filter",
-    "extensions": [],
+    "extensions": [
+      ".html",
+      ".htm"
+    ],
     "mimeTypes": [
       "text/html"
     ],
@@ -51,32 +54,9 @@
     }
   },
   "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "path"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 2,
-  "x-baseHash": "8c8950d4523f",
-  "x-compositeHash": "c967766f4467",
+  "x-baseVersion": 3,
+  "x-baseHash": "a114757a1788",
+  "x-compositeHash": "5979944cb00c",
   "x-introducedInOkapi": "0.38"
 }

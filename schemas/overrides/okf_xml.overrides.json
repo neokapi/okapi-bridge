@@ -1,13 +1,7 @@
 {
   "$schema": "https://gokapi.dev/schemas/editorHints.schema.json",
-  "$include": ["_fragments/inlineCodes.fragment.json"],
-  "groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": ["path"]
-    }
+  "$include": [
+    "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
     "path": {}

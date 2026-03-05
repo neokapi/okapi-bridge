@@ -2,13 +2,18 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_xliff2.schema.json",
   "$version": "1.0.0",
-  "title": "XLIFF-2 Filter (BETA) Filter",
-  "description": "Configuration for the Okapi XLIFF-2 Filter (BETA) Filter",
+  "title": "XLIFF-2 Filter Filter",
+  "description": "Configuration for the Okapi XLIFF-2 Filter Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_xliff2",
     "class": "net.sf.okapi.filters.xliff2.XLIFF2Filter",
-    "extensions": [],
+    "extensions": [
+      ".xlf",
+      ".xliff",
+      ".xlf2",
+      ".xliff2"
+    ],
     "mimeTypes": [
       "application/xliff+xml"
     ],
@@ -18,7 +23,7 @@
         "name": "XLIFF-2",
         "description": "Configuration for XLIFF-2 documents.",
         "mimeType": "application/xliff+xml",
-        "extensions": ".xlf",
+        "extensions": ".xlf;.xliff;.xlf2;.xliff2",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.xliff2.XLIFF2Filter"
       }
@@ -26,23 +31,123 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "maxValidation": {
-      "type": "boolean",
-      "default": true,
-      "title": "Perform maximum validation when parsing",
-      "x-widget": "checkbox"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "mergeAsParagraph": {
-      "type": "boolean",
-      "default": false
+    "extraction": {
+      "type": "object",
+      "description": "Control what content is extracted",
+      "properties": {
+        "needsSegmentation": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "needsSegmentation",
+          "description": "Apply segmentation to content"
+        },
+        "forceUniqueIds": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ensure tag IDs are unique within units",
+          "x-widget": "checkbox",
+          "x-flattenPath": "forceUniqueIds",
+          "description": "Force unique text unit IDs"
+        },
+        "simplifyTags": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "simplifyTags",
+          "description": "Simplify inline tags"
+        },
+        "ignoreTagTypeMatch": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ignore tag type mismatch between source and target",
+          "x-widget": "checkbox",
+          "x-flattenPath": "ignoreTagTypeMatch",
+          "description": "Ignore tag type matching"
+        }
+      }
     },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": false
+    "states": {
+      "type": "object",
+      "description": "Translation state handling",
+      "properties": {
+        "discardInvalidTargets": {
+          "type": "boolean",
+          "default": false,
+          "title": "Discard invalid targets rather than rejecting the file",
+          "x-widget": "checkbox",
+          "x-flattenPath": "discardInvalidTargets",
+          "description": "Discard invalid target elements"
+        },
+        "subfilterOverwriteTarget": {
+          "type": "boolean",
+          "default": false,
+          "title": "Subfilter: Always Overwrite Target?",
+          "description": "Sub-filter overwrites target",
+          "x-widget": "checkbox",
+          "x-flattenPath": "subfilterOverwriteTarget"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Output settings",
+      "properties": {
+        "writeOriginalData": {
+          "type": "boolean",
+          "default": true,
+          "title": "Output includes original data when available",
+          "x-widget": "checkbox",
+          "x-flattenPath": "writeOriginalData",
+          "description": "Write original data to output"
+        },
+        "maxValidation": {
+          "type": "boolean",
+          "default": true,
+          "title": "Perform maximum validation when parsing",
+          "x-widget": "checkbox",
+          "x-flattenPath": "maxValidation",
+          "description": "Maximum validation level"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Inline code detection configuration",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -72,65 +177,15 @@
       },
       "x-okapiFormat": "inlineCodeFinder"
     },
-    "simplifyTags": {
-      "type": "boolean",
-      "default": true
-    },
-    "needsSegmentation": {
-      "type": "boolean",
-      "default": false
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "extraction",
-      "label": "Extraction Settings",
-      "description": "Control what content is extracted",
-      "collapsed": false,
-      "fields": [
-        "extractSource",
-        "extractTarget",
-        "extractNotes"
-      ]
-    },
-    {
-      "id": "states",
-      "label": "State Handling",
-      "description": "Control how XLIFF 2.x states are handled",
-      "collapsed": true,
-      "fields": [
-        "includeInitial",
-        "includeTranslated",
-        "includeReviewed",
-        "includeFinal"
-      ]
-    },
-    {
-      "id": "metadata",
-      "label": "Metadata",
-      "description": "Configure metadata extraction",
-      "collapsed": true,
-      "fields": [
-        "extractMetadata",
-        "extractChanges"
-      ]
-    },
-    {
-      "id": "output",
-      "label": "Output Settings",
-      "description": "Configure output formatting",
-      "collapsed": true,
-      "fields": [
-        "copySource",
-        "useApprovedOnly",
-        "preserveSegmentation"
-      ]
-    }
-  ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 8,
-  "x-baseHash": "39dc7cbf5961",
-  "x-compositeHash": "f619014245f1",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 15,
+  "x-baseHash": "81c85cca248b",
+  "x-compositeHash": "81c85cca248b",
+  "x-introducedInOkapi": "1.47.0"
 }

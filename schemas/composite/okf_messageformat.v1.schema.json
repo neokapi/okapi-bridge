@@ -20,26 +20,107 @@
         "mimeType": "text/x-messageformat",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
+      },
+      {
+        "configId": "okf_messageformat-json",
+        "name": "ICU Message Format",
+        "description": "ICU Message Format From JSON",
+        "mimeType": "text/x-messageformat",
+        "parametersLocation": "okf_messageformat@json.fprm",
+        "parametersRaw": "#v1\naddPluralForms.b=true\nnormalize.b=true\nprettyPrint.b=false\n",
+        "parameters": {
+          "addPluralForms": true,
+          "normalize": true,
+          "prettyPrint": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
+      },
+      {
+        "configId": "okf_messageformat-yaml",
+        "name": "ICU Message Format",
+        "description": "ICU Message Format From YAML",
+        "mimeType": "text/x-messageformat",
+        "parametersLocation": "okf_messageformat@yaml.fprm",
+        "parametersRaw": "#v1\naddPluralForms.b=true\nnormalize.b=true\nprettyPrint.b=true\n",
+        "parameters": {
+          "addPluralForms": true,
+          "normalize": true,
+          "prettyPrint": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.messageformat.MessageFormatFilter"
       }
     ],
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "addPluralForms": {
-      "type": "boolean",
-      "default": false
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "normalize": {
-      "type": "boolean",
-      "default": false
-    },
-    "prettyPrint": {
-      "type": "boolean",
-      "default": false
+    "general": {
+      "type": "object",
+      "description": "General settings",
+      "properties": {
+        "addPluralForms": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "addPluralForms",
+          "description": "Add plural form variants"
+        },
+        "normalize": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "normalize",
+          "description": "Normalize message format"
+        },
+        "prettyPrint": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "prettyPrint",
+          "description": "Pretty-print output"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Regex patterns to identify inline codes in translatable text",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -67,13 +148,7 @@
           "description": "Test all rules together or individually"
         }
       },
-      "x-okapiFormat": "inlineCodeFinder",
-      "x-widget": "codeFinderRules"
-    },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": false,
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -81,35 +156,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "addPluralForms",
-        "normalize",
-        "prettyPrint"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 4,
-  "x-baseHash": "9fcde3537d12",
-  "x-compositeHash": "b2e7f4200fcb",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 7,
+  "x-baseHash": "e8214fa55c62",
+  "x-compositeHash": "4256972230f0",
+  "x-introducedInOkapi": "1.47.0"
 }

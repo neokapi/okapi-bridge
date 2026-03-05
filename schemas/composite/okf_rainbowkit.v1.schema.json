@@ -8,9 +8,13 @@
   "x-filter": {
     "id": "okf_rainbowkit",
     "class": "net.sf.okapi.filters.rainbowkit.RainbowKitFilter",
-    "extensions": [],
+    "extensions": [
+      ".rkm",
+      ".rkp"
+    ],
     "mimeTypes": [
-      "application/x-rainbowkit"
+      "application/x-rainbowkit",
+      "application/x-rainbowkit-package"
     ],
     "configurations": [
       {
@@ -49,27 +53,25 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "openManifest": {
-      "type": "boolean",
-      "default": true,
-      "title": "Open the manifest file before processing",
-      "x-widget": "checkbox"
+    "general": {
+      "type": "object",
+      "description": "General settings",
+      "properties": {
+        "openManifest": {
+          "type": "boolean",
+          "default": true,
+          "title": "Open the manifest file before processing",
+          "x-widget": "checkbox",
+          "x-flattenPath": "openManifest",
+          "description": "Open manifest file"
+        }
+      }
     }
   },
   "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": false,
-      "fields": [
-        "openManifest"
-      ]
-    }
-  ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 2,
-  "x-baseHash": "10f2ef5a1cf8",
-  "x-compositeHash": "d5c39ab9a7bd",
+  "x-baseVersion": 3,
+  "x-baseHash": "100bcbf11652",
+  "x-compositeHash": "100bcbf11652",
   "x-introducedInOkapi": "0.38"
 }

@@ -6,6 +6,7 @@ import com.gokapi.bridge.model.*;
 import com.gokapi.bridge.proto.*;
 import com.gokapi.bridge.util.FilterRegistry;
 import com.gokapi.bridge.util.ParameterApplier;
+import com.gokapi.bridge.util.ParameterFlattener;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -19,6 +20,7 @@ import net.sf.okapi.common.filterwriter.IFilterWriter;
 import net.sf.okapi.common.resource.RawDocument;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.*;
@@ -36,6 +38,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
     private final ExecutorService mergeExecutor = Executors.newCachedThreadPool();
+    private final Map<String, ParameterFlattener> flattenerCache = new ConcurrentHashMap<>();
 
     /**
      * Block until the Shutdown RPC is called.
@@ -624,6 +627,13 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
         }
 
         if (jsonParams.size() > 0) {
+            // Flatten hierarchical params if a schema with x-flattenPath is available.
+            // This is backwards-compatible: flat input passes through unchanged.
+            ParameterFlattener flattener = getFlattener(filter.getClass().getName());
+            if (flattener != null) {
+                jsonParams = flattener.flatten(jsonParams);
+            }
+
             boolean success = ParameterApplier.applyParameters(filterParameters, jsonParams);
             if (success) {
                 System.err.println("[bridge] Applied " + jsonParams.size() + " additional filter parameters");
@@ -704,6 +714,42 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             // Non-fatal: sub-filtering won't work but basic filtering will.
             System.err.println("[bridge] Warning: Could not set up FilterConfigurationMapper: " + e.getMessage());
         }
+    }
+
+    /**
+     * Get or create a ParameterFlattener for the given filter class.
+     * Returns null if no schema is available (flattening will be skipped).
+     */
+    private ParameterFlattener getFlattener(String filterClass) {
+        return flattenerCache.computeIfAbsent(filterClass, fc -> {
+            String filterId = FilterRegistry.getFilterId(fc);
+            if (filterId == null) return null;
+            JsonObject schema = loadSchema(filterId);
+            if (schema == null) return null;
+            return new ParameterFlattener(schema);
+        });
+    }
+
+    /**
+     * Load a composite JSON Schema from the classpath for the given filter ID.
+     */
+    private JsonObject loadSchema(String filterId) {
+        String[] paths = {
+            "/schemas/" + filterId + ".schema.json",
+            "schemas/" + filterId + ".schema.json"
+        };
+        for (String path : paths) {
+            try (InputStream is = getClass().getResourceAsStream(path)) {
+                if (is != null) {
+                    try (InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+                        return JsonParser.parseReader(reader).getAsJsonObject();
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("[bridge] Could not load schema for " + filterId + ": " + e.getMessage());
+            }
+        }
+        return null;
     }
 
     private static String nullSafe(String s) {

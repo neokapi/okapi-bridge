@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_tmx",
     "class": "net.sf.okapi.filters.tmx.TmxFilter",
-    "extensions": [],
+    "extensions": [
+      ".tmx"
+    ],
     "mimeTypes": [
       "application/x-tmx+xml"
     ],
@@ -26,41 +28,132 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "segType": {
-      "type": "integer",
-      "default": 2,
-      "title": "Creates or not a segment for the extracted <Tu>"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "processAllTargets": {
-      "type": "boolean",
-      "default": true,
-      "title": "Read all target entries"
+    "extraction": {
+      "type": "object",
+      "description": "TMX processing settings",
+      "properties": {
+        "segType": {
+          "type": "integer",
+          "default": 2,
+          "title": "Creates or not a segment for the extracted <Tu>",
+          "x-flattenPath": "segType",
+          "description": "Segmentation type"
+        },
+        "processAllTargets": {
+          "type": "boolean",
+          "default": true,
+          "title": "Read all target entries",
+          "x-flattenPath": "processAllTargets",
+          "description": "Process all target languages"
+        },
+        "exitOnInvalid": {
+          "type": "boolean",
+          "default": false,
+          "title": "Exit when encountering invalid <tu>s (default is to skip invalid <tu>s).",
+          "x-flattenPath": "exitOnInvalid",
+          "description": "Exit on invalid TMX"
+        },
+        "consolidateDpSkeleton": {
+          "type": "boolean",
+          "default": true,
+          "title": "Group all document parts skeleton into one",
+          "x-flattenPath": "consolidateDpSkeleton",
+          "description": "Consolidate document part skeleton"
+        },
+        "propValueSep": {
+          "type": "string",
+          "default": ", ",
+          "title": "String used to delimit property values when there are duplicate properties",
+          "x-flattenPath": "propValueSep",
+          "description": "Property value separator"
+        }
+      }
     },
-    "consolidateDpSkeleton": {
-      "type": "boolean",
-      "default": true,
-      "title": "Group all document parts skeleton into one"
+    "output": {
+      "type": "object",
+      "description": "Output settings",
+      "properties": {
+        "escapeGT": {
+          "type": "boolean",
+          "default": false,
+          "title": "Escape the greater-than characters",
+          "x-flattenPath": "escapeGT",
+          "description": "Escape greater-than in output"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
     },
-    "exitOnInvalid": {
-      "type": "boolean",
-      "default": false,
-      "title": "Exit when encountering invalid <tu>s (default is to skip invalid <tu>s)."
-    },
-    "propValueSep": {
-      "type": "string",
-      "default": ", ",
-      "title": "String used to delimit property values when there are duplicate properties"
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
-      "description": "Simplifier rules for code type normalization",
+      "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
-    },
-    "escapeGT": {
-      "type": "boolean",
-      "default": false,
-      "title": "Escape the greater-than characters"
     }
-  },
-  "additionalProperties": false
+  }
 }

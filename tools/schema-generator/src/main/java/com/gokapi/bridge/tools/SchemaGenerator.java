@@ -9,6 +9,8 @@ import com.google.gson.JsonObject;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -35,10 +37,28 @@ public class SchemaGenerator {
 
     private final ParameterIntrospector introspector;
     private final SchemaTransformer transformer;
+    private final JsonObject groupings;
+    private final JsonObject commonDefs;
 
     public SchemaGenerator() {
         this.introspector = new ParameterIntrospector();
         this.transformer = new SchemaTransformer();
+        this.groupings = loadClasspathJson("groupings.json");
+        this.commonDefs = loadClasspathJson("common.defs.json");
+    }
+
+    private JsonObject loadClasspathJson(String resourceName) {
+        InputStream is = getClass().getClassLoader().getResourceAsStream(resourceName);
+        if (is == null) {
+            System.err.println("Warning: " + resourceName + " not found on classpath, hierarchy disabled");
+            return new JsonObject();
+        }
+        try (InputStreamReader reader = new InputStreamReader(is, StandardCharsets.UTF_8)) {
+            return GSON.fromJson(reader, JsonObject.class);
+        } catch (IOException e) {
+            System.err.println("Warning: Failed to load " + resourceName + ": " + e.getMessage());
+            return new JsonObject();
+        }
     }
 
     public static void main(String[] args) {
@@ -154,6 +174,9 @@ public class SchemaGenerator {
         if (needsYamlDefs) {
             schema.add("$defs", transformer.generateYamlConfigDefs());
         }
+
+        // Restructure flat properties into hierarchy using groupings
+        schema = transformer.restructureIntoHierarchy(schema, filterId, groupings, commonDefs);
 
         return schema;
     }

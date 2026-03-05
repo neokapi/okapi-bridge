@@ -2,13 +2,15 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_commaseparatedvalues.schema.json",
   "$version": "2.0.0",
-  "title": "Plain Text Filter Filter",
-  "description": "Configuration for the Okapi Plain Text Filter Filter",
+  "title": "Plain Text Filter (BETA) Filter",
+  "description": "Configuration for the Okapi Plain Text Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_commaseparatedvalues",
     "class": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter",
-    "extensions": [],
+    "extensions": [
+      ".csv"
+    ],
     "mimeTypes": [
       "text/csv"
     ],
@@ -139,25 +141,44 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "fieldDelimiter": {
-      "type": "string",
-      "default": ","
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "textQualifier": {
-      "type": "string",
-      "default": "\""
-    },
-    "removeQualifiers": {
-      "type": "boolean",
-      "default": true
-    },
-    "escapingMode": {
-      "type": "integer",
-      "default": 1
-    },
-    "addQualifiers": {
-      "type": "boolean",
-      "default": false
+    "format": {
+      "type": "object",
+      "description": "CSV format settings",
+      "properties": {
+        "fieldDelimiter": {
+          "type": "string",
+          "default": ",",
+          "x-flattenPath": "fieldDelimiter",
+          "description": "Field delimiter character"
+        },
+        "textQualifier": {
+          "type": "string",
+          "default": "\"",
+          "x-flattenPath": "textQualifier",
+          "description": "Text qualifier character"
+        },
+        "escapingMode": {
+          "type": "integer",
+          "default": 1,
+          "x-flattenPath": "escapingMode",
+          "description": "Escaping mode"
+        },
+        "addQualifiers": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "addQualifiers",
+          "description": "Add text qualifiers to output"
+        },
+        "removeQualifiers": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "removeQualifiers",
+          "description": "Remove text qualifiers from input"
+        }
+      }
     },
     "columnNamesLineNum": {
       "type": "integer",
@@ -243,17 +264,6 @@
       "type": "boolean",
       "default": true
     },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": false,
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
-    },
-    "codeFinderRules": {
-      "type": "string",
-      "default": "#v1\ncount.i=2\nrule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\nrule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nsample=\nuseAllRulesWhenTesting.b=false",
-      "x-widget": "codeFinderRules",
-      "description": "Regex patterns to identify inline codes in translatable text"
-    },
     "wrapMode": {
       "type": "string",
       "default": "NONE",
@@ -262,6 +272,74 @@
         "SPACES",
         "PLACEHOLDERS"
       ]
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -269,25 +347,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 5,
-  "x-baseHash": "92f800ea2525",
-  "x-compositeHash": "111404a9a2b7",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 8,
+  "x-baseHash": "e0f566475672",
+  "x-compositeHash": "1a80e31ef198",
+  "x-introducedInOkapi": "0.38"
 }

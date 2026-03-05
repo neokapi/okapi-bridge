@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_mosestext",
     "class": "net.sf.okapi.filters.mosestext.MosesTextFilter",
-    "extensions": [],
+    "extensions": [
+      ".txt"
+    ],
     "mimeTypes": [
       "text/x-mosestext"
     ],
@@ -23,13 +25,13 @@
         "filterClass": "net.sf.okapi.filters.mosestext.MosesTextFilter"
       }
     ],
-    "serializationFormat": "stringParameters"
+    "serializationFormat": "yaml"
   },
   "properties": {},
   "additionalProperties": false,
   "x-schemaVersion": 2,
-  "x-baseVersion": 3,
-  "x-baseHash": "13d8b859bca5",
-  "x-compositeHash": "13d8b859bca5",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 5,
+  "x-baseHash": "559389b2de9a",
+  "x-compositeHash": "559389b2de9a",
+  "x-introducedInOkapi": "0.38"
 }

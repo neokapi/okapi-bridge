@@ -8,7 +8,12 @@
   "x-filter": {
     "id": "okf_xliff2",
     "class": "net.sf.okapi.filters.xliff2.XLIFF2Filter",
-    "extensions": [],
+    "extensions": [
+      ".xlf",
+      ".xliff",
+      ".xlf2",
+      ".xliff2"
+    ],
     "mimeTypes": [
       "application/xliff+xml"
     ],
@@ -26,19 +31,81 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "maxValidation": {
-      "type": "boolean",
-      "default": true,
-      "title": "Perform maximum validation when parsing",
-      "x-widget": "checkbox"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "useCodeFinder": {
+    "extraction": {
+      "type": "object",
+      "description": "Control what content is extracted",
+      "properties": {
+        "needsSegmentation": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "needsSegmentation",
+          "description": "Apply segmentation to content"
+        },
+        "simplifyTags": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "simplifyTags",
+          "description": "Simplify inline tags"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Output settings",
+      "properties": {
+        "maxValidation": {
+          "type": "boolean",
+          "default": true,
+          "title": "Perform maximum validation when parsing",
+          "x-widget": "checkbox",
+          "x-flattenPath": "maxValidation",
+          "description": "Maximum validation level"
+        }
+      }
+    },
+    "mergeAsParagraph": {
       "type": "boolean",
       "default": false
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Inline code detection configuration",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -68,65 +135,15 @@
       },
       "x-okapiFormat": "inlineCodeFinder"
     },
-    "simplifyTags": {
-      "type": "boolean",
-      "default": false
-    },
-    "needsSegmentation": {
-      "type": "boolean",
-      "default": false
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "extraction",
-      "label": "Extraction Settings",
-      "description": "Control what content is extracted",
-      "collapsed": false,
-      "fields": [
-        "extractSource",
-        "extractTarget",
-        "extractNotes"
-      ]
-    },
-    {
-      "id": "states",
-      "label": "State Handling",
-      "description": "Control how XLIFF 2.x states are handled",
-      "collapsed": true,
-      "fields": [
-        "includeInitial",
-        "includeTranslated",
-        "includeReviewed",
-        "includeFinal"
-      ]
-    },
-    {
-      "id": "metadata",
-      "label": "Metadata",
-      "description": "Configure metadata extraction",
-      "collapsed": true,
-      "fields": [
-        "extractMetadata",
-        "extractChanges"
-      ]
-    },
-    {
-      "id": "output",
-      "label": "Output Settings",
-      "description": "Configure output formatting",
-      "collapsed": true,
-      "fields": [
-        "copySource",
-        "useApprovedOnly",
-        "preserveSegmentation"
-      ]
-    }
-  ],
   "x-schemaVersion": 5,
-  "x-baseVersion": 12,
-  "x-baseHash": "cd88ab24f1f7",
-  "x-compositeHash": "a6fd91e2c032",
-  "x-introducedInOkapi": "1.45.0"
+  "x-baseVersion": 19,
+  "x-baseHash": "4b415f401bdf",
+  "x-compositeHash": "4b415f401bdf",
+  "x-introducedInOkapi": "1.43.0"
 }

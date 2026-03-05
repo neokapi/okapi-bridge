@@ -8,7 +8,12 @@
   "x-filter": {
     "id": "okf_xliff2",
     "class": "net.sf.okapi.filters.xliff2.XLIFF2Filter",
-    "extensions": [],
+    "extensions": [
+      ".xlf",
+      ".xliff",
+      ".xlf2",
+      ".xliff2"
+    ],
     "mimeTypes": [
       "application/xliff+xml"
     ],
@@ -26,21 +31,123 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "maxValidation": {
-      "type": "boolean",
-      "default": true,
-      "title": "Perform maximum validation when parsing",
-      "x-widget": "checkbox"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": false,
-      "title": "Has inline codes as defined below:",
-      "x-widget": "checkbox"
+    "extraction": {
+      "type": "object",
+      "description": "Control what content is extracted",
+      "properties": {
+        "needsSegmentation": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "needsSegmentation",
+          "description": "Apply segmentation to content"
+        },
+        "forceUniqueIds": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ensure tag IDs are unique within units",
+          "x-widget": "checkbox",
+          "x-flattenPath": "forceUniqueIds",
+          "description": "Force unique text unit IDs"
+        },
+        "simplifyTags": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "simplifyTags",
+          "description": "Simplify inline tags"
+        },
+        "ignoreTagTypeMatch": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ignore tag type mismatch between source and target",
+          "x-widget": "checkbox",
+          "x-flattenPath": "ignoreTagTypeMatch",
+          "description": "Ignore tag type matching"
+        }
+      }
+    },
+    "states": {
+      "type": "object",
+      "description": "Translation state handling",
+      "properties": {
+        "discardInvalidTargets": {
+          "type": "boolean",
+          "default": false,
+          "title": "Discard invalid targets rather than rejecting the file",
+          "x-widget": "checkbox",
+          "x-flattenPath": "discardInvalidTargets",
+          "description": "Discard invalid target elements"
+        },
+        "subfilterOverwriteTarget": {
+          "type": "boolean",
+          "default": false,
+          "title": "Subfilter: Always Overwrite Target?",
+          "description": "Sub-filter overwrites target",
+          "x-widget": "checkbox",
+          "x-flattenPath": "subfilterOverwriteTarget"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Output settings",
+      "properties": {
+        "writeOriginalData": {
+          "type": "boolean",
+          "default": true,
+          "title": "Output includes original data when available",
+          "x-widget": "checkbox",
+          "x-flattenPath": "writeOriginalData",
+          "description": "Write original data to output"
+        },
+        "maxValidation": {
+          "type": "boolean",
+          "default": true,
+          "title": "Perform maximum validation when parsing",
+          "x-widget": "checkbox",
+          "x-flattenPath": "maxValidation",
+          "description": "Maximum validation level"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Inline code detection configuration",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -70,45 +177,10 @@
       },
       "x-okapiFormat": "inlineCodeFinder"
     },
-    "simplifyTags": {
-      "type": "boolean",
-      "default": false
-    },
-    "needsSegmentation": {
-      "type": "boolean",
-      "default": false
-    },
-    "forceUniqueIds": {
-      "type": "boolean",
-      "default": false,
-      "title": "Ensure tag IDs are unique within units",
-      "x-widget": "checkbox"
-    },
-    "ignoreTagTypeMatch": {
-      "type": "boolean",
-      "default": false,
-      "title": "Ignore tag type mismatch between source and target",
-      "x-widget": "checkbox"
-    },
-    "discardInvalidTargets": {
-      "type": "boolean",
-      "default": false,
-      "title": "Discard invalid targets rather than rejecting the file",
-      "x-widget": "checkbox"
-    },
-    "writeOriginalData": {
-      "type": "boolean",
-      "default": true,
-      "title": "Output includes original data when available",
-      "x-widget": "checkbox"
-    },
-    "subfilterOverwriteTarget": {
-      "type": "boolean",
-      "default": false,
-      "title": "Subfilter: Always Overwrite Target?",
-      "description": "Should the writer always overwrite an existing target even if state is final?",
-      "x-widget": "checkbox"
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
     }
-  },
-  "additionalProperties": false
+  }
 }

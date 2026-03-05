@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_wiki",
     "class": "net.sf.okapi.filters.wiki.WikiFilter",
-    "extensions": [],
+    "extensions": [
+      ".txt"
+    ],
     "mimeTypes": [
       "text/x-wiki-txt"
     ],
@@ -45,32 +47,9 @@
     }
   },
   "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "path"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 3,
-  "x-baseHash": "982e51424e87",
-  "x-compositeHash": "2a2bcddafcbc",
+  "x-baseVersion": 4,
+  "x-baseHash": "537a51189c73",
+  "x-compositeHash": "ca5f8d281039",
   "x-introducedInOkapi": "0.38"
 }

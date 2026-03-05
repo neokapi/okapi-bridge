@@ -1,0 +1,919 @@
+{
+  "_common": {
+    "inlineCodes": {
+      "$ref": "common.defs.json#/$defs/inlineCodes",
+      "params": ["useCodeFinder", "codeFinderRules", "mergeAdjacentCodes", "moveLeadingAndTrailingCodesToSkeleton", "simplifierRules"]
+    },
+    "whitespace": {
+      "$ref": "common.defs.json#/$defs/whitespace",
+      "params": ["preserveWhitespace", "collapseWhitespace", "trimLeadingWS", "trimTrailingWS"]
+    }
+  },
+
+  "okf_json": {
+    "extraction": {
+      "description": "Control what content is extracted for translation",
+      "properties": {
+        "extractAll": { "flattenPath": "extractAllPairs", "description": "Extract all key-value pairs" },
+        "pathRules": { "flattenPath": "extractionRules", "description": "Regex for JSON paths to extract" },
+        "includeIsolatedStrings": { "flattenPath": "extractIsolatedStrings", "description": "Extract array string values without keys" },
+        "excludeKeys": { "flattenPath": "exceptions", "description": "Comma-separated keys to exclude from extraction" },
+        "subfilterRules": { "flattenPath": "subfilterRules", "description": "Sub-filter rules for embedded content" }
+      }
+    },
+    "keys": {
+      "description": "Configure how JSON keys map to text unit identification",
+      "properties": {
+        "useAsName": { "flattenPath": "useKeyAsName", "description": "Use JSON key as text unit name" },
+        "useFullPath": { "flattenPath": "useFullKeyPath", "description": "Use full path (/key1/key2) as name" },
+        "leadingSlash": { "flattenPath": "useLeadingSlashOnKeyPath", "description": "Include leading slash in paths" },
+        "useIdStack": { "flattenPath": "useIdStack", "description": "Build IDs from nested key stack" },
+        "idRules": { "flattenPath": "idRules", "description": "Regex for keys used as text unit IDs" }
+      }
+    },
+    "metadata": {
+      "description": "Configure metadata extraction rules",
+      "properties": {
+        "noteRules": { "flattenPath": "noteRules", "description": "Regex for translator note keys" },
+        "metaRules": { "flattenPath": "genericMetaRules", "description": "Regex for generic metadata keys" },
+        "maxwidthRules": { "flattenPath": "maxwidthRules", "description": "Regex for max width constraint keys" }
+      }
+    },
+    "output": {
+      "description": "Output formatting options",
+      "properties": {
+        "escapeSlashes": { "flattenPath": "escapeForwardSlashes", "description": "Escape forward slashes in output" }
+      }
+    }
+  },
+
+  "okf_yaml": {
+    "extraction": {
+      "description": "Control what content is extracted for translation",
+      "properties": {
+        "extractAll": { "flattenPath": "extractAllPairs", "description": "Extract all key-value pairs" },
+        "includeIsolatedStrings": { "flattenPath": "extractIsolatedStrings", "description": "Extract array string values" },
+        "excludeKeys": { "flattenPath": "exceptions", "description": "Comma-separated keys to exclude" }
+      }
+    },
+    "keys": {
+      "description": "Configure how YAML keys map to text unit identification",
+      "properties": {
+        "useAsName": { "flattenPath": "useKeyAsName", "description": "Use YAML key as text unit name" },
+        "useFullPath": { "flattenPath": "useFullKeyPath", "description": "Use full path as name" }
+      }
+    },
+    "output": {
+      "description": "Output formatting options",
+      "properties": {
+        "escapeNonAscii": { "flattenPath": "escapeNonAscii", "description": "Escape non-ASCII characters" },
+        "wrap": { "flattenPath": "wrap", "description": "Line wrapping mode" },
+        "subFilterProcessLiteralAsBlock": { "flattenPath": "subFilterProcessLiteralAsBlock", "description": "Process literal blocks with sub-filter" }
+      }
+    }
+  },
+
+  "okf_properties": {
+    "extraction": {
+      "description": "Control what content is extracted",
+      "properties": {
+        "extractOnlyMatchingKey": { "flattenPath": "extractOnlyMatchingKey", "description": "Only extract keys matching condition" },
+        "useKeyCondition": { "flattenPath": "useKeyCondition", "description": "Enable key filtering condition" },
+        "keyCondition": { "flattenPath": "keyCondition", "description": "Regex condition for key extraction" },
+        "localizeOutside": { "flattenPath": "localizeOutside", "description": "Localize values outside matching keys" },
+        "extraComments": { "flattenPath": "extraComments", "description": "Include extra comment lines" }
+      }
+    },
+    "notes": {
+      "description": "Comment/note handling",
+      "properties": {
+        "commentsAreNotes": { "flattenPath": "commentsAreNotes", "description": "Treat comments as translator notes" }
+      }
+    },
+    "identification": {
+      "description": "ID and naming",
+      "properties": {
+        "idLikeResname": { "flattenPath": "idLikeResname", "description": "Use resource name as ID" },
+        "useLd": { "flattenPath": "useLd", "description": "Use localization directives" }
+      }
+    },
+    "output": {
+      "description": "Output formatting",
+      "properties": {
+        "escapeExtendedChars": { "flattenPath": "escapeExtendedChars", "description": "Escape extended characters in output" },
+        "useJavaEscapes": { "flattenPath": "useJavaEscapes", "description": "Use Java-style unicode escapes" },
+        "convertLFandTab": { "flattenPath": "convertLFandTab", "description": "Convert LF and tab characters" }
+      }
+    }
+  },
+
+  "okf_xliff": {
+    "extraction": {
+      "description": "Control what content is extracted",
+      "properties": {
+        "preserveSpaceByDefault": { "flattenPath": "preserveSpaceByDefault", "description": "Preserve whitespace by default" },
+        "includeExtensions": { "flattenPath": "includeExtensions", "description": "Include XLIFF extension elements" },
+        "includeIts": { "flattenPath": "includeIts", "description": "Include ITS annotations" },
+        "inlineCdata": { "flattenPath": "inlineCdata", "description": "Treat CDATA sections as inline" },
+        "subAsTextUnit": { "flattenPath": "subAsTextUnit", "description": "Process sub elements as text units" },
+        "ignoreInputSegmentation": { "flattenPath": "ignoreInputSegmentation", "description": "Ignore existing segmentation" },
+        "skipNoMrkSegSource": { "flattenPath": "skipNoMrkSegSource", "description": "Skip seg-source without mrk elements" },
+        "fallbackToID": { "flattenPath": "fallbackToID", "description": "Fall back to trans-unit ID" },
+        "forceUniqueIds": { "flattenPath": "forceUniqueIds", "description": "Force unique text unit IDs" }
+      }
+    },
+    "states": {
+      "description": "Translation state handling",
+      "properties": {
+        "targetStateMode": { "flattenPath": "targetStateMode", "description": "How to handle target state attribute" },
+        "targetStateValue": { "flattenPath": "targetStateValue", "description": "State value to set on targets" },
+        "useTranslationTargetState": { "flattenPath": "useTranslationTargetState", "description": "Use translation-specific target state" },
+        "editAltTrans": { "flattenPath": "editAltTrans", "description": "Edit alt-trans elements" },
+        "addAltTrans": { "flattenPath": "addAltTrans", "description": "Add alt-trans for existing translations" },
+        "addAltTransGMode": { "flattenPath": "addAltTransGMode", "description": "Alt-trans mode for group-level" }
+      }
+    },
+    "output": {
+      "description": "Output formatting and behavior",
+      "properties": {
+        "addTargetLanguage": { "flattenPath": "addTargetLanguage", "description": "Add target-language attribute" },
+        "overrideTargetLanguage": { "flattenPath": "overrideTargetLanguage", "description": "Override target language in output" },
+        "allowEmptyTargets": { "flattenPath": "allowEmptyTargets", "description": "Allow empty target elements" },
+        "alwaysAddTargets": { "flattenPath": "alwaysAddTargets", "description": "Always add target elements" },
+        "alwaysUseSegSource": { "flattenPath": "alwaysUseSegSource", "description": "Always use seg-source" },
+        "outputSegmentationType": { "flattenPath": "outputSegmentationType", "description": "Output segmentation type" }
+      }
+    },
+    "subfilters": {
+      "description": "Sub-filter configuration",
+      "properties": {
+        "cdataSubfilter": { "flattenPath": "cdataSubfilter", "description": "Sub-filter for CDATA content" },
+        "pcdataSubfilter": { "flattenPath": "pcdataSubfilter", "description": "Sub-filter for PCDATA content" }
+      }
+    },
+    "parser": {
+      "description": "Parser settings",
+      "properties": {
+        "useCustomParser": { "flattenPath": "useCustomParser", "description": "Use custom parser" },
+        "factoryClass": { "flattenPath": "factoryClass", "description": "Custom parser factory class" }
+      }
+    },
+    "sdl": {
+      "description": "SDL XLIFF extensions",
+      "properties": {
+        "useSdlXliffWriter": { "flattenPath": "useSdlXliffWriter", "description": "Use SDL XLIFF writer" },
+        "useSegsForSdlProps": { "flattenPath": "useSegsForSdlProps", "description": "Use segments for SDL properties" },
+        "sdlSegConfValue": { "flattenPath": "sdlSegConfValue", "description": "SDL segment confidence value" },
+        "sdlSegLockedValue": { "flattenPath": "sdlSegLockedValue", "description": "SDL segment locked value" },
+        "sdlSegOriginValue": { "flattenPath": "sdlSegOriginValue", "description": "SDL segment origin value" }
+      }
+    },
+    "iws": {
+      "description": "Idiom WorldServer extensions",
+      "properties": {
+        "useIwsXliffWriter": { "flattenPath": "useIwsXliffWriter", "description": "Use IWS XLIFF writer" },
+        "iwsBlockFinished": { "flattenPath": "iwsBlockFinished", "description": "IWS block finished state" },
+        "iwsBlockLockStatus": { "flattenPath": "iwsBlockLockStatus", "description": "IWS lock status" },
+        "iwsBlockMultipleExact": { "flattenPath": "iwsBlockMultipleExact", "description": "IWS multiple exact matches" },
+        "iwsBlockTmScore": { "flattenPath": "iwsBlockTmScore", "description": "IWS TM score threshold" },
+        "iwsBlockTmScoreValue": { "flattenPath": "iwsBlockTmScoreValue", "description": "IWS TM score value" },
+        "iwsIncludeMultipleExact": { "flattenPath": "iwsIncludeMultipleExact", "description": "Include multiple exact matches" },
+        "iwsRemoveTmOrigin": { "flattenPath": "iwsRemoveTmOrigin", "description": "Remove TM origin" },
+        "iwsTransStatusValue": { "flattenPath": "iwsTransStatusValue", "description": "IWS translation status value" },
+        "iwsTransTypeValue": { "flattenPath": "iwsTransTypeValue", "description": "IWS translation type value" }
+      }
+    }
+  },
+
+  "okf_xliff2": {
+    "extraction": {
+      "description": "Control what content is extracted",
+      "properties": {
+        "needsSegmentation": { "flattenPath": "needsSegmentation", "description": "Apply segmentation to content" },
+        "forceUniqueIds": { "flattenPath": "forceUniqueIds", "description": "Force unique text unit IDs" },
+        "simplifyTags": { "flattenPath": "simplifyTags", "description": "Simplify inline tags" },
+        "ignoreTagTypeMatch": { "flattenPath": "ignoreTagTypeMatch", "description": "Ignore tag type matching" }
+      }
+    },
+    "states": {
+      "description": "Translation state handling",
+      "properties": {
+        "discardInvalidTargets": { "flattenPath": "discardInvalidTargets", "description": "Discard invalid target elements" },
+        "subfilterOverwriteTarget": { "flattenPath": "subfilterOverwriteTarget", "description": "Sub-filter overwrites target" }
+      }
+    },
+    "output": {
+      "description": "Output settings",
+      "properties": {
+        "writeOriginalData": { "flattenPath": "writeOriginalData", "description": "Write original data to output" },
+        "maxValidation": { "flattenPath": "maxValidation", "description": "Maximum validation level" }
+      }
+    }
+  },
+
+  "okf_html": {
+    "parser": {
+      "description": "Parser behavior",
+      "properties": {
+        "assumeWellformed": { "flattenPath": "assumeWellformed", "description": "Assume well-formed HTML" },
+        "preserveWhitespace": { "flattenPath": "preserve_whitespace", "description": "Preserve whitespace" }
+      }
+    },
+    "elements": {
+      "description": "Element extraction rules",
+      "properties": {
+        "elements": { "flattenPath": "elements", "description": "Element extraction rule map" }
+      }
+    },
+    "attributes": {
+      "description": "Attribute extraction rules",
+      "properties": {
+        "attributes": { "flattenPath": "attributes", "description": "Global attribute rule map" }
+      }
+    }
+  },
+
+  "okf_html5": {},
+
+  "okf_xml": {},
+
+  "okf_xmlstream": {
+    "parser": {
+      "description": "Parser behavior",
+      "properties": {
+        "assumeWellformed": { "flattenPath": "assumeWellformed", "description": "Assume well-formed XML" },
+        "preserveWhitespace": { "flattenPath": "preserve_whitespace", "description": "Preserve whitespace" }
+      }
+    },
+    "elements": {
+      "description": "Element extraction rules",
+      "properties": {
+        "elements": { "flattenPath": "elements", "description": "Element extraction rule map" }
+      }
+    },
+    "attributes": {
+      "description": "Attribute extraction rules",
+      "properties": {
+        "attributes": { "flattenPath": "attributes", "description": "Global attribute rule map" }
+      }
+    }
+  },
+
+  "okf_wiki": {},
+
+  "okf_doxygen": {
+    "parser": {
+      "description": "Parser configuration",
+      "properties": {
+        "doxygenCommands": { "flattenPath": "doxygen_commands", "description": "Custom Doxygen command definitions" },
+        "htmlCommands": { "flattenPath": "html_commands", "description": "Custom HTML command definitions" },
+        "preserveWhitespace": { "flattenPath": "preserve_whitespace", "description": "Preserve whitespace" }
+      }
+    }
+  },
+
+  "okf_dtd": {},
+
+  "okf_po": {
+    "mode": {
+      "description": "Processing mode",
+      "properties": {
+        "bilingualMode": { "flattenPath": "bilingualMode", "description": "Treat as bilingual file" },
+        "protectApproved": { "flattenPath": "protectApproved", "description": "Protect approved translations" },
+        "wrapContent": { "flattenPath": "wrapContent", "description": "Wrap long content lines" }
+      }
+    },
+    "identification": {
+      "description": "ID and naming",
+      "properties": {
+        "makeID": { "flattenPath": "makeID", "description": "Generate text unit IDs" },
+        "includeMsgContextInNote": { "flattenPath": "includeMsgContextInNote", "description": "Include msgctxt in notes" }
+      }
+    },
+    "output": {
+      "description": "Output formatting",
+      "properties": {
+        "outputGeneric": { "flattenPath": "outputGeneric", "description": "Output in generic format" },
+        "allowEmptyOutputTarget": { "flattenPath": "allowEmptyOutputTarget", "description": "Allow empty target output" }
+      }
+    }
+  },
+
+  "okf_tmx": {
+    "extraction": {
+      "description": "TMX processing settings",
+      "properties": {
+        "segType": { "flattenPath": "segType", "description": "Segmentation type" },
+        "processAllTargets": { "flattenPath": "processAllTargets", "description": "Process all target languages" },
+        "exitOnInvalid": { "flattenPath": "exitOnInvalid", "description": "Exit on invalid TMX" },
+        "consolidateDpSkeleton": { "flattenPath": "consolidateDpSkeleton", "description": "Consolidate document part skeleton" },
+        "propValueSep": { "flattenPath": "propValueSep", "description": "Property value separator" }
+      }
+    },
+    "output": {
+      "description": "Output settings",
+      "properties": {
+        "escapeGT": { "flattenPath": "escapeGT", "description": "Escape greater-than in output" }
+      }
+    }
+  },
+
+  "okf_ts": {
+    "output": {
+      "description": "Output settings",
+      "properties": {
+        "escapeGT": { "flattenPath": "escapeGT", "description": "Escape greater-than in output" },
+        "decodeByteValues": { "flattenPath": "decodeByteValues", "description": "Decode byte values" }
+      }
+    }
+  },
+
+  "okf_ttx": {
+    "mode": {
+      "description": "Processing mode",
+      "properties": {
+        "segmentMode": { "flattenPath": "segmentMode", "description": "Segmentation mode" }
+      }
+    },
+    "output": {
+      "description": "Output settings",
+      "properties": {
+        "escapeGT": { "flattenPath": "escapeGT", "description": "Escape greater-than in output" }
+      }
+    }
+  },
+
+  "okf_txml": {
+    "output": {
+      "description": "Output settings",
+      "properties": {
+        "allowEmptyOutputTarget": { "flattenPath": "allowEmptyOutputTarget", "description": "Allow empty target in output" }
+      }
+    }
+  },
+
+  "okf_autoxliff": {
+    "general": {
+      "description": "Configuration selection",
+      "properties": {
+        "xliffConfig": { "flattenPath": "xliff_config", "description": "XLIFF 1.x filter configuration" },
+        "xliff2Config": { "flattenPath": "xliff2_config", "description": "XLIFF 2.0 filter configuration" }
+      }
+    }
+  },
+
+  "okf_openxml": {
+    "word": {
+      "description": "Word document settings",
+      "properties": {
+        "translateHeadersFooters": { "flattenPath": "bPreferenceTranslateWordHeadersFooters", "description": "Translate headers and footers" },
+        "translateHidden": { "flattenPath": "bPreferenceTranslateWordHidden", "description": "Translate hidden text" },
+        "translateComments": { "flattenPath": "bPreferenceTranslateComments", "description": "Translate comments" },
+        "translateDocProperties": { "flattenPath": "bPreferenceTranslateDocProperties", "description": "Translate document properties" },
+        "excludeGraphicMetaData": { "flattenPath": "bPreferenceTranslateWordExcludeGraphicMetaData", "description": "Exclude graphic metadata" },
+        "excludeColors": { "flattenPath": "bPreferenceTranslateWordExcludeColors", "description": "Exclude specific font colors" },
+        "allowStyleOptimisation": { "flattenPath": "allowWordStyleOptimisation", "description": "Allow style optimization" },
+        "translateNumberingLevelText": { "flattenPath": "translateWordNumberingLevelText", "description": "Translate numbering level text" },
+        "ignoreFontColors": { "flattenPath": "ignoreWordFontColors", "description": "Ignore font colors" },
+        "fontColorsMin": { "flattenPath": "wordFontColorsMinIgnoranceThreshold", "description": "Font color min threshold" },
+        "fontColorsMax": { "flattenPath": "wordFontColorsMaxIgnoranceThreshold", "description": "Font color max threshold" },
+        "automaticallyAcceptRevisions": { "flattenPath": "bPreferenceAutomaticallyAcceptRevisions", "description": "Accept revisions automatically" }
+      }
+    },
+    "excel": {
+      "description": "Excel spreadsheet settings",
+      "properties": {
+        "translateHidden": { "flattenPath": "bPreferenceTranslateExcelHidden", "description": "Translate hidden cells" },
+        "translateSheetNames": { "flattenPath": "bPreferenceTranslateExcelSheetNames", "description": "Translate sheet names" },
+        "translateDrawings": { "flattenPath": "bPreferenceTranslateExcelDrawings", "description": "Translate drawings" },
+        "translateDiagramData": { "flattenPath": "bPreferenceTranslateExcelDiagramData", "description": "Translate diagram data" },
+        "excludeColors": { "flattenPath": "bPreferenceTranslateExcelExcludeColors", "description": "Exclude specific cell colors" },
+        "preserveStylesInTargetColumns": { "flattenPath": "preserveExcelStylesInTargetColumns", "description": "Preserve styles in target columns" },
+        "translateCellsCopied": { "flattenPath": "translateExcelCellsCopied", "description": "Translate copied cells" }
+      }
+    },
+    "powerpoint": {
+      "description": "PowerPoint presentation settings",
+      "properties": {
+        "translateHidden": { "flattenPath": "bPreferenceTranslatePowerpointHidden", "description": "Translate hidden slides" },
+        "translateMasters": { "flattenPath": "bPreferenceTranslatePowerpointMasters", "description": "Translate master slides" },
+        "translateNotes": { "flattenPath": "bPreferenceTranslatePowerpointNotes", "description": "Translate slide notes" },
+        "includedSlideNumbersOnly": { "flattenPath": "bPreferencePowerpointIncludedSlideNumbersOnly", "description": "Only translate specific slides" },
+        "ignorePlaceholdersInMasters": { "flattenPath": "bPreferenceIgnorePlaceholdersInPowerpointMasters", "description": "Ignore placeholders in masters" },
+        "reorderNotes": { "flattenPath": "bPreferenceReorderPowerpointNotes", "description": "Reorder notes" },
+        "reorderCharts": { "flattenPath": "reorderPowerpointCharts", "description": "Reorder charts" },
+        "reorderComments": { "flattenPath": "reorderPowerpointComments", "description": "Reorder comments" },
+        "reorderDiagramData": { "flattenPath": "reorderPowerpointDiagramData", "description": "Reorder diagram data" },
+        "reorderDocProperties": { "flattenPath": "reorderPowerpointDocProperties", "description": "Reorder doc properties" },
+        "reorderRelationships": { "flattenPath": "reorderPowerpointRelationships", "description": "Reorder relationships" },
+        "reorderNotesAndComments": { "flattenPath": "bReorderPowerpointNotesAndComments", "description": "Reorder notes and comments" },
+        "translateCharts": { "flattenPath": "translatePowerpointCharts", "description": "Translate chart text" },
+        "translateComments": { "flattenPath": "translatePowerpointComments", "description": "Translate comments" },
+        "translateDiagramData": { "flattenPath": "translatePowerpointDiagramData", "description": "Translate diagram data" },
+        "translateDocProperties": { "flattenPath": "translatePowerpointDocProperties", "description": "Translate doc properties" }
+      }
+    },
+    "general": {
+      "description": "General settings",
+      "properties": {
+        "extractExternalHyperlinks": { "flattenPath": "bExtractExternalHyperlinks", "description": "Extract external hyperlinks" },
+        "inExcludeMode": { "flattenPath": "bInExcludeMode", "description": "Use include/exclude mode" },
+        "inExcludeHighlightMode": { "flattenPath": "bInExcludeHighlightMode", "description": "Use highlight include/exclude mode" },
+        "addLineSeparator": { "flattenPath": "bPreferenceAddLineSeparatorAsCharacter", "description": "Add line separator as character" },
+        "addTabAsCharacter": { "flattenPath": "bPreferenceAddTabAsCharacter", "description": "Add tab as character" },
+        "aggressiveCleanup": { "flattenPath": "bPreferenceAggressiveCleanup", "description": "Aggressive code cleanup" },
+        "allowEmptyTargets": { "flattenPath": "bPreferenceAllowEmptyTargets", "description": "Allow empty targets" },
+        "ignoreSoftHyphenTag": { "flattenPath": "bPreferenceIgnoreSoftHyphenTag", "description": "Ignore soft hyphen tags" },
+        "replaceNoBreakHyphenTag": { "flattenPath": "bPreferenceReplaceNoBreakHyphenTag", "description": "Replace no-break hyphen tags" },
+        "lineSeparatorReplacement": { "flattenPath": "sPreferenceLineSeparatorReplacement", "description": "Line separator replacement string" },
+        "maxAttributeSize": { "flattenPath": "maxAttributeSize", "description": "Max attribute size" },
+        "fileType": { "flattenPath": "nFileType", "description": "File type identifier" }
+      }
+    }
+  },
+
+  "okf_icml": {
+    "extraction": {
+      "description": "Extraction settings",
+      "properties": {
+        "extractNotes": { "flattenPath": "extractNotes", "description": "Extract editorial notes" },
+        "extractMasterSpreads": { "flattenPath": "extractMasterSpreads", "description": "Extract master spreads" },
+        "newTuOnBr": { "flattenPath": "newTuOnBr", "description": "Start new text unit on line break" },
+        "simplifyCodes": { "flattenPath": "simplifyCodes", "description": "Simplify inline codes" },
+        "skipThreshold": { "flattenPath": "skipThreshold", "description": "Skip threshold for similar segments" }
+      }
+    }
+  },
+
+  "okf_idml": {
+    "extraction": {
+      "description": "Extraction settings",
+      "properties": {
+        "extractNotes": { "flattenPath": "extractNotes", "description": "Extract editorial notes" },
+        "extractMasterSpreads": { "flattenPath": "extractMasterSpreads", "description": "Extract master spreads" },
+        "extractCustomTextVariables": { "flattenPath": "extractCustomTextVariables", "description": "Extract custom text variables" },
+        "extractExternalHyperlinks": { "flattenPath": "extractExternalHyperlinks", "description": "Extract external hyperlinks" },
+        "extractHiddenLayers": { "flattenPath": "extractHiddenLayers", "description": "Extract hidden layers" },
+        "extractHiddenPasteboardItems": { "flattenPath": "extractHiddenPasteboardItems", "description": "Extract hidden pasteboard items" },
+        "extractHyperlinkTextSourcesInline": { "flattenPath": "extractHyperlinkTextSourcesInline", "description": "Extract hyperlink text inline" },
+        "extractIndexTopics": { "flattenPath": "extractIndexTopics", "description": "Extract index topics" },
+        "extractBreaksInline": { "flattenPath": "extractBreaksInline", "description": "Extract breaks inline" },
+        "untagXmlStructures": { "flattenPath": "untagXmlStructures", "description": "Untag XML structures" },
+        "skipDiscretionaryHyphens": { "flattenPath": "skipDiscretionaryHyphens", "description": "Skip discretionary hyphens" },
+        "specialCharacterPattern": { "flattenPath": "specialCharacterPattern", "description": "Special character pattern" },
+        "maxAttributeSize": { "flattenPath": "maxAttributeSize", "description": "Maximum attribute size" }
+      }
+    },
+    "formatting": {
+      "description": "Formatting tolerance thresholds",
+      "properties": {
+        "ignoreCharacterKerning": { "flattenPath": "ignoreCharacterKerning", "description": "Ignore kerning differences" },
+        "kerningMin": { "flattenPath": "characterKerningMinIgnoranceThreshold", "description": "Kerning min threshold" },
+        "kerningMax": { "flattenPath": "characterKerningMaxIgnoranceThreshold", "description": "Kerning max threshold" },
+        "ignoreCharacterTracking": { "flattenPath": "ignoreCharacterTracking", "description": "Ignore tracking differences" },
+        "trackingMin": { "flattenPath": "characterTrackingMinIgnoranceThreshold", "description": "Tracking min threshold" },
+        "trackingMax": { "flattenPath": "characterTrackingMaxIgnoranceThreshold", "description": "Tracking max threshold" },
+        "ignoreCharacterLeading": { "flattenPath": "ignoreCharacterLeading", "description": "Ignore leading differences" },
+        "leadingMin": { "flattenPath": "characterLeadingMinIgnoranceThreshold", "description": "Leading min threshold" },
+        "leadingMax": { "flattenPath": "characterLeadingMaxIgnoranceThreshold", "description": "Leading max threshold" },
+        "ignoreCharacterBaselineShift": { "flattenPath": "ignoreCharacterBaselineShift", "description": "Ignore baseline shift" },
+        "baselineShiftMin": { "flattenPath": "characterBaselineShiftMinIgnoranceThreshold", "description": "Baseline shift min" },
+        "baselineShiftMax": { "flattenPath": "characterBaselineShiftMaxIgnoranceThreshold", "description": "Baseline shift max" }
+      }
+    }
+  },
+
+  "okf_mif": {
+    "extraction": {
+      "description": "Extraction settings",
+      "properties": {
+        "extractBodyPages": { "flattenPath": "extractBodyPages", "description": "Extract body pages" },
+        "extractMasterPages": { "flattenPath": "extractMasterPages", "description": "Extract master pages" },
+        "extractReferencePages": { "flattenPath": "extractReferencePages", "description": "Extract reference pages" },
+        "extractHiddenPages": { "flattenPath": "extractHiddenPages", "description": "Extract hidden pages" },
+        "extractVariables": { "flattenPath": "extractVariables", "description": "Extract variables" },
+        "extractIndexMarkers": { "flattenPath": "extractIndexMarkers", "description": "Extract index markers" },
+        "extractLinks": { "flattenPath": "extractLinks", "description": "Extract cross-reference links" },
+        "extractHardReturnsAsText": { "flattenPath": "extractHardReturnsAsText", "description": "Extract hard returns as text" },
+        "extractPgfNumFormatsInline": { "flattenPath": "extractPgfNumFormatsInline", "description": "Extract paragraph number formats inline" },
+        "extractReferenceFormats": { "flattenPath": "extractReferenceFormats", "description": "Extract reference formats" }
+      }
+    }
+  },
+
+  "okf_odf": {
+    "extraction": {
+      "description": "Extraction settings",
+      "properties": {
+        "extractNotes": { "flattenPath": "extractNotes", "description": "Extract notes/comments" },
+        "extractMetadata": { "flattenPath": "extractMetadata", "description": "Extract document metadata" },
+        "extractReferences": { "flattenPath": "extractReferences", "description": "Extract cross-references" },
+        "encodeCharacterEntityReferenceGlyphs": { "flattenPath": "encodeCharacterEntityReferenceGlyphs", "description": "Encode character entity glyphs" }
+      }
+    }
+  },
+
+  "okf_openoffice": {
+    "extraction": {
+      "description": "Extraction settings",
+      "properties": {
+        "extractNotes": { "flattenPath": "extractNotes", "description": "Extract notes/comments" },
+        "extractMetadata": { "flattenPath": "extractMetadata", "description": "Extract document metadata" },
+        "extractReferences": { "flattenPath": "extractReferences", "description": "Extract cross-references" },
+        "encodeCharacterEntityReferenceGlyphs": { "flattenPath": "encodeCharacterEntityReferenceGlyphs", "description": "Encode character entity glyphs" }
+      }
+    }
+  },
+
+  "okf_markdown": {
+    "extraction": {
+      "description": "Content extraction settings",
+      "properties": {
+        "translateImageAltText": { "flattenPath": "translateImageAltText", "description": "Translate image alt text" },
+        "translateUrls": { "flattenPath": "translateUrls", "description": "Translate URLs" },
+        "urlPattern": { "flattenPath": "urlToTranslatePattern", "description": "Regex for URLs to translate" },
+        "translateCodeBlocks": { "flattenPath": "translateCodeBlocks", "description": "Translate fenced code blocks" },
+        "translateIndentedCodeBlocks": { "flattenPath": "translateIndentedCodeBlocks", "description": "Translate indented code blocks" },
+        "translateInlineCodeBlocks": { "flattenPath": "translateInlineCodeBlocks", "description": "Translate inline code" },
+        "translateHeaderMetadata": { "flattenPath": "translateHeaderMetadata", "description": "Translate YAML front matter" },
+        "nonTranslateBlocks": { "flattenPath": "nonTranslateBlocks", "description": "Regex for non-translatable blocks" },
+        "parseMdx": { "flattenPath": "parseMdx", "description": "Parse MDX syntax" }
+      }
+    },
+    "output": {
+      "description": "Output formatting",
+      "properties": {
+        "generateHeaderAnchors": { "flattenPath": "generateHeaderAnchors", "description": "Generate header anchor IDs" },
+        "charactersToEscape": { "flattenPath": "charactersToEscape", "description": "Characters to escape in output" },
+        "htmlEntitiesToEscape": { "flattenPath": "htmlEntitiesToEscape", "description": "HTML entities to escape" },
+        "unescapeBackslashCharacters": { "flattenPath": "unescapeBackslashCharacters", "description": "Unescape backslash characters" }
+      }
+    },
+    "subfilters": {
+      "description": "Sub-filter configuration",
+      "properties": {
+        "htmlSubfilter": { "flattenPath": "htmlSubfilter", "description": "HTML sub-filter configuration" },
+        "yamlSubfilter": { "flattenPath": "yamlSubfilter", "description": "YAML front matter sub-filter" }
+      }
+    }
+  },
+
+  "okf_messageformat": {
+    "general": {
+      "description": "General settings",
+      "properties": {
+        "addPluralForms": { "flattenPath": "addPluralForms", "description": "Add plural form variants" },
+        "normalize": { "flattenPath": "normalize", "description": "Normalize message format" },
+        "prettyPrint": { "flattenPath": "prettyPrint", "description": "Pretty-print output" }
+      }
+    }
+  },
+
+  "okf_pdf": {
+    "parser": {
+      "description": "Parser settings",
+      "properties": {
+        "preserveWhitespace": { "flattenPath": "preserveWhitespace", "description": "Preserve whitespace" },
+        "indentThreshold": { "flattenPath": "indentThreshold", "description": "Indent detection threshold" },
+        "spacingTolerance": { "flattenPath": "spacingTolerance", "description": "Spacing tolerance" }
+      }
+    },
+    "output": {
+      "description": "Output formatting",
+      "properties": {
+        "lineSeparator": { "flattenPath": "lineSeparator", "description": "Line separator character" },
+        "paragraphSeparator": { "flattenPath": "paragraphSeparator", "description": "Paragraph separator" }
+      }
+    }
+  },
+
+  "okf_regex": {
+    "extraction": {
+      "description": "Regex extraction settings",
+      "properties": {
+        "startString": { "flattenPath": "startString", "description": "Start pattern for extraction" },
+        "endString": { "flattenPath": "endString", "description": "End pattern for extraction" },
+        "regexOptions": { "flattenPath": "regexOptions", "description": "Regex options" },
+        "extractOuterStrings": { "flattenPath": "extractOuterStrings", "description": "Extract strings outside patterns" },
+        "oneLevelGroups": { "flattenPath": "oneLevelGroups", "description": "Use one-level groups" },
+        "mimeType": { "flattenPath": "mimeType", "description": "MIME type for content" }
+      }
+    },
+    "output": {
+      "description": "Output settings",
+      "properties": {
+        "localizeOutside": { "flattenPath": "localizeOutside", "description": "Localize content outside patterns" },
+        "useBSlashEscape": { "flattenPath": "useBSlashEscape", "description": "Use backslash escaping" },
+        "removeBSlashEscape": { "flattenPath": "removeBSlashEscape", "description": "Remove backslash escaping" },
+        "useDoubleCharEscape": { "flattenPath": "useDoubleCharEscape", "description": "Use double-character escaping" },
+        "useLd": { "flattenPath": "useLd", "description": "Use localization directives" }
+      }
+    },
+    "subfilters": {
+      "description": "Sub-filter configuration",
+      "properties": {
+        "subFilter": { "flattenPath": "subFilter", "description": "Sub-filter for content processing" }
+      }
+    }
+  },
+
+  "okf_phpcontent": {
+    "extraction": {
+      "description": "Extraction settings",
+      "properties": {
+        "useDirectives": { "flattenPath": "useDirectives", "description": "Use extraction directives" },
+        "extractOutsideDirectives": { "flattenPath": "extractOutsideDirectives", "description": "Extract outside directive blocks" }
+      }
+    }
+  },
+
+  "okf_baseplaintext": {
+    "parser": {
+      "description": "Parser settings",
+      "properties": {
+        "preserveWS": { "flattenPath": "preserveWS", "description": "Preserve whitespace" },
+        "trimLeading": { "flattenPath": "trimLeading", "description": "Trim leading whitespace" },
+        "trimTrailing": { "flattenPath": "trimTrailing", "description": "Trim trailing whitespace" },
+        "unescapeSource": { "flattenPath": "unescapeSource", "description": "Unescape source content" },
+        "wrapMode": { "flattenPath": "wrapMode", "description": "Line wrapping mode" }
+      }
+    }
+  },
+
+  "okf_paraplaintext": {
+    "extraction": {
+      "description": "Extraction settings",
+      "properties": {
+        "extractParagraphs": { "flattenPath": "extractParagraphs", "description": "Extract by paragraph" }
+      }
+    },
+    "parser": {
+      "description": "Parser settings",
+      "properties": {
+        "preserveWS": { "flattenPath": "preserveWS", "description": "Preserve whitespace" },
+        "trimLeading": { "flattenPath": "trimLeading", "description": "Trim leading whitespace" },
+        "trimTrailing": { "flattenPath": "trimTrailing", "description": "Trim trailing whitespace" },
+        "unescapeSource": { "flattenPath": "unescapeSource", "description": "Unescape source content" },
+        "wrapMode": { "flattenPath": "wrapMode", "description": "Line wrapping mode" }
+      }
+    }
+  },
+
+  "okf_regexplaintext": {
+    "extraction": {
+      "description": "Extraction settings",
+      "properties": {
+        "rule": { "flattenPath": "rule", "description": "Extraction regex rule" },
+        "sourceGroup": { "flattenPath": "sourceGroup", "description": "Regex group for source text" },
+        "sample": { "flattenPath": "sample", "description": "Sample text for testing" },
+        "regexOptions": { "flattenPath": "regexOptions", "description": "Regex options" }
+      }
+    },
+    "parser": {
+      "description": "Parser settings",
+      "properties": {
+        "preserveWS": { "flattenPath": "preserveWS", "description": "Preserve whitespace" },
+        "trimLeading": { "flattenPath": "trimLeading", "description": "Trim leading whitespace" },
+        "trimTrailing": { "flattenPath": "trimTrailing", "description": "Trim trailing whitespace" },
+        "unescapeSource": { "flattenPath": "unescapeSource", "description": "Unescape source content" },
+        "wrapMode": { "flattenPath": "wrapMode", "description": "Line wrapping mode" }
+      }
+    }
+  },
+
+  "okf_splicedlines": {
+    "extraction": {
+      "description": "Extraction settings",
+      "properties": {
+        "splicer": { "flattenPath": "splicer", "description": "Line splicer pattern" },
+        "createPlaceholders": { "flattenPath": "createPlaceholders", "description": "Create inline placeholders" }
+      }
+    },
+    "parser": {
+      "description": "Parser settings",
+      "properties": {
+        "preserveWS": { "flattenPath": "preserveWS", "description": "Preserve whitespace" },
+        "trimLeading": { "flattenPath": "trimLeading", "description": "Trim leading whitespace" },
+        "trimTrailing": { "flattenPath": "trimTrailing", "description": "Trim trailing whitespace" },
+        "unescapeSource": { "flattenPath": "unescapeSource", "description": "Unescape source content" },
+        "wrapMode": { "flattenPath": "wrapMode", "description": "Line wrapping mode" }
+      }
+    }
+  },
+
+  "okf_plaintext": {},
+  "okf_table": {},
+
+  "okf_basetable": {
+    "columns": {
+      "description": "Column configuration",
+      "properties": {
+        "numColumns": { "flattenPath": "numColumns", "description": "Number of columns" },
+        "sourceColumns": { "flattenPath": "sourceColumns", "description": "Source language columns" },
+        "targetColumns": { "flattenPath": "targetColumns", "description": "Target language columns" },
+        "targetLanguages": { "flattenPath": "targetLanguages", "description": "Target language codes" },
+        "commentColumns": { "flattenPath": "commentColumns", "description": "Comment columns" },
+        "sourceIdColumns": { "flattenPath": "sourceIdColumns", "description": "Source ID columns" },
+        "recordIdColumn": { "flattenPath": "recordIdColumn", "description": "Record ID column" },
+        "columnNamesLineNum": { "flattenPath": "columnNamesLineNum", "description": "Line number with column names" },
+        "valuesStartLineNum": { "flattenPath": "valuesStartLineNum", "description": "First data line number" },
+        "detectColumnsMode": { "flattenPath": "detectColumnsMode", "description": "Column detection mode" },
+        "sendColumnsMode": { "flattenPath": "sendColumnsMode", "description": "Column send mode" },
+        "sendHeaderMode": { "flattenPath": "sendHeaderMode", "description": "Header send mode" }
+      }
+    },
+    "references": {
+      "description": "Source reference columns",
+      "properties": {
+        "commentSourceRefs": { "flattenPath": "commentSourceRefs", "description": "Comment source references" },
+        "sourceIdSourceRefs": { "flattenPath": "sourceIdSourceRefs", "description": "Source ID source references" },
+        "sourceIdSuffixes": { "flattenPath": "sourceIdSuffixes", "description": "Source ID suffixes" },
+        "targetSourceRefs": { "flattenPath": "targetSourceRefs", "description": "Target source references" },
+        "exposeCommentsAsMetadata": { "flattenPath": "exposeCommentsAsMetadata", "description": "Expose comments as metadata" }
+      }
+    },
+    "parser": {
+      "description": "Parser settings",
+      "properties": {
+        "preserveWS": { "flattenPath": "preserveWS", "description": "Preserve whitespace" },
+        "trimLeading": { "flattenPath": "trimLeading", "description": "Trim leading whitespace" },
+        "trimTrailing": { "flattenPath": "trimTrailing", "description": "Trim trailing whitespace" },
+        "trimMode": { "flattenPath": "trimMode", "description": "Trim mode" },
+        "unescapeSource": { "flattenPath": "unescapeSource", "description": "Unescape source content" },
+        "wrapMode": { "flattenPath": "wrapMode", "description": "Line wrapping mode" }
+      }
+    }
+  },
+
+  "okf_commaseparatedvalues": {
+    "format": {
+      "description": "CSV format settings",
+      "properties": {
+        "fieldDelimiter": { "flattenPath": "fieldDelimiter", "description": "Field delimiter character" },
+        "textQualifier": { "flattenPath": "textQualifier", "description": "Text qualifier character" },
+        "escapingMode": { "flattenPath": "escapingMode", "description": "Escaping mode" },
+        "addQualifiers": { "flattenPath": "addQualifiers", "description": "Add text qualifiers to output" },
+        "removeQualifiers": { "flattenPath": "removeQualifiers", "description": "Remove text qualifiers from input" }
+      }
+    }
+  },
+
+  "okf_tabseparatedvalues": {},
+
+  "okf_fixedwidthcolumns": {
+    "columns": {
+      "description": "Column position settings",
+      "properties": {
+        "columnStartPositions": { "flattenPath": "columnStartPositions", "description": "Column start positions" },
+        "columnEndPositions": { "flattenPath": "columnEndPositions", "description": "Column end positions" }
+      }
+    }
+  },
+
+  "okf_ttml": {
+    "output": {
+      "description": "Output settings",
+      "properties": {
+        "keepTimecodes": { "flattenPath": "keepTimecodes", "description": "Preserve timing information" },
+        "timeFormat": { "flattenPath": "timeFormat", "description": "Time code format" },
+        "maxCharsPerLine": { "flattenPath": "maxCharsPerLine", "description": "Maximum characters per line" },
+        "maxLinesPerCaption": { "flattenPath": "maxLinesPerCaption", "description": "Maximum lines per caption" },
+        "cjkCharsPerLine": { "flattenPath": "cjkCharsPerLine", "description": "CJK characters per line" },
+        "splitWords": { "flattenPath": "splitWords", "description": "Split words at line boundaries" }
+      }
+    }
+  },
+
+  "okf_vtt": {
+    "extraction": {
+      "description": "Extraction settings",
+      "properties": {
+        "discardCues": { "flattenPath": "discardCues", "description": "Discard cue settings" },
+        "cueSettings": { "flattenPath": "cueSettings", "description": "Cue settings configuration" }
+      }
+    },
+    "output": {
+      "description": "Output settings",
+      "properties": {
+        "keepTimecodes": { "flattenPath": "keepTimecodes", "description": "Preserve timing information" },
+        "timeFormat": { "flattenPath": "timeFormat", "description": "Time code format" },
+        "maxCharsPerLine": { "flattenPath": "maxCharsPerLine", "description": "Maximum characters per line" },
+        "maxLinesPerCaption": { "flattenPath": "maxLinesPerCaption", "description": "Maximum lines per caption" },
+        "cjkCharsPerLine": { "flattenPath": "cjkCharsPerLine", "description": "CJK characters per line" },
+        "splitWords": { "flattenPath": "splitWords", "description": "Split words at line boundaries" }
+      }
+    }
+  },
+
+  "okf_archive": {
+    "identification": {
+      "description": "File identification",
+      "properties": {
+        "fileNames": { "flattenPath": "fileNames", "description": "File name patterns" },
+        "mimeType": { "flattenPath": "mimeType", "description": "MIME type for content" },
+        "configIds": { "flattenPath": "configIds", "description": "Filter configuration IDs" }
+      }
+    }
+  },
+
+  "okf_epub": {
+    "identification": {
+      "description": "File identification",
+      "properties": {
+        "fileNames": { "flattenPath": "fileNames", "description": "File name patterns" },
+        "mimeType": { "flattenPath": "mimeType", "description": "MIME type for content" },
+        "configIds": { "flattenPath": "configIds", "description": "Filter configuration IDs" }
+      }
+    }
+  },
+
+  "okf_sdlpackage": {
+    "identification": {
+      "description": "File identification",
+      "properties": {
+        "fileNames": { "flattenPath": "fileNames", "description": "File name patterns" },
+        "mimeType": { "flattenPath": "mimeType", "description": "MIME type for content" },
+        "configIds": { "flattenPath": "configIds", "description": "Filter configuration IDs" }
+      }
+    }
+  },
+
+  "okf_wsxzpackage": {
+    "identification": {
+      "description": "File identification",
+      "properties": {
+        "fileNames": { "flattenPath": "fileNames", "description": "File name patterns" },
+        "mimeType": { "flattenPath": "mimeType", "description": "MIME type for content" },
+        "configIds": { "flattenPath": "configIds", "description": "Filter configuration IDs" }
+      }
+    }
+  },
+
+  "okf_rainbowkit": {
+    "general": {
+      "description": "General settings",
+      "properties": {
+        "openManifest": { "flattenPath": "openManifest", "description": "Open manifest file" }
+      }
+    }
+  },
+
+  "okf_transifex": {
+    "general": {
+      "description": "General settings",
+      "properties": {
+        "openProject": { "flattenPath": "openProject", "description": "Transifex project to open" }
+      }
+    }
+  },
+
+  "okf_vignette": {
+    "mode": {
+      "description": "Processing mode",
+      "properties": {
+        "monolingual": { "flattenPath": "monolingual", "description": "Monolingual mode" },
+        "quoteMode": { "flattenPath": "quoteMode", "description": "Quote handling mode" },
+        "quoteModeDefined": { "flattenPath": "quoteModeDefined", "description": "Quote mode is defined" },
+        "useCDATA": { "flattenPath": "useCDATA", "description": "Use CDATA sections" }
+      }
+    },
+    "identification": {
+      "description": "Content identification",
+      "properties": {
+        "localeId": { "flattenPath": "localeId", "description": "Locale identifier" },
+        "sourceId": { "flattenPath": "sourceId", "description": "Source content identifier" },
+        "partsNames": { "flattenPath": "partsNames", "description": "Part names" },
+        "partsConfigurations": { "flattenPath": "partsConfigurations", "description": "Part configurations" }
+      }
+    }
+  },
+
+  "okf_xini": {
+    "segmentation": {
+      "description": "Segmentation settings",
+      "properties": {
+        "useOkapiSegmentation": { "flattenPath": "useOkapiSegmentation", "description": "Use Okapi segmentation" }
+      }
+    }
+  },
+
+  "okf_multiparsers": {
+    "extraction": {
+      "description": "CSV extraction settings",
+      "properties": {
+        "csvAutoDetectColumnTypes": { "flattenPath": "csvAutoDetectColumnTypes", "description": "Auto-detect column types" },
+        "csvAutoDetectColumnTypesRow": { "flattenPath": "csvAutoDetectColumnTypesRow", "description": "Row for type detection" },
+        "csvFormatCols": { "flattenPath": "csvFormatCols", "description": "Format column specifications" },
+        "csvNoExtractCols": { "flattenPath": "csvNoExtractCols", "description": "Columns to skip" },
+        "csvStartingRow": { "flattenPath": "csvStartingRow", "description": "Starting data row" }
+      }
+    }
+  },
+
+  "okf_mosestext": {},
+  "okf_pensieve": {},
+  "okf_rtf": {},
+  "okf_tex": {},
+  "okf_transtable": {},
+  "okf_xinirainbowkit": {}
+}

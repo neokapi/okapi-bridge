@@ -6,7 +6,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Transforms parameter metadata into clean JSON Schema format and merges editor hints.
@@ -415,6 +417,162 @@ public class SchemaTransformer {
                     prop.add("default", (JsonObject) value);
                 }
                 break;
+        }
+    }
+
+    /**
+     * Restructure a flat schema into a hierarchical one using groupings.
+     *
+     * Groups flat properties into nested objects based on the groupings definition.
+     * Common groups (inlineCodes, whitespace) are matched when the filter has at least
+     * one of the listed params, emitted as $ref, and their flat params removed.
+     * Ungrouped properties remain at root level.
+     *
+     * @param flatSchema  The flat schema produced by generateBaseSchema
+     * @param filterId    Filter ID (e.g. "okf_json")
+     * @param groupings   The full groupings.json object
+     * @param commonDefs  The common.defs.json object
+     * @return The restructured schema (may be the same object if no groupings defined)
+     */
+    public JsonObject restructureIntoHierarchy(JsonObject flatSchema, String filterId,
+                                                JsonObject groupings, JsonObject commonDefs) {
+        // No groupings for this filter — return unchanged
+        JsonObject filterGrouping = groupings.has(filterId)
+                ? groupings.getAsJsonObject(filterId) : null;
+        if (filterGrouping == null || filterGrouping.size() == 0) {
+            return flatSchema;
+        }
+
+        JsonObject flatProperties = flatSchema.has("properties")
+                ? flatSchema.getAsJsonObject("properties") : new JsonObject();
+        JsonObject newProperties = new JsonObject();
+        Set<String> claimedParams = new HashSet<>();
+
+        // Process _common groups first
+        JsonObject commonGroups = groupings.has("_common")
+                ? groupings.getAsJsonObject("_common") : null;
+        JsonObject defs = flatSchema.has("$defs")
+                ? flatSchema.getAsJsonObject("$defs").deepCopy() : new JsonObject();
+        JsonObject commonDefsSection = commonDefs.has("$defs")
+                ? commonDefs.getAsJsonObject("$defs") : new JsonObject();
+
+        if (commonGroups != null) {
+            for (Map.Entry<String, JsonElement> entry : commonGroups.entrySet()) {
+                String groupName = entry.getKey();
+                JsonObject groupDef = entry.getValue().getAsJsonObject();
+                JsonArray params = groupDef.getAsJsonArray("params");
+
+                // Check if the filter has at least one of the listed params
+                boolean hasAny = false;
+                for (JsonElement param : params) {
+                    if (flatProperties.has(param.getAsString())) {
+                        hasAny = true;
+                        break;
+                    }
+                }
+                if (!hasAny) continue;
+
+                // Add $ref at root level
+                JsonObject ref = new JsonObject();
+                ref.addProperty("$ref", "#/$defs/" + groupName);
+                newProperties.add(groupName, ref);
+
+                // Copy the definition from common.defs.json into $defs
+                if (commonDefsSection.has(groupName)) {
+                    defs.add(groupName, commonDefsSection.get(groupName).deepCopy());
+                }
+                // Also copy sub-definitions referenced by the common def (e.g. codeFinderRules, simplifierRules)
+                if (commonDefsSection.has(groupName) && commonDefsSection.get(groupName).isJsonObject()) {
+                    copyReferencedDefs(commonDefsSection.getAsJsonObject(groupName),
+                            commonDefsSection, defs);
+                }
+
+                // Claim the flat params
+                for (JsonElement param : params) {
+                    claimedParams.add(param.getAsString());
+                }
+            }
+        }
+
+        // Process filter-specific groups
+        for (Map.Entry<String, JsonElement> entry : filterGrouping.entrySet()) {
+            String groupName = entry.getKey();
+            JsonObject groupDef = entry.getValue().getAsJsonObject();
+            String groupDescription = groupDef.has("description")
+                    ? groupDef.get("description").getAsString() : null;
+            JsonObject groupProps = groupDef.has("properties")
+                    ? groupDef.getAsJsonObject("properties") : new JsonObject();
+
+            JsonObject groupSchema = new JsonObject();
+            groupSchema.addProperty("type", "object");
+            if (groupDescription != null) {
+                groupSchema.addProperty("description", groupDescription);
+            }
+
+            JsonObject groupProperties = new JsonObject();
+            for (Map.Entry<String, JsonElement> propEntry : groupProps.entrySet()) {
+                String cleanName = propEntry.getKey();
+                JsonObject propDef = propEntry.getValue().getAsJsonObject();
+                String flattenPath = propDef.has("flattenPath")
+                        ? propDef.get("flattenPath").getAsString() : cleanName;
+
+                // Find the original property in the flat schema
+                if (flatProperties.has(flattenPath)) {
+                    JsonObject originalProp = flatProperties.getAsJsonObject(flattenPath).deepCopy();
+                    originalProp.addProperty("x-flattenPath", flattenPath);
+                    // Override description if provided in grouping
+                    if (propDef.has("description")) {
+                        originalProp.addProperty("description", propDef.get("description").getAsString());
+                    }
+                    groupProperties.add(cleanName, originalProp);
+                    claimedParams.add(flattenPath);
+                }
+            }
+
+            if (groupProperties.size() > 0) {
+                groupSchema.add("properties", groupProperties);
+                newProperties.add(groupName, groupSchema);
+            }
+        }
+
+        // Add unclaimed properties at root level
+        for (Map.Entry<String, JsonElement> entry : flatProperties.entrySet()) {
+            if (!claimedParams.contains(entry.getKey())) {
+                newProperties.add(entry.getKey(), entry.getValue());
+            }
+        }
+
+        // Update the schema
+        flatSchema.add("properties", newProperties);
+        if (defs.size() > 0) {
+            flatSchema.add("$defs", defs);
+        }
+        // Remove x-groups (hierarchy replaces it)
+        flatSchema.remove("x-groups");
+
+        return flatSchema;
+    }
+
+    /**
+     * Recursively copy $ref-referenced definitions from source defs into target defs.
+     */
+    private void copyReferencedDefs(JsonObject schema, JsonObject sourceDefs, JsonObject targetDefs) {
+        if (schema.has("properties")) {
+            JsonObject props = schema.getAsJsonObject("properties");
+            for (Map.Entry<String, JsonElement> entry : props.entrySet()) {
+                if (!entry.getValue().isJsonObject()) continue;
+                JsonObject prop = entry.getValue().getAsJsonObject();
+                if (prop.has("$ref")) {
+                    String ref = prop.get("$ref").getAsString();
+                    // Parse #/$defs/name
+                    if (ref.startsWith("#/$defs/")) {
+                        String defName = ref.substring("#/$defs/".length());
+                        if (sourceDefs.has(defName) && !targetDefs.has(defName)) {
+                            targetDefs.add(defName, sourceDefs.get(defName).deepCopy());
+                        }
+                    }
+                }
+            }
         }
     }
 

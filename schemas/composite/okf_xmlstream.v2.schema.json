@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_xmlstream",
     "class": "net.sf.okapi.filters.xmlstream.XmlStreamFilter",
-    "extensions": [],
+    "extensions": [
+      ".dita",
+      ".ditamap"
+    ],
     "mimeTypes": [
       "text/xml"
     ],
@@ -66,7 +69,7 @@
         "mimeType": "text/xml",
         "extensions": ".dita;.ditamap;",
         "parametersLocation": "dita.yml",
-        "parametersRaw": "assumeWellformed: true\npreserve_whitespace: false\n\nattributes:\n  # attributes that can appear anywhere\n  'xml:lang':\n    ruleTypes: [ATTRIBUTE_WRITABLE]\n  \n  # This rule will not apply unless TEXT_UNIT element rules are defined which may have an id\n  'xml:id':\n    ruleTypes: [ATTRIBUTE_ID]\n  'id':\n    ruleTypes: [ATTRIBUTE_ID]\n  \n  'xml:space':\n    ruleTypes: [ATTRIBUTE_PRESERVE_WHITESPACE]\n    preserve: ['xml:space', EQUALS, preserve]\n    default: ['xml:space', EQUALS, default]\n\nelements:\n  # translatable attributes\n  othermeta:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [content]\n  \n  topicref:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n  \n  topicgroup:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n  \n  topichead:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n    \n  note:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [othertype]\n  \n  lq:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [reftitle]\n  \n  object:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [standby]\n  \n  map:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [title]\n   \n  state:\n    ruleTypes: [ATTRIBUTES_ONLY, INLINE]\n    translatableAttributes: [value]\n\n  data:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [label]\n  \n  vrm:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [version]\n    \n  # pre-formatted elements\n  pre:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  lines:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  screen:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  msgblock:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  codeblock:\n    ruleTypes: [PRESERVE_WHITESPACE]\n\n  # exclusion rules\n  '.*':\n    ruleTypes: [EXCLUDE]\n    conditions: [translate, EQUALS, 'no']\n\n  # '.+' is a trick to have same regex as above.\n  # hashmap doesn't allow duplicates\n  '.+':\n    ruleTypes: [INCLUDE]\n    conditions: [translate, EQUALS, 'yes']\n  \n  stylesheet:\n    ruleTypes: [EXCLUDE]\n  \n  coords:\n    ruleTypes: [EXCLUDE]\n    \n  draft-comment:\n    ruleTypes: [EXCLUDE]\n    \n  required-cleanup:\n    ruleTypes: [EXCLUDE]\n    \n  shape:\n    ruleTypes: [EXCLUDE]\n    \n  # inline elements\n  alt:\n    ruleTypes: [INLINE]\n  \n  apiname:\n    ruleTypes: [INLINE]\n  \n  b:\n    ruleTypes: [INLINE]\n  \n  boolean:\n    ruleTypes: [INLINE]\n  \n  cite:\n    ruleTypes: [INLINE]\n  \n  cmdname:\n    ruleTypes: [INLINE]\n  \n  codeph:\n    ruleTypes: [INLINE]\n  \n  delim:\n    ruleTypes: [INLINE]\n  \n  filepath:\n    ruleTypes: [INLINE]\n  \n  fragref:\n    ruleTypes: [INLINE]\n  \n  i:\n    ruleTypes: [INLINE]\n  \n  image:\n    ruleTypes: [INLINE]\n    translatableAttributes: [alt]\n    conditions: [placement, NOT_EQUALS, break]\n  \n  itemgroup:\n    ruleTypes: [INLINE]\n  \n  keyword:\n    ruleTypes: [INLINE]\n  \n  kwd:\n    ruleTypes: [INLINE]\n  \n  menucascade:\n    ruleTypes: [INLINE]\n  \n  msgnum:\n    ruleTypes: [INLINE]\n  \n  msgph:\n    ruleTypes: [INLINE]\n  \n  oper:\n    ruleTypes: [INLINE]\n  \n  option:\n    ruleTypes: [INLINE]\n  \n  parmname:\n    ruleTypes: [INLINE]\n  \n  ph:\n    ruleTypes: [INLINE]\n  \n  q:\n    ruleTypes: [INLINE]\n  \n  repsep:\n    ruleTypes: [INLINE]\n  \n  sep:\n    ruleTypes: [INLINE]\n  \n  shortcut:\n    ruleTypes: [INLINE]\n\n  sub:\n    ruleTypes: [INLINE]\n  \n  sup:\n    ruleTypes: [INLINE]\n  \n  synnoteref:\n    ruleTypes: [INLINE]\n  \n  synph:\n    ruleTypes: [INLINE]\n  \n  systemoutput:\n    ruleTypes: [INLINE]\n  \n  term:\n    ruleTypes: [INLINE]\n  \n  tm:\n    ruleTypes: [INLINE]\n  \n  tt:\n    ruleTypes: [INLINE]\n  \n  u:\n    ruleTypes: [INLINE]\n  \n  uicontrol:\n    ruleTypes: [INLINE]\n  \n  userinput:\n    ruleTypes: [INLINE]\n  \n  var:\n    ruleTypes: [INLINE]\n  \n  varname:\n    ruleTypes: [INLINE]\n  \n  wintitle:\n    ruleTypes: [INLINE]\n  \n  xref:\n    ruleTypes: [INLINE]                              \n",
+        "parametersRaw": "assumeWellformed: true\npreserve_whitespace: false\n\nattributes:\n  # attributes that can appear anywhere\n  'xml:lang':\n    ruleTypes: [ATTRIBUTE_WRITABLE]\n  \n  # This rule will not apply unless TEXT_UNIT element rules are defined which may have an id\n  'xml:id':\n    ruleTypes: [ATTRIBUTE_ID]\n  'id':\n    ruleTypes: [ATTRIBUTE_ID]\n  \n  'xml:space':\n    ruleTypes: [ATTRIBUTE_PRESERVE_WHITESPACE]\n    preserve: ['xml:space', EQUALS, preserve]\n    default: ['xml:space', EQUALS, default]\n\nelements:\n  # translatable attributes\n  othermeta:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [content]\n  \n  topicref:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n  \n  topicgroup:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n  \n  topichead:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [navtitle]\n    \n  note:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [othertype]\n  \n  lq:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [reftitle]\n  \n  object:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [standby]\n  \n  map:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [title]\n   \n  state:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [value]\n  \n  data:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [label]\n  \n  vrm:\n    ruleTypes: [ATTRIBUTES_ONLY]\n    translatableAttributes: [version]\n    \n  # pre-formatted elements\n  pre:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  lines:\n    ruleTypes: [PRESERVE_WHITESPACE]\n  screen:\n    ruleTypes: [PRESERVE_WHITESPACE]\n\n  # exclusion rules\n  '.*':\n    ruleTypes: [EXCLUDE]\n    conditions: [translate, EQUALS, 'no']\n  \n  stylesheet:\n    ruleTypes: [EXCLUDE]\n  \n  coords:\n    ruleTypes: [EXCLUDE]\n    \n  draft-comment:\n    ruleTypes: [EXCLUDE]\n    \n  required-cleanup:\n    ruleTypes: [EXCLUDE]\n    \n  shape:\n    ruleTypes: [EXCLUDE]\n    \n  # inline elements\n  alt:\n    ruleTypes: [INLINE]\n  \n  apiname:\n    ruleTypes: [INLINE]\n  \n  b:\n    ruleTypes: [INLINE]\n  \n  boolean:\n    ruleTypes: [INLINE]\n  \n  cite:\n    ruleTypes: [INLINE]\n  \n  cmdname:\n    ruleTypes: [INLINE]\n  \n  codeph:\n    ruleTypes: [INLINE]\n  \n  delim:\n    ruleTypes: [INLINE]\n  \n  filepath:\n    ruleTypes: [INLINE]\n  \n  fragref:\n    ruleTypes: [INLINE]\n  \n  i:\n    ruleTypes: [INLINE]\n  \n  image:\n    ruleTypes: [INLINE]\n    translatableAttributes: [alt]\n    conditions: [placement, NOT_EQUALS, break]\n  \n  itemgroup:\n    ruleTypes: [INLINE]\n  \n  keyword:\n    ruleTypes: [INLINE]\n  \n  kwd:\n    ruleTypes: [INLINE]\n  \n  menucascade:\n    ruleTypes: [INLINE]\n  \n  msgnum:\n    ruleTypes: [INLINE]\n  \n  msgph:\n    ruleTypes: [INLINE]\n  \n  oper:\n    ruleTypes: [INLINE]\n  \n  option:\n    ruleTypes: [INLINE]\n  \n  parmname:\n    ruleTypes: [INLINE]\n  \n  ph:\n    ruleTypes: [INLINE]\n  \n  q:\n    ruleTypes: [INLINE]\n  \n  repsep:\n    ruleTypes: [INLINE]\n  \n  sep:\n    ruleTypes: [INLINE]\n  \n  shortcut:\n    ruleTypes: [INLINE]\n  \n  state:\n    ruleTypes: [INLINE]\n  \n  sub:\n    ruleTypes: [INLINE]\n  \n  sup:\n    ruleTypes: [INLINE]\n  \n  synnoteref:\n    ruleTypes: [INLINE]\n  \n  synph:\n    ruleTypes: [INLINE]\n  \n  systemoutput:\n    ruleTypes: [INLINE]\n  \n  term:\n    ruleTypes: [INLINE]\n  \n  tm:\n    ruleTypes: [INLINE]\n  \n  tt:\n    ruleTypes: [INLINE]\n  \n  u:\n    ruleTypes: [INLINE]\n  \n  uicontrol:\n    ruleTypes: [INLINE]\n  \n  userinput:\n    ruleTypes: [INLINE]\n  \n  var:\n    ruleTypes: [INLINE]\n  \n  varname:\n    ruleTypes: [INLINE]\n  \n  wintitle:\n    ruleTypes: [INLINE]\n  \n  xref:\n    ruleTypes: [INLINE]                              \n",
         "parameters": {
           "assumeWellformed": true,
           "preserve_whitespace": false,
@@ -167,15 +170,6 @@
                 "title"
               ]
             },
-            "state": {
-              "ruleTypes": [
-                "ATTRIBUTES_ONLY",
-                "INLINE"
-              ],
-              "translatableAttributes": [
-                "value"
-              ]
-            },
             "data": {
               "ruleTypes": [
                 "ATTRIBUTES_ONLY"
@@ -207,16 +201,6 @@
                 "PRESERVE_WHITESPACE"
               ]
             },
-            "msgblock": {
-              "ruleTypes": [
-                "PRESERVE_WHITESPACE"
-              ]
-            },
-            "codeblock": {
-              "ruleTypes": [
-                "PRESERVE_WHITESPACE"
-              ]
-            },
             ".*": {
               "ruleTypes": [
                 "EXCLUDE"
@@ -225,16 +209,6 @@
                 "translate",
                 "EQUALS",
                 "no"
-              ]
-            },
-            ".+": {
-              "ruleTypes": [
-                "INCLUDE"
-              ],
-              "conditions": [
-                "translate",
-                "EQUALS",
-                "yes"
               ]
             },
             "stylesheet": {
@@ -400,6 +374,11 @@
                 "INLINE"
               ]
             },
+            "state": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
             "sub": {
               "ruleTypes": [
                 "INLINE"
@@ -509,6 +488,74 @@
     "serializationFormat": "yaml"
   },
   "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "parser": {
+      "type": "object",
+      "description": "Parser behavior",
+      "properties": {
+        "assumeWellformed": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "assumeWellformed",
+          "description": "Assume well-formed XML"
+        },
+        "preserveWhitespace": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "preserve_whitespace",
+          "description": "Preserve whitespace"
+        }
+      }
+    },
+    "attributes": {
+      "type": "object",
+      "description": "Attribute extraction rules",
+      "properties": {
+        "attributes": {
+          "type": "object",
+          "description": "Global attribute rule map",
+          "x-widget": "attributeRulesEditor",
+          "additionalProperties": {
+            "$ref": "#/$defs/attributeRule"
+          },
+          "default": {
+            "xml:lang": {
+              "ruleTypes": [
+                "ATTRIBUTE_WRITABLE"
+              ]
+            },
+            "xml:id": {
+              "ruleTypes": [
+                "ATTRIBUTE_ID"
+              ]
+            },
+            "id": {
+              "ruleTypes": [
+                "ATTRIBUTE_ID"
+              ]
+            },
+            "xml:space": {
+              "ruleTypes": [
+                "ATTRIBUTE_PRESERVE_WHITESPACE"
+              ],
+              "preserve": [
+                "xml:space",
+                "EQUALS",
+                "preserve"
+              ],
+              "default": [
+                "xml:space",
+                "EQUALS",
+                "default"
+              ]
+            }
+          },
+          "x-flattenPath": "attributes"
+        }
+      }
+    },
     "taggedConfig": {
       "type": "object"
     },
@@ -516,61 +563,8 @@
       "type": "string",
       "default": "Parameters Editor"
     },
-    "simplifierRules": {
-      "type": "string",
-      "description": "Rules for simplifying inline code representation",
-      "x-widget": "simplifierRulesEditor"
-    },
     "path": {
       "type": "string"
-    },
-    "assumeWellformed": {
-      "type": "boolean",
-      "default": true
-    },
-    "preserve_whitespace": {
-      "type": "boolean",
-      "default": false
-    },
-    "attributes": {
-      "type": "object",
-      "description": "Global attribute extraction rules — maps attribute names to their rule configuration",
-      "x-widget": "attributeRulesEditor",
-      "additionalProperties": {
-        "$ref": "#/$defs/attributeRule"
-      },
-      "default": {
-        "xml:lang": {
-          "ruleTypes": [
-            "ATTRIBUTE_WRITABLE"
-          ]
-        },
-        "xml:id": {
-          "ruleTypes": [
-            "ATTRIBUTE_ID"
-          ]
-        },
-        "id": {
-          "ruleTypes": [
-            "ATTRIBUTE_ID"
-          ]
-        },
-        "xml:space": {
-          "ruleTypes": [
-            "ATTRIBUTE_PRESERVE_WHITESPACE"
-          ],
-          "preserve": [
-            "xml:space",
-            "EQUALS",
-            "preserve"
-          ],
-          "default": [
-            "xml:space",
-            "EQUALS",
-            "default"
-          ]
-        }
-      }
     }
   },
   "additionalProperties": false,
@@ -719,36 +713,81 @@
           "description": "Condition triples: [attributeName, EQUALS|NOT_EQUALS|MATCHES, value(s)]"
         }
       ]
+    },
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "taggedConfig",
-        "editorTitle",
-        "path"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 6,
-  "x-baseHash": "8bdd1564dcd2",
-  "x-compositeHash": "639b0698168d",
-  "x-introducedInOkapi": "1.43.0"
+  "x-baseVersion": 8,
+  "x-baseHash": "dacc86936829",
+  "x-compositeHash": "8298deb5a236",
+  "x-introducedInOkapi": "0.38"
 }

@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_icml",
     "class": "net.sf.okapi.filters.icml.ICMLFilter",
-    "extensions": [],
+    "extensions": [
+      ".wcml",
+      ".icml"
+    ],
     "mimeTypes": [
       "application/x-icml+xml"
     ],
@@ -18,7 +21,7 @@
         "name": "ICML",
         "description": "Adobe InDesign ICML documents",
         "mimeType": "application/x-icml+xml",
-        "extensions": ".wcml;.icml;",
+        "extensions": ".wcml;.icml",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.icml.ICMLFilter"
       }
@@ -26,38 +29,123 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "extractNotes": {
-      "type": "boolean",
-      "default": false,
-      "title": "Extract notes",
-      "x-widget": "checkbox",
-      "description": "Extract notes/comments as translator notes"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "simplifyCodes": {
-      "type": "boolean",
-      "default": true,
-      "title": "Simplify inline codes when possible",
-      "x-widget": "checkbox"
+    "extraction": {
+      "type": "object",
+      "description": "Extraction settings",
+      "properties": {
+        "extractNotes": {
+          "type": "boolean",
+          "default": false,
+          "title": "Extract notes",
+          "x-widget": "checkbox",
+          "x-flattenPath": "extractNotes",
+          "description": "Extract notes/comments as translator notes"
+        },
+        "extractMasterSpreads": {
+          "type": "boolean",
+          "default": true,
+          "title": "Extract master spreads",
+          "x-widget": "checkbox",
+          "x-flattenPath": "extractMasterSpreads",
+          "description": "Extract master spreads"
+        },
+        "newTuOnBr": {
+          "type": "boolean",
+          "default": false,
+          "title": "Create new paragraphs on hard returns (<Br/> elements) [BETA]",
+          "x-flattenPath": "newTuOnBr",
+          "description": "Start new text unit on line break"
+        },
+        "simplifyCodes": {
+          "type": "boolean",
+          "default": true,
+          "title": "Simplify inline codes when possible",
+          "x-widget": "checkbox",
+          "x-flattenPath": "simplifyCodes",
+          "description": "Simplify inline codes"
+        },
+        "skipThreshold": {
+          "type": "integer",
+          "default": 1000,
+          "title": "Maximum spread size",
+          "description": "Skip threshold for similar segments",
+          "minimum": 1,
+          "maximum": 32000,
+          "x-widget": "spin",
+          "x-flattenPath": "skipThreshold"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
-    "extractMasterSpreads": {
-      "type": "boolean",
-      "default": true,
-      "title": "Extract master spreads",
-      "x-widget": "checkbox"
-    },
-    "skipThreshold": {
-      "type": "integer",
-      "default": 1000,
-      "title": "Maximum spread size",
-      "description": "Skip any spread larger than the given value (in Kbytes)",
-      "minimum": 1,
-      "maximum": 32000,
-      "x-widget": "spin"
-    },
-    "newTuOnBr": {
-      "type": "boolean",
-      "default": false,
-      "title": "Create new paragraphs on hard returns (<Br/> elements) [BETA]"
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -65,50 +153,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "extraction",
-      "label": "Extraction Settings",
-      "description": "Control what content is extracted for translation",
-      "collapsed": false,
-      "fields": [
-        "extractAllPairs",
-        "extractSource",
-        "extractTarget",
-        "extractNotes",
-        "extractComments",
-        "extractMetadata",
-        "extractOuterStrings"
-      ]
-    },
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "simplifyCodes",
-        "skipThreshold",
-        "newTuOnBr"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 6,
-  "x-baseHash": "584955e56187",
-  "x-compositeHash": "d5ec3a9919af",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 10,
+  "x-baseHash": "8acce6be6c05",
+  "x-compositeHash": "3214c652bd3a",
+  "x-introducedInOkapi": "0.38"
 }

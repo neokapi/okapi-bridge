@@ -92,52 +92,137 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "splicer": {
-      "type": "string",
-      "default": "\\"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "createPlaceholders": {
-      "type": "boolean",
-      "default": true
+    "extraction": {
+      "type": "object",
+      "description": "Extraction settings",
+      "properties": {
+        "splicer": {
+          "type": "string",
+          "default": "\\",
+          "x-flattenPath": "splicer",
+          "description": "Line splicer pattern"
+        },
+        "createPlaceholders": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "createPlaceholders",
+          "description": "Create inline placeholders"
+        }
+      }
     },
-    "unescapeSource": {
-      "type": "boolean",
-      "default": true
-    },
-    "trimLeading": {
-      "type": "boolean",
-      "default": false
-    },
-    "trimTrailing": {
-      "type": "boolean",
-      "default": false
-    },
-    "preserveWS": {
-      "type": "boolean",
-      "default": true
-    },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": false
+    "parser": {
+      "type": "object",
+      "description": "Parser settings",
+      "properties": {
+        "preserveWS": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "preserveWS",
+          "description": "Preserve whitespace"
+        },
+        "trimLeading": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "trimLeading",
+          "description": "Trim leading whitespace"
+        },
+        "trimTrailing": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "trimTrailing",
+          "description": "Trim trailing whitespace"
+        },
+        "unescapeSource": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "unescapeSource",
+          "description": "Unescape source content"
+        },
+        "wrapMode": {
+          "type": "string",
+          "default": "NONE",
+          "enum": [
+            "NONE",
+            "SPACES",
+            "PLACEHOLDERS"
+          ],
+          "x-flattenPath": "wrapMode",
+          "description": "Line wrapping mode"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
     },
     "codeFinderRules": {
-      "type": "string",
-      "default": "#v1\ncount.i=2\nrule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\nrule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nsample=\nuseAllRulesWhenTesting.b=false"
-    },
-    "wrapMode": {
-      "type": "string",
-      "default": "NONE",
-      "enum": [
-        "NONE",
-        "SPACES",
-        "PLACEHOLDERS"
-      ]
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
-      "description": "Simplifier rules for code type normalization",
+      "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
     }
-  },
-  "additionalProperties": false
+  }
 }

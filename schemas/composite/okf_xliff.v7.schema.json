@@ -8,7 +8,14 @@
   "x-filter": {
     "id": "okf_xliff",
     "class": "net.sf.okapi.filters.xliff.XLIFFFilter",
-    "extensions": [],
+    "extensions": [
+      ".xlf",
+      ".xlif",
+      ".xliff",
+      ".mxliff",
+      ".mqxliff",
+      ".sdlxliff"
+    ],
     "mimeTypes": [
       "application/x-xliff+xml"
     ],
@@ -117,165 +124,323 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "addAltTrans": {
-      "type": "boolean",
-      "default": false
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "addAltTransGMode": {
-      "type": "boolean",
-      "default": true
+    "extraction": {
+      "type": "object",
+      "description": "Control what content is extracted",
+      "properties": {
+        "preserveSpaceByDefault": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "preserveSpaceByDefault",
+          "description": "Preserve whitespace by default"
+        },
+        "includeExtensions": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "includeExtensions",
+          "description": "Include XLIFF extension elements"
+        },
+        "includeIts": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "includeIts",
+          "description": "Include ITS annotations"
+        },
+        "inlineCdata": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "inlineCdata",
+          "description": "Treat CDATA sections as inline"
+        },
+        "subAsTextUnit": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "subAsTextUnit",
+          "description": "Process sub elements as text units"
+        },
+        "ignoreInputSegmentation": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreInputSegmentation",
+          "description": "Ignore existing segmentation"
+        },
+        "skipNoMrkSegSource": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "skipNoMrkSegSource",
+          "description": "Skip seg-source without mrk elements"
+        },
+        "fallbackToID": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "fallbackToID",
+          "description": "Fall back to trans-unit ID"
+        }
+      }
     },
-    "editAltTrans": {
-      "type": "boolean",
-      "default": false
+    "states": {
+      "type": "object",
+      "description": "Translation state handling",
+      "properties": {
+        "targetStateMode": {
+          "type": "integer",
+          "default": 0,
+          "x-flattenPath": "targetStateMode",
+          "description": "How to handle target state attribute"
+        },
+        "targetStateValue": {
+          "type": "string",
+          "default": "needs-translation",
+          "x-flattenPath": "targetStateValue",
+          "description": "State value to set on targets"
+        },
+        "useTranslationTargetState": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "useTranslationTargetState",
+          "description": "Use translation-specific target state"
+        },
+        "editAltTrans": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "editAltTrans",
+          "description": "Edit alt-trans elements"
+        },
+        "addAltTrans": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "addAltTrans",
+          "description": "Add alt-trans for existing translations"
+        },
+        "addAltTransGMode": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "addAltTransGMode",
+          "description": "Alt-trans mode for group-level"
+        }
+      }
     },
-    "useCustomParser": {
-      "type": "boolean",
-      "default": true
+    "output": {
+      "type": "object",
+      "description": "Output formatting and behavior",
+      "properties": {
+        "addTargetLanguage": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "addTargetLanguage",
+          "description": "Add target-language attribute"
+        },
+        "overrideTargetLanguage": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "overrideTargetLanguage",
+          "description": "Override target language in output"
+        },
+        "allowEmptyTargets": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "allowEmptyTargets",
+          "description": "Allow empty target elements"
+        },
+        "alwaysAddTargets": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "alwaysAddTargets",
+          "description": "Always add target elements"
+        },
+        "alwaysUseSegSource": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "alwaysUseSegSource",
+          "description": "Always use seg-source"
+        },
+        "outputSegmentationType": {
+          "type": "string",
+          "x-flattenPath": "outputSegmentationType",
+          "description": "Output segmentation type"
+        }
+      }
     },
-    "factoryClass": {
-      "type": "string",
-      "default": "com.ctc.wstx.stax.WstxInputFactory"
+    "subfilters": {
+      "type": "object",
+      "description": "Sub-filter configuration",
+      "properties": {
+        "cdataSubfilter": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "cdataSubfilter",
+          "description": "Sub-filter for CDATA content"
+        },
+        "pcdataSubfilter": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "pcdataSubfilter",
+          "description": "Sub-filter for PCDATA content"
+        }
+      }
     },
-    "fallbackToID": {
-      "type": "boolean",
-      "default": false
+    "parser": {
+      "type": "object",
+      "description": "Parser settings",
+      "properties": {
+        "useCustomParser": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "useCustomParser",
+          "description": "Use custom parser"
+        },
+        "factoryClass": {
+          "type": "string",
+          "default": "com.ctc.wstx.stax.WstxInputFactory",
+          "x-flattenPath": "factoryClass",
+          "description": "Custom parser factory class"
+        }
+      }
     },
-    "addTargetLanguage": {
-      "type": "boolean",
-      "default": true
+    "sdl": {
+      "type": "object",
+      "description": "SDL XLIFF extensions",
+      "properties": {
+        "useSdlXliffWriter": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useSdlXliffWriter",
+          "description": "Use SDL XLIFF writer"
+        },
+        "useSegsForSdlProps": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useSegsForSdlProps",
+          "description": "Use segments for SDL properties"
+        },
+        "sdlSegConfValue": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "sdlSegConfValue",
+          "description": "SDL segment confidence value"
+        },
+        "sdlSegLockedValue": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "sdlSegLockedValue",
+          "description": "SDL segment locked value"
+        },
+        "sdlSegOriginValue": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "sdlSegOriginValue",
+          "description": "SDL segment origin value"
+        }
+      }
     },
-    "overrideTargetLanguage": {
-      "type": "boolean",
-      "default": false
-    },
-    "allowEmptyTargets": {
-      "type": "boolean",
-      "default": false
-    },
-    "outputSegmentationType": {
-      "type": "string"
-    },
-    "ignoreInputSegmentation": {
-      "type": "boolean",
-      "default": false
-    },
-    "includeExtensions": {
-      "type": "boolean",
-      "default": true
-    },
-    "targetStateMode": {
-      "type": "integer",
-      "default": 0
-    },
-    "targetStateValue": {
-      "type": "string",
-      "default": "needs-translation"
-    },
-    "includeIts": {
-      "type": "boolean",
-      "default": true
-    },
-    "alwaysUseSegSource": {
-      "type": "boolean",
-      "default": false
-    },
-    "preserveSpaceByDefault": {
-      "type": "boolean",
-      "default": false
-    },
-    "useSdlXliffWriter": {
-      "type": "boolean",
-      "default": false
-    },
-    "sdlSegLockedValue": {
-      "type": "string",
-      "default": ""
-    },
-    "sdlSegConfValue": {
-      "type": "string",
-      "default": ""
-    },
-    "sdlSegOriginValue": {
-      "type": "string",
-      "default": ""
-    },
-    "skipNoMrkSegSource": {
-      "type": "boolean",
-      "default": false
-    },
-    "subAsTextUnit": {
-      "type": "boolean",
-      "default": false
-    },
-    "useSegsForSdlProps": {
-      "type": "boolean",
-      "default": false
-    },
-    "useTranslationTargetState": {
-      "type": "boolean",
-      "default": true
-    },
-    "alwaysAddTargets": {
-      "type": "boolean",
-      "default": false
-    },
-    "useIwsXliffWriter": {
-      "type": "boolean",
-      "default": false
-    },
-    "iwsBlockFinished": {
-      "type": "boolean",
-      "default": true
-    },
-    "iwsTransStatusValue": {
-      "type": "string",
-      "default": "finished"
-    },
-    "iwsRemoveTmOrigin": {
-      "type": "boolean",
-      "default": false
-    },
-    "iwsTransTypeValue": {
-      "type": "string",
-      "default": "manual_translation"
-    },
-    "iwsBlockLockStatus": {
-      "type": "boolean",
-      "default": false
-    },
-    "iwsBlockTmScore": {
-      "type": "boolean",
-      "default": false
-    },
-    "iwsBlockTmScoreValue": {
-      "type": "string",
-      "default": "100.00"
-    },
-    "iwsIncludeMultipleExact": {
-      "type": "boolean",
-      "default": false
-    },
-    "iwsBlockMultipleExact": {
-      "type": "boolean",
-      "default": false
-    },
-    "forceUniqueIds": {
-      "type": "boolean",
-      "default": false
-    },
-    "inlineCdata": {
-      "type": "boolean",
-      "default": false
-    },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": false,
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
+    "iws": {
+      "type": "object",
+      "description": "Idiom WorldServer extensions",
+      "properties": {
+        "useIwsXliffWriter": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useIwsXliffWriter",
+          "description": "Use IWS XLIFF writer"
+        },
+        "iwsBlockFinished": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "iwsBlockFinished",
+          "description": "IWS block finished state"
+        },
+        "iwsBlockLockStatus": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "iwsBlockLockStatus",
+          "description": "IWS lock status"
+        },
+        "iwsBlockMultipleExact": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "iwsBlockMultipleExact",
+          "description": "IWS multiple exact matches"
+        },
+        "iwsBlockTmScore": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "iwsBlockTmScore",
+          "description": "IWS TM score threshold"
+        },
+        "iwsBlockTmScoreValue": {
+          "type": "string",
+          "default": "100.00",
+          "x-flattenPath": "iwsBlockTmScoreValue",
+          "description": "IWS TM score value"
+        },
+        "iwsIncludeMultipleExact": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "iwsIncludeMultipleExact",
+          "description": "Include multiple exact matches"
+        },
+        "iwsRemoveTmOrigin": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "iwsRemoveTmOrigin",
+          "description": "Remove TM origin"
+        },
+        "iwsTransStatusValue": {
+          "type": "string",
+          "default": "finished",
+          "x-flattenPath": "iwsTransStatusValue",
+          "description": "IWS translation status value"
+        },
+        "iwsTransTypeValue": {
+          "type": "string",
+          "default": "manual_translation",
+          "x-flattenPath": "iwsTransTypeValue",
+          "description": "IWS translation type value"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Regex patterns to identify inline codes in translatable text",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -303,16 +468,7 @@
           "description": "Test all rules together or individually"
         }
       },
-      "x-okapiFormat": "inlineCodeFinder",
-      "x-widget": "codeFinderRules"
-    },
-    "cdataSubfilter": {
-      "type": "string",
-      "default": ""
-    },
-    "pcdataSubfilter": {
-      "type": "string",
-      "default": ""
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -320,58 +476,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "extraction",
-      "label": "Extraction Settings",
-      "description": "Control what content is extracted",
-      "collapsed": false,
-      "fields": [
-        "extractSource",
-        "extractTarget",
-        "extractNotes"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    },
-    {
-      "id": "output",
-      "label": "Output Settings",
-      "description": "Configure output formatting",
-      "collapsed": true,
-      "fields": [
-        "copySource",
-        "useApprovedOnly"
-      ]
-    },
-    {
-      "id": "states",
-      "label": "State Handling",
-      "description": "Control how translation states are handled",
-      "collapsed": true,
-      "fields": [
-        "includeNotTranslated",
-        "includeTranslated",
-        "includeReviewNeeded",
-        "includeFinal"
-      ]
-    }
-  ],
   "x-schemaVersion": 7,
-  "x-baseVersion": 15,
-  "x-baseHash": "ae062925c1a0",
-  "x-compositeHash": "5084943d22cd",
-  "x-introducedInOkapi": "1.47.0"
+  "x-baseVersion": 23,
+  "x-baseHash": "82e03b6f87ec",
+  "x-compositeHash": "33b92ef8efc2",
+  "x-introducedInOkapi": "1.46.0"
 }

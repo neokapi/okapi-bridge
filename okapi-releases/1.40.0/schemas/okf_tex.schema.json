@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_tex",
     "class": "net.sf.okapi.filters.tex.TEXFilter",
-    "extensions": [],
+    "extensions": [
+      ".tex"
+    ],
     "mimeTypes": [
       "text/x-tex-text"
     ],

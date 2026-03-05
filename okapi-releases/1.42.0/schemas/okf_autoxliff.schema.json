@@ -8,9 +8,12 @@
   "x-filter": {
     "id": "okf_autoxliff",
     "class": "net.sf.okapi.filters.autoxliff.AutoXLIFFFilter",
-    "extensions": [],
+    "extensions": [
+      ".xlf",
+      ".xliff"
+    ],
     "mimeTypes": [
-      "application/x-xliff+xml"
+      "application/xliff+xml"
     ],
     "configurations": [
       {
@@ -26,13 +29,23 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "xliff_config": {
-      "type": "string",
-      "default": "okf_xliff"
-    },
-    "xliff2_config": {
-      "type": "string",
-      "default": "okf_xliff2"
+    "general": {
+      "type": "object",
+      "description": "Configuration selection",
+      "properties": {
+        "xliffConfig": {
+          "type": "string",
+          "default": "okf_xliff",
+          "x-flattenPath": "xliff_config",
+          "description": "XLIFF 1.x filter configuration"
+        },
+        "xliff2Config": {
+          "type": "string",
+          "default": "okf_xliff2",
+          "x-flattenPath": "xliff2_config",
+          "description": "XLIFF 2.0 filter configuration"
+        }
+      }
     }
   },
   "additionalProperties": false

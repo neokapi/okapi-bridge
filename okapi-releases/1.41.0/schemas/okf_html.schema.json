@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_html",
     "class": "net.sf.okapi.filters.html.HtmlFilter",
-    "extensions": [],
+    "extensions": [
+      ".html",
+      ".htm"
+    ],
     "mimeTypes": [
       "text/html"
     ],
@@ -1449,6 +1452,740 @@
     "serializationFormat": "yaml"
   },
   "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "parser": {
+      "type": "object",
+      "description": "Parser behavior",
+      "properties": {
+        "assumeWellformed": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "assumeWellformed",
+          "description": "Assume well-formed HTML"
+        },
+        "preserveWhitespace": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "preserve_whitespace",
+          "description": "Preserve whitespace"
+        }
+      }
+    },
+    "elements": {
+      "type": "object",
+      "description": "Element extraction rules",
+      "properties": {
+        "elements": {
+          "type": "object",
+          "description": "Element extraction rule map",
+          "x-widget": "elementRulesEditor",
+          "additionalProperties": {
+            "$ref": "#/$defs/elementRule"
+          },
+          "default": {
+            "meta": {
+              "ruleTypes": [
+                "ATTRIBUTES_ONLY"
+              ],
+              "translatableAttributes": {
+                "content": [
+                  [
+                    "http-equiv",
+                    "EQUALS",
+                    "keywords"
+                  ],
+                  [
+                    "name",
+                    "EQUALS",
+                    [
+                      "keywords",
+                      "description"
+                    ]
+                  ]
+                ]
+              },
+              "writableLocalizableAttributes": {
+                "content": [
+                  "http-equiv",
+                  "EQUALS",
+                  [
+                    "content-language",
+                    "content-type"
+                  ]
+                ]
+              },
+              "readOnlyLocalizableAttributes": {
+                "content": [
+                  "name",
+                  "EQUALS",
+                  [
+                    "generator",
+                    "author",
+                    "progid",
+                    "date"
+                  ]
+                ]
+              }
+            },
+            "area": {
+              "ruleTypes": [
+                "ATTRIBUTES_ONLY"
+              ],
+              "translatableAttributes": [
+                "accesskey",
+                "area",
+                "alt",
+                "download"
+              ]
+            },
+            "isindex": {
+              "ruleTypes": [
+                "ATTRIBUTES_ONLY"
+              ],
+              "translatableAttributes": [
+                "prompt"
+              ]
+            },
+            "option": {
+              "ruleTypes": [
+                "ATTRIBUTES_ONLY"
+              ],
+              "translatableAttributes": [
+                "label"
+              ]
+            },
+            "optgroup": {
+              "ruleTypes": [
+                "ATTRIBUTES_ONLY"
+              ],
+              "translatableAttributes": [
+                "label"
+              ]
+            },
+            "address": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "dt": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "dd": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "h1": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "h2": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "h3": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "h4": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "h5": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "h6": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "legend": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "translatableAttributes": [
+                "accesskey"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "li": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "translatableAttributes": [
+                "value"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "marquee": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "p": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ],
+              "elementType": "paragraph"
+            },
+            "pre": {
+              "ruleTypes": [
+                "TEXTUNIT",
+                "PRESERVE_WHITESPACE"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "td": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "translatableAttributes": [
+                "abbr"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "th": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ],
+              "translatableAttributes": [
+                "abbr"
+              ]
+            },
+            "title": {
+              "ruleTypes": [
+                "TEXTUNIT"
+              ],
+              "idAttributes": [
+                "id"
+              ]
+            },
+            "track": {
+              "translatableAttributes": [
+                "label",
+                "srclang"
+              ],
+              "writableLocalizableAttributes": [
+                "src"
+              ]
+            },
+            "a": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "elementType": "link",
+              "translatableAttributes": [
+                "title",
+                "accesskey",
+                "download"
+              ],
+              "writableLocalizableAttributes": [
+                "href"
+              ]
+            },
+            "audio": {
+              "writableLocalizableAttributes": [
+                "src"
+              ]
+            },
+            "abbr": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "acronym": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "applet": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "translatableAttributes": [
+                "alt"
+              ]
+            },
+            "b": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "elementType": "bold"
+            },
+            "base": {
+              "ruleTypes": [
+                "ATTRIBUTES_ONLY"
+              ],
+              "writableLocalizableAttributes": [
+                "href"
+              ]
+            },
+            "bdo": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "big": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "blink": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "br": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "button": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "translatableAttributes": [
+                "accesskey",
+                "value"
+              ]
+            },
+            "cite": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "code": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "del": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "dfn": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "em": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "embed": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "font": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "i": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "elementType": "italic"
+            },
+            "iframe": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "translatableAttributes": [
+                "srcdoc"
+              ]
+            },
+            "img": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "elementType": "image",
+              "translatableAttributes": [
+                "title",
+                "alt"
+              ],
+              "writableLocalizableAttributes": [
+                "href",
+                "src"
+              ]
+            },
+            "input": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "translatableAttributes": {
+                "alt": [
+                  "type",
+                  "NOT_EQUALS",
+                  [
+                    "file",
+                    "hidden",
+                    "image",
+                    "Password"
+                  ]
+                ],
+                "value": [
+                  "type",
+                  "NOT_EQUALS",
+                  [
+                    "file",
+                    "hidden",
+                    "image",
+                    "Password"
+                  ]
+                ],
+                "accesskey": [
+                  "type",
+                  "NOT_EQUALS",
+                  [
+                    "file",
+                    "hidden",
+                    "image",
+                    "Password"
+                  ]
+                ],
+                "title": [
+                  "type",
+                  "NOT_EQUALS",
+                  [
+                    "file",
+                    "hidden",
+                    "image",
+                    "Password"
+                  ]
+                ],
+                "placeholder": [
+                  "type",
+                  "NOT_EQUALS",
+                  "dummy"
+                ]
+              }
+            },
+            "ins": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "kbd": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "label": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "translatableAttributes": [
+                "accesskey"
+              ]
+            },
+            "map": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "menuitem": {
+              "translatableAttributes": [
+                "label"
+              ]
+            },
+            "nobr": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "object": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "translatableAttributes": [
+                "standby"
+              ]
+            },
+            "param": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "translatableAttributes": [
+                "value"
+              ]
+            },
+            "q": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "s": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "samp": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "small": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "select": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "span": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "spacer": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "strike": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "strong": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "sub": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "sup": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "table": {
+              "ruleTypes": [
+                "ATTRIBUTES_ONLY"
+              ],
+              "translatableAttributes": [
+                "summary"
+              ]
+            },
+            "textarea": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "translatableAttributes": [
+                "accesskey",
+                "placeholder"
+              ]
+            },
+            "tt": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "u": {
+              "ruleTypes": [
+                "INLINE"
+              ],
+              "elementType": "underlined"
+            },
+            "var": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "wbr": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "ruby": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "rb": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "rt": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "rc": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "rp": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "rbc": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "rtc": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "symbol": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            "face": {
+              "ruleTypes": [
+                "INLINE"
+              ]
+            },
+            ".*": {
+              "ruleTypes": [
+                "EXCLUDE"
+              ],
+              "conditions": [
+                "translate",
+                "EQUALS",
+                "no"
+              ]
+            },
+            "style": {
+              "ruleTypes": [
+                "EXCLUDE"
+              ]
+            },
+            "stylesheet": {
+              "ruleTypes": [
+                "EXCLUDE"
+              ]
+            },
+            "script": {
+              "ruleTypes": [
+                "EXCLUDE"
+              ]
+            }
+          },
+          "x-flattenPath": "elements"
+        }
+      }
+    },
+    "attributes": {
+      "type": "object",
+      "description": "Attribute extraction rules",
+      "properties": {
+        "attributes": {
+          "type": "object",
+          "description": "Global attribute rule map",
+          "x-widget": "attributeRulesEditor",
+          "additionalProperties": {
+            "$ref": "#/$defs/attributeRule"
+          },
+          "default": {
+            "dir": {
+              "ruleTypes": [
+                "ATTRIBUTE_WRITABLE"
+              ],
+              "allElementsExcept": [
+                "base",
+                "basefront",
+                "head",
+                "html",
+                "meta",
+                "param",
+                "script"
+              ]
+            },
+            "title": {
+              "ruleTypes": [
+                "ATTRIBUTE_TRANS"
+              ]
+            },
+            "lang": {
+              "ruleTypes": [
+                "ATTRIBUTE_WRITABLE"
+              ]
+            },
+            "xml:lang": {
+              "ruleTypes": [
+                "ATTRIBUTE_WRITABLE"
+              ]
+            },
+            "aria-label": {
+              "ruleTypes": [
+                "ATTRIBUTE_TRANS"
+              ]
+            }
+          },
+          "x-flattenPath": "attributes"
+        }
+      }
+    },
     "taggedConfig": {
       "type": "object"
     },
@@ -1456,720 +2193,8 @@
       "type": "string",
       "default": "Parameters Editor"
     },
-    "simplifierRules": {
-      "type": "string",
-      "description": "Simplifier rules for code type normalization",
-      "x-widget": "simplifierRulesEditor"
-    },
     "path": {
       "type": "string"
-    },
-    "assumeWellformed": {
-      "type": "boolean",
-      "default": false
-    },
-    "preserve_whitespace": {
-      "type": "boolean",
-      "default": false
-    },
-    "attributes": {
-      "type": "object",
-      "description": "Global attribute extraction rules — maps attribute names to their rule configuration",
-      "x-widget": "attributeRulesEditor",
-      "additionalProperties": {
-        "$ref": "#/$defs/attributeRule"
-      },
-      "default": {
-        "dir": {
-          "ruleTypes": [
-            "ATTRIBUTE_WRITABLE"
-          ],
-          "allElementsExcept": [
-            "base",
-            "basefront",
-            "head",
-            "html",
-            "meta",
-            "param",
-            "script"
-          ]
-        },
-        "title": {
-          "ruleTypes": [
-            "ATTRIBUTE_TRANS"
-          ]
-        },
-        "lang": {
-          "ruleTypes": [
-            "ATTRIBUTE_WRITABLE"
-          ]
-        },
-        "xml:lang": {
-          "ruleTypes": [
-            "ATTRIBUTE_WRITABLE"
-          ]
-        },
-        "aria-label": {
-          "ruleTypes": [
-            "ATTRIBUTE_TRANS"
-          ]
-        }
-      }
-    },
-    "elements": {
-      "type": "object",
-      "description": "Element extraction rules — maps element names to their rule configuration",
-      "x-widget": "elementRulesEditor",
-      "additionalProperties": {
-        "$ref": "#/$defs/elementRule"
-      },
-      "default": {
-        "meta": {
-          "ruleTypes": [
-            "ATTRIBUTES_ONLY"
-          ],
-          "translatableAttributes": {
-            "content": [
-              [
-                "http-equiv",
-                "EQUALS",
-                "keywords"
-              ],
-              [
-                "name",
-                "EQUALS",
-                [
-                  "keywords",
-                  "description"
-                ]
-              ]
-            ]
-          },
-          "writableLocalizableAttributes": {
-            "content": [
-              "http-equiv",
-              "EQUALS",
-              [
-                "content-language",
-                "content-type"
-              ]
-            ]
-          },
-          "readOnlyLocalizableAttributes": {
-            "content": [
-              "name",
-              "EQUALS",
-              [
-                "generator",
-                "author",
-                "progid",
-                "date"
-              ]
-            ]
-          }
-        },
-        "area": {
-          "ruleTypes": [
-            "ATTRIBUTES_ONLY"
-          ],
-          "translatableAttributes": [
-            "accesskey",
-            "area",
-            "alt",
-            "download"
-          ]
-        },
-        "isindex": {
-          "ruleTypes": [
-            "ATTRIBUTES_ONLY"
-          ],
-          "translatableAttributes": [
-            "prompt"
-          ]
-        },
-        "option": {
-          "ruleTypes": [
-            "ATTRIBUTES_ONLY"
-          ],
-          "translatableAttributes": [
-            "label"
-          ]
-        },
-        "optgroup": {
-          "ruleTypes": [
-            "ATTRIBUTES_ONLY"
-          ],
-          "translatableAttributes": [
-            "label"
-          ]
-        },
-        "address": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "dt": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "dd": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "h1": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "h2": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "h3": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "h4": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "h5": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "h6": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "legend": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "translatableAttributes": [
-            "accesskey"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "li": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "translatableAttributes": [
-            "value"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "marquee": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "p": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ],
-          "elementType": "paragraph"
-        },
-        "pre": {
-          "ruleTypes": [
-            "TEXTUNIT",
-            "PRESERVE_WHITESPACE"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "td": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "translatableAttributes": [
-            "abbr"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "th": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ],
-          "translatableAttributes": [
-            "abbr"
-          ]
-        },
-        "title": {
-          "ruleTypes": [
-            "TEXTUNIT"
-          ],
-          "idAttributes": [
-            "id"
-          ]
-        },
-        "track": {
-          "translatableAttributes": [
-            "label",
-            "srclang"
-          ],
-          "writableLocalizableAttributes": [
-            "src"
-          ]
-        },
-        "a": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "elementType": "link",
-          "translatableAttributes": [
-            "title",
-            "accesskey",
-            "download"
-          ],
-          "writableLocalizableAttributes": [
-            "href"
-          ]
-        },
-        "audio": {
-          "writableLocalizableAttributes": [
-            "src"
-          ]
-        },
-        "abbr": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "acronym": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "applet": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "translatableAttributes": [
-            "alt"
-          ]
-        },
-        "b": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "elementType": "bold"
-        },
-        "base": {
-          "ruleTypes": [
-            "ATTRIBUTES_ONLY"
-          ],
-          "writableLocalizableAttributes": [
-            "href"
-          ]
-        },
-        "bdo": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "big": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "blink": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "br": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "button": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "translatableAttributes": [
-            "accesskey",
-            "value"
-          ]
-        },
-        "cite": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "code": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "del": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "dfn": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "em": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "embed": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "font": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "i": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "elementType": "italic"
-        },
-        "iframe": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "translatableAttributes": [
-            "srcdoc"
-          ]
-        },
-        "img": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "elementType": "image",
-          "translatableAttributes": [
-            "title",
-            "alt"
-          ],
-          "writableLocalizableAttributes": [
-            "href",
-            "src"
-          ]
-        },
-        "input": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "translatableAttributes": {
-            "alt": [
-              "type",
-              "NOT_EQUALS",
-              [
-                "file",
-                "hidden",
-                "image",
-                "Password"
-              ]
-            ],
-            "value": [
-              "type",
-              "NOT_EQUALS",
-              [
-                "file",
-                "hidden",
-                "image",
-                "Password"
-              ]
-            ],
-            "accesskey": [
-              "type",
-              "NOT_EQUALS",
-              [
-                "file",
-                "hidden",
-                "image",
-                "Password"
-              ]
-            ],
-            "title": [
-              "type",
-              "NOT_EQUALS",
-              [
-                "file",
-                "hidden",
-                "image",
-                "Password"
-              ]
-            ],
-            "placeholder": [
-              "type",
-              "NOT_EQUALS",
-              "dummy"
-            ]
-          }
-        },
-        "ins": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "kbd": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "label": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "translatableAttributes": [
-            "accesskey"
-          ]
-        },
-        "map": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "menuitem": {
-          "translatableAttributes": [
-            "label"
-          ]
-        },
-        "nobr": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "object": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "translatableAttributes": [
-            "standby"
-          ]
-        },
-        "param": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "translatableAttributes": [
-            "value"
-          ]
-        },
-        "q": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "s": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "samp": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "small": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "select": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "span": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "spacer": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "strike": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "strong": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "sub": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "sup": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "table": {
-          "ruleTypes": [
-            "ATTRIBUTES_ONLY"
-          ],
-          "translatableAttributes": [
-            "summary"
-          ]
-        },
-        "textarea": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "translatableAttributes": [
-            "accesskey",
-            "placeholder"
-          ]
-        },
-        "tt": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "u": {
-          "ruleTypes": [
-            "INLINE"
-          ],
-          "elementType": "underlined"
-        },
-        "var": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "wbr": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "ruby": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "rb": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "rt": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "rc": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "rp": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "rbc": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "rtc": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "symbol": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        "face": {
-          "ruleTypes": [
-            "INLINE"
-          ]
-        },
-        ".*": {
-          "ruleTypes": [
-            "EXCLUDE"
-          ],
-          "conditions": [
-            "translate",
-            "EQUALS",
-            "no"
-          ]
-        },
-        "style": {
-          "ruleTypes": [
-            "EXCLUDE"
-          ]
-        },
-        "stylesheet": {
-          "ruleTypes": [
-            "EXCLUDE"
-          ]
-        },
-        "script": {
-          "ruleTypes": [
-            "EXCLUDE"
-          ]
-        }
-      }
     }
   },
   "additionalProperties": false,
@@ -2318,6 +2343,73 @@
           "description": "Condition triples: [attributeName, EQUALS|NOT_EQUALS|MATCHES, value(s)]"
         }
       ]
+    },
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
     }
   }
 }

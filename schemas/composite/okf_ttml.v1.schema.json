@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_ttml",
     "class": "net.sf.okapi.filters.ttml.TTMLFilter",
-    "extensions": [],
+    "extensions": [
+      ".ttml"
+    ],
     "mimeTypes": [
       "application/ttml+xml"
     ],
@@ -34,91 +36,71 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "timeFormat": {
-      "type": "string",
-      "default": "",
-      "title": "Time format",
-      "x-widget": "text"
-    },
-    "maxLinesPerCaption": {
-      "type": "integer",
-      "default": 0,
-      "title": "Max lines per caption",
-      "minimum": 1,
-      "maximum": 9999999,
-      "x-widget": "spin"
-    },
-    "maxCharsPerLine": {
-      "type": "integer",
-      "default": 0,
-      "title": "Max characters per line",
-      "minimum": 1,
-      "maximum": 9999999,
-      "x-widget": "spin"
-    },
-    "cjkCharsPerLine": {
-      "type": "integer",
-      "default": 0,
-      "title": "Max characters per line for CJK",
-      "minimum": 1,
-      "maximum": 9999999,
-      "x-widget": "spin"
-    },
-    "keepTimecodes": {
-      "type": "boolean",
-      "default": false,
-      "title": "Keep timecodes",
-      "x-widget": "checkbox"
-    },
-    "splitWords": {
-      "type": "boolean",
-      "default": false,
-      "title": "Split words so that they don't go over the char limit",
-      "x-widget": "checkbox"
+    "output": {
+      "type": "object",
+      "description": "Output settings",
+      "properties": {
+        "keepTimecodes": {
+          "type": "boolean",
+          "default": false,
+          "title": "Keep timecodes",
+          "x-widget": "checkbox",
+          "x-flattenPath": "keepTimecodes",
+          "description": "Preserve timing information"
+        },
+        "timeFormat": {
+          "type": "string",
+          "default": "",
+          "title": "Time format",
+          "x-widget": "text",
+          "x-flattenPath": "timeFormat",
+          "description": "Time code format"
+        },
+        "maxCharsPerLine": {
+          "type": "integer",
+          "default": 0,
+          "title": "Max characters per line",
+          "minimum": 1,
+          "maximum": 9999999,
+          "x-widget": "spin",
+          "x-flattenPath": "maxCharsPerLine",
+          "description": "Maximum characters per line"
+        },
+        "maxLinesPerCaption": {
+          "type": "integer",
+          "default": 0,
+          "title": "Max lines per caption",
+          "minimum": 1,
+          "maximum": 9999999,
+          "x-widget": "spin",
+          "x-flattenPath": "maxLinesPerCaption",
+          "description": "Maximum lines per caption"
+        },
+        "cjkCharsPerLine": {
+          "type": "integer",
+          "default": 0,
+          "title": "Max characters per line for CJK",
+          "minimum": 1,
+          "maximum": 9999999,
+          "x-widget": "spin",
+          "x-flattenPath": "cjkCharsPerLine",
+          "description": "CJK characters per line"
+        },
+        "splitWords": {
+          "type": "boolean",
+          "default": false,
+          "title": "Split words so that they don't go over the char limit",
+          "x-widget": "checkbox",
+          "x-flattenPath": "splitWords",
+          "description": "Split words at line boundaries"
+        }
+      }
     }
   },
   "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "timeFormat",
-        "maxLinesPerCaption",
-        "maxCharsPerLine",
-        "cjkCharsPerLine",
-        "keepTimecodes",
-        "splitWords",
-        "writeCharAnnotations",
-        "mergeCaptions"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    },
-    {
-      "id": "output",
-      "label": "Output Settings",
-      "collapsed": true,
-      "fields": [
-        "escapeBrMode"
-      ]
-    }
-  ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 3,
-  "x-baseHash": "be9174096dc5",
-  "x-compositeHash": "8e794c9cccc5",
+  "x-baseVersion": 5,
+  "x-baseHash": "f69aeb4939d9",
+  "x-compositeHash": "f69aeb4939d9",
   "x-introducedInOkapi": "1.46.0"
 }

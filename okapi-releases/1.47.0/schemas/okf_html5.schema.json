@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_html5",
     "class": "net.sf.okapi.filters.its.html5.HTML5Filter",
-    "extensions": [],
+    "extensions": [
+      ".html",
+      ".htm"
+    ],
     "mimeTypes": [
       "text/html"
     ],
@@ -41,13 +44,13 @@
     "serializationFormat": "yaml"
   },
   "properties": {
-    "path": {
-      "type": "string"
-    },
     "simplifierRules": {
       "type": "string",
       "description": "Simplifier rules for code type normalization",
       "x-widget": "simplifierRulesEditor"
+    },
+    "path": {
+      "type": "string"
     }
   },
   "additionalProperties": false

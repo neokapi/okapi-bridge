@@ -3,25 +3,6 @@
   "$include": [
     "_fragments/inlineCodes.fragment.json"
   ],
-  "groups": [
-    {
-      "id": "identification",
-      "label": "Identification",
-      "collapsed": true,
-      "fields": [
-        "fileNames",
-        "configIds"
-      ]
-    },
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "mimeType"
-      ]
-    }
-  ],
   "fields": {
     "mimeType": {},
     "fileNames": {},

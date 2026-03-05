@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_po",
     "class": "net.sf.okapi.filters.po.POFilter",
-    "extensions": [],
+    "extensions": [
+      ".po"
+    ],
     "mimeTypes": [
       "application/x-gettext"
     ],
@@ -49,29 +51,105 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "protectApproved": {
-      "type": "boolean",
-      "default": false
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "allowEmptyOutputTarget": {
-      "type": "boolean",
-      "default": false
+    "mode": {
+      "type": "object",
+      "description": "Processing mode",
+      "properties": {
+        "bilingualMode": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bilingualMode",
+          "description": "Treat as bilingual file"
+        },
+        "protectApproved": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "protectApproved",
+          "description": "Protect approved translations"
+        },
+        "wrapContent": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "wrapContent",
+          "description": "Wrap long content lines"
+        }
+      }
     },
-    "bilingualMode": {
-      "type": "boolean",
-      "default": true
+    "identification": {
+      "type": "object",
+      "description": "ID and naming",
+      "properties": {
+        "makeID": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "makeID",
+          "description": "Generate text unit IDs"
+        },
+        "includeMsgContextInNote": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "includeMsgContextInNote",
+          "description": "Include msgctxt in notes"
+        }
+      }
     },
-    "makeID": {
-      "type": "boolean",
-      "default": true
-    },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": true
+    "output": {
+      "type": "object",
+      "description": "Output formatting",
+      "properties": {
+        "outputGeneric": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "outputGeneric",
+          "description": "Output in generic format"
+        },
+        "allowEmptyOutputTarget": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "allowEmptyOutputTarget",
+          "description": "Allow empty target output"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Inline code detection configuration",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -101,29 +179,10 @@
       },
       "x-okapiFormat": "inlineCodeFinder"
     },
-    "includeMsgContextInNote": {
-      "type": "boolean",
-      "default": false
-    },
-    "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "boolean"
-    },
-    "mergeAdjacentCodes": {
-      "type": "boolean"
-    },
     "simplifierRules": {
       "type": "string",
-      "description": "Simplifier rules for code type normalization",
+      "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
-    },
-    "wrapContent": {
-      "type": "boolean",
-      "default": true
-    },
-    "outputGeneric": {
-      "type": "boolean",
-      "default": false
     }
-  },
-  "additionalProperties": false
+  }
 }

@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_plaintext",
     "class": "net.sf.okapi.filters.plaintext.PlainTextFilter",
-    "extensions": [],
+    "extensions": [
+      ".txt"
+    ],
     "mimeTypes": [
       "text/plain"
     ],

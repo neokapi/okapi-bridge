@@ -8,7 +8,13 @@
   "x-filter": {
     "id": "okf_xml",
     "class": "net.sf.okapi.filters.xml.XMLFilter",
-    "extensions": [],
+    "extensions": [
+      ".xml",
+      ".resx",
+      ".rdf",
+      ".wxl",
+      ".stringsdict"
+    ],
     "mimeTypes": [
       "text/xml"
     ],

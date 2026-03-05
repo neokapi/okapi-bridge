@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_regex",
     "class": "net.sf.okapi.filters.regex.RegexFilter",
-    "extensions": [],
+    "extensions": [
+      ".srt",
+      ".strings"
+    ],
     "mimeTypes": [
       "text/x-regex"
     ],
@@ -255,65 +258,168 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "extractOuterStrings": {
-      "type": "boolean",
-      "default": false
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "startString": {
-      "type": "string",
-      "default": "\""
+    "extraction": {
+      "type": "object",
+      "description": "Regex extraction settings",
+      "properties": {
+        "startString": {
+          "type": "string",
+          "default": "\"",
+          "x-flattenPath": "startString",
+          "description": "Start pattern for extraction"
+        },
+        "endString": {
+          "type": "string",
+          "default": "\"",
+          "x-flattenPath": "endString",
+          "description": "End pattern for extraction"
+        },
+        "regexOptions": {
+          "type": "integer",
+          "default": 40,
+          "x-flattenPath": "regexOptions",
+          "description": "Regex options"
+        },
+        "extractOuterStrings": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractOuterStrings",
+          "description": "Extract strings outside patterns"
+        },
+        "oneLevelGroups": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "oneLevelGroups",
+          "description": "Use one-level groups"
+        },
+        "mimeType": {
+          "type": "string",
+          "default": "text/plain",
+          "x-flattenPath": "mimeType",
+          "description": "MIME type for content"
+        }
+      }
     },
-    "endString": {
-      "type": "string",
-      "default": "\""
+    "output": {
+      "type": "object",
+      "description": "Output settings",
+      "properties": {
+        "localizeOutside": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "localizeOutside",
+          "description": "Localize content outside patterns"
+        },
+        "useBSlashEscape": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "useBSlashEscape",
+          "description": "Use backslash escaping"
+        },
+        "removeBSlashEscape": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "removeBSlashEscape",
+          "description": "Remove backslash escaping"
+        },
+        "useDoubleCharEscape": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useDoubleCharEscape",
+          "description": "Use double-character escaping"
+        },
+        "useLd": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useLd",
+          "description": "Use localization directives"
+        }
+      }
     },
-    "useBSlashEscape": {
-      "type": "boolean",
-      "default": true
+    "subfilters": {
+      "type": "object",
+      "description": "Sub-filter configuration",
+      "properties": {
+        "subFilter": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "subFilter",
+          "description": "Sub-filter for content processing"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
     },
-    "useDoubleCharEscape": {
-      "type": "boolean",
-      "default": false
-    },
-    "removeBSlashEscape": {
-      "type": "boolean",
-      "default": false
-    },
-    "oneLevelGroups": {
-      "type": "boolean",
-      "default": false
-    },
-    "useLd": {
-      "type": "boolean",
-      "default": false
-    },
-    "localizeOutside": {
-      "type": "boolean",
-      "default": false
-    },
-    "regexOptions": {
-      "type": "integer",
-      "default": 40
-    },
-    "mimeType": {
-      "type": "string",
-      "default": "text/plain"
-    },
-    "subFilter": {
-      "type": "string",
-      "default": ""
-    },
-    "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "boolean"
-    },
-    "mergeAdjacentCodes": {
-      "type": "boolean"
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
-      "description": "Simplifier rules for code type normalization",
+      "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
     }
-  },
-  "additionalProperties": false
+  }
 }

@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_mif",
     "class": "net.sf.okapi.filters.mif.MIFFilter",
-    "extensions": [],
+    "extensions": [
+      ".mif"
+    ],
     "mimeTypes": [
       "application/vnd.mif"
     ],
@@ -26,29 +28,111 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "extractBodyPages": {
-      "type": "boolean",
-      "default": true
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "extractReferencePages": {
-      "type": "boolean",
-      "default": true
-    },
-    "extractMasterPages": {
-      "type": "boolean",
-      "default": true
-    },
-    "extractHiddenPages": {
-      "type": "boolean",
-      "default": true
-    },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": true
+    "extraction": {
+      "type": "object",
+      "description": "Extraction settings",
+      "properties": {
+        "extractBodyPages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractBodyPages",
+          "description": "Extract body pages"
+        },
+        "extractMasterPages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractMasterPages",
+          "description": "Extract master pages"
+        },
+        "extractReferencePages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractReferencePages",
+          "description": "Extract reference pages"
+        },
+        "extractHiddenPages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractHiddenPages",
+          "description": "Extract hidden pages"
+        },
+        "extractVariables": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractVariables",
+          "description": "Extract variables"
+        },
+        "extractIndexMarkers": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractIndexMarkers",
+          "description": "Extract index markers"
+        },
+        "extractLinks": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractLinks",
+          "description": "Extract cross-reference links"
+        },
+        "extractHardReturnsAsText": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractHardReturnsAsText",
+          "description": "Extract hard returns as text"
+        },
+        "extractPgfNumFormatsInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractPgfNumFormatsInline",
+          "description": "Extract paragraph number formats inline"
+        },
+        "extractReferenceFormats": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractReferenceFormats",
+          "description": "Extract reference formats"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Inline code detection configuration",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -78,35 +162,10 @@
       },
       "x-okapiFormat": "inlineCodeFinder"
     },
-    "extractVariables": {
-      "type": "boolean",
-      "default": true
-    },
-    "extractIndexMarkers": {
-      "type": "boolean",
-      "default": true
-    },
-    "extractLinks": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractPgfNumFormatsInline": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractReferenceFormats": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractHardReturnsAsText": {
-      "type": "boolean",
-      "default": true
-    },
     "simplifierRules": {
       "type": "string",
-      "description": "Simplifier rules for code type normalization",
+      "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
     }
-  },
-  "additionalProperties": false
+  }
 }

@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_pensieve",
     "class": "net.sf.okapi.filters.pensieve.PensieveFilter",
-    "extensions": [],
+    "extensions": [
+      ".pentm"
+    ],
     "mimeTypes": [
       "application/x-pensieve-tm"
     ],
@@ -23,13 +25,13 @@
         "filterClass": "net.sf.okapi.filters.pensieve.PensieveFilter"
       }
     ],
-    "serializationFormat": "yaml"
+    "serializationFormat": "stringParameters"
   },
   "properties": {},
   "additionalProperties": false,
   "x-schemaVersion": 1,
-  "x-baseVersion": 2,
-  "x-baseHash": "730956b7be2e",
-  "x-compositeHash": "730956b7be2e",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 4,
+  "x-baseHash": "990f6535e2dd",
+  "x-compositeHash": "990f6535e2dd",
+  "x-introducedInOkapi": "1.46.0"
 }

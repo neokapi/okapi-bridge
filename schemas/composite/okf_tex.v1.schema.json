@@ -2,13 +2,15 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_tex.schema.json",
   "$version": "1.0.0",
-  "title": "TEX Filter (BETA) Filter",
-  "description": "Configuration for the Okapi TEX Filter (BETA) Filter",
+  "title": "TEX Filter Filter",
+  "description": "Configuration for the Okapi TEX Filter Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_tex",
     "class": "net.sf.okapi.filters.tex.TEXFilter",
-    "extensions": [],
+    "extensions": [
+      ".tex"
+    ],
     "mimeTypes": [
       "text/x-tex-text"
     ],
@@ -18,18 +20,18 @@
         "name": "Tex",
         "description": "Tex files",
         "mimeType": "text/x-tex-text",
-        "extensions": ".tex",
+        "extensions": ".tex;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.tex.TEXFilter"
       }
     ],
-    "serializationFormat": "yaml"
+    "serializationFormat": "stringParameters"
   },
   "properties": {},
   "additionalProperties": false,
   "x-schemaVersion": 1,
-  "x-baseVersion": 3,
-  "x-baseHash": "974d930a96d9",
-  "x-compositeHash": "974d930a96d9",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 5,
+  "x-baseHash": "633edde804c7",
+  "x-compositeHash": "633edde804c7",
+  "x-introducedInOkapi": "1.46.0"
 }

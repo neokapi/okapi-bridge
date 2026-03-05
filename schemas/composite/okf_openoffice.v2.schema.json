@@ -2,13 +2,22 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_openoffice.schema.json",
   "$version": "2.0.0",
-  "title": "OpenOffice.org Filter Filter",
-  "description": "Configuration for the Okapi OpenOffice.org Filter Filter",
+  "title": "OpenOffice.org Filter (BETA) Filter",
+  "description": "Configuration for the Okapi OpenOffice.org Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_openoffice",
     "class": "net.sf.okapi.filters.openoffice.OpenOfficeFilter",
-    "extensions": [],
+    "extensions": [
+      ".odt",
+      ".ods",
+      ".odg",
+      ".odp",
+      ".ott",
+      ".ots",
+      ".otp",
+      ".otg"
+    ],
     "mimeTypes": [
       "application/x-openoffice"
     ],
@@ -16,9 +25,9 @@
       {
         "configId": "okf_openoffice",
         "name": "OpenOffice.org Documents",
-        "description": "OpenOffice.org ODT, ODS, ODP, ODG, OTT, OTS, OTP, OTG, SWC, SWX, SXD, SXI documents",
+        "description": "OpenOffice.org ODT, ODS, ODP, ODG, OTT, OTS, OTP, OTG documents",
         "mimeType": "application/x-openoffice",
-        "extensions": ".odt;.ods;.odg;.odp;.ott;.ots;.otp;.otg;.swc;.swx;.sxd;.sxi;",
+        "extensions": ".odt;.ods;.odg;.odp;.ott;.ots;.otp;.otg;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.openoffice.OpenOfficeFilter"
       }
@@ -26,23 +35,106 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "extractNotes": {
-      "type": "boolean",
-      "default": false,
-      "description": "Extract notes/comments as translator notes"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "extractReferences": {
-      "type": "boolean",
-      "default": false
+    "extraction": {
+      "type": "object",
+      "description": "Extraction settings",
+      "properties": {
+        "extractNotes": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractNotes",
+          "description": "Extract notes/comments as translator notes"
+        },
+        "extractMetadata": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractMetadata",
+          "description": "Extract metadata fields for translation"
+        },
+        "extractReferences": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractReferences",
+          "description": "Extract cross-references"
+        },
+        "encodeCharacterEntityReferenceGlyphs": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "encodeCharacterEntityReferenceGlyphs",
+          "description": "Encode character entity glyphs"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
-    "extractMetadata": {
-      "type": "boolean",
-      "default": true,
-      "description": "Extract metadata fields for translation"
-    },
-    "encodeCharacterEntityReferenceGlyphs": {
-      "type": "boolean",
-      "default": true
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -50,48 +142,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "extraction",
-      "label": "Extraction Settings",
-      "description": "Control what content is extracted for translation",
-      "collapsed": false,
-      "fields": [
-        "extractAllPairs",
-        "extractSource",
-        "extractTarget",
-        "extractNotes",
-        "extractComments",
-        "extractMetadata",
-        "extractOuterStrings"
-      ]
-    },
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "encodeCharacterEntityReferenceGlyphs"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 5,
-  "x-baseHash": "60efde04d80f",
-  "x-compositeHash": "13c5c8aa22d5",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 8,
+  "x-baseHash": "73c8a6ec587c",
+  "x-compositeHash": "fb96383e2c11",
+  "x-introducedInOkapi": "0.38"
 }

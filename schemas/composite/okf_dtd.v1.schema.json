@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_dtd",
     "class": "net.sf.okapi.filters.dtd.DTDFilter",
-    "extensions": [],
+    "extensions": [
+      ".dtd",
+      ".ent"
+    ],
     "mimeTypes": [
       "application/xml+dtd"
     ],
@@ -18,7 +21,7 @@
         "name": "DTD (Document Type Definition)",
         "description": "Configuration for XML DTD documents (entities content)",
         "mimeType": "application/xml+dtd",
-        "extensions": ".dtd;",
+        "extensions": ".dtd;.ent;",
         "isDefault": true,
         "filterClass": "net.sf.okapi.filters.dtd.DTDFilter"
       }
@@ -38,24 +41,9 @@
     }
   },
   "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 4,
-  "x-baseHash": "094d6b4bb352",
-  "x-compositeHash": "2381963b71c0",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 7,
+  "x-baseHash": "b4d5eb5ea577",
+  "x-compositeHash": "e06a57bf7176",
+  "x-introducedInOkapi": "1.46.0"
 }

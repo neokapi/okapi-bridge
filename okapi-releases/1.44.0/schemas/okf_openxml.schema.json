@@ -8,7 +8,24 @@
   "x-filter": {
     "id": "okf_openxml",
     "class": "net.sf.okapi.filters.openxml.OpenXMLFilter",
-    "extensions": [],
+    "extensions": [
+      ".docx",
+      ".docm",
+      ".dotx",
+      ".dotm",
+      ".pptx",
+      ".pptm",
+      ".ppsx",
+      ".ppsm",
+      ".potx",
+      ".potm",
+      ".xlsx",
+      ".xlsm",
+      ".xltx",
+      ".xltm",
+      ".vsdx",
+      ".vsdm"
+    ],
     "mimeTypes": [
       "text/xml"
     ],
@@ -26,135 +43,219 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "maxAttributeSize": {
-      "type": "integer",
-      "default": 4194304
+    "word": {
+      "type": "object",
+      "description": "Word document settings",
+      "properties": {
+        "translateHeadersFooters": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslateWordHeadersFooters",
+          "description": "Translate headers and footers"
+        },
+        "translateHidden": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateWordHidden",
+          "description": "Translate hidden text"
+        },
+        "translateComments": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslateComments",
+          "description": "Translate comments"
+        },
+        "translateDocProperties": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslateDocProperties",
+          "description": "Translate document properties"
+        },
+        "excludeGraphicMetaData": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateWordExcludeGraphicMetaData",
+          "description": "Exclude graphic metadata"
+        },
+        "excludeColors": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateWordExcludeColors",
+          "description": "Exclude specific font colors"
+        },
+        "automaticallyAcceptRevisions": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceAutomaticallyAcceptRevisions",
+          "description": "Accept revisions automatically"
+        }
+      }
     },
-    "bPreferenceTranslateDocProperties": {
-      "type": "boolean",
-      "default": true
+    "excel": {
+      "type": "object",
+      "description": "Excel spreadsheet settings",
+      "properties": {
+        "translateHidden": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelHidden",
+          "description": "Translate hidden cells"
+        },
+        "translateSheetNames": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelSheetNames",
+          "description": "Translate sheet names"
+        },
+        "translateDrawings": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelDrawings",
+          "description": "Translate drawings"
+        },
+        "translateDiagramData": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelDiagramData",
+          "description": "Translate diagram data"
+        },
+        "excludeColors": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelExcludeColors",
+          "description": "Exclude specific cell colors"
+        }
+      }
     },
-    "bPreferenceTranslateComments": {
-      "type": "boolean",
-      "default": true
+    "powerpoint": {
+      "type": "object",
+      "description": "PowerPoint presentation settings",
+      "properties": {
+        "translateHidden": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslatePowerpointHidden",
+          "description": "Translate hidden slides"
+        },
+        "translateMasters": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslatePowerpointMasters",
+          "description": "Translate master slides"
+        },
+        "translateNotes": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslatePowerpointNotes",
+          "description": "Translate slide notes"
+        },
+        "includedSlideNumbersOnly": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferencePowerpointIncludedSlideNumbersOnly",
+          "description": "Only translate specific slides"
+        },
+        "ignorePlaceholdersInMasters": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceIgnorePlaceholdersInPowerpointMasters",
+          "description": "Ignore placeholders in masters"
+        },
+        "reorderNotesAndComments": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bReorderPowerpointNotesAndComments",
+          "description": "Reorder notes and comments"
+        }
+      }
     },
-    "bPreferenceAggressiveCleanup": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceAutomaticallyAcceptRevisions": {
-      "type": "boolean",
-      "default": true
-    },
-    "bPreferenceTranslatePowerpointNotes": {
-      "type": "boolean",
-      "default": true
-    },
-    "bPreferenceTranslatePowerpointMasters": {
-      "type": "boolean",
-      "default": true
-    },
-    "bPreferenceIgnorePlaceholdersInPowerpointMasters": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceTranslateWordHeadersFooters": {
-      "type": "boolean",
-      "default": true
-    },
-    "bPreferenceTranslateWordHidden": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceTranslateExcelExcludeColors": {
-      "type": "boolean",
-      "default": false
+    "general": {
+      "type": "object",
+      "description": "General settings",
+      "properties": {
+        "extractExternalHyperlinks": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bExtractExternalHyperlinks",
+          "description": "Extract external hyperlinks"
+        },
+        "inExcludeMode": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bInExcludeMode",
+          "description": "Use include/exclude mode"
+        },
+        "inExcludeHighlightMode": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bInExcludeHighlightMode",
+          "description": "Use highlight include/exclude mode"
+        },
+        "addLineSeparator": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAddLineSeparatorAsCharacter",
+          "description": "Add line separator as character"
+        },
+        "addTabAsCharacter": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAddTabAsCharacter",
+          "description": "Add tab as character"
+        },
+        "aggressiveCleanup": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAggressiveCleanup",
+          "description": "Aggressive code cleanup"
+        },
+        "allowEmptyTargets": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAllowEmptyTargets",
+          "description": "Allow empty targets"
+        },
+        "ignoreSoftHyphenTag": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceIgnoreSoftHyphenTag",
+          "description": "Ignore soft hyphen tags"
+        },
+        "replaceNoBreakHyphenTag": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceReplaceNoBreakHyphenTag",
+          "description": "Replace no-break hyphen tags"
+        },
+        "lineSeparatorReplacement": {
+          "type": "string",
+          "default": "\n",
+          "x-flattenPath": "sPreferenceLineSeparatorReplacement",
+          "description": "Line separator replacement string"
+        },
+        "maxAttributeSize": {
+          "type": "integer",
+          "default": 4194304,
+          "x-flattenPath": "maxAttributeSize",
+          "description": "Max attribute size"
+        },
+        "fileType": {
+          "type": "string",
+          "default": "MSWORD",
+          "enum": [
+            "MSWORD",
+            "MSEXCEL",
+            "MSWORDDOCPROPERTIES",
+            "MSPOWERPOINTCOMMENTS"
+          ],
+          "x-flattenPath": "nFileType",
+          "description": "File type identifier"
+        }
+      }
     },
     "bPreferenceTranslateExcelExcludeColumns": {
       "type": "boolean",
       "default": false
-    },
-    "bPreferenceTranslateExcelSheetNames": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceTranslateExcelDiagramData": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceTranslateExcelDrawings": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceTranslatePowerpointHidden": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceTranslateWordExcludeGraphicMetaData": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceTranslateExcelHidden": {
-      "type": "boolean",
-      "default": false
-    },
-    "bExtractExternalHyperlinks": {
-      "type": "boolean",
-      "default": false
-    },
-    "bInExcludeMode": {
-      "type": "boolean",
-      "default": true
-    },
-    "bInExcludeHighlightMode": {
-      "type": "boolean",
-      "default": true
-    },
-    "bPreferenceTranslateWordExcludeColors": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceAddTabAsCharacter": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceAddLineSeparatorAsCharacter": {
-      "type": "boolean",
-      "default": false
-    },
-    "sPreferenceLineSeparatorReplacement": {
-      "type": "string",
-      "default": "\n"
-    },
-    "bPreferenceReplaceNoBreakHyphenTag": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceIgnoreSoftHyphenTag": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferencePowerpointIncludedSlideNumbersOnly": {
-      "type": "boolean",
-      "default": false
-    },
-    "bReorderPowerpointNotesAndComments": {
-      "type": "boolean",
-      "default": false
-    },
-    "bPreferenceAllowEmptyTargets": {
-      "type": "boolean",
-      "default": false
-    },
-    "nFileType": {
-      "type": "string",
-      "default": "MSWORD",
-      "enum": [
-        "MSWORD",
-        "MSEXCEL",
-        "MSWORDDOCPROPERTIES",
-        "MSPOWERPOINTCOMMENTS"
-      ]
     }
   },
   "additionalProperties": false

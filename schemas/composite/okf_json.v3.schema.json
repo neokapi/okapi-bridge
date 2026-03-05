@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_json",
     "class": "net.sf.okapi.filters.json.JSONFilter",
-    "extensions": [],
+    "extensions": [
+      ".json"
+    ],
     "mimeTypes": [
       "application/json"
     ],
@@ -26,51 +28,178 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "extractIsolatedStrings": {
-      "type": "boolean",
-      "default": false,
-      "description": "Extract string values in arrays (without keys)."
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "extractAllPairs": {
-      "type": "boolean",
-      "default": true,
-      "description": "Extract all key-value pairs for translation. When false, use extractionRules to specify which paths to extract."
+    "extraction": {
+      "type": "object",
+      "description": "Control what content is extracted for translation",
+      "properties": {
+        "extractAll": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractAllPairs",
+          "description": "Extract all key-value pairs for translation. When false, use extractionRules to specify which paths to extract."
+        },
+        "pathRules": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "extractionRules",
+          "description": "Regex pattern for JSON paths to extract. Overrides extractAllPairs when specified.",
+          "x-widget": "regexBuilder",
+          "x-placeholder": "/messages/.*|/labels/.*"
+        },
+        "includeIsolatedStrings": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractIsolatedStrings",
+          "description": "Extract string values in arrays (without keys)."
+        },
+        "excludeKeys": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "exceptions",
+          "description": "Comma-separated list of keys to exclude from extraction.",
+          "x-widget": "tagList",
+          "x-placeholder": "key1,key2,key3"
+        },
+        "subfilterRules": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "subfilterRules",
+          "description": "Sub-filter rules for embedded content"
+        }
+      }
     },
-    "exceptions": {
-      "type": "string",
-      "default": "",
-      "x-widget": "tagList",
-      "x-placeholder": "key1,key2,key3",
-      "description": "Comma-separated list of keys to exclude from extraction."
+    "keys": {
+      "type": "object",
+      "description": "Configure how JSON keys map to text unit identification",
+      "properties": {
+        "useAsName": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "useKeyAsName",
+          "description": "Use JSON key as the Block (TextUnit) name for reference."
+        },
+        "useFullPath": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useFullKeyPath",
+          "description": "Use full path (/key1/key2) instead of immediate key as name."
+        },
+        "leadingSlash": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "useLeadingSlashOnKeyPath",
+          "description": "Include leading slash in key path names."
+        },
+        "idRules": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "idRules",
+          "description": "Regex for keys whose values become Block IDs (overrides useKeyAsName).",
+          "x-widget": "regexBuilder",
+          "x-placeholder": "/id|/key"
+        }
+      }
     },
-    "useKeyAsName": {
-      "type": "boolean",
-      "default": true,
-      "description": "Use JSON key as the Block (TextUnit) name for reference."
+    "metadata": {
+      "type": "object",
+      "description": "Configure metadata extraction rules",
+      "properties": {
+        "noteRules": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "noteRules",
+          "description": "Regex for keys whose values become translator notes.",
+          "x-widget": "regexBuilder",
+          "x-placeholder": "/description|/comment"
+        },
+        "metaRules": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "genericMetaRules",
+          "description": "Regex for keys whose values become generic metadata.",
+          "x-widget": "regexBuilder"
+        }
+      }
     },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": false,
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
-    },
-    "useFullKeyPath": {
-      "type": "boolean",
-      "default": false,
-      "description": "Use full path (/key1/key2) instead of immediate key as name."
-    },
-    "useLeadingSlashOnKeyPath": {
-      "type": "boolean",
-      "default": true,
-      "description": "Include leading slash in key path names."
-    },
-    "useIdStack": {
-      "type": "boolean",
-      "default": false,
-      "description": "Build TextUnit IDs from nested key stack."
+    "output": {
+      "type": "object",
+      "description": "Output formatting options",
+      "properties": {
+        "escapeSlashes": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "escapeForwardSlashes",
+          "description": "Escape forward slashes in output JSON (\\/)."
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "x-presets": {
+            "html": {
+              "rules": [
+                {
+                  "pattern": "<[^>]+>"
+                }
+              ],
+              "sample": "Click <b>here</b> to continue"
+            },
+            "printf": {
+              "rules": [
+                {
+                  "pattern": "%[\\d]*[sdioxXucsfeEgGpn]"
+                }
+              ],
+              "sample": "Hello %s, you have %d messages"
+            },
+            "icu": {
+              "rules": [
+                {
+                  "pattern": "\\{[^}]+\\}"
+                }
+              ],
+              "sample": "Hello {name}, you have {count} messages"
+            }
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Inline code detection configuration",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -98,76 +227,7 @@
           "description": "Test all rules together or individually"
         }
       },
-      "x-okapiFormat": "inlineCodeFinder",
-      "x-widget": "codeFinderRules",
-      "x-presets": {
-        "html": {
-          "rules": [
-            {
-              "pattern": "<[^>]+>"
-            }
-          ],
-          "sample": "Click <b>here</b> to continue"
-        },
-        "printf": {
-          "rules": [
-            {
-              "pattern": "%[\\d]*[sdioxXucsfeEgGpn]"
-            }
-          ],
-          "sample": "Hello %s, you have %d messages"
-        },
-        "icu": {
-          "rules": [
-            {
-              "pattern": "\\{[^}]+\\}"
-            }
-          ],
-          "sample": "Hello {name}, you have {count} messages"
-        }
-      }
-    },
-    "escapeForwardSlashes": {
-      "type": "boolean",
-      "default": true,
-      "description": "Escape forward slashes in output JSON (\\/)."
-    },
-    "noteRules": {
-      "type": "string",
-      "default": "",
-      "x-widget": "regexBuilder",
-      "x-placeholder": "/description|/comment",
-      "description": "Regex for keys whose values become translator notes."
-    },
-    "subfilterRules": {
-      "type": "string",
-      "default": ""
-    },
-    "extractionRules": {
-      "type": "string",
-      "default": "",
-      "x-widget": "regexBuilder",
-      "x-placeholder": "/messages/.*|/labels/.*",
-      "description": "Regex pattern for JSON paths to extract. Overrides extractAllPairs when specified."
-    },
-    "idRules": {
-      "type": "string",
-      "default": "",
-      "x-widget": "regexBuilder",
-      "x-placeholder": "/id|/key",
-      "description": "Regex for keys whose values become Block IDs (overrides useKeyAsName)."
-    },
-    "genericMetaRules": {
-      "type": "string",
-      "default": "",
-      "x-widget": "regexBuilder",
-      "description": "Regex for keys whose values become generic metadata."
-    },
-    "maxwidthRules": {
-      "type": "string",
-      "default": "",
-      "x-widget": "regexBuilder",
-      "description": "Regex for keys whose values set max width constraints."
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -175,70 +235,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "extraction",
-      "label": "Extraction Settings",
-      "description": "Control what content is extracted for translation",
-      "collapsed": false,
-      "fields": [
-        "extractAllPairs",
-        "extractionRules",
-        "extractIsolatedStrings",
-        "exceptions"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    },
-    {
-      "id": "keys",
-      "label": "Key Handling",
-      "description": "Configure how JSON keys are used",
-      "collapsed": true,
-      "fields": [
-        "useKeyAsName",
-        "useFullKeyPath",
-        "useLeadingSlashOnKeyPath",
-        "useIdStack",
-        "idRules"
-      ]
-    },
-    {
-      "id": "metadata",
-      "label": "Metadata Rules",
-      "description": "Configure metadata extraction",
-      "collapsed": true,
-      "fields": [
-        "noteRules",
-        "genericMetaRules",
-        "maxwidthRules"
-      ]
-    },
-    {
-      "id": "output",
-      "label": "Output Settings",
-      "description": "Configure output formatting",
-      "collapsed": true,
-      "fields": [
-        "escapeForwardSlashes"
-      ]
-    }
-  ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 7,
-  "x-baseHash": "43a6d151e7be",
-  "x-compositeHash": "53949ad4b2d1",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 11,
+  "x-baseHash": "8069fb498a4c",
+  "x-compositeHash": "694177b14516",
+  "x-introducedInOkapi": "1.42.0"
 }

@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_idml",
     "class": "net.sf.okapi.filters.idml.IDMLFilter",
-    "extensions": [],
+    "extensions": [
+      ".idml"
+    ],
     "mimeTypes": [
       "application/vnd.adobe.indesign-idml-package"
     ],
@@ -26,172 +28,248 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "maxAttributeSize": {
-      "type": "integer",
-      "default": 4194304
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "untagXmlStructures": {
-      "type": "boolean",
-      "default": true,
-      "title": "Untag XML structures",
-      "x-widget": "checkbox"
+    "extraction": {
+      "type": "object",
+      "description": "Extraction settings",
+      "properties": {
+        "extractNotes": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractNotes",
+          "description": "Extract notes/comments as translator notes"
+        },
+        "extractMasterSpreads": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractMasterSpreads",
+          "description": "Extract master spreads"
+        },
+        "extractCustomTextVariables": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractCustomTextVariables",
+          "description": "Extract custom text variables"
+        },
+        "extractExternalHyperlinks": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractExternalHyperlinks",
+          "description": "Extract external hyperlinks"
+        },
+        "extractHiddenLayers": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHiddenLayers",
+          "description": "Extract hidden layers"
+        },
+        "extractHiddenPasteboardItems": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHiddenPasteboardItems",
+          "description": "Extract hidden pasteboard items"
+        },
+        "extractHyperlinkTextSourcesInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHyperlinkTextSourcesInline",
+          "description": "Extract hyperlink text inline"
+        },
+        "extractIndexTopics": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractIndexTopics",
+          "description": "Extract index topics"
+        },
+        "extractBreaksInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractBreaksInline",
+          "description": "Extract breaks inline"
+        },
+        "untagXmlStructures": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "untagXmlStructures",
+          "description": "Untag XML structures"
+        },
+        "skipDiscretionaryHyphens": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "skipDiscretionaryHyphens",
+          "description": "Skip discretionary hyphens"
+        },
+        "specialCharacterPattern": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "specialCharacterPattern",
+          "description": "Special character pattern"
+        },
+        "maxAttributeSize": {
+          "type": "integer",
+          "default": 4194304,
+          "x-flattenPath": "maxAttributeSize",
+          "description": "Maximum attribute size"
+        }
+      }
     },
-    "extractNotes": {
-      "type": "boolean",
-      "default": false,
-      "title": "Extract notes",
-      "x-widget": "checkbox",
-      "description": "Extract notes/comments as translator notes"
-    },
-    "extractMasterSpreads": {
-      "type": "boolean",
-      "default": true,
-      "title": "Extract master spreads",
-      "x-widget": "checkbox"
-    },
-    "extractHiddenLayers": {
-      "type": "boolean",
-      "default": false,
-      "title": "Extract hidden layers",
-      "x-widget": "checkbox"
-    },
-    "skipDiscretionaryHyphens": {
-      "type": "boolean",
-      "default": false,
-      "title": "Skip discretionary hyphens",
-      "x-widget": "checkbox"
-    },
-    "ignoreCharacterKerning": {
-      "type": "boolean",
-      "default": false,
-      "title": "Ignore character kerning",
-      "x-widget": "checkbox"
-    },
-    "characterKerningMinIgnoranceThreshold": {
-      "type": "string",
-      "default": "",
-      "title": "Character kerning minimum ignorance threshold",
-      "x-widget": "text"
-    },
-    "characterKerningMaxIgnoranceThreshold": {
-      "type": "string",
-      "default": "",
-      "title": "Character kerning maximum ignorance threshold",
-      "x-widget": "text"
-    },
-    "ignoreCharacterTracking": {
-      "type": "boolean",
-      "default": false,
-      "title": "Ignore character tracking",
-      "x-widget": "checkbox"
-    },
-    "characterTrackingMinIgnoranceThreshold": {
-      "type": "string",
-      "default": "",
-      "title": "Character tracking minimum ignorance threshold",
-      "x-widget": "text"
-    },
-    "characterTrackingMaxIgnoranceThreshold": {
-      "type": "string",
-      "default": "",
-      "title": "Character tracking maximum ignorance threshold",
-      "x-widget": "text"
-    },
-    "ignoreCharacterLeading": {
-      "type": "boolean",
-      "default": false,
-      "title": "Ignore character leading",
-      "x-widget": "checkbox"
-    },
-    "characterLeadingMinIgnoranceThreshold": {
-      "type": "string",
-      "default": "",
-      "title": "Character leading minimum ignorance threshold",
-      "x-widget": "text"
-    },
-    "characterLeadingMaxIgnoranceThreshold": {
-      "type": "string",
-      "default": "",
-      "title": "Character leading maximum ignorance threshold",
-      "x-widget": "text"
-    },
-    "ignoreCharacterBaselineShift": {
-      "type": "boolean",
-      "default": false,
-      "title": "Ignore character baseline shift",
-      "x-widget": "checkbox"
-    },
-    "characterBaselineShiftMinIgnoranceThreshold": {
-      "type": "string",
-      "default": "",
-      "title": "Character baseline shift minimum ignorance threshold",
-      "x-widget": "text"
-    },
-    "characterBaselineShiftMaxIgnoranceThreshold": {
-      "type": "string",
-      "default": "",
-      "title": "Character baseline shift maximum ignorance threshold",
-      "x-widget": "text"
+    "formatting": {
+      "type": "object",
+      "description": "Formatting tolerance thresholds",
+      "properties": {
+        "ignoreCharacterKerning": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterKerning",
+          "description": "Ignore kerning differences"
+        },
+        "kerningMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterKerningMinIgnoranceThreshold",
+          "description": "Kerning min threshold"
+        },
+        "kerningMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterKerningMaxIgnoranceThreshold",
+          "description": "Kerning max threshold"
+        },
+        "ignoreCharacterTracking": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterTracking",
+          "description": "Ignore tracking differences"
+        },
+        "trackingMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterTrackingMinIgnoranceThreshold",
+          "description": "Tracking min threshold"
+        },
+        "trackingMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterTrackingMaxIgnoranceThreshold",
+          "description": "Tracking max threshold"
+        },
+        "ignoreCharacterLeading": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterLeading",
+          "description": "Ignore leading differences"
+        },
+        "leadingMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterLeadingMinIgnoranceThreshold",
+          "description": "Leading min threshold"
+        },
+        "leadingMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterLeadingMaxIgnoranceThreshold",
+          "description": "Leading max threshold"
+        },
+        "ignoreCharacterBaselineShift": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterBaselineShift",
+          "description": "Ignore baseline shift"
+        },
+        "baselineShiftMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterBaselineShiftMinIgnoranceThreshold",
+          "description": "Baseline shift min"
+        },
+        "baselineShiftMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterBaselineShiftMaxIgnoranceThreshold",
+          "description": "Baseline shift max"
+        }
+      }
     }
   },
   "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "extraction",
-      "label": "Extraction Settings",
-      "description": "Control what content is extracted for translation",
-      "collapsed": false,
-      "fields": [
-        "extractAllPairs",
-        "extractSource",
-        "extractTarget",
-        "extractNotes",
-        "extractComments",
-        "extractMetadata",
-        "extractOuterStrings"
-      ]
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "maxAttributeSize",
-        "specialCharacterPattern",
-        "untagXmlStructures",
-        "skipDiscretionaryHyphens",
-        "excludedStyleConfigurations",
-        "ignoreCharacterKerning",
-        "characterKerningMinIgnoranceThreshold",
-        "characterKerningMaxIgnoranceThreshold",
-        "ignoreCharacterTracking",
-        "characterTrackingMinIgnoranceThreshold",
-        "characterTrackingMaxIgnoranceThreshold",
-        "ignoreCharacterLeading",
-        "characterLeadingMinIgnoranceThreshold",
-        "characterLeadingMaxIgnoranceThreshold",
-        "ignoreCharacterBaselineShift",
-        "characterBaselineShiftMinIgnoranceThreshold",
-        "characterBaselineShiftMaxIgnoranceThreshold"
-      ]
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
     }
-  ],
+  },
   "x-schemaVersion": 1,
-  "x-baseVersion": 9,
-  "x-baseHash": "1463486ab1f0",
-  "x-compositeHash": "aa8206e17263",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 17,
+  "x-baseHash": "b17e387742d6",
+  "x-compositeHash": "e2d6220f9c7c",
+  "x-introducedInOkapi": "1.46.0"
 }

@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_regex",
     "class": "net.sf.okapi.filters.regex.RegexFilter",
-    "extensions": [],
+    "extensions": [
+      ".srt",
+      ".strings"
+    ],
     "mimeTypes": [
       "text/x-regex"
     ],
@@ -135,7 +138,7 @@
         "mimeType": "text/x-regex",
         "extensions": ".strings;",
         "parametersLocation": "macStrings.fprm",
-        "parametersRaw": "#v1\nuseLd.b=true\nlocalizeOutside.b=true\nstartString=\"\nendString=\"\nextractOuterStrings.b=false\nuseBSlashEscape.b=true\nuseDoubleCharEscape.b=false\nremoveBSlashEscape.b=true\noneLevelGroups.b=false\nregexOptions.i=40\nmimeType=text/plain\nruleCount.i=4\nrule0.ruleName=Comments+String\nrule0.ruleType.i=0\nrule0.expr=/\\*(.*?)\\*/\\n\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule0.groupSource.i=3\nrule0.groupTarget.i=-1\nrule0.groupName.i=2\nrule0.groupNote.i=1\nrule0.preserveWS.b=true\nrule0.useCodeFinder.b=true\nrule0.sample=/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$\nrule0.codeFinderRules.count.i=3\nrule0.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule0.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule0.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule0.codeFinderRules.sample=\nrule0.codeFinderRules.useAllRulesWhenTesting.b=false\nrule1.ruleName=Bracketing Comments\nrule1.ruleType.i=3\nrule1.expr=/\\*(.*?)\\*/\nrule1.groupSource.i=1\nrule1.groupTarget.i=-1\nrule1.groupName.i=-1\nrule1.groupNote.i=-1\nrule1.preserveWS.b=true\nrule1.useCodeFinder.b=false\nrule1.sample=test /* test */\nrule1.codeFinderRules.count.i=0\nrule1.codeFinderRules.sample=\nrule1.codeFinderRules.useAllRulesWhenTesting.b=false\nrule2.ruleName=Line Comments\nrule2.ruleType.i=3\nrule2.expr=//(.*?)\\n\nrule2.groupSource.i=-1\nrule2.groupTarget.i=-1\nrule2.groupName.i=-1\nrule2.groupNote.i=-1\nrule2.preserveWS.b=true\nrule2.useCodeFinder.b=false\nrule2.sample=// test$0a$test // bbb$0a$\nrule2.codeFinderRules.count.i=0\nrule2.codeFinderRules.sample=\nrule2.codeFinderRules.useAllRulesWhenTesting.b=false\nrule3.ruleName=String\nrule3.ruleType.i=0\nrule3.expr=\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule3.groupSource.i=2\nrule3.groupTarget.i=-1\nrule3.groupName.i=1\nrule3.groupNote.i=-1\nrule3.preserveWS.b=true\nrule3.useCodeFinder.b=true\nrule3.sample=/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$\nrule3.codeFinderRules.count.i=3\nrule3.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule3.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule3.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule3.codeFinderRules.sample=\nrule3.codeFinderRules.useAllRulesWhenTesting.b=false\n",
+        "parametersRaw": "#v1\nuseLd.b=true\nlocalizeOutside.b=true\nstartString=\"\nendString=\"\nextractOuterStrings.b=false\nuseBSlashEscape.b=true\nuseDoubleCharEscape.b=false\noneLevelGroups.b=false\nregexOptions.i=40\nmimeType=text/plain\nruleCount.i=4\nrule0.ruleName=Comments+String\nrule0.ruleType.i=0\nrule0.expr=/\\*(.*?)\\*/\\n\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule0.groupSource.i=3\nrule0.groupTarget.i=-1\nrule0.groupName.i=2\nrule0.groupNote.i=1\nrule0.preserveWS.b=true\nrule0.useCodeFinder.b=true\nrule0.sample=/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$\nrule0.codeFinderRules.count.i=3\nrule0.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule0.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule0.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule0.codeFinderRules.sample=\nrule0.codeFinderRules.useAllRulesWhenTesting.b=false\nrule1.ruleName=Bracketing Comments\nrule1.ruleType.i=3\nrule1.expr=/\\*(.*?)\\*/\nrule1.groupSource.i=1\nrule1.groupTarget.i=-1\nrule1.groupName.i=-1\nrule1.groupNote.i=-1\nrule1.preserveWS.b=true\nrule1.useCodeFinder.b=false\nrule1.sample=test /* test */\nrule1.codeFinderRules.count.i=0\nrule1.codeFinderRules.sample=\nrule1.codeFinderRules.useAllRulesWhenTesting.b=false\nrule2.ruleName=Line Comments\nrule2.ruleType.i=3\nrule2.expr=//(.*?)\\n\nrule2.groupSource.i=-1\nrule2.groupTarget.i=-1\nrule2.groupName.i=-1\nrule2.groupNote.i=-1\nrule2.preserveWS.b=true\nrule2.useCodeFinder.b=false\nrule2.sample=// test$0a$test // bbb$0a$\nrule2.codeFinderRules.count.i=0\nrule2.codeFinderRules.sample=\nrule2.codeFinderRules.useAllRulesWhenTesting.b=false\nrule3.ruleName=String\nrule3.ruleType.i=0\nrule3.expr=\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule3.groupSource.i=2\nrule3.groupTarget.i=-1\nrule3.groupName.i=1\nrule3.groupNote.i=-1\nrule3.preserveWS.b=true\nrule3.useCodeFinder.b=true\nrule3.sample=/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$\nrule3.codeFinderRules.count.i=3\nrule3.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule3.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule3.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule3.codeFinderRules.sample=\nrule3.codeFinderRules.useAllRulesWhenTesting.b=false\n",
         "parameters": {
           "useLd": true,
           "localizeOutside": true,
@@ -144,7 +147,6 @@
           "extractOuterStrings": false,
           "useBSlashEscape": true,
           "useDoubleCharEscape": false,
-          "removeBSlashEscape": true,
           "oneLevelGroups": false,
           "regexOptions": 40,
           "mimeType": "text/plain",
@@ -215,50 +217,148 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "extractOuterStrings": {
-      "type": "boolean",
-      "default": false,
-      "description": "Extract strings outside the main content structure"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "startString": {
-      "type": "string",
-      "default": "\""
+    "extraction": {
+      "type": "object",
+      "description": "Regex extraction settings",
+      "properties": {
+        "startString": {
+          "type": "string",
+          "default": "\"",
+          "x-flattenPath": "startString",
+          "description": "Start pattern for extraction"
+        },
+        "endString": {
+          "type": "string",
+          "default": "\"",
+          "x-flattenPath": "endString",
+          "description": "End pattern for extraction"
+        },
+        "regexOptions": {
+          "type": "integer",
+          "default": 40,
+          "x-flattenPath": "regexOptions",
+          "description": "Regex options"
+        },
+        "extractOuterStrings": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractOuterStrings",
+          "description": "Extract strings outside the main content structure"
+        },
+        "oneLevelGroups": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "oneLevelGroups",
+          "description": "Use one-level groups"
+        },
+        "mimeType": {
+          "type": "string",
+          "default": "text/plain",
+          "x-flattenPath": "mimeType",
+          "description": "MIME type for content"
+        }
+      }
     },
-    "endString": {
-      "type": "string",
-      "default": "\""
+    "output": {
+      "type": "object",
+      "description": "Output settings",
+      "properties": {
+        "localizeOutside": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "localizeOutside",
+          "description": "Localize content outside patterns"
+        },
+        "useBSlashEscape": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "useBSlashEscape",
+          "description": "Use backslash escaping"
+        },
+        "useDoubleCharEscape": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useDoubleCharEscape",
+          "description": "Use double-character escaping"
+        },
+        "useLd": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useLd",
+          "description": "Use localization directives"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
-    "useBSlashEscape": {
-      "type": "boolean",
-      "default": true
-    },
-    "useDoubleCharEscape": {
-      "type": "boolean",
-      "default": false
-    },
-    "removeBSlashEscape": {
-      "type": "boolean",
-      "default": false
-    },
-    "oneLevelGroups": {
-      "type": "boolean",
-      "default": false
-    },
-    "useLd": {
-      "type": "boolean",
-      "default": false
-    },
-    "localizeOutside": {
-      "type": "boolean",
-      "default": false
-    },
-    "regexOptions": {
-      "type": "integer",
-      "default": 40
-    },
-    "mimeType": {
-      "type": "string",
-      "default": "text/plain"
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -266,71 +366,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "extraction",
-      "label": "Extraction Settings",
-      "description": "Control what content is extracted for translation",
-      "collapsed": false,
-      "fields": [
-        "extractAllPairs",
-        "extractSource",
-        "extractTarget",
-        "extractNotes",
-        "extractComments",
-        "extractMetadata",
-        "extractOuterStrings"
-      ]
-    },
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "startString",
-        "endString",
-        "oneLevelGroups",
-        "useLd",
-        "regexOptions",
-        "mimeType"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    },
-    {
-      "id": "output",
-      "label": "Output Settings",
-      "collapsed": true,
-      "fields": [
-        "useBSlashEscape",
-        "useDoubleCharEscape",
-        "removeBSlashEscape"
-      ]
-    },
-    {
-      "id": "subfilters",
-      "label": "Subfilter Configuration",
-      "collapsed": true,
-      "fields": [
-        "subFilter"
-      ]
-    }
-  ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 7,
-  "x-baseHash": "816f4de057fb",
-  "x-compositeHash": "7458aeeb049c",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 12,
+  "x-baseHash": "b4b5c41be8d7",
+  "x-compositeHash": "3ca19b5aca5f",
+  "x-introducedInOkapi": "0.38"
 }

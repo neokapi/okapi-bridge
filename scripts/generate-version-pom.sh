@@ -276,6 +276,20 @@ cat >> "$OUTPUT_FILE" << EOF
                             </sources>
                         </configuration>
                     </execution>
+                    <execution>
+                        <id>add-tools-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>${PATH_PREFIX}tools/schema-generator/src/main/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
                 </executions>
             </plugin>
             <!-- Shade: fat JAR (config inherited from parent) -->

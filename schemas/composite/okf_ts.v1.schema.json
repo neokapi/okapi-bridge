@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_ts",
     "class": "net.sf.okapi.filters.ts.TsFilter",
-    "extensions": [],
+    "extensions": [
+      ".ts"
+    ],
     "mimeTypes": [
       "application/x-ts"
     ],
@@ -26,22 +28,66 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "escapeGT": {
-      "type": "boolean",
-      "default": false
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "decodeByteValues": {
-      "type": "boolean",
-      "default": false
-    },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": true,
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
+    "output": {
+      "type": "object",
+      "description": "Output settings",
+      "properties": {
+        "escapeGT": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "escapeGT",
+          "description": "Escape greater-than in output"
+        },
+        "decodeByteValues": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "decodeByteValues",
+          "description": "Decode byte values"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Regex patterns to identify inline codes in translatable text",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -69,8 +115,7 @@
           "description": "Test all rules together or individually"
         }
       },
-      "x-okapiFormat": "inlineCodeFinder",
-      "x-widget": "codeFinderRules"
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -78,41 +123,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "decodeByteValues"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    },
-    {
-      "id": "output",
-      "label": "Output Settings",
-      "collapsed": true,
-      "fields": [
-        "escapeGT"
-      ]
-    }
-  ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 3,
-  "x-baseHash": "39dd63a4159c",
-  "x-compositeHash": "e7a558f43d0b",
+  "x-baseVersion": 5,
+  "x-baseHash": "6500a344e7d9",
+  "x-compositeHash": "bbb10bac2fa8",
   "x-introducedInOkapi": "0.38"
 }

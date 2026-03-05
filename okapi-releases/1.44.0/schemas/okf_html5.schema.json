@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_html5",
     "class": "net.sf.okapi.filters.its.html5.HTML5Filter",
-    "extensions": [],
+    "extensions": [
+      ".html",
+      ".htm"
+    ],
     "mimeTypes": [
       "text/html"
     ],

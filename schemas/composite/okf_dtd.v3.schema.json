@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_dtd",
     "class": "net.sf.okapi.filters.dtd.DTDFilter",
-    "extensions": [],
+    "extensions": [
+      ".dtd",
+      ".ent"
+    ],
     "mimeTypes": [
       "application/xml+dtd"
     ],
@@ -46,24 +49,9 @@
     }
   },
   "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 3,
-  "x-baseVersion": 6,
-  "x-baseHash": "88ec943432ec",
-  "x-compositeHash": "9155069c4cb0",
+  "x-baseVersion": 9,
+  "x-baseHash": "125de97e7920",
+  "x-compositeHash": "4fcc37ad3aa8",
   "x-introducedInOkapi": "1.48.0"
 }

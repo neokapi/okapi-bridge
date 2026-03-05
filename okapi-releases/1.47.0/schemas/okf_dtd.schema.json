@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_dtd",
     "class": "net.sf.okapi.filters.dtd.DTDFilter",
-    "extensions": [],
+    "extensions": [
+      ".dtd",
+      ".ent"
+    ],
     "mimeTypes": [
       "application/xml+dtd"
     ],

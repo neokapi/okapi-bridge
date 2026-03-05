@@ -8,7 +8,13 @@
   "x-filter": {
     "id": "okf_xml",
     "class": "net.sf.okapi.filters.xml.XMLFilter",
-    "extensions": [],
+    "extensions": [
+      ".xml",
+      ".resx",
+      ".rdf",
+      ".wxl",
+      ".stringsdict"
+    ],
     "mimeTypes": [
       "text/xml"
     ],
@@ -181,13 +187,13 @@
     "serializationFormat": "yaml"
   },
   "properties": {
-    "path": {
-      "type": "string"
-    },
     "simplifierRules": {
       "type": "string",
       "description": "Simplifier rules for code type normalization",
       "x-widget": "simplifierRulesEditor"
+    },
+    "path": {
+      "type": "string"
     }
   },
   "additionalProperties": false

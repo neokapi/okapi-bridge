@@ -3,16 +3,6 @@
   "$include": [
     "_fragments/inlineCodes.fragment.json"
   ],
-  "groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "path"
-      ]
-    }
-  ],
   "fields": {
     "path": {}
   }

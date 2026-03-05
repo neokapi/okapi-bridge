@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_pensieve",
     "class": "net.sf.okapi.filters.pensieve.PensieveFilter",
-    "extensions": [],
+    "extensions": [
+      ".pentm"
+    ],
     "mimeTypes": [
       "application/x-pensieve-tm"
     ],

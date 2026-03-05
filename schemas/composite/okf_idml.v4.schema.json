@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_idml",
     "class": "net.sf.okapi.filters.idml.IDMLFilter",
-    "extensions": [],
+    "extensions": [
+      ".idml"
+    ],
     "mimeTypes": [
       "application/vnd.adobe.indesign-idml-package"
     ],
@@ -26,154 +28,181 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "maxAttributeSize": {
-      "type": "integer",
-      "default": 4194304
+    "extraction": {
+      "type": "object",
+      "description": "Extraction settings",
+      "properties": {
+        "extractNotes": {
+          "type": "boolean",
+          "default": false,
+          "title": "Extract notes",
+          "x-widget": "checkbox",
+          "x-flattenPath": "extractNotes",
+          "description": "Extract notes/comments as translator notes"
+        },
+        "extractMasterSpreads": {
+          "type": "boolean",
+          "default": true,
+          "title": "Extract master spreads",
+          "x-widget": "checkbox",
+          "x-flattenPath": "extractMasterSpreads",
+          "description": "Extract master spreads"
+        },
+        "extractHiddenLayers": {
+          "type": "boolean",
+          "default": false,
+          "title": "Extract hidden layers",
+          "x-widget": "checkbox",
+          "x-flattenPath": "extractHiddenLayers",
+          "description": "Extract hidden layers"
+        },
+        "extractHiddenPasteboardItems": {
+          "type": "boolean",
+          "default": false,
+          "title": "Extract hidden pasteboard items",
+          "x-widget": "checkbox",
+          "x-flattenPath": "extractHiddenPasteboardItems",
+          "description": "Extract hidden pasteboard items"
+        },
+        "extractBreaksInline": {
+          "type": "boolean",
+          "default": false,
+          "title": "Extract breaks inline",
+          "x-widget": "checkbox",
+          "x-flattenPath": "extractBreaksInline",
+          "description": "Extract breaks inline"
+        },
+        "untagXmlStructures": {
+          "type": "boolean",
+          "default": true,
+          "title": "Untag XML structures",
+          "x-widget": "checkbox",
+          "x-flattenPath": "untagXmlStructures",
+          "description": "Untag XML structures"
+        },
+        "skipDiscretionaryHyphens": {
+          "type": "boolean",
+          "default": false,
+          "title": "Skip discretionary hyphens",
+          "x-widget": "checkbox",
+          "x-flattenPath": "skipDiscretionaryHyphens",
+          "description": "Skip discretionary hyphens"
+        },
+        "maxAttributeSize": {
+          "type": "integer",
+          "default": 4194304,
+          "x-flattenPath": "maxAttributeSize",
+          "description": "Maximum attribute size"
+        }
+      }
     },
-    "untagXmlStructures": {
-      "type": "boolean",
-      "default": true
-    },
-    "extractNotes": {
-      "type": "boolean",
-      "default": false,
-      "description": "Extract notes/comments as translator notes"
-    },
-    "extractMasterSpreads": {
-      "type": "boolean",
-      "default": true
-    },
-    "extractHiddenLayers": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractHiddenPasteboardItems": {
-      "type": "boolean",
-      "default": false
-    },
-    "skipDiscretionaryHyphens": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractBreaksInline": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractCustomTextVariables": {
-      "type": "boolean",
-      "default": false
-    },
-    "extractIndexTopics": {
-      "type": "boolean",
-      "default": false
-    },
-    "ignoreCharacterKerning": {
-      "type": "boolean",
-      "default": false
-    },
-    "characterKerningMinIgnoranceThreshold": {
-      "type": "string",
-      "default": ""
-    },
-    "characterKerningMaxIgnoranceThreshold": {
-      "type": "string",
-      "default": ""
-    },
-    "ignoreCharacterTracking": {
-      "type": "boolean",
-      "default": false
-    },
-    "characterTrackingMinIgnoranceThreshold": {
-      "type": "string",
-      "default": ""
-    },
-    "characterTrackingMaxIgnoranceThreshold": {
-      "type": "string",
-      "default": ""
-    },
-    "ignoreCharacterLeading": {
-      "type": "boolean",
-      "default": false
-    },
-    "characterLeadingMinIgnoranceThreshold": {
-      "type": "string",
-      "default": ""
-    },
-    "characterLeadingMaxIgnoranceThreshold": {
-      "type": "string",
-      "default": ""
-    },
-    "ignoreCharacterBaselineShift": {
-      "type": "boolean",
-      "default": false
-    },
-    "characterBaselineShiftMinIgnoranceThreshold": {
-      "type": "string",
-      "default": ""
-    },
-    "characterBaselineShiftMaxIgnoranceThreshold": {
-      "type": "string",
-      "default": ""
+    "formatting": {
+      "type": "object",
+      "description": "Formatting tolerance thresholds",
+      "properties": {
+        "ignoreCharacterKerning": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ignore character kerning",
+          "x-widget": "checkbox",
+          "x-flattenPath": "ignoreCharacterKerning",
+          "description": "Ignore kerning differences"
+        },
+        "kerningMin": {
+          "type": "string",
+          "default": "",
+          "title": "Character kerning minimum ignorance threshold",
+          "x-widget": "text",
+          "x-flattenPath": "characterKerningMinIgnoranceThreshold",
+          "description": "Kerning min threshold"
+        },
+        "kerningMax": {
+          "type": "string",
+          "default": "",
+          "title": "Character kerning maximum ignorance threshold",
+          "x-widget": "text",
+          "x-flattenPath": "characterKerningMaxIgnoranceThreshold",
+          "description": "Kerning max threshold"
+        },
+        "ignoreCharacterTracking": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ignore character tracking",
+          "x-widget": "checkbox",
+          "x-flattenPath": "ignoreCharacterTracking",
+          "description": "Ignore tracking differences"
+        },
+        "trackingMin": {
+          "type": "string",
+          "default": "",
+          "title": "Character tracking minimum ignorance threshold",
+          "x-widget": "text",
+          "x-flattenPath": "characterTrackingMinIgnoranceThreshold",
+          "description": "Tracking min threshold"
+        },
+        "trackingMax": {
+          "type": "string",
+          "default": "",
+          "title": "Character tracking maximum ignorance threshold",
+          "x-widget": "text",
+          "x-flattenPath": "characterTrackingMaxIgnoranceThreshold",
+          "description": "Tracking max threshold"
+        },
+        "ignoreCharacterLeading": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ignore character leading",
+          "x-widget": "checkbox",
+          "x-flattenPath": "ignoreCharacterLeading",
+          "description": "Ignore leading differences"
+        },
+        "leadingMin": {
+          "type": "string",
+          "default": "",
+          "title": "Character leading minimum ignorance threshold",
+          "x-widget": "text",
+          "x-flattenPath": "characterLeadingMinIgnoranceThreshold",
+          "description": "Leading min threshold"
+        },
+        "leadingMax": {
+          "type": "string",
+          "default": "",
+          "title": "Character leading maximum ignorance threshold",
+          "x-widget": "text",
+          "x-flattenPath": "characterLeadingMaxIgnoranceThreshold",
+          "description": "Leading max threshold"
+        },
+        "ignoreCharacterBaselineShift": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ignore character baseline shift",
+          "x-widget": "checkbox",
+          "x-flattenPath": "ignoreCharacterBaselineShift",
+          "description": "Ignore baseline shift"
+        },
+        "baselineShiftMin": {
+          "type": "string",
+          "default": "",
+          "title": "Character baseline shift minimum ignorance threshold",
+          "x-widget": "text",
+          "x-flattenPath": "characterBaselineShiftMinIgnoranceThreshold",
+          "description": "Baseline shift min"
+        },
+        "baselineShiftMax": {
+          "type": "string",
+          "default": "",
+          "title": "Character baseline shift maximum ignorance threshold",
+          "x-widget": "text",
+          "x-flattenPath": "characterBaselineShiftMaxIgnoranceThreshold",
+          "description": "Baseline shift max"
+        }
+      }
     }
   },
   "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "extraction",
-      "label": "Extraction Settings",
-      "description": "Control what content is extracted for translation",
-      "collapsed": false,
-      "fields": [
-        "extractAllPairs",
-        "extractSource",
-        "extractTarget",
-        "extractNotes",
-        "extractComments",
-        "extractMetadata",
-        "extractOuterStrings"
-      ]
-    },
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "maxAttributeSize",
-        "specialCharacterPattern",
-        "untagXmlStructures",
-        "skipDiscretionaryHyphens",
-        "excludedStyleConfigurations",
-        "ignoreCharacterKerning",
-        "characterKerningMinIgnoranceThreshold",
-        "characterKerningMaxIgnoranceThreshold",
-        "ignoreCharacterTracking",
-        "characterTrackingMinIgnoranceThreshold",
-        "characterTrackingMaxIgnoranceThreshold",
-        "ignoreCharacterLeading",
-        "characterLeadingMinIgnoranceThreshold",
-        "characterLeadingMaxIgnoranceThreshold",
-        "ignoreCharacterBaselineShift",
-        "characterBaselineShiftMinIgnoranceThreshold",
-        "characterBaselineShiftMaxIgnoranceThreshold"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 4,
-  "x-baseVersion": 12,
-  "x-baseHash": "eb5aaf71fa4b",
-  "x-compositeHash": "f4c15f1fd51e",
-  "x-introducedInOkapi": "1.44.0"
+  "x-baseVersion": 20,
+  "x-baseHash": "d3b317c11e11",
+  "x-compositeHash": "cc1e1e0a06e5",
+  "x-introducedInOkapi": "1.41.0"
 }

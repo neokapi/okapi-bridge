@@ -2,13 +2,16 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_sdlpackage.schema.json",
   "$version": "1.0.0",
-  "title": "SDLPPX and SDLRPX Filter (BETA) Filter",
-  "description": "Configuration for the Okapi SDLPPX and SDLRPX Filter (BETA) Filter",
+  "title": "SDLPPX and SDLRPX Filter Filter",
+  "description": "Configuration for the Okapi SDLPPX and SDLRPX Filter Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_sdlpackage",
     "class": "net.sf.okapi.filters.sdlpackage.SdlPackageFilter",
-    "extensions": [],
+    "extensions": [
+      ".sdlppx",
+      ".sdlrpx"
+    ],
     "mimeTypes": [
       "application/x-sdlpackage"
     ],
@@ -26,25 +29,106 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "mimeType": {
-      "type": "string",
-      "default": "application/x-archive",
-      "title": "MIME type of the filter's container format",
-      "x-widget": "text"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "fileNames": {
-      "type": "string",
-      "default": "*.tmx,*.xlf,*.xlff",
-      "title": "File names",
-      "description": "Comma-delimited list of file names to be processed (wildcards are allowed) in the same order as configuration ids",
-      "x-widget": "text"
+    "identification": {
+      "type": "object",
+      "description": "File identification",
+      "properties": {
+        "fileNames": {
+          "type": "string",
+          "default": "*.tmx,*.xlf,*.xlff",
+          "title": "File names",
+          "description": "File name patterns",
+          "x-widget": "text",
+          "x-flattenPath": "fileNames"
+        },
+        "mimeType": {
+          "type": "string",
+          "default": "application/x-archive",
+          "title": "MIME type of the filter's container format",
+          "x-widget": "text",
+          "x-flattenPath": "mimeType",
+          "description": "MIME type for content"
+        },
+        "configIds": {
+          "type": "string",
+          "default": "okf_tmx,okf_xliff,okf_xliff",
+          "title": "Filter configuration ids",
+          "description": "Filter configuration IDs",
+          "x-widget": "text",
+          "x-flattenPath": "configIds"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
-    "configIds": {
-      "type": "string",
-      "default": "okf_tmx,okf_xliff,okf_xliff",
-      "title": "Filter configuration ids",
-      "description": "Comma-delimited list of configuration ids corresponding to the file names",
-      "x-widget": "text"
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -52,42 +136,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "mimeType"
-      ]
-    },
-    {
-      "id": "identification",
-      "label": "Identification",
-      "collapsed": true,
-      "fields": [
-        "fileNames",
-        "configIds"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 4,
-  "x-baseHash": "f1273161e342",
-  "x-compositeHash": "5983f46f8900",
-  "x-introducedInOkapi": "0.38"
+  "x-baseVersion": 7,
+  "x-baseHash": "c877f8c97b89",
+  "x-compositeHash": "203f97ecd5e4",
+  "x-introducedInOkapi": "1.46.0"
 }

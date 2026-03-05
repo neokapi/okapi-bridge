@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_markdown",
     "class": "net.sf.okapi.filters.markdown.MarkdownFilter",
-    "extensions": [],
+    "extensions": [
+      ".md",
+      ".markdown"
+    ],
     "mimeTypes": [
       "text/markdown"
     ],
@@ -26,22 +29,144 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "htmlSubfilter": {
-      "type": "string",
-      "default": ""
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "yamlSubfilter": {
-      "type": "string",
-      "default": ""
+    "extraction": {
+      "type": "object",
+      "description": "Content extraction settings",
+      "properties": {
+        "translateImageAltText": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translateImageAltText",
+          "description": "Translate image alt text"
+        },
+        "translateUrls": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "translateUrls",
+          "description": "Translate URLs"
+        },
+        "urlPattern": {
+          "type": "string",
+          "default": ".+",
+          "x-flattenPath": "urlToTranslatePattern",
+          "description": "Regex for URLs to translate"
+        },
+        "translateCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translateCodeBlocks",
+          "description": "Translate fenced code blocks"
+        },
+        "translateIndentedCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translateIndentedCodeBlocks",
+          "description": "Translate indented code blocks"
+        },
+        "translateInlineCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translateInlineCodeBlocks",
+          "description": "Translate inline code"
+        },
+        "translateHeaderMetadata": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "translateHeaderMetadata",
+          "description": "Translate YAML front matter"
+        },
+        "nonTranslateBlocks": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "nonTranslateBlocks",
+          "description": "Regex for non-translatable blocks"
+        }
+      }
     },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": false,
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
+    "output": {
+      "type": "object",
+      "description": "Output formatting",
+      "properties": {
+        "charactersToEscape": {
+          "type": "string",
+          "default": "*_`{}[]<>()#+\\-.!|",
+          "x-flattenPath": "charactersToEscape",
+          "description": "Characters to escape in output"
+        },
+        "htmlEntitiesToEscape": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "htmlEntitiesToEscape",
+          "description": "HTML entities to escape"
+        },
+        "unescapeBackslashCharacters": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "unescapeBackslashCharacters",
+          "description": "Unescape backslash characters"
+        }
+      }
+    },
+    "subfilters": {
+      "type": "object",
+      "description": "Sub-filter configuration",
+      "properties": {
+        "htmlSubfilter": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "htmlSubfilter",
+          "description": "HTML sub-filter configuration"
+        },
+        "yamlSubfilter": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "yamlSubfilter",
+          "description": "YAML front matter sub-filter"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Regex patterns to identify inline codes in translatable text",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -69,108 +194,17 @@
           "description": "Test all rules together or individually"
         }
       },
-      "x-okapiFormat": "inlineCodeFinder",
-      "x-widget": "codeFinderRules"
+      "x-okapiFormat": "inlineCodeFinder"
     },
-    "translateUrls": {
-      "type": "boolean",
-      "default": false
-    },
-    "translateCodeBlocks": {
-      "type": "boolean",
-      "default": true
-    },
-    "translateIndentedCodeBlocks": {
-      "type": "boolean",
-      "default": true
-    },
-    "translateInlineCodeBlocks": {
-      "type": "boolean",
-      "default": true
-    },
-    "translateHeaderMetadata": {
-      "type": "boolean",
-      "default": false
-    },
-    "translateImageAltText": {
-      "type": "boolean",
-      "default": true
-    },
-    "urlToTranslatePattern": {
+    "simplifierRules": {
       "type": "string",
-      "default": ".+"
-    },
-    "htmlEntitiesToEscape": {
-      "type": "string",
-      "default": ""
-    },
-    "nonTranslateBlocks": {
-      "type": "string",
-      "default": ""
-    },
-    "unescapeBackslashCharacters": {
-      "type": "boolean",
-      "default": false
-    },
-    "charactersToEscape": {
-      "type": "string",
-      "default": "*_`{}[]<>()#+\\-.!|"
-    },
-    "generateHeaderAnchors": {
-      "type": "boolean",
-      "default": false
-    },
-    "parseMdx": {
-      "type": "boolean",
-      "default": false
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "generateHeaderAnchors"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    },
-    {
-      "id": "output",
-      "label": "Output Settings",
-      "collapsed": true,
-      "fields": [
-        "htmlEntitiesToEscape",
-        "unescapeBackslashCharacters",
-        "charactersToEscape"
-      ]
-    },
-    {
-      "id": "subfilters",
-      "label": "Subfilter Configuration",
-      "collapsed": true,
-      "fields": [
-        "htmlSubfilter",
-        "yamlSubfilter"
-      ]
-    }
-  ],
   "x-schemaVersion": 4,
-  "x-baseVersion": 8,
-  "x-baseHash": "4dd44093f473",
-  "x-compositeHash": "a4eca130dbea",
-  "x-introducedInOkapi": "1.45.0"
+  "x-baseVersion": 12,
+  "x-baseHash": "1cd194f831e0",
+  "x-compositeHash": "0721aa605c91",
+  "x-introducedInOkapi": "1.43.0"
 }

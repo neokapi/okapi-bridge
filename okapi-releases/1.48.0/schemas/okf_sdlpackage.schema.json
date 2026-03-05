@@ -8,7 +8,10 @@
   "x-filter": {
     "id": "okf_sdlpackage",
     "class": "net.sf.okapi.filters.sdlpackage.SdlPackageFilter",
-    "extensions": [],
+    "extensions": [
+      ".sdlppx",
+      ".sdlrpx"
+    ],
     "mimeTypes": [
       "application/x-sdlpackage"
     ],
@@ -26,37 +29,108 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "mimeType": {
-      "type": "string",
-      "default": "application/x-archive",
-      "title": "MIME type of the filter's container format",
-      "x-widget": "text"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "fileNames": {
-      "type": "string",
-      "default": "*.tmx,*.xlf,*.xlff",
-      "title": "File names",
-      "description": "Comma-delimited list of file names to be processed (wildcards are allowed) in the same order as configuration ids",
-      "x-widget": "text"
+    "identification": {
+      "type": "object",
+      "description": "File identification",
+      "properties": {
+        "fileNames": {
+          "type": "string",
+          "default": "*.tmx,*.xlf,*.xlff",
+          "title": "File names",
+          "description": "File name patterns",
+          "x-widget": "text",
+          "x-flattenPath": "fileNames"
+        },
+        "mimeType": {
+          "type": "string",
+          "default": "application/x-archive",
+          "title": "MIME type of the filter's container format",
+          "x-widget": "text",
+          "x-flattenPath": "mimeType",
+          "description": "MIME type for content"
+        },
+        "configIds": {
+          "type": "string",
+          "default": "okf_tmx,okf_xliff,okf_xliff",
+          "title": "Filter configuration ids",
+          "description": "Filter configuration IDs",
+          "x-widget": "text",
+          "x-flattenPath": "configIds"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
     },
-    "configIds": {
-      "type": "string",
-      "default": "okf_tmx,okf_xliff,okf_xliff",
-      "title": "Filter configuration ids",
-      "description": "Comma-delimited list of configuration ids corresponding to the file names",
-      "x-widget": "text"
-    },
-    "moveLeadingAndTrailingCodesToSkeleton": {
-      "type": "boolean"
-    },
-    "mergeAdjacentCodes": {
-      "type": "boolean"
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
-      "description": "Simplifier rules for code type normalization",
+      "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
     }
-  },
-  "additionalProperties": false
+  }
 }

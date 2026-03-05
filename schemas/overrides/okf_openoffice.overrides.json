@@ -4,16 +4,6 @@
     "_fragments/inlineCodes.fragment.json",
     "_fragments/extraction.fragment.json"
   ],
-  "groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "encodeCharacterEntityReferenceGlyphs"
-      ]
-    }
-  ],
   "fields": {
     "extractReferences": {},
     "encodeCharacterEntityReferenceGlyphs": {}

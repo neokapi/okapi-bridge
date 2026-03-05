@@ -45,68 +45,158 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "partsConfigurations": {
-      "type": "string",
-      "default": "default, okf_html, okf_html, default, default, okf_html, default, default, okf_html, default, okf_html, okf_html, default",
-      "title": "Corresponding filter configurations (or 'default')",
-      "description": "Comma-separated list of the filter configurations to use, use 'default' for none",
-      "x-widget": "text"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "partsNames": {
-      "type": "string",
-      "default": "SMCCONTENT-TITLE, SMCCONTENT-ABSTRACT, SMCCONTENT-BODY, SMCCONTENT-ALT, SMCCHANNELDESCRIPTOR-TITLE, SMCCHANNELDESCRIPTOR-ABSTRACT, SMCCHANNELDESCRIPTOR-ALT, SMCLINKCOLLECTIONS-LINKCOLLECTION-TITLE, SMCLINKCOLLECTIONS-LINKCOLLECTION-DESCRIPTION, SMCLINKS-TITLE, SMCLINKS-ABSTRACT, SMCLINKS-BODY, SMCLINKS-ALT",
-      "title": "Names of the <attribute> elements to extract",
-      "description": "Comma-separated list of the names of the <attribute> elements to extract.",
-      "x-widget": "text"
-    },
-    "sourceId": {
-      "type": "string",
-      "default": "SOURCE_ID",
-      "title": "Name for source ID element",
-      "description": "Name of the <attribute> element containing the source ID",
-      "x-widget": "text",
-      "x-enabledBy": {
-        "parameter": "monolingual",
-        "enabledWhenSelected": false
+    "mode": {
+      "type": "object",
+      "description": "Processing mode",
+      "properties": {
+        "monolingual": {
+          "type": "boolean",
+          "default": false,
+          "title": "Monolingual mode",
+          "x-widget": "checkbox",
+          "x-flattenPath": "monolingual",
+          "description": "Monolingual mode"
+        },
+        "quoteMode": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "quoteMode",
+          "description": "Quote handling mode"
+        },
+        "quoteModeDefined": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "quoteModeDefined",
+          "description": "Quote mode is defined"
+        },
+        "useCDATA": {
+          "type": "boolean",
+          "default": true,
+          "title": "Use CDATA",
+          "description": "Use CDATA sections",
+          "x-widget": "checkbox",
+          "x-flattenPath": "useCDATA"
+        }
       }
     },
-    "localeId": {
-      "type": "string",
-      "default": "LOCALE_ID",
-      "title": "Name for locale ID element",
-      "description": "Name of the <attribute> element containing the locale ID",
-      "x-widget": "text",
-      "x-enabledBy": {
-        "parameter": "monolingual",
-        "enabledWhenSelected": false
+    "identification": {
+      "type": "object",
+      "description": "Content identification",
+      "properties": {
+        "localeId": {
+          "type": "string",
+          "default": "LOCALE_ID",
+          "title": "Name for locale ID element",
+          "description": "Locale identifier",
+          "x-widget": "text",
+          "x-enabledBy": {
+            "parameter": "monolingual",
+            "enabledWhenSelected": false
+          },
+          "x-flattenPath": "localeId"
+        },
+        "sourceId": {
+          "type": "string",
+          "default": "SOURCE_ID",
+          "title": "Name for source ID element",
+          "description": "Source content identifier",
+          "x-widget": "text",
+          "x-enabledBy": {
+            "parameter": "monolingual",
+            "enabledWhenSelected": false
+          },
+          "x-flattenPath": "sourceId"
+        },
+        "partsNames": {
+          "type": "string",
+          "default": "SMCCONTENT-TITLE, SMCCONTENT-ABSTRACT, SMCCONTENT-BODY, SMCCONTENT-ALT, SMCCHANNELDESCRIPTOR-TITLE, SMCCHANNELDESCRIPTOR-ABSTRACT, SMCCHANNELDESCRIPTOR-ALT, SMCLINKCOLLECTIONS-LINKCOLLECTION-TITLE, SMCLINKCOLLECTIONS-LINKCOLLECTION-DESCRIPTION, SMCLINKS-TITLE, SMCLINKS-ABSTRACT, SMCLINKS-BODY, SMCLINKS-ALT",
+          "title": "Names of the <attribute> elements to extract",
+          "description": "Part names",
+          "x-widget": "text",
+          "x-flattenPath": "partsNames"
+        },
+        "partsConfigurations": {
+          "type": "string",
+          "default": "default, okf_html, okf_html, default, default, okf_html, default, default, okf_html, default, okf_html, okf_html, default",
+          "title": "Corresponding filter configurations (or 'default')",
+          "description": "Part configurations",
+          "x-widget": "text",
+          "x-flattenPath": "partsConfigurations"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules"
+        }
       }
     },
-    "quoteModeDefined": {
-      "type": "boolean",
-      "default": false
-    },
-    "quoteMode": {
-      "type": "boolean",
-      "default": false
-    },
-    "monolingual": {
-      "type": "boolean",
-      "default": false,
-      "title": "Monolingual mode",
-      "x-widget": "checkbox"
-    },
-    "useCDATA": {
-      "type": "boolean",
-      "default": true,
-      "title": "Use CDATA",
-      "description": "Create CDATA sections in the output file",
-      "x-widget": "checkbox"
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
-      "description": "Simplifier rules for code type normalization",
+      "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
     }
-  },
-  "additionalProperties": false
+  }
 }

@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_table",
     "class": "net.sf.okapi.filters.table.TableFilter",
-    "extensions": [],
+    "extensions": [
+      ".csv"
+    ],
     "mimeTypes": [
       "text/csv"
     ],
@@ -60,8 +62,7 @@
           "_parametersClass": "net.sf.okapi.filters.table.csv.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter",
-        "schemaRef": "okf_commaseparatedvalues.schema.json"
+        "filterClass": "net.sf.okapi.filters.table.TableFilter"
       },
       {
         "configId": "okf_table_catkeys",
@@ -101,8 +102,7 @@
           "_parametersClass": "net.sf.okapi.filters.table.csv.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter",
-        "schemaRef": "okf_commaseparatedvalues.schema.json"
+        "filterClass": "net.sf.okapi.filters.table.TableFilter"
       },
       {
         "configId": "okf_table_src-tab-trg",
@@ -143,8 +143,7 @@
           "_parametersClass": "net.sf.okapi.filters.table.csv.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter",
-        "schemaRef": "okf_commaseparatedvalues.schema.json"
+        "filterClass": "net.sf.okapi.filters.table.TableFilter"
       },
       {
         "configId": "okf_table_fwc",
@@ -183,8 +182,7 @@
           "_parametersClass": "net.sf.okapi.filters.table.fwc.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.table.fwc.FixedWidthColumnsFilter",
-        "schemaRef": "okf_fixedwidthcolumns.schema.json"
+        "filterClass": "net.sf.okapi.filters.table.TableFilter"
       },
       {
         "configId": "okf_table_tsv",
@@ -221,8 +219,7 @@
           "_parametersClass": "net.sf.okapi.filters.table.tsv.Parameters"
         },
         "isDefault": false,
-        "filterClass": "net.sf.okapi.filters.table.tsv.TabSeparatedValuesFilter",
-        "schemaRef": "okf_tabseparatedvalues.schema.json"
+        "filterClass": "net.sf.okapi.filters.table.TableFilter"
       }
     ],
     "serializationFormat": "stringParameters"
@@ -235,24 +232,9 @@
     }
   },
   "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 4,
-  "x-baseHash": "1b450d3ad06d",
-  "x-compositeHash": "16f9ab1fd156",
-  "x-introducedInOkapi": "1.42.0"
+  "x-baseVersion": 6,
+  "x-baseHash": "35e4d7d91497",
+  "x-compositeHash": "deb97f20e0ff",
+  "x-introducedInOkapi": "0.38"
 }

@@ -18,14 +18,5 @@
     "simplifierRules": {
       "description": "Rules for simplifying inline code representation"
     }
-  },
-  "groups": [
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": ["useCodeFinder", "codeFinderRules", "mergeAdjacentCodes", "moveLeadingAndTrailingCodesToSkeleton", "simplifierRules"]
-    }
-  ]
+  }
 }

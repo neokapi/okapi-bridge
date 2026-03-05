@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_phpcontent",
     "class": "net.sf.okapi.filters.php.PHPContentFilter",
-    "extensions": [],
+    "extensions": [
+      ".php"
+    ],
     "mimeTypes": [
       "application/x-php"
     ],
@@ -26,16 +28,74 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": true,
-      "title": "Has inline codes as defined below:",
-      "x-widget": "checkbox",
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "extraction": {
+      "type": "object",
+      "description": "Extraction settings",
+      "properties": {
+        "useDirectives": {
+          "type": "boolean",
+          "default": true,
+          "title": "Use localization directives",
+          "x-widget": "checkbox",
+          "x-flattenPath": "useDirectives",
+          "description": "Use extraction directives"
+        },
+        "extractOutsideDirectives": {
+          "type": "boolean",
+          "default": true,
+          "title": "Extract outside the scope of the directives",
+          "x-widget": "checkbox",
+          "x-enabledBy": {
+            "parameter": "useDirectives",
+            "enabledWhenSelected": true
+          },
+          "x-flattenPath": "extractOutsideDirectives",
+          "description": "Extract outside directive blocks"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
     "codeFinderRules": {
       "type": "object",
-      "description": "Regex patterns to identify inline codes in translatable text",
+      "description": "Regex patterns for inline code detection",
       "properties": {
         "rules": {
           "type": "array",
@@ -63,24 +123,7 @@
           "description": "Test all rules together or individually"
         }
       },
-      "x-okapiFormat": "inlineCodeFinder",
-      "x-widget": "codeFinderRules"
-    },
-    "useDirectives": {
-      "type": "boolean",
-      "default": true,
-      "title": "Use localization directives",
-      "x-widget": "checkbox"
-    },
-    "extractOutsideDirectives": {
-      "type": "boolean",
-      "default": true,
-      "title": "Extract outside the scope of the directives",
-      "x-widget": "checkbox",
-      "x-enabledBy": {
-        "parameter": "useDirectives",
-        "enabledWhenSelected": true
-      }
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -88,33 +131,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "general",
-      "label": "General Settings",
-      "collapsed": true,
-      "fields": [
-        "useDirectives"
-      ]
-    },
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 1,
-  "x-baseVersion": 3,
-  "x-baseHash": "26084884674a",
-  "x-compositeHash": "7bd916c35e9d",
+  "x-baseVersion": 5,
+  "x-baseHash": "22fceb65060c",
+  "x-compositeHash": "f7ef6269e56e",
   "x-introducedInOkapi": "0.38"
 }

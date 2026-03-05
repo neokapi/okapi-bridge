@@ -14,14 +14,5 @@
     "trimTrailingWS": {
       "description": "Remove trailing whitespace from text segments"
     }
-  },
-  "groups": [
-    {
-      "id": "whitespace",
-      "label": "Whitespace Handling",
-      "description": "Control how whitespace is processed in extracted text",
-      "collapsed": true,
-      "fields": ["preserveWhitespace", "collapseWhitespace", "trimLeadingWS", "trimTrailingWS"]
-    }
-  ]
+  }
 }

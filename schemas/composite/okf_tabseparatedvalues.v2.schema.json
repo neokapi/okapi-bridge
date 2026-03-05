@@ -165,24 +165,9 @@
     }
   },
   "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 2,
   "x-baseVersion": 5,
   "x-baseHash": "a1d352cb6501",
-  "x-compositeHash": "3d469337b67f",
+  "x-compositeHash": "49f69bb439ee",
   "x-introducedInOkapi": "1.46.0"
 }

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Okapi Bridge - Build for Okapi 1.41.0
-    Generated: 2026-02-26T08:00:47Z
+    Generated: 2026-03-05T19:46:55Z
     Filters: 41
 
     Inherits infrastructure deps (gRPC, Gson, etc.) and plugin config from parent.
@@ -275,6 +275,20 @@
                             <sources>
                                 <source>../../tools/schema-generator/src/main/java</source>
                             </sources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>add-tools-resources</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>add-resource</goal>
+                        </goals>
+                        <configuration>
+                            <resources>
+                                <resource>
+                                    <directory>../../tools/schema-generator/src/main/resources</directory>
+                                </resource>
+                            </resources>
                         </configuration>
                     </execution>
                 </executions>

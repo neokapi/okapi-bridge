@@ -2,8 +2,8 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://gokapi.dev/schemas/filters/okf_paraplaintext.schema.json",
   "$version": "2.0.0",
-  "title": "Plain Text Filter Filter",
-  "description": "Configuration for the Okapi Plain Text Filter Filter",
+  "title": "Plain Text Filter (BETA) Filter",
+  "description": "Configuration for the Okapi Plain Text Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_paraplaintext",
@@ -47,45 +47,129 @@
     "serializationFormat": "stringParameters"
   },
   "properties": {
-    "extractParagraphs": {
-      "type": "boolean",
-      "default": true
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
     },
-    "unescapeSource": {
-      "type": "boolean",
-      "default": true
+    "extraction": {
+      "type": "object",
+      "description": "Extraction settings",
+      "properties": {
+        "extractParagraphs": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractParagraphs",
+          "description": "Extract by paragraph"
+        }
+      }
     },
-    "trimLeading": {
-      "type": "boolean",
-      "default": false
-    },
-    "trimTrailing": {
-      "type": "boolean",
-      "default": false
-    },
-    "preserveWS": {
-      "type": "boolean",
-      "default": true
-    },
-    "useCodeFinder": {
-      "type": "boolean",
-      "default": false,
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
+    "parser": {
+      "type": "object",
+      "description": "Parser settings",
+      "properties": {
+        "preserveWS": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "preserveWS",
+          "description": "Preserve whitespace"
+        },
+        "trimLeading": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "trimLeading",
+          "description": "Trim leading whitespace"
+        },
+        "trimTrailing": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "trimTrailing",
+          "description": "Trim trailing whitespace"
+        },
+        "unescapeSource": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "unescapeSource",
+          "description": "Unescape source content"
+        },
+        "wrapMode": {
+          "type": "string",
+          "default": "NONE",
+          "enum": [
+            "NONE",
+            "SPACES",
+            "PLACEHOLDERS"
+          ],
+          "x-flattenPath": "wrapMode",
+          "description": "Line wrapping mode"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-widget": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
     },
     "codeFinderRules": {
-      "type": "string",
-      "default": "#v1\ncount.i=2\nrule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\nrule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nsample=\nuseAllRulesWhenTesting.b=false",
-      "x-widget": "codeFinderRules",
-      "description": "Regex patterns to identify inline codes in translatable text"
-    },
-    "wrapMode": {
-      "type": "string",
-      "default": "NONE",
-      "enum": [
-        "NONE",
-        "SPACES",
-        "PLACEHOLDERS"
-      ]
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     },
     "simplifierRules": {
       "type": "string",
@@ -93,25 +177,9 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "additionalProperties": false,
-  "x-groups": [
-    {
-      "id": "inlineCodes",
-      "label": "Inline Code Handling",
-      "description": "Configure detection and handling of inline codes (placeholders, tags, etc.)",
-      "collapsed": true,
-      "fields": [
-        "useCodeFinder",
-        "codeFinderRules",
-        "mergeAdjacentCodes",
-        "moveLeadingAndTrailingCodesToSkeleton",
-        "simplifierRules"
-      ]
-    }
-  ],
   "x-schemaVersion": 2,
-  "x-baseVersion": 4,
-  "x-baseHash": "0b497686ba57",
-  "x-compositeHash": "9aa1bc1beaac",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 6,
+  "x-baseHash": "577ad2095da1",
+  "x-compositeHash": "be008839157f",
+  "x-introducedInOkapi": "0.38"
 }

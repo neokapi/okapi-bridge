@@ -495,6 +495,21 @@ public class FilterRegistry {
     }
 
     /**
+     * Get the filter ID (e.g., "okf_html") for a given filter class name.
+     *
+     * @param filterClass fully-qualified Java class name
+     * @return filter ID or null if not found
+     */
+    public static String getFilterId(String filterClass) {
+        ensureInitialized();
+        FilterInfo info = FILTERS.get(filterClass);
+        if (info != null && info.getName() != null) {
+            return "okf_" + info.getName();
+        }
+        return null;
+    }
+
+    /**
      * Get all discovered filter class names.
      */
     public static Set<String> getFilterClasses() {

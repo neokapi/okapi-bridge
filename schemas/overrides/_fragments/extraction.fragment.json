@@ -23,14 +23,5 @@
     "extractOuterStrings": {
       "description": "Extract strings outside the main content structure"
     }
-  },
-  "groups": [
-    {
-      "id": "extraction",
-      "label": "Extraction Settings",
-      "description": "Control what content is extracted for translation",
-      "collapsed": false,
-      "fields": ["extractAllPairs", "extractSource", "extractTarget", "extractNotes", "extractComments", "extractMetadata", "extractOuterStrings"]
-    }
-  ]
+  }
 }

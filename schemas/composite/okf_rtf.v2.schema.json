@@ -8,7 +8,9 @@
   "x-filter": {
     "id": "okf_rtf",
     "class": "net.sf.okapi.filters.rtf.RTFFilter",
-    "extensions": [],
+    "extensions": [
+      ".rtf"
+    ],
     "mimeTypes": [
       "application/rtf"
     ],
@@ -23,13 +25,13 @@
         "filterClass": "net.sf.okapi.filters.rtf.RTFFilter"
       }
     ],
-    "serializationFormat": "stringParameters"
+    "serializationFormat": "yaml"
   },
   "properties": {},
   "additionalProperties": false,
   "x-schemaVersion": 2,
-  "x-baseVersion": 3,
-  "x-baseHash": "2d7e414b6334",
-  "x-compositeHash": "2d7e414b6334",
-  "x-introducedInOkapi": "1.46.0"
+  "x-baseVersion": 5,
+  "x-baseHash": "83e8b1bacc7c",
+  "x-compositeHash": "83e8b1bacc7c",
+  "x-introducedInOkapi": "0.38"
 }
