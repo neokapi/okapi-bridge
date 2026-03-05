@@ -393,6 +393,11 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             applyFilterParams(filter, filterParams);
         }
 
+        // Set up FilterConfigurationMapper for sub-filtering support in the write phase.
+        // Without this, filters that use sub-filters (e.g., RegexFilter with useCodeFinder)
+        // fail with NullPointerException when writing because the mapper is null.
+        setupFilterConfigurationMapper(filter);
+
         // Create filter writer.
         IFilterWriter writer = filter.createFilterWriter();
         if (writer == null) {
@@ -472,6 +477,9 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
         if (filterParams != null && !filterParams.isEmpty()) {
             applyFilterParams(filter, filterParams);
         }
+
+        // Set up FilterConfigurationMapper for sub-filtering support in the write phase.
+        setupFilterConfigurationMapper(filter);
 
         IFilterWriter writer = filter.createFilterWriter();
         if (writer == null) {
