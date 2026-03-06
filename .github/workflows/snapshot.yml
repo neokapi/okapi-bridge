@@ -158,6 +158,7 @@ jobs:
           CAPABILITIES=$(java -jar "$JAR_FILE" --list-filters 2>/dev/null \
             | jq '[.filters[] | {
                 type: "format",
+                id: .id,
                 name: .name,
                 display_name: .display_name,
                 mime_types: (if (.mime_types | length) > 0 then .mime_types else null end),

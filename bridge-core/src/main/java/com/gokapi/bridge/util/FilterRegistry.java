@@ -137,6 +137,7 @@ public class FilterRegistry {
 
             FilterInfo info = new FilterInfo(
                     filterClass,
+                    "okf_" + formatId,
                     formatId,
                     displayName != null ? displayName : name,
                     Collections.emptyList(),
@@ -503,8 +504,8 @@ public class FilterRegistry {
     public static String getFilterId(String filterClass) {
         ensureInitialized();
         FilterInfo info = FILTERS.get(filterClass);
-        if (info != null && info.getName() != null) {
-            return "okf_" + info.getName();
+        if (info != null && info.getId() != null) {
+            return info.getId();
         }
         return null;
     }

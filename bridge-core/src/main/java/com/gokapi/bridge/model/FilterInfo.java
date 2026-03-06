@@ -12,6 +12,9 @@ public class FilterInfo {
     @SerializedName("filter_class")
     private String filterClass;
 
+    @SerializedName("id")
+    private String id;
+
     @SerializedName("name")
     private String name;
 
@@ -31,9 +34,10 @@ public class FilterInfo {
         this.configurations = new ArrayList<>();
     }
 
-    public FilterInfo(String filterClass, String name, String displayName,
+    public FilterInfo(String filterClass, String id, String name, String displayName,
                       List<String> mimeTypes, List<String> extensions) {
         this.filterClass = filterClass;
+        this.id = id;
         this.name = name;
         this.displayName = displayName;
         this.mimeTypes = mimeTypes;
@@ -47,6 +51,14 @@ public class FilterInfo {
 
     public void setFilterClass(String filterClass) {
         this.filterClass = filterClass;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public String getName() {
