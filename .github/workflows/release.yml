@@ -55,12 +55,19 @@ jobs:
             gh cache delete "$id" || true
           done
 
+      - name: Compute dependency hash (ignoring version bumps)
+        id: dep-hash
+        run: |
+          HASH=$(cat pom.xml okapi-releases/${{ matrix.okapi-version }}/pom.xml \
+            | grep -v '<version>' | sha256sum | cut -c1-16)
+          echo "hash=$HASH" >> "$GITHUB_OUTPUT"
+
       - name: Cache Maven repository (Okapi ${{ matrix.okapi-version }})
         uses: actions/cache@v4
         id: maven-cache
         with:
           path: ~/.m2/repository
-          key: maven-okapi-${{ matrix.okapi-version }}-${{ hashFiles('pom.xml', format('okapi-releases/{0}/pom.xml', matrix.okapi-version)) }}
+          key: maven-okapi-${{ matrix.okapi-version }}-${{ steps.dep-hash.outputs.hash }}
           restore-keys: maven-okapi-${{ matrix.okapi-version }}-
 
       - name: Generate version pom if missing
@@ -122,11 +129,18 @@ jobs:
           distribution: temurin
           java-version: '17'
 
+      - name: Compute dependency hash (ignoring version bumps)
+        id: dep-hash
+        run: |
+          HASH=$(cat pom.xml okapi-releases/${{ matrix.okapi-version }}/pom.xml \
+            | grep -v '<version>' | sha256sum | cut -c1-16)
+          echo "hash=$HASH" >> "$GITHUB_OUTPUT"
+
       - name: Restore Maven cache (Okapi ${{ matrix.okapi-version }})
         uses: actions/cache/restore@v4
         with:
           path: ~/.m2/repository
-          key: maven-okapi-${{ matrix.okapi-version }}-${{ hashFiles('pom.xml', format('okapi-releases/{0}/pom.xml', matrix.okapi-version)) }}
+          key: maven-okapi-${{ matrix.okapi-version }}-${{ steps.dep-hash.outputs.hash }}
           restore-keys: maven-okapi-${{ matrix.okapi-version }}-
 
       - name: Generate version pom if missing
