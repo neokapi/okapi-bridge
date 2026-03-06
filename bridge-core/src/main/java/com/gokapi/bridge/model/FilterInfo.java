@@ -30,6 +30,9 @@ public class FilterInfo {
     @SerializedName("configurations")
     private List<FilterConfigurationInfo> configurations;
 
+    @SerializedName("capabilities")
+    private List<String> capabilities;
+
     public FilterInfo() {
         this.configurations = new ArrayList<>();
     }
@@ -106,5 +109,13 @@ public class FilterInfo {
             this.configurations = new ArrayList<>();
         }
         this.configurations.add(config);
+    }
+
+    public List<String> getCapabilities() {
+        return capabilities;
+    }
+
+    public void setCapabilities(List<String> capabilities) {
+        this.capabilities = capabilities;
     }
 }

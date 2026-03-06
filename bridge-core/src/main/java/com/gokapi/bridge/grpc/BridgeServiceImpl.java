@@ -100,12 +100,16 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 FilterEntry.Builder entry = FilterEntry.newBuilder()
                         .setFilterClass(info.getFilterClass())
                         .setName(nullSafe(info.getName()))
-                        .setDisplayName(nullSafe(info.getDisplayName()));
+                        .setDisplayName(nullSafe(info.getDisplayName()))
+                        .setFilterId(nullSafe(info.getId()));
                 if (info.getMimeTypes() != null) {
                     entry.addAllMimeTypes(info.getMimeTypes());
                 }
                 if (info.getExtensions() != null) {
                     entry.addAllExtensions(info.getExtensions());
+                }
+                if (info.getCapabilities() != null) {
+                    entry.addAllCapabilities(info.getCapabilities());
                 }
                 resp.addFilters(entry);
             }

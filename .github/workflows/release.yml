@@ -183,6 +183,7 @@ jobs:
                 id: .id,
                 name: .name,
                 display_name: .display_name,
+                capabilities: .capabilities,
                 mime_types: (if (.mime_types | length) > 0 then .mime_types else null end),
                 extensions: (if (.extensions | length) > 0 then .extensions else null end)
               } | with_entries(select(.value != null))]')

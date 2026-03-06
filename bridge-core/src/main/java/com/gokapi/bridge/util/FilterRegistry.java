@@ -143,6 +143,7 @@ public class FilterRegistry {
                     Collections.emptyList(),
                     Collections.emptyList()
             );
+            info.setCapabilities(Arrays.asList("read", "write"));
 
             // Extract filter configurations (presets/variants)
             // For compound filters, track which sibling filter handles each configuration
