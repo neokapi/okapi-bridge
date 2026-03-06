@@ -197,6 +197,31 @@ message PartMessage {
 }
 
 // ────────────────────────────────────────────────────────────────────────────
+// Content References
+// ────────────────────────────────────────────────────────────────────────────
+
+// ContentRef describes where input content lives.
+// The bridge resolves the reference to a local file for Okapi processing.
+// For local co-located deployments, use path to avoid byte transfer over gRPC.
+// For distributed deployments, use uri to reference shared storage (s3://, gs://, etc.).
+message ContentRef {
+  oneof location {
+    bytes  inline = 1;  // Inline bytes (same as legacy content fields)
+    string path   = 2;  // Local filesystem path (same as legacy source_path)
+    string uri    = 3;  // URI reference: file://, s3://, gs://, etc.
+  }
+}
+
+// OutputRef describes where the bridge should write output.
+// If not set in WriteHeader, output is returned inline in WriteResponse.output.
+message OutputRef {
+  oneof destination {
+    string path = 1;  // Write to local filesystem path
+    string uri  = 2;  // Write to URI: file://, s3://, gs://
+  }
+}
+
+// ────────────────────────────────────────────────────────────────────────────
 // Service RPCs
 // ────────────────────────────────────────────────────────────────────────────
 
@@ -230,13 +255,13 @@ message OpenRequest {
   string uri = 2;
   string source_locale = 3;
   string encoding = 4;
-  bytes content = 5;
+  bytes content = 5;              // Legacy: inline document bytes.
   string mime_type = 6;
   map<string, string> filter_params = 7;
   string target_locale = 8;
-  string source_path = 9;  // Optional absolute file path on disk.
-                            // When set, Java reads from disk (no temp file).
-                            // Enables relative URI resolution for auxiliary files.
+  string source_path = 9;         // Legacy: absolute file path on disk.
+  ContentRef content_ref = 10;    // Preferred: unified content reference.
+                                  // When set, takes precedence over content/source_path.
 }
 
 message OpenResponse {
@@ -258,15 +283,20 @@ message WriteHeader {
   string filter_class = 1;
   string locale = 2;
   string encoding = 3;
-  bytes original_content = 4;
+  bytes original_content = 4;           // Legacy: inline original document bytes.
   map<string, string> filter_params = 5;
-  string source_path = 6;  // Optional absolute path to original file.
-                            // When set, Java re-reads from disk (no temp file).
+  string source_path = 6;               // Legacy: absolute path to original file.
+  ContentRef original_content_ref = 7;  // Preferred: unified content reference.
+                                        // When set, takes precedence over original_content/source_path.
+  OutputRef output_ref = 8;             // Optional: where to write output.
+                                        // When set, output is written to the referenced location
+                                        // and output_path is returned instead of inline bytes.
 }
 
 message WriteResponse {
-  bytes output = 1;
+  bytes output = 1;          // Inline output bytes (when no output_ref was set).
   string error = 2;
+  string output_path = 3;   // Path/URI where output was written (when output_ref was set).
 }
 
 message CloseRequest {}

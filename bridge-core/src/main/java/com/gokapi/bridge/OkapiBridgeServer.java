@@ -1,6 +1,8 @@
 package com.gokapi.bridge;
 
 import com.gokapi.bridge.grpc.BridgeServiceImpl;
+import com.gokapi.bridge.io.LocalContentResolver;
+import com.gokapi.bridge.io.LocalOutputWriter;
 import com.gokapi.bridge.model.FilterInfo;
 import com.gokapi.bridge.util.FilterRegistry;
 import com.google.gson.Gson;
@@ -35,7 +37,8 @@ public class OkapiBridgeServer {
         System.err.println("[bridge] Okapi Bridge Server starting (gRPC)...");
 
         try {
-            BridgeServiceImpl service = new BridgeServiceImpl();
+            BridgeServiceImpl service = new BridgeServiceImpl(
+                    new LocalContentResolver(), new LocalOutputWriter());
 
             Server server = ServerBuilder.forPort(0) // random available port
                     .addService(service)

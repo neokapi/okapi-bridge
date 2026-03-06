@@ -2,6 +2,9 @@ package com.gokapi.bridge.grpc;
 
 import com.gokapi.bridge.EventConverter;
 import com.gokapi.bridge.PartDTOConverter;
+import com.gokapi.bridge.io.ContentResolver;
+import com.gokapi.bridge.io.OutputWriter;
+import com.gokapi.bridge.io.WriteResult;
 import com.gokapi.bridge.model.*;
 import com.gokapi.bridge.proto.*;
 import com.gokapi.bridge.util.FilterRegistry;
@@ -35,12 +38,18 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     private static final int QUEUE_CAPACITY = 1024;
 
     private IFilter currentFilter;
-    private byte[] currentContent;
 
+    private final ContentResolver contentResolver;
+    private final OutputWriter outputWriter;
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
     private final ExecutorService mergeExecutor = Executors.newCachedThreadPool();
     private final Map<String, ParameterFlattener> flattenerCache = new ConcurrentHashMap<>();
     private final Map<String, JsonObject> schemaCache = new ConcurrentHashMap<>();
+
+    public BridgeServiceImpl(ContentResolver contentResolver, OutputWriter outputWriter) {
+        this.contentResolver = contentResolver;
+        this.outputWriter = outputWriter;
+    }
 
     /**
      * Block until the Shutdown RPC is called.
@@ -115,14 +124,10 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     public void open(OpenRequest request, StreamObserver<OpenResponse> responseObserver) {
         try {
             String filterClass = request.getFilterClass();
-            byte[] content = request.getContent().toByteArray();
             String uri = request.getUri();
-            String sourcePath = request.getSourcePath();
             String sourceLocale = request.getSourceLocale().isEmpty() ? "en" : request.getSourceLocale();
             String targetLocale = request.getTargetLocale().isEmpty() ? "fr" : request.getTargetLocale();
             String encoding = request.getEncoding().isEmpty() ? "UTF-8" : request.getEncoding();
-
-            currentContent = content;
 
             // Instantiate filter.
             IFilter filter = FilterRegistry.createFilter(filterClass);
@@ -140,18 +145,8 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 applyFilterParams(filter, filterParams);
             }
 
-            // Use source_path for direct disk access when available.
-            // This enables relative URI resolution for auxiliary files
-            // (e.g. ITS standoff annotations, external skeleton files).
-            File inputFile;
-            if (sourcePath != null && !sourcePath.isEmpty()) {
-                inputFile = new File(sourcePath);
-                if (!inputFile.exists()) {
-                    inputFile = writeTempFile(content, uri);
-                }
-            } else {
-                inputFile = writeTempFile(content, uri);
-            }
+            // Resolve content to a local file via the content resolver.
+            File inputFile = resolveOpenContent(request);
 
             // Set up FilterConfigurationMapper for sub-filtering support.
             // Filters like RegexFilter with useCodeFinder/subfilter configs need
@@ -218,7 +213,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             private WriteHeader header;
             private final BlockingQueue<TranslationEntry> queue =
                     new LinkedBlockingQueue<>(QUEUE_CAPACITY);
-            private Future<byte[]> mergeFuture;
+            private Future<WriteResult> mergeFuture;
 
             @Override
             public void onNext(WriteChunk chunk) {
@@ -286,10 +281,14 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
                     // Signal end of stream and wait for merge to complete.
                     queue.put(TranslationEntry.END);
-                    byte[] output = mergeFuture.get();
-                    responseObserver.onNext(WriteResponse.newBuilder()
-                            .setOutput(ByteString.copyFrom(output))
-                            .build());
+                    WriteResult result = mergeFuture.get();
+                    WriteResponse.Builder resp = WriteResponse.newBuilder();
+                    if (result.isReferenced()) {
+                        resp.setOutputPath(result.getOutputPath());
+                    } else {
+                        resp.setOutput(ByteString.copyFrom(result.getBytes()));
+                    }
+                    responseObserver.onNext(resp.build());
                     responseObserver.onCompleted();
                 } catch (Exception e) {
                     Throwable cause = e instanceof ExecutionException ? e.getCause() : e;
@@ -332,7 +331,6 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
         IFilter filter = currentFilter;
         currentFilter = null;
-        currentContent = null;
 
         try {
             filter.close();
@@ -356,35 +354,13 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
      * Perform the write (roundtrip) operation: re-read the original document
      * through the filter, apply translations from parts, and write output.
      */
-    private byte[] performWrite(WriteHeader header, List<PartDTO> parts) throws Exception {
+    private WriteResult performWrite(WriteHeader header, List<PartDTO> parts) throws Exception {
         String filterClass = header.getFilterClass();
         String locale = header.getLocale().isEmpty() ? "en" : header.getLocale();
         String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
-        byte[] originalContent = header.getOriginalContent().toByteArray();
-        String sourcePath = header.getSourcePath();
 
-        // For XLIFF filters, strip empty target-language="" from the original content.
-        // Okapi's XLIFF writer sets target-language from the RawDocument target locale,
-        // but doesn't remove a pre-existing empty one from the skeleton, producing
-        // invalid XML with duplicate attributes.
-        if (isXliffFilter(filterClass)) {
-            originalContent = stripEmptyTargetLanguage(originalContent, sourcePath);
-            // We modified the content, so we can't use sourcePath for reading.
-            // But we still need the directory context for auxiliary file resolution
-            // (e.g., ITS standoff annotations like lqiTestIssues.xml).
-            // Write modified content as a sibling temp file in the source directory.
-            if (sourcePath != null && !sourcePath.isEmpty()) {
-                File sourceDir = new File(sourcePath).getParentFile();
-                if (sourceDir != null && sourceDir.isDirectory()) {
-                    File siblingTemp = File.createTempFile("gokapi-bridge-", ".xlf", sourceDir);
-                    siblingTemp.deleteOnExit();
-                    Files.write(siblingTemp.toPath(), originalContent);
-                    sourcePath = siblingTemp.getAbsolutePath();
-                } else {
-                    sourcePath = "";
-                }
-            }
-        }
+        // Resolve input content via the content resolver.
+        File inputFile = resolveWriteContent(header);
 
         // Create filter for reading the skeleton.
         IFilter filter = FilterRegistry.createFilter(filterClass);
@@ -409,19 +385,16 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             throw new IllegalStateException("filter does not support writing: " + filterClass);
         }
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        // Resolve output destination before processing. When output_ref is set,
+        // Okapi writes directly to disk — no in-memory buffering needed.
+        String outputPath = resolveOutputPath(header);
+        ByteArrayOutputStream outputStream = null;
         writer.setOptions(LocaleId.fromString(locale), encoding);
-        writer.setOutput(outputStream);
-
-        // Use source_path for direct disk access when available.
-        File inputFile;
-        if (sourcePath != null && !sourcePath.isEmpty()) {
-            inputFile = new File(sourcePath);
-            if (!inputFile.exists()) {
-                inputFile = writeTempFile(originalContent, "");
-            }
+        if (outputPath != null) {
+            writer.setOutput(outputPath);
         } else {
-            inputFile = writeTempFile(originalContent, "");
+            outputStream = new ByteArrayOutputStream();
+            writer.setOutput(outputStream);
         }
 
         LocaleId srcLocale = LocaleId.fromString("en");
@@ -440,8 +413,14 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
         filter.close();
         writer.close();
 
-        System.err.println("[bridge] Wrote output (" + outputStream.size() + " bytes)");
-        return outputStream.toByteArray();
+        if (outputPath != null) {
+            System.err.println("[bridge] Wrote output to " + outputPath);
+            return WriteResult.ofPath(outputPath);
+        } else {
+            byte[] output = outputStream.toByteArray();
+            System.err.println("[bridge] Wrote output (" + output.length + " bytes)");
+            return WriteResult.ofBytes(output);
+        }
     }
 
     /**
@@ -449,29 +428,14 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
      * through the filter, apply translations on-demand from the queue, and write output.
      * The merge thread runs concurrently with part arrival from Go.
      */
-    private byte[] performWriteStreaming(WriteHeader header,
-                                         BlockingQueue<TranslationEntry> queue) throws Exception {
+    private WriteResult performWriteStreaming(WriteHeader header,
+                                              BlockingQueue<TranslationEntry> queue) throws Exception {
         String filterClass = header.getFilterClass();
         String locale = header.getLocale().isEmpty() ? "en" : header.getLocale();
         String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
-        byte[] originalContent = header.getOriginalContent().toByteArray();
-        String sourcePath = header.getSourcePath();
 
-        // XLIFF empty target-language stripping (same as performWrite).
-        if (isXliffFilter(filterClass)) {
-            originalContent = stripEmptyTargetLanguage(originalContent, sourcePath);
-            if (sourcePath != null && !sourcePath.isEmpty()) {
-                File sourceDir = new File(sourcePath).getParentFile();
-                if (sourceDir != null && sourceDir.isDirectory()) {
-                    File siblingTemp = File.createTempFile("gokapi-bridge-", ".xlf", sourceDir);
-                    siblingTemp.deleteOnExit();
-                    Files.write(siblingTemp.toPath(), originalContent);
-                    sourcePath = siblingTemp.getAbsolutePath();
-                } else {
-                    sourcePath = "";
-                }
-            }
-        }
+        // Resolve input content via the content resolver.
+        File inputFile = resolveWriteContent(header);
 
         IFilter filter = FilterRegistry.createFilter(filterClass);
         if (filter == null) {
@@ -491,18 +455,16 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             throw new IllegalStateException("filter does not support writing: " + filterClass);
         }
 
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        // Resolve output destination before processing. When output_ref is set,
+        // Okapi writes directly to disk — no in-memory buffering needed.
+        String outputPath = resolveOutputPath(header);
+        ByteArrayOutputStream outputStream = null;
         writer.setOptions(LocaleId.fromString(locale), encoding);
-        writer.setOutput(outputStream);
-
-        File inputFile;
-        if (sourcePath != null && !sourcePath.isEmpty()) {
-            inputFile = new File(sourcePath);
-            if (!inputFile.exists()) {
-                inputFile = writeTempFile(originalContent, "");
-            }
+        if (outputPath != null) {
+            writer.setOutput(outputPath);
         } else {
-            inputFile = writeTempFile(originalContent, "");
+            outputStream = new ByteArrayOutputStream();
+            writer.setOutput(outputStream);
         }
 
         LocaleId srcLocale = LocaleId.fromString("en");
@@ -522,8 +484,14 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
         filter.close();
         writer.close();
 
-        System.err.println("[bridge] Wrote output (" + outputStream.size() + " bytes, streaming)");
-        return outputStream.toByteArray();
+        if (outputPath != null) {
+            System.err.println("[bridge] Wrote output to " + outputPath + " (streaming)");
+            return WriteResult.ofPath(outputPath);
+        } else {
+            byte[] output = outputStream.toByteArray();
+            System.err.println("[bridge] Wrote output (" + output.length + " bytes, streaming)");
+            return WriteResult.ofBytes(output);
+        }
     }
 
     /**
@@ -546,22 +514,103 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     }
 
     /**
-     * Write content to a temp file for filters needing random access.
-     * The file extension is derived from the URI (if any) to help Okapi
-     * auto-detect the format.
+     * Resolve content for an Open request using the content resolver.
+     * Checks content_ref first (new API), then falls back to legacy source_path/content fields.
      */
-    private File writeTempFile(byte[] content, String uri) throws IOException {
-        String ext = "";
-        if (uri != null && !uri.isEmpty()) {
-            int dotIdx = uri.lastIndexOf('.');
-            if (dotIdx >= 0) {
-                ext = uri.substring(dotIdx);
+    private File resolveOpenContent(OpenRequest request) throws IOException {
+        String extensionHint = extensionFromUri(request.getUri());
+
+        // Prefer content_ref (new unified API).
+        if (request.hasContentRef()) {
+            ContentRef ref = request.getContentRef();
+            switch (ref.getLocationCase()) {
+                case PATH:
+                    return contentResolver.resolvePath(ref.getPath());
+                case URI:
+                    return contentResolver.resolveUri(ref.getUri(), extensionHint);
+                case INLINE:
+                    return contentResolver.resolveInline(ref.getInline().toByteArray(), extensionHint);
+                default:
+                    break;
             }
         }
-        File tempFile = File.createTempFile("gokapi-bridge-", ext);
-        tempFile.deleteOnExit();
-        Files.write(tempFile.toPath(), content);
-        return tempFile;
+
+        // Legacy fallback: source_path takes precedence over content.
+        String sourcePath = request.getSourcePath();
+        if (sourcePath != null && !sourcePath.isEmpty()) {
+            File file = new File(sourcePath);
+            if (file.exists()) {
+                return file;
+            }
+            // source_path set but file doesn't exist — fall through to inline content.
+        }
+
+        return contentResolver.resolveInline(request.getContent().toByteArray(), extensionHint);
+    }
+
+    /**
+     * Resolve content for a Write request using the content resolver.
+     * Checks original_content_ref first (new API), then falls back to legacy fields.
+     */
+    private File resolveWriteContent(WriteHeader header) throws IOException {
+        // Prefer original_content_ref (new unified API).
+        if (header.hasOriginalContentRef()) {
+            ContentRef ref = header.getOriginalContentRef();
+            switch (ref.getLocationCase()) {
+                case PATH:
+                    return contentResolver.resolvePath(ref.getPath());
+                case URI:
+                    return contentResolver.resolveUri(ref.getUri(), "");
+                case INLINE:
+                    return contentResolver.resolveInline(ref.getInline().toByteArray(), "");
+                default:
+                    break;
+            }
+        }
+
+        // Legacy fallback.
+        String sourcePath = header.getSourcePath();
+        if (sourcePath != null && !sourcePath.isEmpty()) {
+            File file = new File(sourcePath);
+            if (file.exists()) {
+                return file;
+            }
+        }
+
+        return contentResolver.resolveInline(header.getOriginalContent().toByteArray(), "");
+    }
+
+    /**
+     * Resolve the output file path from the header's output_ref.
+     * Returns null if no output_ref is set (output should be returned inline).
+     * When a path is returned, Okapi's filter writer can write directly to it
+     * via setOutput(String), avoiding in-memory buffering entirely.
+     */
+    private String resolveOutputPath(WriteHeader header) throws IOException {
+        if (!header.hasOutputRef()) return null;
+        OutputRef ref = header.getOutputRef();
+        switch (ref.getDestinationCase()) {
+            case PATH:
+                // Ensure parent directories exist.
+                File parent = new File(ref.getPath()).getParentFile();
+                if (parent != null) {
+                    Files.createDirectories(parent.toPath());
+                }
+                return ref.getPath();
+            case URI:
+                return outputWriter.resolveUri(ref.getUri());
+            default:
+                return null;
+        }
+    }
+
+    /**
+     * Extract file extension from a URI string (e.g., "document.html" -> ".html").
+     */
+    private static String extensionFromUri(String uri) {
+        if (uri == null || uri.isEmpty()) return "";
+        int dotIdx = uri.lastIndexOf('.');
+        return (dotIdx >= 0) ? uri.substring(dotIdx) : "";
     }
 
     /** Reserved param keys handled specially by the bridge. */
@@ -682,40 +731,6 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                         configFilePath + ": " + e2.getMessage());
             }
         }
-    }
-
-    /**
-     * Check if a filter class is an XLIFF filter (1.2 or 2.0).
-     */
-    private static boolean isXliffFilter(String filterClass) {
-        return filterClass != null && (
-                filterClass.contains("XLIFFFilter") ||
-                filterClass.contains("XLIFF2Filter"));
-    }
-
-    /**
-     * Strip empty target-language="" attributes from XLIFF content.
-     * When sourcePath is set, reads the file content first. Returns the
-     * cleaned content bytes (always use temp file after this).
-     */
-    private byte[] stripEmptyTargetLanguage(byte[] content, String sourcePath) {
-        byte[] raw = content;
-        if ((raw == null || raw.length == 0) && sourcePath != null && !sourcePath.isEmpty()) {
-            try {
-                raw = Files.readAllBytes(new File(sourcePath).toPath());
-            } catch (IOException e) {
-                return content; // fall back to original
-            }
-        }
-        if (raw == null || raw.length == 0) {
-            return content;
-        }
-        String text = new String(raw, java.nio.charset.StandardCharsets.UTF_8);
-        // Remove empty target-language="" or target-language='' attributes.
-        // This prevents duplicate attributes when Okapi's XLIFF writer sets
-        // the target-language from the RawDocument target locale.
-        String cleaned = text.replaceAll("\\s+target-language\\s*=\\s*[\"'][\"']", "");
-        return cleaned.getBytes(java.nio.charset.StandardCharsets.UTF_8);
     }
 
     /**
