@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_tex.schema.json",
-  "$version": "2.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_tex.v2.schema.json",
+  "version": 2,
   "title": "TEX Filter Filter",
   "description": "Configuration for the Okapi TEX Filter Filter",
   "type": "object",
@@ -29,9 +29,8 @@
   },
   "properties": {},
   "additionalProperties": false,
-  "x-schemaVersion": 2,
-  "x-baseVersion": 2,
+  "x-baseVersion": 4,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "633edde804c7",
-  "x-compositeHash": "633edde804c7"
+  "x-baseHash": "29107a8c4439",
+  "x-compositeHash": "29107a8c4439"
 }

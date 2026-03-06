@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_tmx.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_tmx.v1.schema.json",
+  "version": 1,
   "title": "TMX Filter Filter",
   "description": "Configuration for the Okapi TMX Filter Filter",
   "type": "object",
@@ -159,9 +159,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "cdf20eb77a4c",
-  "x-compositeHash": "e4eaaa473a4e"
+  "x-baseHash": "1b58da42875f",
+  "x-compositeHash": "f1200bd8fb9b"
 }

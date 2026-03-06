@@ -32,7 +32,6 @@ public class SchemaGenerator {
             .disableHtmlEscaping()
             .create();
 
-    private static final String SCHEMA_VERSION = "1.0.0";
     private static final String OUTPUT_DIR = "schemas";
 
     private final ParameterIntrospector introspector;
@@ -126,8 +125,6 @@ public class SchemaGenerator {
 
         JsonObject schema = new JsonObject();
         schema.addProperty("$schema", "http://json-schema.org/draft-07/schema#");
-        schema.addProperty("$id", "https://gokapi.dev/schemas/filters/" + filterId + ".schema.json");
-        schema.addProperty("$version", SCHEMA_VERSION);
         schema.addProperty("title", info.getDisplayName() + " Filter");
         schema.addProperty("description", "Configuration for the Okapi " + info.getDisplayName() + " Filter");
         schema.addProperty("type", "object");
@@ -188,7 +185,6 @@ public class SchemaGenerator {
         File metaFile = new File(dir, "meta.json");
         
         JsonObject meta = new JsonObject();
-        meta.addProperty("schemaVersion", SCHEMA_VERSION);
         meta.addProperty("generatedAt", java.time.Instant.now().toString());
         meta.addProperty("filterCount", filters.size());
 

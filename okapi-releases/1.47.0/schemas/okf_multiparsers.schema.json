@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_multiparsers.schema.json",
-  "$version": "1.0.0",
   "title": "Multi-Parsers Filter Filter",
   "description": "Configuration for the Okapi Multi-Parsers Filter Filter",
   "type": "object",

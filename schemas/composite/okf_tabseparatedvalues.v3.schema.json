@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_tabseparatedvalues.schema.json",
-  "$version": "3.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_tabseparatedvalues.v3.schema.json",
+  "version": 3,
   "title": "Plain Text Filter Filter",
   "description": "Configuration for the Okapi Plain Text Filter Filter",
   "type": "object",
@@ -169,9 +169,8 @@
     }
   },
   "additionalProperties": false,
-  "x-schemaVersion": 3,
-  "x-baseVersion": 3,
+  "x-baseVersion": 6,
   "x-introducedInOkapi": "1.47.0",
-  "x-baseHash": "d909969941ff",
-  "x-compositeHash": "a7d66e2e8264"
+  "x-baseHash": "5e7de86aa312",
+  "x-compositeHash": "fb57daec13a6"
 }

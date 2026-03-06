@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_archive.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_archive.v1.schema.json",
+  "version": 1,
   "title": "Archive Filter (BETA) Filter",
   "description": "Configuration for the Okapi Archive Filter (BETA) Filter",
   "type": "object",
@@ -135,9 +135,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 3,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "8dd8ddc211d6",
-  "x-compositeHash": "13be1e4f51e0"
+  "x-baseHash": "e06de37b078a",
+  "x-compositeHash": "320c247a473a"
 }

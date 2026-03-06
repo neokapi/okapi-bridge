@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_vignette.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_vignette.v1.schema.json",
+  "version": 1,
   "title": "Vignette Filter Filter",
   "description": "Configuration for the Okapi Vignette Filter Filter",
   "type": "object",
@@ -202,9 +202,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "9215cf54f6af",
-  "x-compositeHash": "c31a711a97ea"
+  "x-baseHash": "29757a72cc9e",
+  "x-compositeHash": "c612ae263351"
 }

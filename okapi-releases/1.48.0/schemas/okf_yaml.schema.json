@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_yaml.schema.json",
-  "$version": "1.0.0",
   "title": "YAML Filter Filter",
   "description": "Configuration for the Okapi YAML Filter Filter",
   "type": "object",

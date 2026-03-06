@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_markdown.schema.json",
-  "$version": "4.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_markdown.v4.schema.json",
+  "version": 4,
   "title": "Markdown Filter Filter",
   "description": "Configuration for the Okapi Markdown Filter Filter",
   "type": "object",
@@ -214,9 +214,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 4,
-  "x-baseVersion": 4,
+  "x-baseVersion": 8,
   "x-introducedInOkapi": "1.45.0",
-  "x-baseHash": "ce7d25102b05",
-  "x-compositeHash": "837e391176e6"
+  "x-baseHash": "dc74d17370ff",
+  "x-compositeHash": "c58d46430c5e"
 }

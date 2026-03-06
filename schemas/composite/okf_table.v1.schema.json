@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_table.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_table.v1.schema.json",
+  "version": 1,
   "title": "Table Filter Filter",
   "description": "Configuration for the Okapi Table Filter Filter",
   "type": "object",
@@ -232,9 +232,8 @@
     }
   },
   "additionalProperties": false,
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 3,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "35e4d7d91497",
-  "x-compositeHash": "deb97f20e0ff"
+  "x-baseHash": "1d683348c19c",
+  "x-compositeHash": "45035c7875b2"
 }

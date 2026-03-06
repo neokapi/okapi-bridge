@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_rainbowkit.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_rainbowkit.v1.schema.json",
+  "version": 1,
   "title": "Rainbow Translation Kit Filter Filter",
   "description": "Configuration for the Okapi Rainbow Translation Kit Filter Filter",
   "type": "object",
@@ -69,9 +69,8 @@
     }
   },
   "additionalProperties": false,
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "100bcbf11652",
-  "x-compositeHash": "100bcbf11652"
+  "x-baseHash": "7fc38c230d23",
+  "x-compositeHash": "7fc38c230d23"
 }

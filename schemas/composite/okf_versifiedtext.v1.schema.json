@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_versifiedtext.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_versifiedtext.v1.schema.json",
+  "version": 1,
   "title": "Versified Text Filter Filter",
   "description": "Configuration for the Okapi Versified Text Filter Filter",
   "type": "object",
@@ -31,9 +31,8 @@
     }
   },
   "additionalProperties": false,
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "9604dfbb6c14",
-  "x-compositeHash": "9604dfbb6c14"
+  "x-baseHash": "ef2ec9b69685",
+  "x-compositeHash": "ef2ec9b69685"
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_openxml.schema.json",
-  "$version": "3.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_openxml.v3.schema.json",
+  "version": 3,
   "title": "OpenXML Filter Filter",
   "description": "Configuration for the Okapi OpenXML Filter Filter",
   "type": "object",
@@ -259,9 +259,8 @@
     }
   },
   "additionalProperties": false,
-  "x-schemaVersion": 3,
-  "x-baseVersion": 3,
+  "x-baseVersion": 10,
   "x-introducedInOkapi": "1.43.0",
-  "x-baseHash": "d6b2e6c2d800",
-  "x-compositeHash": "f3247aa58cf0"
+  "x-baseHash": "dce31efbc1ac",
+  "x-compositeHash": "049fc0891b45"
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_commaseparatedvalues.schema.json",
-  "$version": "3.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_commaseparatedvalues.v3.schema.json",
+  "version": 3,
   "title": "Plain Text Filter Filter",
   "description": "Configuration for the Okapi Plain Text Filter Filter",
   "type": "object",
@@ -351,9 +351,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 3,
-  "x-baseVersion": 3,
+  "x-baseVersion": 6,
   "x-introducedInOkapi": "1.47.0",
-  "x-baseHash": "9c410838ecca",
-  "x-compositeHash": "83b9f048551a"
+  "x-baseHash": "8c484872ba9e",
+  "x-compositeHash": "0e2f4ce6951a"
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_icml.schema.json",
-  "$version": "2.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_icml.v2.schema.json",
+  "version": 2,
   "title": "ICML Filter Filter",
   "description": "Configuration for the Okapi ICML Filter Filter",
   "type": "object",
@@ -153,9 +153,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 2,
-  "x-baseVersion": 2,
+  "x-baseVersion": 5,
   "x-introducedInOkapi": "1.42.0",
-  "x-baseHash": "4a38fb5d693a",
-  "x-compositeHash": "b70997b038fb"
+  "x-baseHash": "1aa05ec33f70",
+  "x-compositeHash": "da70426b54b4"
 }

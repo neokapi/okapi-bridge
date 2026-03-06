@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_html5.schema.json",
-  "$version": "1.0.0",
   "title": "HTML5-ITS Filter Filter",
   "description": "Configuration for the Okapi HTML5-ITS Filter Filter",
   "type": "object",
@@ -44,13 +42,13 @@
     "serializationFormat": "yaml"
   },
   "properties": {
-    "path": {
-      "type": "string"
-    },
     "simplifierRules": {
       "type": "string",
       "description": "Simplifier rules for code type normalization",
       "x-widget": "simplifierRulesEditor"
+    },
+    "path": {
+      "type": "string"
     }
   },
   "additionalProperties": false

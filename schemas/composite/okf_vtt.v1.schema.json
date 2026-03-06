@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_vtt.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_vtt.v1.schema.json",
+  "version": 1,
   "title": "VTT Filter Filter",
   "description": "Configuration for the Okapi VTT Filter Filter",
   "type": "object",
@@ -125,9 +125,8 @@
     }
   },
   "additionalProperties": false,
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 3,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "33840e3a99a9",
-  "x-compositeHash": "33840e3a99a9"
+  "x-baseHash": "be513d9e00b5",
+  "x-compositeHash": "be513d9e00b5"
 }

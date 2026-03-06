@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_vtt.schema.json",
-  "$version": "1.0.0",
   "title": "VTT Filter Filter",
   "description": "Configuration for the Okapi VTT Filter Filter",
   "type": "object",

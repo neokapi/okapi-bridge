@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_xliff.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_xliff.v1.schema.json",
+  "version": 1,
   "title": "XLIFF Filter Filter",
   "description": "Configuration for the Okapi XLIFF Filter Filter",
   "type": "object",
@@ -430,9 +430,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 9,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "5df2c65347c4",
-  "x-compositeHash": "541c9e61f5c9"
+  "x-baseHash": "182c7868c44a",
+  "x-compositeHash": "dc102d0a00e4"
 }

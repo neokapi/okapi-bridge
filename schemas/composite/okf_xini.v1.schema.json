@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_xini.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_xini.v1.schema.json",
+  "version": 1,
   "title": "XINI Filter Filter",
   "description": "Configuration for the Okapi XINI Filter Filter",
   "type": "object",
@@ -131,9 +131,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "813e2f06bbba",
-  "x-compositeHash": "6165738b88e0"
+  "x-baseHash": "517131e0f7be",
+  "x-compositeHash": "2aa91b940e05"
 }

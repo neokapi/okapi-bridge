@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_xliff2.schema.json",
-  "$version": "1.0.0",
   "title": "XLIFF-2 Filter (BETA) Filter",
   "description": "Configuration for the Okapi XLIFF-2 Filter (BETA) Filter",
   "type": "object",

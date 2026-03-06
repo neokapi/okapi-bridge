@@ -190,15 +190,18 @@ process_schema() {
     # Save composite schema
     local composite_output="$COMPOSITE_DIR/${filter}.v${new_version}.schema.json"
     
-    # Add version metadata to composite
+    # Add version metadata to composite (reorder so $schema, $id, version come first)
     jq --argjson v "$new_version" \
        --argjson bv "$base_version" \
        --arg intro "$okapi_version" \
        --arg bh "$base_hash" \
-       --arg ch "$composite_hash" '
-        . + {
-            "$version": "\($v).0.0",
-            "x-schemaVersion": $v,
+       --arg ch "$composite_hash" \
+       --arg f "$filter" '
+        {
+            "$schema": ."$schema",
+            "$id": "https://gokapi.github.io/schemas/filters/\($f).v\($v).schema.json",
+            "version": $v
+        } + del(."$schema", ."$id", ."$version", .["x-schemaVersion"]) + {
             "x-baseVersion": $bv,
             "x-introducedInOkapi": $intro,
             "x-baseHash": $bh,
@@ -389,15 +392,18 @@ regenerate_composites() {
             local introduced_in
             introduced_in=$(echo "$okapi_versions" | jq -r 'sort_by(split(".") | map(tonumber? // .)) | .[0] // null')
 
-            # Add version metadata
+            # Add version metadata (reorder so $schema, $id, version come first)
             jq --argjson v "$composite_version" \
                --argjson bv "$base_version" \
                --arg bh "$base_hash" \
                --arg ch "$composite_hash" \
-               --arg intro "$introduced_in" '
-                . + {
-                    "$version": "\($v).0.0",
-                    "x-schemaVersion": $v,
+               --arg intro "$introduced_in" \
+               --arg f "$filter" '
+                {
+                    "$schema": ."$schema",
+                    "$id": "https://gokapi.github.io/schemas/filters/\($f).v\($v).schema.json",
+                    "version": $v
+                } + del(."$schema", ."$id", ."$version", .["x-schemaVersion"]) + {
                     "x-baseVersion": $bv,
                     "x-introducedInOkapi": $intro,
                     "x-baseHash": $bh,
@@ -540,10 +546,13 @@ add_version() {
                --argjson bv "$base_version" \
                --arg intro "$version" \
                --arg bh "$base_hash" \
-               --arg ch "$composite_hash" '
-                . + {
-                    "$version": "\($v).0.0",
-                    "x-schemaVersion": $v,
+               --arg ch "$composite_hash" \
+               --arg f "$filter" '
+                {
+                    "$schema": ."$schema",
+                    "$id": "https://gokapi.github.io/schemas/filters/\($f).v\($v).schema.json",
+                    "version": $v
+                } + del(."$schema", ."$id", ."$version", .["x-schemaVersion"]) + {
                     "x-baseVersion": $bv,
                     "x-introducedInOkapi": $intro,
                     "x-baseHash": $bh,

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_regexplaintext.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_regexplaintext.v1.schema.json",
+  "version": 1,
   "title": "okf_plaintext_regex Filter",
   "description": "Configuration for the Okapi okf_plaintext_regex Filter",
   "type": "object",
@@ -226,9 +226,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "d47ed018ef46",
-  "x-compositeHash": "fdba17073269"
+  "x-baseHash": "5e747a7add77",
+  "x-compositeHash": "bb99630650cf"
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_fixedwidthcolumns.schema.json",
-  "$version": "2.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_fixedwidthcolumns.v2.schema.json",
+  "version": 2,
   "title": "Plain Text Filter Filter",
   "description": "Configuration for the Okapi Plain Text Filter Filter",
   "type": "object",
@@ -244,9 +244,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 2,
-  "x-baseVersion": 2,
+  "x-baseVersion": 5,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "22f4d24abce8",
-  "x-compositeHash": "c4abfd600f8b"
+  "x-baseHash": "15743606fd20",
+  "x-compositeHash": "b3d0305da145"
 }

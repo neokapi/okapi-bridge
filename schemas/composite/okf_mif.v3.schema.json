@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_mif.schema.json",
-  "$version": "3.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_mif.v3.schema.json",
+  "version": 3,
   "title": "MIF Filter Filter",
   "description": "Configuration for the Okapi MIF Filter Filter",
   "type": "object",
@@ -165,9 +165,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 3,
-  "x-baseVersion": 3,
+  "x-baseVersion": 8,
   "x-introducedInOkapi": "1.40.0",
-  "x-baseHash": "196db18fdbd0",
-  "x-compositeHash": "b1d9cba7dd95"
+  "x-baseHash": "d0b1b632928c",
+  "x-compositeHash": "75ad3ae6a4ce"
 }

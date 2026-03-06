@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_html.schema.json",
-  "$version": "1.0.0",
   "title": "HTML/XHTML Filter Filter",
   "description": "Configuration for the Okapi HTML/XHTML Filter Filter",
   "type": "object",

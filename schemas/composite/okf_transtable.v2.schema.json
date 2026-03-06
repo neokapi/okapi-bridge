@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_transtable.schema.json",
-  "$version": "2.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_transtable.v2.schema.json",
+  "version": 2,
   "title": "TransTable Filter Filter",
   "description": "Configuration for the Okapi TransTable Filter Filter",
   "type": "object",
@@ -26,9 +26,8 @@
   },
   "properties": {},
   "additionalProperties": false,
-  "x-schemaVersion": 2,
-  "x-baseVersion": 2,
+  "x-baseVersion": 4,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "8ee489ed3a70",
-  "x-compositeHash": "8ee489ed3a70"
+  "x-baseHash": "0de5875337f3",
+  "x-compositeHash": "0de5875337f3"
 }

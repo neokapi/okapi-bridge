@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_messageformat.schema.json",
-  "$version": "1.0.0",
   "title": "Message Format Filter Filter",
   "description": "Configuration for the Okapi Message Format Filter Filter",
   "type": "object",

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_plaintext.schema.json",
-  "$version": "2.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_plaintext.v2.schema.json",
+  "version": 2,
   "title": "Plain Text Filter Filter",
   "description": "Configuration for the Okapi Plain Text Filter Filter",
   "type": "object",
@@ -219,9 +219,8 @@
     }
   },
   "additionalProperties": false,
-  "x-schemaVersion": 2,
-  "x-baseVersion": 2,
+  "x-baseVersion": 4,
   "x-introducedInOkapi": "1.42.0",
-  "x-baseHash": "a3e71336568d",
-  "x-compositeHash": "eb46657fcb5d"
+  "x-baseHash": "9ab715515e55",
+  "x-compositeHash": "29d5f3e4d416"
 }

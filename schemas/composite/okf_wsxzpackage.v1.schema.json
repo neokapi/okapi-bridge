@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_wsxzpackage.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_wsxzpackage.v1.schema.json",
+  "version": 1,
   "title": "WSXZ Filter (BETA) Filter",
   "description": "Configuration for the Okapi WSXZ Filter (BETA) Filter",
   "type": "object",
@@ -135,9 +135,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 3,
   "x-introducedInOkapi": "1.45.0",
-  "x-baseHash": "7886b28164f8",
-  "x-compositeHash": "a9e1fb9a3eeb"
+  "x-baseHash": "55f8dda04729",
+  "x-compositeHash": "3bbfd9c46841"
 }

@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_messageformat.schema.json",
-  "$version": "2.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_messageformat.v2.schema.json",
+  "version": 2,
   "title": "Message Format Filter Filter",
   "description": "Configuration for the Okapi Message Format Filter Filter",
   "type": "object",
@@ -156,9 +156,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 2,
-  "x-baseVersion": 2,
+  "x-baseVersion": 4,
   "x-introducedInOkapi": "1.47.0",
-  "x-baseHash": "e8214fa55c62",
-  "x-compositeHash": "4256972230f0"
+  "x-baseHash": "d8be8fe3d12c",
+  "x-compositeHash": "5762a843651d"
 }

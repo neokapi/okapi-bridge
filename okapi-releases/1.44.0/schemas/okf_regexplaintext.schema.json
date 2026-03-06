@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_regexplaintext.schema.json",
-  "$version": "1.0.0",
   "title": "okf_plaintext_regex Filter",
   "description": "Configuration for the Okapi okf_plaintext_regex Filter",
   "type": "object",

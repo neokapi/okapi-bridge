@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_pdf.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_pdf.v1.schema.json",
+  "version": 1,
   "title": "PDF Filter Filter",
   "description": "Configuration for the Okapi PDF Filter Filter",
   "type": "object",
@@ -186,9 +186,8 @@
       }
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 3,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "02364fe01d78",
-  "x-compositeHash": "70f32174e885"
+  "x-baseHash": "eb43f4796445",
+  "x-compositeHash": "79eef6877c73"
 }

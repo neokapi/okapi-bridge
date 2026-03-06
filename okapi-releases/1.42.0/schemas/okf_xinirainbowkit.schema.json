@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_xinirainbowkit.schema.json",
-  "$version": "1.0.0",
   "title": "XINI RainbowKit Filter Filter",
   "description": "Configuration for the Okapi XINI RainbowKit Filter Filter",
   "type": "object",

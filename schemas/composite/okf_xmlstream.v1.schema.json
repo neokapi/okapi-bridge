@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_xmlstream.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_xmlstream.v1.schema.json",
+  "version": 1,
   "title": "XML Stream Filter Filter",
   "description": "Configuration for the Okapi XML Stream Filter Filter",
   "type": "object",
@@ -509,12 +509,12 @@
         }
       }
     },
-    "taggedConfig": {
-      "type": "object"
-    },
     "editorTitle": {
       "type": "string",
       "default": "Parameters Editor"
+    },
+    "taggedConfig": {
+      "type": "object"
     },
     "path": {
       "type": "string"
@@ -778,9 +778,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 3,
+  "x-baseVersion": 5,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "f61124dde0c1",
-  "x-compositeHash": "362b9225d4a2"
+  "x-baseHash": "35e61be9ff77",
+  "x-compositeHash": "5c8139194d74"
 }

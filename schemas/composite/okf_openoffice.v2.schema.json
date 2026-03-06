@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_openoffice.schema.json",
-  "$version": "2.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_openoffice.v2.schema.json",
+  "version": 2,
   "title": "OpenOffice.org Filter Filter",
   "description": "Configuration for the Okapi OpenOffice.org Filter Filter",
   "type": "object",
@@ -146,9 +146,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 2,
-  "x-baseVersion": 2,
+  "x-baseVersion": 4,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "3c6ba9fea34e",
-  "x-compositeHash": "847874423d6e"
+  "x-baseHash": "f757bd171c27",
+  "x-compositeHash": "e88d6eeeb2ae"
 }

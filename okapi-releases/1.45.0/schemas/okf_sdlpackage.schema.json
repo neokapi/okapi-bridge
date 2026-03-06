@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_sdlpackage.schema.json",
-  "$version": "1.0.0",
   "title": "SDLPPX and SDLRPX Filter (BETA) Filter",
   "description": "Configuration for the Okapi SDLPPX and SDLRPX Filter (BETA) Filter",
   "type": "object",

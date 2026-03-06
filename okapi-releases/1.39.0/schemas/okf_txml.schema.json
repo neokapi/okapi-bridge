@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_txml.schema.json",
-  "$version": "1.0.0",
   "title": "TXML Filter Filter",
   "description": "Configuration for the Okapi TXML Filter Filter",
   "type": "object",

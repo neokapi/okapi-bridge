@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_ttml.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_ttml.v1.schema.json",
+  "version": 1,
   "title": "TTML Filter Filter",
   "description": "Configuration for the Okapi TTML Filter Filter",
   "type": "object",
@@ -98,9 +98,8 @@
     }
   },
   "additionalProperties": false,
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 3,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "f69aeb4939d9",
-  "x-compositeHash": "f69aeb4939d9"
+  "x-baseHash": "d5de337718d6",
+  "x-compositeHash": "d5de337718d6"
 }

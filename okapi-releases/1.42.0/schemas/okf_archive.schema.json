@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_archive.schema.json",
-  "$version": "1.0.0",
   "title": "Archive Filter (BETA) Filter",
   "description": "Configuration for the Okapi Archive Filter (BETA) Filter",
   "type": "object",

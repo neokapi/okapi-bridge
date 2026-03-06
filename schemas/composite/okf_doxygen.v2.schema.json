@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_doxygen.schema.json",
-  "$version": "2.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_doxygen.v2.schema.json",
+  "version": 2,
   "title": "Doxygen Filter Filter",
   "description": "Configuration for the Okapi Doxygen Filter Filter",
   "type": "object",
@@ -1678,9 +1678,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 2,
-  "x-baseVersion": 2,
+  "x-baseVersion": 4,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "4605e91a24dc",
-  "x-compositeHash": "15065fcbfece"
+  "x-baseHash": "3cd3025cfc09",
+  "x-compositeHash": "8743f5062dda"
 }

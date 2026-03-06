@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_phpcontent.schema.json",
-  "$version": "1.0.0",
   "title": "PHP Content Filter Filter",
   "description": "Configuration for the Okapi PHP Content Filter Filter",
   "type": "object",

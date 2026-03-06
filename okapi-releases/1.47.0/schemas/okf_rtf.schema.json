@@ -1,7 +1,5 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_rtf.schema.json",
-  "$version": "1.0.0",
   "title": "Trados-Tagged RTF Filter - READING ONLY Filter",
   "description": "Configuration for the Okapi Trados-Tagged RTF Filter - READING ONLY Filter",
   "type": "object",

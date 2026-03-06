@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_po.schema.json",
-  "$version": "2.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_po.v2.schema.json",
+  "version": 2,
   "title": "PO Filter Filter",
   "description": "Configuration for the Okapi PO Filter Filter",
   "type": "object",
@@ -188,9 +188,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 2,
-  "x-baseVersion": 2,
+  "x-baseVersion": 4,
   "x-introducedInOkapi": "1.42.0",
-  "x-baseHash": "44a97c3beaaf",
-  "x-compositeHash": "eab4e3332f22"
+  "x-baseHash": "b0eeac312258",
+  "x-compositeHash": "15a9682f4b8b"
 }

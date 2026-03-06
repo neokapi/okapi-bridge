@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_ttml.schema.json",
-  "$version": "2.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_ttml.v2.schema.json",
+  "version": 2,
   "title": "TTML Filter Filter",
   "description": "Configuration for the Okapi TTML Filter Filter",
   "type": "object",
@@ -195,9 +195,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 2,
-  "x-baseVersion": 2,
+  "x-baseVersion": 4,
   "x-introducedInOkapi": "1.48.0",
-  "x-baseHash": "cb67d4349523",
-  "x-compositeHash": "716b7c8bb642"
+  "x-baseHash": "3522fe2dde88",
+  "x-compositeHash": "14e20d1539ca"
 }

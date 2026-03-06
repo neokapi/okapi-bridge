@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_html.schema.json",
-  "$version": "5.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_html.v5.schema.json",
+  "version": 5,
   "title": "HTML/XHTML Filter Filter",
   "description": "Configuration for the Okapi HTML/XHTML Filter Filter",
   "type": "object",
@@ -2467,9 +2467,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 5,
-  "x-baseVersion": 11,
+  "x-baseVersion": 17,
   "x-introducedInOkapi": "1.45.0",
-  "x-baseHash": "a305075ad8bf",
-  "x-compositeHash": "5582443d16aa"
+  "x-baseHash": "d715ae68ca70",
+  "x-compositeHash": "ebf01322f2ee"
 }

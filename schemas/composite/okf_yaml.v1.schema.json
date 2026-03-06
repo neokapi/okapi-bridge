@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_yaml.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_yaml.v1.schema.json",
+  "version": 1,
   "title": "YAML Filter Filter",
   "description": "Configuration for the Okapi YAML Filter Filter",
   "type": "object",
@@ -189,9 +189,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 3,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "a8e753570cad",
-  "x-compositeHash": "3105eed00833"
+  "x-baseHash": "cb7ab83fa220",
+  "x-compositeHash": "e9478a0ac699"
 }

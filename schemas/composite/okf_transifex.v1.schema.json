@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_transifex.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_transifex.v1.schema.json",
+  "version": 1,
   "title": "Transifex Filter Filter",
   "description": "Configuration for the Okapi Transifex Filter Filter",
   "type": "object",
@@ -132,9 +132,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "e01e0cd3b123",
-  "x-compositeHash": "5bf6f8f3c393"
+  "x-baseHash": "350a0c5cc8d8",
+  "x-compositeHash": "0856d92a0708"
 }

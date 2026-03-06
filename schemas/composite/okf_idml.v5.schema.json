@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_idml.schema.json",
-  "$version": "5.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_idml.v5.schema.json",
+  "version": 5,
   "title": "IDML Filter Filter",
   "description": "Configuration for the Okapi IDML Filter Filter",
   "type": "object",
@@ -180,9 +180,8 @@
     }
   },
   "additionalProperties": false,
-  "x-schemaVersion": 5,
-  "x-baseVersion": 5,
+  "x-baseVersion": 12,
   "x-introducedInOkapi": "1.45.0",
-  "x-baseHash": "fb8e30f8995c",
-  "x-compositeHash": "bfa170a92872"
+  "x-baseHash": "a8b06f8eeba2",
+  "x-compositeHash": "f8ac6d98a5c2"
 }

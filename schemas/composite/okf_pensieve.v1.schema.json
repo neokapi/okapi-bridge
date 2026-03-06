@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_pensieve.schema.json",
-  "$version": "1.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_pensieve.v1.schema.json",
+  "version": 1,
   "title": "Pensieve TM Filter Filter",
   "description": "Configuration for the Okapi Pensieve TM Filter Filter",
   "type": "object",
@@ -29,9 +29,8 @@
   },
   "properties": {},
   "additionalProperties": false,
-  "x-schemaVersion": 1,
-  "x-baseVersion": 1,
+  "x-baseVersion": 3,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "43411bdd878a",
-  "x-compositeHash": "43411bdd878a"
+  "x-baseHash": "58eade2cf56f",
+  "x-compositeHash": "58eade2cf56f"
 }

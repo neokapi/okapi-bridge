@@ -1,7 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "$id": "https://gokapi.dev/schemas/filters/okf_json.schema.json",
-  "$version": "3.0.0",
+  "$id": "https://gokapi.github.io/schemas/filters/okf_json.v3.schema.json",
+  "version": 3,
   "title": "Json Filter Filter",
   "description": "Configuration for the Okapi Json Filter Filter",
   "type": "object",
@@ -248,9 +248,8 @@
       "x-widget": "simplifierRulesEditor"
     }
   },
-  "x-schemaVersion": 3,
-  "x-baseVersion": 3,
+  "x-baseVersion": 7,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "557ea6484b81",
-  "x-compositeHash": "e5fef5d3331d"
+  "x-baseHash": "bd79c69540fe",
+  "x-compositeHash": "3658e728e372"
 }

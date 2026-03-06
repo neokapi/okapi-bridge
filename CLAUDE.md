@@ -142,6 +142,6 @@ The parent `pom.xml` declares all infrastructure dependencies (gRPC, Gson, Snake
 - stdout is **only** for gRPC; all logging to stderr
 - Filter IDs use `okf_` prefix (e.g., `okf_html`, `okf_json`)
 - YAML 1.2 boolean resolution: `FilterRegistry` uses a custom SnakeYAML Resolver so `yes`/`no` are strings, not booleans
-- Schema `$version` format is `N.0.0` where N increments on content change
+- Schema `version` is an integer N that increments on content change; `$id` includes the version
 - CI on push to main: regenerates composites and verifies schemas are up-to-date (fails if out of date)
 - CI on tag push: matrix build across all 11 Okapi versions
