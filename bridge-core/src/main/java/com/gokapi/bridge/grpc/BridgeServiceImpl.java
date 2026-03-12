@@ -362,6 +362,196 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     }
 
     @Override
+    public StreamObserver<RoundTripRequest> roundTrip(StreamObserver<RoundTripResponse> responseObserver) {
+        return new StreamObserver<RoundTripRequest>() {
+            private RoundTripHeader header;
+            private final BlockingQueue<TranslationEntry> writeQueue =
+                    new LinkedBlockingQueue<>(QUEUE_CAPACITY);
+            private Future<WriteResult> writeFuture;
+
+            @Override
+            public void onNext(RoundTripRequest request) {
+                switch (request.getRequestCase()) {
+                    case HEADER:
+                        header = request.getHeader();
+                        performReadPhase();
+                        break;
+
+                    case PROCESSED_PART:
+                        handleProcessedPart(request.getProcessedPart());
+                        break;
+
+                    case FLUSH:
+                        handleFlush();
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+
+            @Override
+            public void onError(Throwable t) {
+                System.err.println("[bridge] RoundTrip stream error: " + t.getMessage());
+                writeQueue.clear();
+                writeQueue.offer(TranslationEntry.END);
+                if (writeFuture != null) {
+                    writeFuture.cancel(true);
+                }
+            }
+
+            @Override
+            public void onCompleted() {
+                responseObserver.onCompleted();
+            }
+
+            /**
+             * Read phase: open the document, stream all parts to the client,
+             * then send RoundTripReadDone.
+             */
+            private void performReadPhase() {
+                try {
+                    String filterClass = header.getFilterClass();
+                    String sourceLocale = header.getSourceLocale().isEmpty() ? "en" : header.getSourceLocale();
+                    String targetLocale = header.getTargetLocale().isEmpty() ? "fr" : header.getTargetLocale();
+                    String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
+
+                    IFilter filter = FilterRegistry.createFilter(filterClass);
+                    if (filter == null) {
+                        sendError("cannot instantiate filter: " + filterClass);
+                        return;
+                    }
+
+                    // Apply filter parameters.
+                    Map<String, String> filterParams = header.getFilterParamsMap();
+                    if (filterParams != null && !filterParams.isEmpty()) {
+                        applyFilterParams(filter, filterParams);
+                    }
+
+                    // Resolve input content.
+                    File inputFile = resolveRoundTripContent(header);
+
+                    setupFilterConfigurationMapper(filter);
+
+                    LocaleId srcLocale = LocaleId.fromString(sourceLocale);
+                    LocaleId tgtLocale = LocaleId.fromString(targetLocale);
+                    RawDocument rawDoc = new RawDocument(inputFile.toURI(), encoding, srcLocale, tgtLocale);
+
+                    filter.open(rawDoc);
+
+                    // Stream all parts to the client.
+                    int count = 0;
+                    while (filter.hasNext()) {
+                        Event event = filter.next();
+                        PartDTO partDTO = EventConverter.convert(event);
+                        if (partDTO != null) {
+                            PartMessage protoMsg = ProtoAdapter.toProto(partDTO);
+                            responseObserver.onNext(RoundTripResponse.newBuilder()
+                                    .setPart(protoMsg)
+                                    .build());
+                            count++;
+                        }
+                    }
+
+                    filter.close();
+                    System.err.println("[bridge] RoundTrip read phase: streamed " + count + " parts");
+
+                    // Signal read phase complete.
+                    responseObserver.onNext(RoundTripResponse.newBuilder()
+                            .setReadDone(RoundTripReadDone.newBuilder().build())
+                            .build());
+
+                    // Start the write phase merge thread now — it will block on the
+                    // queue waiting for processed parts to arrive.
+                    startWritePhase();
+
+                } catch (Exception e) {
+                    System.err.println("[bridge] RoundTrip read error: " + e.getMessage());
+                    e.printStackTrace(System.err);
+                    sendError(e.getMessage());
+                }
+            }
+
+            /**
+             * Start the write phase in a background thread. It re-opens the document
+             * and merges translations from the queue as they arrive.
+             */
+            private void startWritePhase() {
+                writeFuture = mergeExecutor.submit(() -> {
+                    try {
+                        return performRoundTripWrite(header, writeQueue);
+                    } catch (Exception e) {
+                        writeQueue.clear();
+                        writeQueue.offer(TranslationEntry.END);
+                        throw e;
+                    }
+                });
+            }
+
+            /**
+             * Handle a processed part from the client — extract target translations
+             * and enqueue them for the write phase.
+             */
+            private void handleProcessedPart(RoundTripProcessed processed) {
+                PartMessage msg = processed.getPart();
+                if (msg.getPartType() == PartDTO.TYPE_BLOCK && msg.hasBlock()) {
+                    BlockMessage blockMsg = msg.getBlock();
+                    String locale = header.getOutputLocale().isEmpty()
+                            ? header.getTargetLocale() : header.getOutputLocale();
+                    List<FragmentDTO> fragments = extractTargetFragments(blockMsg, locale);
+                    if (fragments != null) {
+                        try {
+                            if (!writeQueue.offer(new TranslationEntry(blockMsg.getId(), fragments),
+                                    5, TimeUnit.SECONDS)) {
+                                System.err.println("[bridge] RoundTrip write queue full, dropping part");
+                            }
+                        } catch (InterruptedException e) {
+                            Thread.currentThread().interrupt();
+                        }
+                    }
+                }
+            }
+
+            /**
+             * Handle flush — signal end of processed parts, wait for write to complete,
+             * and send RoundTripComplete.
+             */
+            private void handleFlush() {
+                try {
+                    writeQueue.put(TranslationEntry.END);
+                    WriteResult result = writeFuture.get();
+
+                    RoundTripComplete.Builder complete = RoundTripComplete.newBuilder();
+                    if (result.isReferenced()) {
+                        complete.setOutputPath(result.getOutputPath());
+                    } else {
+                        complete.setOutput(ByteString.copyFrom(result.getBytes()));
+                    }
+
+                    responseObserver.onNext(RoundTripResponse.newBuilder()
+                            .setComplete(complete.build())
+                            .build());
+
+                    System.err.println("[bridge] RoundTrip complete");
+                } catch (Exception e) {
+                    Throwable cause = e instanceof ExecutionException ? e.getCause() : e;
+                    System.err.println("[bridge] RoundTrip write error: " + cause.getMessage());
+                    cause.printStackTrace(System.err);
+                    sendError(cause.getMessage());
+                }
+            }
+
+            private void sendError(String message) {
+                responseObserver.onNext(RoundTripResponse.newBuilder()
+                        .setComplete(RoundTripComplete.newBuilder()
+                                .setError(message)
+                                .build())
+                        .build());
+            }
+        };
+    }
+
+    @Override
     public void shutdown(ShutdownRequest request, StreamObserver<ShutdownResponse> responseObserver) {
         System.err.println("[bridge] Shutdown requested");
         mergeExecutor.shutdownNow();
@@ -513,6 +703,118 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             byte[] output = outputStream.toByteArray();
             System.err.println("[bridge] Wrote output (" + output.length + " bytes, streaming)");
             return WriteResult.ofBytes(output);
+        }
+    }
+
+    /**
+     * Perform the write phase of a RoundTrip: re-read the original document through the filter,
+     * apply translations from the queue, and write output. Reuses performWriteStreaming logic.
+     */
+    private WriteResult performRoundTripWrite(RoundTripHeader header,
+                                               BlockingQueue<TranslationEntry> queue) throws Exception {
+        String filterClass = header.getFilterClass();
+        String outputLocale = header.getOutputLocale().isEmpty()
+                ? header.getTargetLocale() : header.getOutputLocale();
+        String locale = outputLocale.isEmpty() ? "en" : outputLocale;
+        String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
+
+        File inputFile = resolveRoundTripContent(header);
+
+        IFilter filter = FilterRegistry.createFilter(filterClass);
+        if (filter == null) {
+            throw new IllegalStateException("cannot instantiate filter: " + filterClass);
+        }
+
+        Map<String, String> filterParams = header.getFilterParamsMap();
+        if (filterParams != null && !filterParams.isEmpty()) {
+            applyFilterParams(filter, filterParams);
+        }
+
+        setupFilterConfigurationMapper(filter);
+
+        IFilterWriter writer = filter.createFilterWriter();
+        if (writer == null) {
+            throw new IllegalStateException("filter does not support writing: " + filterClass);
+        }
+
+        // Resolve output destination.
+        String outputPath = resolveRoundTripOutputPath(header);
+        ByteArrayOutputStream outputStream = null;
+        writer.setOptions(LocaleId.fromString(locale), encoding);
+        if (outputPath != null) {
+            writer.setOutput(outputPath);
+        } else {
+            outputStream = new ByteArrayOutputStream();
+            writer.setOutput(outputStream);
+        }
+
+        String sourceLocale = header.getSourceLocale().isEmpty() ? "en" : header.getSourceLocale();
+        LocaleId srcLocale = LocaleId.fromString(sourceLocale);
+        LocaleId tgtLocale = LocaleId.fromString(locale);
+        RawDocument rawDoc = new RawDocument(inputFile.toURI(), encoding, srcLocale, tgtLocale);
+        filter.open(rawDoc);
+
+        StreamingTranslationApplier applier =
+                new StreamingTranslationApplier(queue, LocaleId.fromString(locale));
+        while (filter.hasNext()) {
+            Event event = filter.next();
+            Event modified = applier.applyTranslations(event);
+            writer.handleEvent(modified);
+        }
+
+        filter.close();
+        writer.close();
+
+        if (outputPath != null) {
+            System.err.println("[bridge] RoundTrip wrote output to " + outputPath);
+            return WriteResult.ofPath(outputPath);
+        } else {
+            byte[] output = outputStream.toByteArray();
+            System.err.println("[bridge] RoundTrip wrote output (" + output.length + " bytes)");
+            return WriteResult.ofBytes(output);
+        }
+    }
+
+    /**
+     * Resolve content for a RoundTrip request using the content resolver.
+     */
+    private File resolveRoundTripContent(RoundTripHeader header) throws IOException {
+        String extensionHint = extensionFromUri(header.getUri());
+
+        if (header.hasContentRef()) {
+            ContentRef ref = header.getContentRef();
+            switch (ref.getLocationCase()) {
+                case PATH:
+                    return contentResolver.resolvePath(ref.getPath());
+                case URI:
+                    return contentResolver.resolveUri(ref.getUri(), extensionHint);
+                case INLINE:
+                    return contentResolver.resolveInline(ref.getInline().toByteArray(), extensionHint);
+                default:
+                    break;
+            }
+        }
+
+        throw new IOException("RoundTrip requires content_ref in header");
+    }
+
+    /**
+     * Resolve the output file path from the RoundTrip header's output_ref.
+     */
+    private String resolveRoundTripOutputPath(RoundTripHeader header) throws IOException {
+        if (!header.hasOutputRef()) return null;
+        OutputRef ref = header.getOutputRef();
+        switch (ref.getDestinationCase()) {
+            case PATH:
+                File parent = new File(ref.getPath()).getParentFile();
+                if (parent != null) {
+                    Files.createDirectories(parent.toPath());
+                }
+                return ref.getPath();
+            case URI:
+                return outputWriter.resolveUri(ref.getUri());
+            default:
+                return null;
         }
     }
 
@@ -798,27 +1100,34 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
      * (e.g., "okf_html") to their filter classes. Without this mapper, opening a
      * filter with sub-filtering config causes a NullPointerException on fcMapper.
      */
+    /** Common sub-filter targets that might be referenced by compound/regex filters. */
+    private static final String[] COMMON_SUB_FILTER_CLASSES = {
+        "net.sf.okapi.filters.html.HtmlFilter",
+        "net.sf.okapi.filters.xml.XMLFilter",
+        "net.sf.okapi.filters.plaintext.PlainTextFilter",
+        "net.sf.okapi.filters.properties.PropertiesFilter",
+    };
+
+    /**
+     * Set up a FilterConfigurationMapper on the filter so that sub-filtering works.
+     * Only registers common sub-filter targets to avoid triggering full JAR discovery.
+     * Filters like RegexFilter with useCodeFinder need to resolve sub-filter IDs
+     * (e.g., "okf_html") to their filter classes.
+     */
     private void setupFilterConfigurationMapper(IFilter filter) {
         try {
-            // Create a FilterConfigurationMapper with all discovered filters.
             net.sf.okapi.common.filters.FilterConfigurationMapper fcMapper =
                     new net.sf.okapi.common.filters.FilterConfigurationMapper();
 
-            // Register all discovered filters and their configurations.
-            for (String fc : FilterRegistry.getFilterClasses()) {
+            // Register the filter itself and common sub-filter targets.
+            // This avoids scanning all 57 filters — most sub-filtering only
+            // references HTML, XML, plaintext, or properties.
+            fcMapper.addConfigurations(filter.getClass().getName());
+            for (String fc : COMMON_SUB_FILTER_CLASSES) {
                 try {
-                    IFilter f = FilterRegistry.createFilter(fc);
-                    if (f != null) {
-                        List<net.sf.okapi.common.filters.FilterConfiguration> configs = f.getConfigurations();
-                        if (configs != null) {
-                            for (net.sf.okapi.common.filters.FilterConfiguration cfg : configs) {
-                                fcMapper.addConfigurations(fc);
-                                break; // Only need to register each filter class once
-                            }
-                        }
-                    }
+                    fcMapper.addConfigurations(fc);
                 } catch (Exception e) {
-                    // Skip filters that fail to instantiate
+                    // Skip if class not on classpath
                 }
             }
 

@@ -482,23 +482,41 @@ public class FilterRegistry {
 
     /**
      * Get metadata for a filter class.
+     * Returns cached info if available, otherwise creates it on demand
+     * without triggering full filter discovery.
      *
      * @param filterClass fully-qualified Java class name
      * @return FilterInfo or null if not found
      */
     public static FilterInfo getFilterInfo(String filterClass) {
-        ensureInitialized();
-        return FILTERS.get(filterClass);
+        // Check cache first.
+        FilterInfo cached = FILTERS.get(filterClass);
+        if (cached != null) {
+            return cached;
+        }
+        // If not in cache and not yet initialized, create info on demand
+        // without triggering full discovery.
+        if (!initialized && filterClass != null && !filterClass.isEmpty()) {
+            FilterInfo info = createFilterInfo(filterClass);
+            if (info != null) {
+                synchronized (FilterRegistry.class) {
+                    FILTERS.put(filterClass, info);
+                }
+            }
+            return info;
+        }
+        return null;
     }
 
     /**
      * Create a new instance of the specified filter.
+     * This method does NOT trigger full filter discovery — it directly instantiates
+     * the class by name, which is much faster than scanning all JARs.
      *
      * @param filterClass fully-qualified Java class name
      * @return new IFilter instance or null
      */
     public static IFilter createFilter(String filterClass) {
-        ensureInitialized();
         try {
             Class<?> clazz = Class.forName(filterClass);
             Object instance = clazz.getDeclaredConstructor().newInstance();
@@ -522,15 +540,22 @@ public class FilterRegistry {
 
     /**
      * Get the filter ID (e.g., "okf_html") for a given filter class name.
+     * This method does NOT trigger full filter discovery — it derives the ID
+     * from the class name if the filter hasn't been discovered yet.
      *
      * @param filterClass fully-qualified Java class name
      * @return filter ID or null if not found
      */
     public static String getFilterId(String filterClass) {
-        ensureInitialized();
+        // Check cache first (populated by ensureInitialized if it ran).
         FilterInfo info = FILTERS.get(filterClass);
         if (info != null && info.getId() != null) {
             return info.getId();
+        }
+        // Derive from class name without triggering full discovery.
+        if (filterClass != null && !filterClass.isEmpty()) {
+            String simpleName = filterClass.substring(filterClass.lastIndexOf('.') + 1);
+            return "okf_" + deriveFormatId(simpleName);
         }
         return null;
     }
