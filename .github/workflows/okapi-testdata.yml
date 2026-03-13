@@ -1,0 +1,55 @@
+name: Okapi Test Data
+
+on:
+  workflow_dispatch:
+    inputs:
+      okapi_version:
+        description: 'Okapi Framework version to use'
+        type: string
+        default: '1.48.0'
+  workflow_call:
+    inputs:
+      okapi_version:
+        description: 'Okapi Framework version to use'
+        type: string
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  testdata:
+    name: Publish Okapi Test Data
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Publish testdata
+        env:
+          GITHUB_TOKEN: ${{ secrets.NEOKAPI_GITHUB_TOKEN }}
+          OKAPI_VERSION: ${{ inputs.okapi_version }}
+        run: bash scripts/publish-okapi-testdata.sh "$OKAPI_VERSION"
+
+  surefire:
+    name: Publish Okapi Surefire Reports
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Publish surefire reports
+        env:
+          GITHUB_TOKEN: ${{ secrets.NEOKAPI_GITHUB_TOKEN }}
+          OKAPI_VERSION: ${{ inputs.okapi_version }}
+        run: bash scripts/publish-okapi-surefire.sh "$OKAPI_VERSION"
