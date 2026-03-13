@@ -6,7 +6,8 @@ SHELL := /bin/bash
         version-schemas build clean test generate-pom generate-all-poms \
         centralize regenerate-composites build-tools \
         download-filter-docs parse-filter-docs parse-filter-docs-force \
-        bundle-filter-docs clean-filter-docs snapshot
+        bundle-filter-docs clean-filter-docs snapshot \
+        verify-schemas update-readme-matrix
 
 # Configuration - derived from okapi-releases directory
 SUPPORTED_VERSIONS := $(shell ls -1 okapi-releases 2>/dev/null | sort -V)
@@ -24,6 +25,8 @@ help:
 	@echo "Schema Management (Centralized):"
 	@echo "  make centralize           Migrate to centralized schema structure"
 	@echo "  make regenerate-composites  Regenerate composites from base + overrides"
+	@echo "  make verify-schemas       Verify schemas and README are up to date (same as CI)"
+	@echo "  make update-readme-matrix Update README schema matrix"
 	@echo "  make add-release V=1.48.0 Add new Okapi version"
 	@echo ""
 	@echo "Build:"
@@ -76,6 +79,27 @@ regenerate-composites:
 # Generate schema version matrix
 schema-matrix:
 	@./scripts/generate-matrix.sh
+
+# Update README schema matrix
+update-readme-matrix:
+	@./scripts/update-readme-matrix.sh
+
+# Verify schemas and README are up to date (mirrors CI verify-schemas job)
+verify-schemas: regenerate-composites update-readme-matrix
+	@echo "Checking for uncommitted schema or README changes..."
+	@git diff --stat -- schemas/ README.md
+	@DIFF=$$(git diff -- schemas/ README.md | grep '^[+-]' | grep -v '^[+-][+-][+-]' | grep -v '"generatedAt"') || true; \
+	if [ -n "$$DIFF" ]; then \
+		echo ""; \
+		echo "ERROR: Composite schemas or README are out of date."; \
+		echo "The regenerated files differ from what is committed."; \
+		echo ""; \
+		echo "$$DIFF" | head -40; \
+		echo ""; \
+		echo "Review the changes and commit them."; \
+		exit 1; \
+	fi
+	@echo "Schemas and README are up to date."
 
 # ============================================================================
 # Legacy Schema Management

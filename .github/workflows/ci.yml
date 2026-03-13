@@ -103,7 +103,6 @@ jobs:
   verify-schemas:
     needs: setup
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
 
@@ -114,20 +113,5 @@ jobs:
           java-version: '17'
           cache: maven
 
-      - name: Regenerate composite schemas
-        run: ./scripts/centralize-schemas.sh regenerate-composites
-
-      - name: Update README matrix
-        run: ./scripts/update-readme-matrix.sh
-
-      - name: Verify schemas are up to date
-        run: |
-          # Ignore generatedAt timestamps which change on every run
-          git diff --stat -- schemas/ README.md
-          git diff -- schemas/ README.md | grep '^[+-]' | grep -v '^[+-][+-][+-]' | grep -v '"generatedAt"' > /tmp/meaningful-diff.txt || true
-          if [[ -s /tmp/meaningful-diff.txt ]]; then
-            echo "::error::Composite schemas or README are out of date. Run 'make version-schemas' locally and commit the results."
-            cat /tmp/meaningful-diff.txt | head -40
-            exit 1
-          fi
-          echo "✓ Schemas and README are up to date"
+      - name: Verify schemas and README are up to date
+        run: make verify-schemas
