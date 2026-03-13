@@ -6,8 +6,9 @@
 #   ./scripts/publish-okapi-testdata.sh [OKAPI_VERSION]
 #
 # Clones the Okapi Framework from GitLab at the specified version tag, extracts
-# test resource files for all filters used by the bridge, packages them into a
-# tarball, and uploads it as a GitHub release asset.
+# test resource files for all filters used by the bridge, runs Maven tests to
+# generate Surefire/Failsafe XML reports, packages everything into a tarball,
+# and uploads it as a GitHub release asset.
 #
 # Arguments:
 #   OKAPI_VERSION  — Okapi Framework version (default: 1.48.0). Used as the
@@ -19,6 +20,8 @@
 #                    Falls back to `gh auth token` if unset.
 #   SKIP_PUBLISH   — If set (e.g. SKIP_PUBLISH=1), build the tarball but don't
 #                    upload to GitHub. Useful for local testing.
+#   SKIP_SUREFIRE  — If set (e.g. SKIP_SUREFIRE=1), skip running Maven tests
+#                    and omit surefire reports from the tarball.
 
 set -euo pipefail
 
@@ -44,61 +47,69 @@ REPO_ROOT="$SCRIPT_DIR/.."
 WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "$WORK_DIR"' EXIT
 
-echo "=== Cloning Okapi Framework @ ${GITLAB_TAG} (sparse checkout) ==="
+echo "=== Cloning Okapi Framework @ ${GITLAB_TAG} ==="
 
 cd "$WORK_DIR"
-git init okapi --quiet
-cd okapi
-git remote add origin "$GITLAB_REPO"
 
-# Sparse checkout: only fetch the test resource directories we need.
-git sparse-checkout init --cone
-git sparse-checkout set \
-    okapi/filters/html/src/test/resources \
-    okapi/filters/json/src/test/resources \
-    okapi/filters/yaml/src/test/resources \
-    okapi/filters/xmlstream/src/test/resources \
-    okapi/filters/xliff/src/test/resources \
-    okapi/filters/xliff2/src/test/resources \
-    okapi/filters/properties/src/test/resources \
-    okapi/filters/po/src/test/resources \
-    okapi/filters/plaintext/src/test/resources \
-    okapi/filters/markdown/src/test/resources \
-    okapi/filters/its/src/test/resources \
-    okapi/filters/openxml/src/test/resources \
-    okapi/filters/idml/src/test/resources \
-    okapi/filters/icml/src/test/resources \
-    okapi/filters/openoffice/src/test/resources \
-    okapi/filters/mif/src/test/resources \
-    okapi/filters/rtf/src/test/resources \
-    okapi/filters/epub/src/test/resources \
-    okapi/filters/archive/src/test/resources \
-    okapi/filters/pdf/src/test/resources \
-    okapi/filters/ttx/src/test/resources \
-    okapi/filters/txml/src/test/resources \
-    okapi/filters/table/src/test/resources \
-    okapi/filters/regex/src/test/resources \
-    okapi/filters/doxygen/src/test/resources \
-    okapi/filters/dtd/src/test/resources \
-    okapi/filters/tmx/src/test/resources \
-    okapi/filters/ts/src/test/resources \
-    okapi/filters/tex/src/test/resources \
-    okapi/filters/wiki/src/test/resources \
-    okapi/filters/mosestext/src/test/resources \
-    okapi/filters/transtable/src/test/resources \
-    okapi/filters/php/src/test/resources \
-    okapi/filters/vignette/src/test/resources \
-    okapi/filters/xini/src/test/resources \
-    okapi/filters/autoxliff/src/test/resources \
-    okapi/filters/multiparsers/src/test/resources \
-    okapi/filters/sdlpackage/src/test/resources \
-    okapi/filters/wsxzpackage/src/test/resources \
-    okapi/filters/subtitles/src/test/resources \
-    integration-tests/okapi/src/test/resources
+if [ "${SKIP_SUREFIRE:-}" != "" ]; then
+    # Sparse checkout: only fetch test resources (faster, no Maven needed).
+    git init okapi --quiet
+    cd okapi
+    git remote add origin "$GITLAB_REPO"
 
-echo "  Fetching ${GITLAB_TAG}..."
-git fetch --depth=1 origin "refs/tags/${GITLAB_TAG}" --quiet
-git checkout FETCH_HEAD --quiet
+    git sparse-checkout init --cone
+    git sparse-checkout set \
+        okapi/filters/html/src/test/resources \
+        okapi/filters/json/src/test/resources \
+        okapi/filters/yaml/src/test/resources \
+        okapi/filters/xmlstream/src/test/resources \
+        okapi/filters/xliff/src/test/resources \
+        okapi/filters/xliff2/src/test/resources \
+        okapi/filters/properties/src/test/resources \
+        okapi/filters/po/src/test/resources \
+        okapi/filters/plaintext/src/test/resources \
+        okapi/filters/markdown/src/test/resources \
+        okapi/filters/its/src/test/resources \
+        okapi/filters/openxml/src/test/resources \
+        okapi/filters/idml/src/test/resources \
+        okapi/filters/icml/src/test/resources \
+        okapi/filters/openoffice/src/test/resources \
+        okapi/filters/mif/src/test/resources \
+        okapi/filters/rtf/src/test/resources \
+        okapi/filters/epub/src/test/resources \
+        okapi/filters/archive/src/test/resources \
+        okapi/filters/pdf/src/test/resources \
+        okapi/filters/ttx/src/test/resources \
+        okapi/filters/txml/src/test/resources \
+        okapi/filters/table/src/test/resources \
+        okapi/filters/regex/src/test/resources \
+        okapi/filters/doxygen/src/test/resources \
+        okapi/filters/dtd/src/test/resources \
+        okapi/filters/tmx/src/test/resources \
+        okapi/filters/ts/src/test/resources \
+        okapi/filters/tex/src/test/resources \
+        okapi/filters/wiki/src/test/resources \
+        okapi/filters/mosestext/src/test/resources \
+        okapi/filters/transtable/src/test/resources \
+        okapi/filters/php/src/test/resources \
+        okapi/filters/vignette/src/test/resources \
+        okapi/filters/xini/src/test/resources \
+        okapi/filters/autoxliff/src/test/resources \
+        okapi/filters/multiparsers/src/test/resources \
+        okapi/filters/sdlpackage/src/test/resources \
+        okapi/filters/wsxzpackage/src/test/resources \
+        okapi/filters/subtitles/src/test/resources \
+        integration-tests/okapi/src/test/resources
+
+    echo "  Fetching ${GITLAB_TAG} (sparse)..."
+    git fetch --depth=1 origin "refs/tags/${GITLAB_TAG}" --quiet
+    git checkout FETCH_HEAD --quiet
+else
+    # Full shallow clone: needed for Maven test execution.
+    echo "  Fetching ${GITLAB_TAG} (full shallow clone for surefire)..."
+    git clone --depth=1 --branch "${GITLAB_TAG}" "${GITLAB_REPO}" okapi --quiet
+    cd okapi
+fi
 
 echo "  Clone complete."
 
@@ -313,6 +324,76 @@ copy_resources "$OUT/okf_wsxzpackage" \
     "$UNIT/wsxzpackage/src/test/resources"
 
 # ---------------------------------------------------------------------------
+# Phase 6: Generate Surefire/Failsafe XML reports.
+#
+# Run Maven verify on the filters module to produce test reports. These are
+# included in the tarball under surefire/{filter}/TEST-*.xml so neokapi can
+# use them for test comparison without a separate publish step.
+# ---------------------------------------------------------------------------
+
+if [ "${SKIP_SUREFIRE:-}" = "" ]; then
+    echo ""
+    echo "=== Running Maven verify to generate Surefire reports ==="
+    echo "  This may take several minutes..."
+
+    cd "$OKAPI"
+
+    # Run verify (not just test) to include Failsafe integration tests (*IT.java).
+    # -T4 runs 4 threads for faster builds.
+    # Failure ignore ensures we get reports even when tests fail.
+    mvn verify \
+        -pl okapi/filters \
+        -am \
+        -T4 \
+        -Dmaven.test.failure.ignore=true \
+        -q \
+        2>&1 | tail -5
+
+    echo "  Maven verify complete."
+
+    echo ""
+    echo "=== Collecting Surefire + Failsafe XML reports ==="
+
+    SUREFIRE_OUT="$OUT/surefire"
+    mkdir -p "$SUREFIRE_OUT"
+
+    SUREFIRE_FILES=0
+    SUREFIRE_FILTERS=0
+
+    # Collect from both surefire-reports (unit) and failsafe-reports (integration).
+    for report_dir in "$OKAPI"/okapi/filters/*/target/surefire-reports "$OKAPI"/okapi/filters/*/target/failsafe-reports; do
+        if [ ! -d "$report_dir" ]; then
+            continue
+        fi
+
+        # Extract filter name from path (e.g. .../filters/html/target/... → html)
+        filter_path="${report_dir%/target/*}"
+        filter="$(basename "$filter_path")"
+
+        # Count XML files.
+        xml_count=$(find "$report_dir" -name "TEST-*.xml" -type f | wc -l | tr -d ' ')
+        if [ "$xml_count" -eq 0 ]; then
+            continue
+        fi
+
+        # Copy XML files (may merge surefire + failsafe for same filter).
+        mkdir -p "$SUREFIRE_OUT/$filter"
+        cp "$report_dir"/TEST-*.xml "$SUREFIRE_OUT/$filter/"
+
+        SUREFIRE_FILES=$((SUREFIRE_FILES + xml_count))
+    done
+
+    # Count unique filter dirs.
+    if [ -d "$SUREFIRE_OUT" ]; then
+        SUREFIRE_FILTERS=$(find "$SUREFIRE_OUT" -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
+    fi
+
+    echo "  Surefire: $SUREFIRE_FILES XML files across $SUREFIRE_FILTERS filters"
+
+    cd "$WORK_DIR"
+fi
+
+# ---------------------------------------------------------------------------
 # Package the tarball.
 # ---------------------------------------------------------------------------
 
@@ -325,7 +406,7 @@ tar czf "$ASSET_NAME" okapi-testdata/
 SIZE=$(du -sh "$ASSET_NAME" | cut -f1)
 TOTAL_FILES=$(find okapi-testdata -type f | wc -l | tr -d ' ')
 TOTAL_DIRS=$(find okapi-testdata -mindepth 1 -maxdepth 1 -type d | wc -l | tr -d ' ')
-echo "  $ASSET_NAME: $SIZE ($TOTAL_FILES files across $TOTAL_DIRS filters)"
+echo "  $ASSET_NAME: $SIZE ($TOTAL_FILES files across $TOTAL_DIRS directories)"
 
 # ---------------------------------------------------------------------------
 # Publish to GitHub release.
@@ -347,11 +428,11 @@ if gh release view "$RELEASE_TAG" --repo "$GITHUB_REPO" &>/dev/null; then
     gh release delete "$RELEASE_TAG" --repo "$GITHUB_REPO" --yes --cleanup-tag
 fi
 
-RELEASE_BODY="Test resources extracted from Okapi Framework v${OKAPI_VERSION} (https://gitlab.com/okapiframework/okapi/-/tree/v${OKAPI_VERSION}).
+RELEASE_BODY="Test resources and Surefire reports from Okapi Framework v${OKAPI_VERSION} (https://gitlab.com/okapiframework/okapi/-/tree/v${OKAPI_VERSION}).
 
-Contains test data for bridge filter integration tests.
+Contains test data and Maven test reports for bridge filter integration tests.
 
-- Filters: ${TOTAL_DIRS}
+- Directories: ${TOTAL_DIRS}
 - Files: ${TOTAL_FILES}
 - Generated: $(date -u +"%Y-%m-%dT%H:%M:%SZ")
 - Script: scripts/publish-okapi-testdata.sh"
