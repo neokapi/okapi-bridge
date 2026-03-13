@@ -105,9 +105,9 @@ if [ "${SKIP_SUREFIRE:-}" != "" ]; then
     git fetch --depth=1 origin "refs/tags/${GITLAB_TAG}" --quiet
     git checkout FETCH_HEAD --quiet
 else
-    # Full shallow clone: needed for Maven test execution.
-    echo "  Fetching ${GITLAB_TAG} (full shallow clone for surefire)..."
-    git clone --depth=1 --branch "${GITLAB_TAG}" "${GITLAB_REPO}" okapi --quiet
+    # Full clone at the tag: needed for Maven test execution.
+    echo "  Fetching ${GITLAB_TAG} (full checkout for surefire)..."
+    git clone --branch "${GITLAB_TAG}" "${GITLAB_REPO}" okapi --quiet
     cd okapi
 fi
 
@@ -338,13 +338,16 @@ if [ "${SKIP_SUREFIRE:-}" = "" ]; then
 
     cd "$OKAPI"
 
-    # Run verify (not just test) to include Failsafe integration tests (*IT.java).
+    # Install parent and core modules first (required for filter compilation).
+    echo "  Installing parent and core dependencies..."
+    mvn -B install -pl okapi/core -am -DskipTests -T4 2>&1 | tail -5
+
+    # Run verify on filters to generate Surefire + Failsafe XML reports.
     # -T4 runs 4 threads for faster builds.
     # Failure ignore ensures we get reports even when tests fail.
-    # -B for batch mode (non-interactive).
+    echo "  Running filter tests..."
     mvn -B verify \
         -pl okapi/filters \
-        -am \
         -T4 \
         -Dmaven.test.failure.ignore=true \
         2>&1 | tail -20
