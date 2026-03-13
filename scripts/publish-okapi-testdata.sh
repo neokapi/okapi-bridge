@@ -51,65 +51,12 @@ echo "=== Cloning Okapi Framework @ ${GITLAB_TAG} ==="
 
 cd "$WORK_DIR"
 
-if [ "${SKIP_SUREFIRE:-}" != "" ]; then
-    # Sparse checkout: only fetch test resources (faster, no Maven needed).
-    git init okapi --quiet
-    cd okapi
-    git remote add origin "$GITLAB_REPO"
-
-    git sparse-checkout init --cone
-    git sparse-checkout set \
-        okapi/filters/html/src/test/resources \
-        okapi/filters/json/src/test/resources \
-        okapi/filters/yaml/src/test/resources \
-        okapi/filters/xmlstream/src/test/resources \
-        okapi/filters/xliff/src/test/resources \
-        okapi/filters/xliff2/src/test/resources \
-        okapi/filters/properties/src/test/resources \
-        okapi/filters/po/src/test/resources \
-        okapi/filters/plaintext/src/test/resources \
-        okapi/filters/markdown/src/test/resources \
-        okapi/filters/its/src/test/resources \
-        okapi/filters/openxml/src/test/resources \
-        okapi/filters/idml/src/test/resources \
-        okapi/filters/icml/src/test/resources \
-        okapi/filters/openoffice/src/test/resources \
-        okapi/filters/mif/src/test/resources \
-        okapi/filters/rtf/src/test/resources \
-        okapi/filters/epub/src/test/resources \
-        okapi/filters/archive/src/test/resources \
-        okapi/filters/pdf/src/test/resources \
-        okapi/filters/ttx/src/test/resources \
-        okapi/filters/txml/src/test/resources \
-        okapi/filters/table/src/test/resources \
-        okapi/filters/regex/src/test/resources \
-        okapi/filters/doxygen/src/test/resources \
-        okapi/filters/dtd/src/test/resources \
-        okapi/filters/tmx/src/test/resources \
-        okapi/filters/ts/src/test/resources \
-        okapi/filters/tex/src/test/resources \
-        okapi/filters/wiki/src/test/resources \
-        okapi/filters/mosestext/src/test/resources \
-        okapi/filters/transtable/src/test/resources \
-        okapi/filters/php/src/test/resources \
-        okapi/filters/vignette/src/test/resources \
-        okapi/filters/xini/src/test/resources \
-        okapi/filters/autoxliff/src/test/resources \
-        okapi/filters/multiparsers/src/test/resources \
-        okapi/filters/sdlpackage/src/test/resources \
-        okapi/filters/wsxzpackage/src/test/resources \
-        okapi/filters/subtitles/src/test/resources \
-        integration-tests/okapi/src/test/resources
-
-    echo "  Fetching ${GITLAB_TAG} (sparse)..."
-    git fetch --depth=1 origin "refs/tags/${GITLAB_TAG}" --quiet
-    git checkout FETCH_HEAD --quiet
-else
-    # Full clone at the tag: needed for Maven test execution.
-    echo "  Fetching ${GITLAB_TAG} (full checkout for surefire)..."
-    git clone --branch "${GITLAB_TAG}" "${GITLAB_REPO}" okapi --quiet
-    cd okapi
-fi
+# Full clone at the tag. Needed for Maven builds (surefire reports).
+# When SKIP_SUREFIRE is set, we still do a full clone — it's simpler and
+# the size difference is marginal compared to the Maven dependency downloads.
+echo "  Cloning ${GITLAB_TAG}..."
+git clone --depth=1 --branch "${GITLAB_TAG}" "${GITLAB_REPO}" okapi --quiet
+cd okapi
 
 echo "  Clone complete."
 
@@ -338,16 +285,11 @@ if [ "${SKIP_SUREFIRE:-}" = "" ]; then
 
     cd "$OKAPI"
 
-    # Install parent and core modules first (required for filter compilation).
-    echo "  Installing parent and core dependencies..."
-    mvn -B install -pl okapi/core -am -DskipTests -T4 2>&1 | tail -5
-
-    # Run verify on filters to generate Surefire + Failsafe XML reports.
+    # Run Maven verify from the project root. This builds all modules and
+    # generates Surefire + Failsafe XML reports for filter modules.
     # -T4 runs 4 threads for faster builds.
     # Failure ignore ensures we get reports even when tests fail.
-    echo "  Running filter tests..."
     mvn -B verify \
-        -pl okapi/filters \
         -T4 \
         -Dmaven.test.failure.ignore=true \
         2>&1 | tail -20
