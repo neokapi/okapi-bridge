@@ -569,6 +569,52 @@ public class FilterRegistry {
     }
 
     /**
+     * Scan for filter class names without instantiating filters or extracting metadata.
+     * This is much faster than {@link #getFilterClasses()} because it only reads JAR
+     * entries (no class loading, no filter instantiation, no metadata extraction).
+     * Use this when you only need class names, e.g., for populating a
+     * FilterConfigurationMapper.
+     */
+    public static Set<String> scanFilterClassNames() {
+        Set<String> filterClasses = new TreeSet<>();
+
+        ClassLoader cl = FilterRegistry.class.getClassLoader();
+        if (cl instanceof URLClassLoader) {
+            for (URL url : ((URLClassLoader) cl).getURLs()) {
+                String path = url.getPath();
+                if (path.contains("okapi-filter-") && path.endsWith(".jar")) {
+                    scanJarForFilters(path, filterClasses);
+                }
+            }
+        }
+
+        String classpath = System.getProperty("java.class.path");
+        if (classpath != null) {
+            for (String path : classpath.split(File.pathSeparator)) {
+                if (path.contains("okapi-filter-") && path.endsWith(".jar")) {
+                    scanJarForFilters(path, filterClasses);
+                }
+            }
+        }
+
+        if (filterClasses.isEmpty()) {
+            try {
+                java.security.CodeSource cs = FilterRegistry.class.getProtectionDomain().getCodeSource();
+                if (cs != null) {
+                    File jarFile = new File(cs.getLocation().toURI());
+                    if (jarFile.isFile() && jarFile.getName().endsWith(".jar")) {
+                        scanJarForFilters(jarFile.getPath(), filterClasses);
+                    }
+                }
+            } catch (Exception e) {
+                System.err.println("[bridge] Could not scan uber JAR for filter class names: " + e.getMessage());
+            }
+        }
+
+        return filterClasses;
+    }
+
+    /**
      * Resolve a filter class from an envelope Kind string.
      * Format: {@code Okf{Format}FilterConfig} where Format is PascalCase and maps
      * to filter ID {@code okf_{format}}.

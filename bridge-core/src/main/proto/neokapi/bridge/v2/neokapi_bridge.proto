@@ -298,6 +298,7 @@ message WriteHeader {
   string source_path = 6;                  // Legacy: absolute path to original file
   ContentRef original_content_ref = 7;     // Preferred: file reference for original content
   OutputRef output_ref = 8;                // When set, Java writes output directly to this path
+  string source_locale = 9;               // Source locale for skeleton re-read during write
 }
 
 message WriteResponse {

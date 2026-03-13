@@ -38,6 +38,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     private static final int QUEUE_CAPACITY = 1024;
 
     private IFilter currentFilter;
+    private String currentSourceLocale = "";
 
     private final ContentResolver contentResolver;
     private final OutputWriter outputWriter;
@@ -129,8 +130,9 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
         try {
             String filterClass = request.getFilterClass();
             String uri = request.getUri();
-            String sourceLocale = request.getSourceLocale().isEmpty() ? "en" : request.getSourceLocale();
-            String targetLocale = request.getTargetLocale().isEmpty() ? "fr" : request.getTargetLocale();
+            String sourceLocale = request.getSourceLocale();
+            currentSourceLocale = sourceLocale;
+            String targetLocale = request.getTargetLocale();
             String encoding = request.getEncoding().isEmpty() ? "UTF-8" : request.getEncoding();
 
             Map<String, String> filterParams = request.getFilterParamsMap();
@@ -412,8 +414,8 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             private void performReadPhase() {
                 try {
                     String filterClass = header.getFilterClass();
-                    String sourceLocale = header.getSourceLocale().isEmpty() ? "en" : header.getSourceLocale();
-                    String targetLocale = header.getTargetLocale().isEmpty() ? "fr" : header.getTargetLocale();
+                    String sourceLocale = header.getSourceLocale();
+                    String targetLocale = header.getTargetLocale();
                     String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
 
                     IFilter filter = FilterRegistry.createFilter(filterClass);
@@ -568,7 +570,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
      */
     private WriteResult performWrite(WriteHeader header, List<PartDTO> parts) throws Exception {
         String filterClass = header.getFilterClass();
-        String locale = header.getLocale().isEmpty() ? "en" : header.getLocale();
+        String locale = header.getLocale();
         String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
 
         // Resolve input content via the content resolver.
@@ -609,7 +611,8 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             writer.setOutput(outputStream);
         }
 
-        LocaleId srcLocale = LocaleId.fromString("en");
+        String srcLoc = header.getSourceLocale().isEmpty() ? currentSourceLocale : header.getSourceLocale();
+        LocaleId srcLocale = LocaleId.fromString(srcLoc);
         LocaleId tgtLocale = LocaleId.fromString(locale);
         RawDocument rawDoc = new RawDocument(inputFile.toURI(), encoding, srcLocale, tgtLocale);
         filter.open(rawDoc);
@@ -643,7 +646,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     private WriteResult performWriteStreaming(WriteHeader header,
                                               BlockingQueue<TranslationEntry> queue) throws Exception {
         String filterClass = header.getFilterClass();
-        String locale = header.getLocale().isEmpty() ? "en" : header.getLocale();
+        String locale = header.getLocale();
         String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
 
         // Resolve input content via the content resolver.
@@ -679,7 +682,8 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             writer.setOutput(outputStream);
         }
 
-        LocaleId srcLocale = LocaleId.fromString("en");
+        String srcLoc = header.getSourceLocale().isEmpty() ? currentSourceLocale : header.getSourceLocale();
+        LocaleId srcLocale = LocaleId.fromString(srcLoc);
         LocaleId tgtLocale = LocaleId.fromString(locale);
         RawDocument rawDoc = new RawDocument(inputFile.toURI(), encoding, srcLocale, tgtLocale);
         filter.open(rawDoc);
@@ -715,7 +719,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
         String filterClass = header.getFilterClass();
         String outputLocale = header.getOutputLocale().isEmpty()
                 ? header.getTargetLocale() : header.getOutputLocale();
-        String locale = outputLocale.isEmpty() ? "en" : outputLocale;
+        String locale = outputLocale;
         String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
 
         File inputFile = resolveRoundTripContent(header);
@@ -748,7 +752,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             writer.setOutput(outputStream);
         }
 
-        String sourceLocale = header.getSourceLocale().isEmpty() ? "en" : header.getSourceLocale();
+        String sourceLocale = header.getSourceLocale();
         LocaleId srcLocale = LocaleId.fromString(sourceLocale);
         LocaleId tgtLocale = LocaleId.fromString(locale);
         RawDocument rawDoc = new RawDocument(inputFile.toURI(), encoding, srcLocale, tgtLocale);
@@ -1109,7 +1113,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 if (sharedFcMapper == null) {
                     net.sf.okapi.common.filters.FilterConfigurationMapper mapper =
                             new net.sf.okapi.common.filters.FilterConfigurationMapper();
-                    for (String fc : FilterRegistry.getFilterClasses()) {
+                    for (String fc : FilterRegistry.scanFilterClassNames()) {
                         try {
                             mapper.addConfigurations(fc);
                         } catch (Exception e) {
