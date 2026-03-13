@@ -341,13 +341,13 @@ if [ "${SKIP_SUREFIRE:-}" = "" ]; then
     # Run verify (not just test) to include Failsafe integration tests (*IT.java).
     # -T4 runs 4 threads for faster builds.
     # Failure ignore ensures we get reports even when tests fail.
-    mvn verify \
+    # -B for batch mode (non-interactive).
+    mvn -B verify \
         -pl okapi/filters \
         -am \
         -T4 \
         -Dmaven.test.failure.ignore=true \
-        -q \
-        2>&1 | tail -5
+        2>&1 | tail -20
 
     echo "  Maven verify complete."
 

@@ -244,6 +244,12 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
       - name: Publish testdata for latest Okapi version
         run: bash scripts/publish-okapi-testdata.sh "${{ needs.setup.outputs.latest }}"
         env:
