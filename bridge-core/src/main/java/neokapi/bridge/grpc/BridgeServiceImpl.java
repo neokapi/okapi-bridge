@@ -41,13 +41,54 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     private final Map<String, ParameterFlattener> flattenerCache = new ConcurrentHashMap<>();
     private final Map<String, JsonObject> schemaCache = new ConcurrentHashMap<>();
 
+    // Idle timeout tracking.
+    private final java.util.concurrent.atomic.AtomicInteger activeStreams = new java.util.concurrent.atomic.AtomicInteger(0);
+    private final java.util.concurrent.atomic.AtomicLong lastActivityNanos = new java.util.concurrent.atomic.AtomicLong(System.nanoTime());
+    private final long idleTimeoutNanos;
+    private ScheduledExecutorService idleTimer;
+
     public BridgeServiceImpl(ContentResolver contentResolver, OutputWriter outputWriter) {
+        this(contentResolver, outputWriter, 0);
+    }
+
+    public BridgeServiceImpl(ContentResolver contentResolver, OutputWriter outputWriter, long idleTimeoutSeconds) {
         this.contentResolver = contentResolver;
         this.outputWriter = outputWriter;
+        this.idleTimeoutNanos = TimeUnit.SECONDS.toNanos(idleTimeoutSeconds);
+
+        if (idleTimeoutNanos > 0) {
+            long checkInterval = Math.max(idleTimeoutSeconds / 2, 1);
+            idleTimer = Executors.newSingleThreadScheduledExecutor(r -> {
+                Thread t = new Thread(r, "idle-timer");
+                t.setDaemon(true);
+                return t;
+            });
+            idleTimer.scheduleAtFixedRate(this::checkIdle,
+                    checkInterval, checkInterval, TimeUnit.SECONDS);
+        }
+    }
+
+    private void checkIdle() {
+        if (activeStreams.get() > 0) return;
+        long elapsed = System.nanoTime() - lastActivityNanos.get();
+        if (elapsed >= idleTimeoutNanos) {
+            System.err.println("[bridge] Idle timeout (" + TimeUnit.NANOSECONDS.toSeconds(idleTimeoutNanos) + "s), shutting down");
+            shutdownLatch.countDown();
+        }
+    }
+
+    private void streamStarted() {
+        activeStreams.incrementAndGet();
+        lastActivityNanos.set(System.nanoTime());
+    }
+
+    private void streamEnded() {
+        activeStreams.decrementAndGet();
+        lastActivityNanos.set(System.nanoTime());
     }
 
     /**
-     * Block until the Shutdown RPC is called.
+     * Block until the Shutdown RPC is called or idle timeout triggers.
      */
     public void awaitShutdown() throws InterruptedException {
         shutdownLatch.await();
@@ -57,6 +98,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
     @Override
     public StreamObserver<ProcessRequest> process(StreamObserver<ProcessResponse> responseObserver) {
+        streamStarted();
         // Use manual flow control so we explicitly request messages.
         io.grpc.stub.ServerCallStreamObserver<ProcessResponse> serverObserver =
                 (io.grpc.stub.ServerCallStreamObserver<ProcessResponse>) responseObserver;
@@ -372,7 +414,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     /**
      * Send a ProcessComplete with an optional error and close the response stream.
      */
-    private static void sendComplete(StreamObserver<ProcessResponse> respObserver, String error) {
+    private void sendComplete(StreamObserver<ProcessResponse> respObserver, String error) {
         ProcessComplete.Builder complete = ProcessComplete.newBuilder();
         if (error != null) {
             complete.setError(error);
@@ -384,14 +426,15 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
      * Send a ProcessComplete message and close the response stream.
      * Synchronized on the respObserver to avoid concurrent onNext/onCompleted calls.
      */
-    private static void sendCompleteMessage(StreamObserver<ProcessResponse> respObserver,
-                                             ProcessComplete complete) {
+    private void sendCompleteMessage(StreamObserver<ProcessResponse> respObserver,
+                                      ProcessComplete complete) {
         synchronized (respObserver) {
             respObserver.onNext(ProcessResponse.newBuilder()
                     .setComplete(complete)
                     .build());
             respObserver.onCompleted();
         }
+        streamEnded();
     }
 
     // ── Shutdown RPC ───────────────────────────────────────────────────────────
