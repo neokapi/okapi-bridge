@@ -25,12 +25,17 @@ import java.util.concurrent.TimeUnit;
  *   <li>{@code --list-filters} — Print filter metadata as JSON to stdout and exit.</li>
  *   <li>{@code --idle-timeout <seconds>} — Shut down after N seconds with no active streams.
  *       Default: 0 (no timeout, subprocess mode).</li>
+ *   <li>{@code --concurrency <N>} — Number of filter threads. Default: available processors.</li>
+ *   <li>{@code --stuck-timeout <seconds>} — Abort if translation queue poll exceeds this.
+ *       Default: 120s.</li>
  * </ul>
  */
 public class OkapiBridgeServer {
 
     public static void main(String[] args) {
         long idleTimeoutSeconds = 0;
+        long stuckTimeoutSeconds = 120;
+        int concurrency = Runtime.getRuntime().availableProcessors();
 
         for (int i = 0; i < args.length; i++) {
             if ("--list-filters".equals(args[i])) {
@@ -40,13 +45,21 @@ public class OkapiBridgeServer {
             if ("--idle-timeout".equals(args[i]) && i + 1 < args.length) {
                 idleTimeoutSeconds = parseTimeout(args[++i]);
             }
+            if ("--concurrency".equals(args[i]) && i + 1 < args.length) {
+                concurrency = Integer.parseInt(args[++i]);
+            }
+            if ("--stuck-timeout".equals(args[i]) && i + 1 < args.length) {
+                stuckTimeoutSeconds = parseTimeout(args[++i]);
+            }
         }
 
         System.err.println("[bridge] Okapi Bridge Server starting (gRPC)...");
+        System.err.println("[bridge] Concurrency: " + concurrency + " filter threads");
 
         try {
             BridgeServiceImpl service = new BridgeServiceImpl(
-                    new LocalContentResolver(), new LocalOutputWriter(), idleTimeoutSeconds);
+                    new LocalContentResolver(), new LocalOutputWriter(),
+                    concurrency, idleTimeoutSeconds, stuckTimeoutSeconds);
 
             Server server = ServerBuilder.forPort(0) // random available port
                     .addService(service)
@@ -60,6 +73,9 @@ public class OkapiBridgeServer {
             System.err.println("[bridge] gRPC server started on " + address);
             if (idleTimeoutSeconds > 0) {
                 System.err.println("[bridge] Idle timeout: " + idleTimeoutSeconds + "s");
+            }
+            if (stuckTimeoutSeconds != 120) {
+                System.err.println("[bridge] Stuck timeout: " + stuckTimeoutSeconds + "s");
             }
 
             // Print address to stdout — the Go client reads this first line.
@@ -123,7 +139,7 @@ public class OkapiBridgeServer {
         try {
             return Long.parseLong(value);
         } catch (NumberFormatException e) {
-            System.err.println("[bridge] Invalid --idle-timeout value: " + value);
+            System.err.println("[bridge] Invalid timeout value: " + value);
             return 0;
         }
     }

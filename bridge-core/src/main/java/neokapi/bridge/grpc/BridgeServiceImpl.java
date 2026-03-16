@@ -26,34 +26,46 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * gRPC implementation of the BridgeService.
- * Implements the single bidirectional-streaming Process RPC that replaces the
- * old Open/Read/Write/Close/RoundTrip RPCs.
+ * Implements the single bidirectional-streaming Process RPC with a clean
+ * two-phase design:
+ * <ul>
+ *   <li>Phase 1 (Read): iterate filter events, convert to PartMessages, stream
+ *       ALL to Go, then send ReadDone.</li>
+ *   <li>Phase 2 (Write, if output requested): re-open filter, apply translations
+ *       from queue, write output, send Complete.</li>
+ * </ul>
  */
 public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
     private final ContentResolver contentResolver;
     private final OutputWriter outputWriter;
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
-    private final ExecutorService mergeExecutor = Executors.newCachedThreadPool();
+    private final ExecutorService filterPool;
+    private final long stuckTimeoutSeconds;
     private final Map<String, ParameterFlattener> flattenerCache = new ConcurrentHashMap<>();
     private final Map<String, JsonObject> schemaCache = new ConcurrentHashMap<>();
 
     // Idle timeout tracking.
-    private final java.util.concurrent.atomic.AtomicInteger activeStreams = new java.util.concurrent.atomic.AtomicInteger(0);
-    private final java.util.concurrent.atomic.AtomicLong lastActivityNanos = new java.util.concurrent.atomic.AtomicLong(System.nanoTime());
+    private final AtomicInteger activeStreams = new AtomicInteger(0);
+    private final AtomicLong lastActivityNanos = new AtomicLong(System.nanoTime());
     private final long idleTimeoutNanos;
     private ScheduledExecutorService idleTimer;
 
-    public BridgeServiceImpl(ContentResolver contentResolver, OutputWriter outputWriter) {
-        this(contentResolver, outputWriter, 0);
-    }
-
-    public BridgeServiceImpl(ContentResolver contentResolver, OutputWriter outputWriter, long idleTimeoutSeconds) {
+    public BridgeServiceImpl(ContentResolver contentResolver, OutputWriter outputWriter,
+                             int concurrency, long idleTimeoutSeconds, long stuckTimeoutSeconds) {
         this.contentResolver = contentResolver;
         this.outputWriter = outputWriter;
+        this.stuckTimeoutSeconds = stuckTimeoutSeconds;
+        this.filterPool = new ThreadPoolExecutor(
+                concurrency, concurrency, 60, TimeUnit.SECONDS,
+                new LinkedBlockingQueue<>(),
+                r -> { Thread t = new Thread(r, "filter-pool"); t.setDaemon(true); return t; }
+        );
         this.idleTimeoutNanos = TimeUnit.SECONDS.toNanos(idleTimeoutSeconds);
 
         if (idleTimeoutNanos > 0) {
@@ -66,6 +78,17 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             idleTimer.scheduleAtFixedRate(this::checkIdle,
                     checkInterval, checkInterval, TimeUnit.SECONDS);
         }
+    }
+
+    public BridgeServiceImpl(ContentResolver contentResolver, OutputWriter outputWriter) {
+        this(contentResolver, outputWriter,
+                Runtime.getRuntime().availableProcessors(), 0, 120);
+    }
+
+    public BridgeServiceImpl(ContentResolver contentResolver, OutputWriter outputWriter,
+                             long idleTimeoutSeconds) {
+        this(contentResolver, outputWriter,
+                Runtime.getRuntime().availableProcessors(), idleTimeoutSeconds, 120);
     }
 
     private void checkIdle() {
@@ -99,49 +122,21 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     @Override
     public StreamObserver<ProcessRequest> process(StreamObserver<ProcessResponse> responseObserver) {
         streamStarted();
-        // Use manual flow control so we explicitly request messages.
-        io.grpc.stub.ServerCallStreamObserver<ProcessResponse> serverObserver =
-                (io.grpc.stub.ServerCallStreamObserver<ProcessResponse>) responseObserver;
-        serverObserver.disableAutoRequest();
-        // Request the first message (Header).
-        serverObserver.request(1);
 
         return new StreamObserver<ProcessRequest>() {
             private ProcessHeader header;
             private final BlockingQueue<TranslationEntry> translationQueue = new LinkedBlockingQueue<>();
-            private final CountDownLatch clientDone = new CountDownLatch(1);
-            private volatile boolean writeEnabled = false;
-            private String targetLocale = "";
 
             @Override
             public void onNext(ProcessRequest request) {
                 switch (request.getRequestCase()) {
                     case HEADER:
                         header = request.getHeader();
-                        writeEnabled = header.hasOutput() || !header.getOutputLocale().isEmpty();
-                        targetLocale = header.getOutputLocale().isEmpty()
-                                ? header.getTargetLocale() : header.getOutputLocale();
-                        startProcessing(serverObserver);
-                        // Request next messages (processed parts from Go).
-                        // Use a large number — Go sends parts as fast as it can.
-                        serverObserver.request(Integer.MAX_VALUE);
+                        filterPool.submit(() -> runPipeline(header, translationQueue, responseObserver));
                         break;
 
                     case PART:
-                        // Processed part from Go — extract target translations.
-                        PartMessage pm = request.getPart();
-                        if (pm.getPartType() == PartDTO.TYPE_BLOCK && pm.hasBlock()) {
-                            BlockMessage blockMsg = pm.getBlock();
-                            List<FragmentDTO> fragments = extractTargetFragments(blockMsg, targetLocale);
-                            // Always enqueue for blocks — null fragments means "pass through".
-                            try {
-                                translationQueue.offer(
-                                        new TranslationEntry(blockMsg.getId(), fragments),
-                                        120, TimeUnit.SECONDS);
-                            } catch (InterruptedException e) {
-                                Thread.currentThread().interrupt();
-                            }
-                        }
+                        handleProcessedPart(request.getPart());
                         break;
 
                     default:
@@ -151,9 +146,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
             @Override
             public void onCompleted() {
-                // Go called CloseSend() — signal end of translations.
                 translationQueue.offer(TranslationEntry.END);
-                clientDone.countDown();
             }
 
             @Override
@@ -161,185 +154,117 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 System.err.println("[bridge] Process stream error: " + t.getMessage());
                 translationQueue.clear();
                 translationQueue.offer(TranslationEntry.END);
-                clientDone.countDown();
             }
 
-            /**
-             * Run a single-pass Okapi pipeline: one filter instance, one read,
-             * inline writing. Go participates as a pipeline step — for each event,
-             * the part is sent to Go, the translation is received back, and the
-             * event is written immediately. The filter stays open throughout.
-             */
-            /**
-             * True single-pass pipeline like Tikal: one filter, one read, inline
-             * writing. For each event, send the part to Go, wait for translation,
-             * apply it, write immediately. Uses manual gRPC flow control to ensure
-             * Go's responses are delivered while the pipeline thread is blocked.
-             */
-            private void startProcessing(io.grpc.stub.ServerCallStreamObserver<ProcessResponse> respObserver) {
-                mergeExecutor.submit(() -> {
-                    IFilter filter = null;
-                    IFilterWriter writer = null;
+            private void handleProcessedPart(PartMessage pm) {
+                if (pm.getPartType() == PartDTO.TYPE_BLOCK && pm.hasBlock()) {
+                    BlockMessage blockMsg = pm.getBlock();
+                    String locale = header.getOutputLocale().isEmpty()
+                            ? header.getTargetLocale() : header.getOutputLocale();
+                    List<FragmentDTO> fragments = extractTargetFragments(blockMsg, locale);
                     try {
-                        File inputFile = resolveProcessContent(header);
-                        String filterClass = header.getFilterClass();
-                        String sourceLocale = header.getSourceLocale();
-                        String tgtLoc = header.getTargetLocale();
-                        String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
-                        String outputLocale = header.getOutputLocale().isEmpty() ? tgtLoc : header.getOutputLocale();
-
-                        filter = FilterRegistry.createFilter(filterClass);
-                        if (filter == null) {
-                            sendComplete(respObserver, "cannot instantiate filter: " + filterClass);
-                            return;
-                        }
-
-                        Map<String, String> filterParams = header.getFilterParamsMap();
-                        if (filterParams != null && !filterParams.isEmpty()) {
-                            applyFilterParams(filter, filterParams);
-                        }
-                        setupFilterConfigurationMapper(filter);
-
-                        LocaleId srcLocale = LocaleId.fromString(sourceLocale);
-                        LocaleId tgtLocale = LocaleId.fromString(tgtLoc);
-                        RawDocument rawDoc = new RawDocument(inputFile.toURI(), encoding, srcLocale, tgtLocale);
-                        filter.open(rawDoc);
-
-                        // Create writer BEFORE iterating — filter is fresh.
-                        ByteArrayOutputStream outputStream = null;
-                        String outputPath = null;
-                        StreamingTranslationApplier applier = null;
-                        if (writeEnabled) {
-                            writer = filter.createFilterWriter();
-                            if (writer == null) {
-                                throw new IllegalStateException("filter does not support writing: " + filterClass);
-                            }
-                            outputPath = resolveProcessOutputPath(header);
-                            writer.setOptions(LocaleId.fromString(outputLocale), encoding);
-                            if (outputPath != null) {
-                                writer.setOutput(outputPath);
-                            } else {
-                                outputStream = new ByteArrayOutputStream();
-                                writer.setOutput(outputStream);
-                            }
-                            applier = new StreamingTranslationApplier(
-                                    translationQueue, LocaleId.fromString(outputLocale));
-                        }
-
-                        // Build subscription filter: which part types to send to Go.
-                        // Empty list = send all (backward compatible).
-                        Set<Integer> subscribedTypes = new HashSet<>();
-                        for (int pt : header.getSubscribePartsList()) {
-                            subscribedTypes.add(pt);
-                        }
-                        boolean sendAll = subscribedTypes.isEmpty();
-
-                        // Single-pass pipeline with selective subscription:
-                        // - Subscribed events: send to Go, wait for translation, write.
-                        // - Non-subscribed events: write directly (no gRPC round-trip).
-                        //
-                        // Batching: accumulate events until BATCH_SIZE subscribed units,
-                        // then flush. ZIP filters use per-event write (no batching).
-                        boolean useInlineWrite = !writeEnabled
-                                || (writer instanceof net.sf.okapi.common.filterwriter.ZipFilterWriter);
-                        final int BATCH_SIZE = 100;
-                        int count = 0;
-                        int pendingSubscribed = 0;
-                        List<Event> batch = (writeEnabled && !useInlineWrite) ? new ArrayList<>() : null;
-
-                        while (filter.hasNext()) {
-                            Event event = filter.next();
-
-                            // Convert event to part and check subscription.
-                            PartDTO partDTO = EventConverter.convert(event);
-                            boolean subscribed = false;
-                            if (partDTO != null) {
-                                subscribed = sendAll || subscribedTypes.contains(partDTO.getPartType());
-                                if (subscribed) {
-                                    PartMessage protoMsg = ProtoAdapter.toProto(partDTO);
-                                    respObserver.onNext(ProcessResponse.newBuilder()
-                                            .setPart(protoMsg)
-                                            .build());
-                                    count++;
-                                }
-                            }
-
-                            if (useInlineWrite && writer != null) {
-                                if (subscribed) {
-                                    Event modified = applier.applyTranslations(event);
-                                    writer.handleEvent(modified);
-                                } else {
-                                    writer.handleEvent(event);
-                                }
-                            } else if (batch != null) {
-                                batch.add(event);
-                                if (subscribed) {
-                                    pendingSubscribed++;
-                                }
-                                if (pendingSubscribed >= BATCH_SIZE) {
-                                    for (Event be : batch) {
-                                        Event modified = applier.applyTranslations(be);
-                                        writer.handleEvent(modified);
-                                    }
-                                    batch.clear();
-                                    pendingSubscribed = 0;
-                                }
-                            }
-                        }
-
-                        // Flush remaining batched events.
-                        if (batch != null && !batch.isEmpty()) {
-                            for (Event be : batch) {
-                                Event modified = applier.applyTranslations(be);
-                                writer.handleEvent(modified);
-                            }
-                        }
-
-                        // Close writer first (flushes), then filter.
-                        if (writer != null) {
-                            writer.close();
-                            writer = null;
-                        }
-                        filter.close();
-                        filter = null;
-
-                        System.err.println("[bridge] Process: " + count + " parts"
-                                + (writeEnabled ? " (single-pass)" : " (read-only)"));
-
-                        respObserver.onNext(ProcessResponse.newBuilder()
-                                .setReadDone(ProcessReadDone.newBuilder().build())
-                                .build());
-
-                        ProcessComplete.Builder complete = ProcessComplete.newBuilder();
-                        if (writeEnabled && outputPath != null) {
-                            complete.setOutputPath(outputPath);
-                        } else if (writeEnabled && outputStream != null) {
-                            complete.setOutput(ByteString.copyFrom(outputStream.toByteArray()));
-                        }
-
-                        if (writeEnabled) {
-                            clientDone.await();
-                        }
-                        sendCompleteMessage(respObserver, complete.build());
-
-                    } catch (Exception e) {
-                        String errMsg = e.getMessage();
-                        if (errMsg == null || errMsg.isEmpty()) {
-                            errMsg = e.getClass().getSimpleName();
-                        }
-                        System.err.println("[bridge] Process error: " + errMsg);
-                        e.printStackTrace(System.err);
-                        if (writer != null) {
-                            try { writer.close(); } catch (Exception ignored) {}
-                        }
-                        if (filter != null) {
-                            try { filter.close(); } catch (Exception ignored) {}
-                        }
-                        sendComplete(respObserver, errMsg);
+                        translationQueue.offer(
+                                new TranslationEntry(blockMsg.getId(), fragments),
+                                stuckTimeoutSeconds, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
                     }
-                });
+                }
             }
         };
+    }
+
+    /**
+     * Two-phase pipeline:
+     * Phase 1: Read all events, stream parts to Go, send ReadDone.
+     * Phase 2: If write requested, re-open filter, apply translations, write, send Complete.
+     */
+    private void runPipeline(ProcessHeader header,
+                             BlockingQueue<TranslationEntry> translationQueue,
+                             StreamObserver<ProcessResponse> respObserver) {
+        IFilter filter = null;
+        try {
+            File inputFile = resolveProcessContent(header);
+            String filterClass = header.getFilterClass();
+            String sourceLocale = header.getSourceLocale();
+            String targetLocale = header.getTargetLocale();
+            String encoding = header.getEncoding().isEmpty() ? "UTF-8" : header.getEncoding();
+            String outputLocale = header.getOutputLocale().isEmpty() ? targetLocale : header.getOutputLocale();
+            boolean writeEnabled = header.hasOutput() || !header.getOutputLocale().isEmpty();
+
+            // Build subscription filter: which part types to send to Go.
+            Set<Integer> subscribedTypes = new HashSet<>();
+            for (int pt : header.getSubscribePartsList()) {
+                subscribedTypes.add(pt);
+            }
+            boolean sendAll = subscribedTypes.isEmpty();
+
+            // ── Phase 1: Read ──
+            filter = FilterRegistry.createFilter(filterClass);
+            if (filter == null) {
+                sendComplete(respObserver, "cannot instantiate filter: " + filterClass);
+                return;
+            }
+
+            Map<String, String> filterParams = header.getFilterParamsMap();
+            if (filterParams != null && !filterParams.isEmpty()) {
+                applyFilterParams(filter, filterParams);
+            }
+            setupFilterConfigurationMapper(filter);
+
+            LocaleId srcLocale = LocaleId.fromString(sourceLocale);
+            LocaleId tgtLocale = LocaleId.fromString(targetLocale);
+            RawDocument rawDoc = new RawDocument(inputFile.toURI(), encoding, srcLocale, tgtLocale);
+            filter.open(rawDoc);
+
+            System.err.println("[bridge] Opened filter " + filter.getClass().getName()
+                    + " for " + inputFile.getName());
+
+            int count = 0;
+            while (filter.hasNext()) {
+                Event event = filter.next();
+                PartDTO partDTO = EventConverter.convert(event);
+                if (partDTO != null) {
+                    boolean subscribed = sendAll || subscribedTypes.contains(partDTO.getPartType());
+                    if (subscribed) {
+                        PartMessage protoMsg = ProtoAdapter.toProto(partDTO);
+                        synchronized (respObserver) {
+                            respObserver.onNext(ProcessResponse.newBuilder()
+                                    .setPart(protoMsg).build());
+                        }
+                        count++;
+                    }
+                }
+            }
+            filter.close();
+            filter = null;
+
+            // Signal read done.
+            synchronized (respObserver) {
+                respObserver.onNext(ProcessResponse.newBuilder()
+                        .setReadDone(ProcessReadDone.newBuilder().build()).build());
+            }
+
+            System.err.println("[bridge] Read phase: " + count + " parts");
+
+            // ── Phase 2: Write (if output requested) ──
+            if (writeEnabled) {
+                ProcessComplete complete = performWritePhase(header, translationQueue);
+                sendCompleteMessage(respObserver, complete);
+            } else {
+                sendCompleteMessage(respObserver, ProcessComplete.newBuilder().build());
+            }
+
+        } catch (Exception e) {
+            String errMsg = e.getMessage();
+            if (errMsg == null || errMsg.isEmpty()) errMsg = e.getClass().getSimpleName();
+            System.err.println("[bridge] Process error: " + errMsg);
+            e.printStackTrace(System.err);
+            if (filter != null) {
+                try { filter.close(); } catch (Exception ignored) {}
+            }
+            sendComplete(respObserver, errMsg);
+        }
     }
 
     /**
@@ -389,7 +314,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
         writeFilter.open(rawDoc);
 
         StreamingTranslationApplier applier =
-                new StreamingTranslationApplier(translationQueue, LocaleId.fromString(outputLocale));
+                new StreamingTranslationApplier(translationQueue, LocaleId.fromString(outputLocale), stuckTimeoutSeconds);
 
         while (writeFilter.hasNext()) {
             Event event = writeFilter.next();
@@ -442,7 +367,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     @Override
     public void shutdown(ShutdownRequest request, StreamObserver<ShutdownResponse> responseObserver) {
         System.err.println("[bridge] Shutdown requested");
-        mergeExecutor.shutdownNow();
+        filterPool.shutdownNow();
         responseObserver.onNext(ShutdownResponse.newBuilder().build());
         responseObserver.onCompleted();
         shutdownLatch.countDown();

@@ -29,16 +29,23 @@ import java.util.concurrent.TimeUnit;
  */
 public class StreamingTranslationApplier {
 
-    private static final long POLL_TIMEOUT_SECONDS = 120;
+    private static final long DEFAULT_POLL_TIMEOUT_SECONDS = 120;
 
     private final BlockingQueue<TranslationEntry> queue;
     private final LocaleId targetLocale;
+    private final long pollTimeoutSeconds;
     private final Map<String, List<FragmentDTO>> lookahead = new LinkedHashMap<>();
     private boolean endOfStream = false;
 
-    public StreamingTranslationApplier(BlockingQueue<TranslationEntry> queue, LocaleId targetLocale) {
+    public StreamingTranslationApplier(BlockingQueue<TranslationEntry> queue,
+                                       LocaleId targetLocale, long pollTimeoutSeconds) {
         this.queue = queue;
         this.targetLocale = targetLocale;
+        this.pollTimeoutSeconds = pollTimeoutSeconds;
+    }
+
+    public StreamingTranslationApplier(BlockingQueue<TranslationEntry> queue, LocaleId targetLocale) {
+        this(queue, targetLocale, DEFAULT_POLL_TIMEOUT_SECONDS);
     }
 
     /**
@@ -99,7 +106,7 @@ public class StreamingTranslationApplier {
         while (true) {
             TranslationEntry entry;
             try {
-                entry = queue.poll(POLL_TIMEOUT_SECONDS, TimeUnit.SECONDS);
+                entry = queue.poll(pollTimeoutSeconds, TimeUnit.SECONDS);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 endOfStream = true;
