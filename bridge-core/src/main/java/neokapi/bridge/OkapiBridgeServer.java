@@ -8,8 +8,12 @@ import neokapi.bridge.util.FilterRegistry;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import io.grpc.Server;
-import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder;
+import io.grpc.netty.NettyServerBuilder;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ServerChannel;
+import io.netty.channel.unix.DomainSocketAddress;
 
+import java.net.SocketAddress;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -61,16 +65,18 @@ public class OkapiBridgeServer {
                     new LocalContentResolver(), new LocalOutputWriter(),
                     concurrency, idleTimeoutSeconds, stuckTimeoutSeconds);
 
-            Server server = NettyServerBuilder.forPort(0) // random available port
-                    .addService(service)
-                    .maxInboundMessageSize(64 * 1024 * 1024)
-                    .flowControlWindow(4 * 1024 * 1024)            // 4MB (default 1MB)
-                    .initialFlowControlWindow(4 * 1024 * 1024)     // 4MB initial
-                    .build()
-                    .start();
+            // Check for Unix domain socket path from Go parent process.
+            String socketPath = System.getenv("NEOKAPI_BRIDGE_SOCKET");
+            Server server;
+            String address;
 
-            int port = server.getPort();
-            String address = "localhost:" + port;
+            if (socketPath != null && !socketPath.isEmpty()) {
+                server = createUnixSocketServer(service, socketPath);
+                address = socketPath;
+            } else {
+                server = createTcpServer(service);
+                address = "localhost:" + server.getPort();
+            }
 
             System.err.println("[bridge] gRPC server started on " + address);
             if (idleTimeoutSeconds > 0) {
@@ -144,6 +150,81 @@ public class OkapiBridgeServer {
             System.err.println("[bridge] Invalid timeout value: " + value);
             return 0;
         }
+    }
+
+    /**
+     * Create a gRPC server listening on a Unix domain socket. Uses Netty's
+     * native epoll (Linux) or kqueue (macOS) transport for zero-copy IPC.
+     * Falls back to TCP if native transport is unavailable.
+     */
+    private static Server createUnixSocketServer(BridgeServiceImpl service, String socketPath) throws Exception {
+        SocketAddress address = new DomainSocketAddress(socketPath);
+        String os = System.getProperty("os.name", "").toLowerCase();
+
+        EventLoopGroup bossGroup;
+        EventLoopGroup workerGroup;
+        Class<? extends ServerChannel> channelType;
+
+        if (os.contains("linux")) {
+            bossGroup = createEventLoopGroup(
+                    "io.netty.channel.epoll.EpollEventLoopGroup", 1);
+            workerGroup = createEventLoopGroup(
+                    "io.netty.channel.epoll.EpollEventLoopGroup", 0);
+            channelType = loadChannelClass(
+                    "io.netty.channel.epoll.EpollServerDomainSocketChannel");
+        } else if (os.contains("mac")) {
+            bossGroup = createEventLoopGroup(
+                    "io.netty.channel.kqueue.KQueueEventLoopGroup", 1);
+            workerGroup = createEventLoopGroup(
+                    "io.netty.channel.kqueue.KQueueEventLoopGroup", 0);
+            channelType = loadChannelClass(
+                    "io.netty.channel.kqueue.KQueueServerDomainSocketChannel");
+        } else {
+            throw new UnsupportedOperationException("Unix sockets not supported on " + os);
+        }
+
+        System.err.println("[bridge] Using Unix domain socket: " + socketPath);
+        return NettyServerBuilder.forAddress(address)
+                .channelType(channelType)
+                .bossEventLoopGroup(bossGroup)
+                .workerEventLoopGroup(workerGroup)
+                .addService(service)
+                .maxInboundMessageSize(64 * 1024 * 1024)
+                .flowControlWindow(4 * 1024 * 1024)
+                .initialFlowControlWindow(4 * 1024 * 1024)
+                .build()
+                .start();
+    }
+
+    /**
+     * Create a gRPC server on a random TCP port (default / fallback).
+     */
+    private static Server createTcpServer(BridgeServiceImpl service) throws Exception {
+        return NettyServerBuilder.forPort(0)
+                .addService(service)
+                .maxInboundMessageSize(64 * 1024 * 1024)
+                .flowControlWindow(4 * 1024 * 1024)
+                .initialFlowControlWindow(4 * 1024 * 1024)
+                .build()
+                .start();
+    }
+
+    /**
+     * Reflectively create a Netty EventLoopGroup. Uses reflection so the class
+     * compiles on all platforms — the native library only loads at runtime.
+     */
+    @SuppressWarnings("unchecked")
+    private static EventLoopGroup createEventLoopGroup(String className, int nThreads) throws Exception {
+        Class<?> clazz = Class.forName(className);
+        return (EventLoopGroup) clazz.getConstructor(int.class).newInstance(nThreads);
+    }
+
+    /**
+     * Reflectively load a Netty ServerChannel class.
+     */
+    @SuppressWarnings("unchecked")
+    private static Class<? extends ServerChannel> loadChannelClass(String className) throws Exception {
+        return (Class<? extends ServerChannel>) Class.forName(className);
     }
 
     /**
