@@ -59,10 +59,14 @@ echo ""
 echo "=== Running Maven verify to generate Surefire reports ==="
 echo "  This may take several minutes..."
 
+# Use -fae (fail-at-end) so Maven builds as many modules as possible.
+# Ignore exit code — some upstream modules may fail to compile (e.g. javacc
+# plugin bugs) but we still want to collect reports from modules that succeeded.
 mvn -B verify \
     -T4 \
+    -fae \
     -Dmaven.test.failure.ignore=true \
-    2>&1 | tail -20
+    2>&1 | tail -20 || true
 
 echo "  Maven verify complete."
 
