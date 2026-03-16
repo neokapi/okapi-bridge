@@ -183,18 +183,27 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
         };
     }
 
-    /** Number of subscribed (Block) events to accumulate before flushing a batch to the writer. */
-    private static final int BATCH_SIZE = 64;
-
     /** Number of parts to accumulate before sending a PartBatch message to Go. */
     private static final int SEND_BATCH_SIZE = 64;
 
+    /** Capacity of the event queue between the reader and writer threads. */
+    private static final int EVENT_QUEUE_CAPACITY = 256;
+
+    /** Sentinel event marking the end of the event stream. */
+    private static final Event END_OF_EVENTS = new Event(net.sf.okapi.common.EventType.NO_OP);
+
     /**
-     * Batched single-pass pipeline:
-     * One filter read — events are sent to Go as encountered, but writing is
-     * deferred until BATCH_SIZE subscribed events accumulate. By the time the
-     * batch is flushed, Go has had time to return translations for the earlier
-     * blocks, amortizing gRPC round-trip latency.
+     * Two-thread single-pass pipeline — one filter read, no double I/O.
+     *
+     * <p>Thread 1 (reader, this thread): reads events from the filter, sends
+     * subscribed parts to Go via gRPC, and enqueues events into an event queue.
+     *
+     * <p>Thread 2 (writer): dequeues events, applies translations from the
+     * translation queue, and writes to the filter writer.
+     *
+     * <p>The two threads are decoupled: the reader never blocks on translations
+     * and the writer never blocks on gRPC sends. The bounded event queue provides
+     * back-pressure so the reader doesn't outrun the writer by too much.
      */
     private void runPipeline(ProcessHeader header,
                              BlockingQueue<TranslationEntry> translationQueue,
@@ -210,7 +219,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             String outputLocale = header.getOutputLocale().isEmpty() ? targetLocale : header.getOutputLocale();
             boolean writeEnabled = header.hasOutput() || !header.getOutputLocale().isEmpty();
 
-            // Build subscription filter: which part types to send to Go.
+            // Build subscription filter.
             Set<Integer> subscribedTypes = new HashSet<>();
             for (int pt : header.getSubscribePartsList()) {
                 subscribedTypes.add(pt);
@@ -237,10 +246,9 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             System.err.println("[bridge] Opened filter " + filter.getClass().getName()
                     + " for " + inputFile.getName());
 
-            // Create writer BEFORE iterating (single-pass: no re-open needed).
+            // Create writer BEFORE iterating (same filter instance — single read).
             String outputPath = null;
             ByteArrayOutputStream outputStream = null;
-            StreamingTranslationApplier applier = null;
             if (writeEnabled) {
                 writer = filter.createFilterWriter();
                 if (writer == null) {
@@ -254,29 +262,48 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                     outputStream = new ByteArrayOutputStream();
                     writer.setOutput(outputStream);
                 }
-                applier = new StreamingTranslationApplier(
-                        translationQueue, LocaleId.fromString(outputLocale), stuckTimeoutSeconds);
             }
 
-            // Batched single-pass: accumulate events, flush when BATCH_SIZE subscribed events collected.
-            List<Event> batch = new ArrayList<>();
+            // ── Start writer thread ──
+            BlockingQueue<Event> eventQueue = writeEnabled
+                    ? new ArrayBlockingQueue<>(EVENT_QUEUE_CAPACITY) : null;
+            Future<Void> writerFuture = null;
+            if (writeEnabled) {
+                IFilterWriter writerRef = writer;
+                StreamingTranslationApplier applier = new StreamingTranslationApplier(
+                        translationQueue, LocaleId.fromString(outputLocale), stuckTimeoutSeconds);
+                writerFuture = filterPool.submit(() -> {
+                    Event ev;
+                    while ((ev = eventQueue.poll(stuckTimeoutSeconds, TimeUnit.SECONDS)) != END_OF_EVENTS) {
+                        if (ev == null) {
+                            throw new RuntimeException("Writer thread timed out waiting for events");
+                        }
+                        Event modified = applier.applyTranslations(ev);
+                        writerRef.handleEvent(modified);
+                    }
+                    return null;
+                });
+            }
+
+            // ── Reader thread (this thread): read events, send parts, enqueue ──
             List<PartMessage> sendBatch = new ArrayList<>(SEND_BATCH_SIZE);
-            int subscribedInBatch = 0;
             int totalSent = 0;
 
             while (filter.hasNext()) {
                 Event event = filter.next();
-                batch.add(event);
 
+                // Enqueue for writer thread.
+                if (eventQueue != null) {
+                    eventQueue.put(event);
+                }
+
+                // Send subscribed parts to Go.
                 PartDTO partDTO = EventConverter.convert(event);
-                boolean subscribed = false;
                 if (partDTO != null) {
-                    subscribed = sendAll || subscribedTypes.contains(partDTO.getPartType());
+                    boolean subscribed = sendAll || subscribedTypes.contains(partDTO.getPartType());
                     if (subscribed) {
-                        PartMessage protoMsg = ProtoAdapter.toProto(partDTO);
-                        sendBatch.add(protoMsg);
+                        sendBatch.add(ProtoAdapter.toProto(partDTO));
                         totalSent++;
-                        subscribedInBatch++;
                         if (sendBatch.size() >= SEND_BATCH_SIZE) {
                             respObserver.onNext(ProcessResponse.newBuilder()
                                     .setPartBatch(PartBatch.newBuilder()
@@ -286,22 +313,6 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                         }
                     }
                 }
-
-                // Flush write batch when enough subscribed events accumulated.
-                // Send batch MUST be flushed first so Go receives parts before
-                // the write phase blocks on the translation queue.
-                if (subscribedInBatch >= BATCH_SIZE) {
-                    if (!sendBatch.isEmpty()) {
-                        respObserver.onNext(ProcessResponse.newBuilder()
-                                .setPartBatch(PartBatch.newBuilder()
-                                        .addAllParts(sendBatch).build())
-                                .build());
-                        sendBatch.clear();
-                    }
-                    flushBatch(batch, writer, applier, writeEnabled);
-                    batch.clear();
-                    subscribedInBatch = 0;
-                }
             }
 
             // Flush remaining send batch.
@@ -310,12 +321,16 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                         .setPartBatch(PartBatch.newBuilder()
                                 .addAllParts(sendBatch).build())
                         .build());
-                sendBatch.clear();
             }
 
-            // Flush remaining write batch.
-            if (!batch.isEmpty()) {
-                flushBatch(batch, writer, applier, writeEnabled);
+            // Signal end of events to writer thread.
+            if (eventQueue != null) {
+                eventQueue.put(END_OF_EVENTS);
+            }
+
+            // Wait for writer thread to finish.
+            if (writerFuture != null) {
+                writerFuture.get();
             }
 
             // Close writer then filter.
@@ -326,7 +341,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             respObserver.onNext(ProcessResponse.newBuilder()
                     .setReadDone(ProcessReadDone.newBuilder().build()).build());
 
-            System.err.println("[bridge] Pipeline complete: " + totalSent + " parts (batched single-pass)");
+            System.err.println("[bridge] Pipeline complete: " + totalSent + " parts (single-pass)");
 
             // Build and send Complete.
             ProcessComplete.Builder complete = ProcessComplete.newBuilder();
@@ -336,15 +351,15 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 } else if (outputStream != null) {
                     complete.setOutput(ByteString.copyFrom(outputStream.toByteArray()));
                 }
-                System.err.println("[bridge] Process write complete");
             }
             sendCompleteMessage(respObserver, complete.build());
 
         } catch (Exception e) {
-            String errMsg = e.getMessage();
-            if (errMsg == null || errMsg.isEmpty()) errMsg = e.getClass().getSimpleName();
+            Throwable cause = e instanceof ExecutionException ? e.getCause() : e;
+            String errMsg = cause.getMessage();
+            if (errMsg == null || errMsg.isEmpty()) errMsg = cause.getClass().getSimpleName();
             System.err.println("[bridge] Process error: " + errMsg);
-            e.printStackTrace(System.err);
+            cause.printStackTrace(System.err);
             if (writer != null) {
                 try { writer.close(); } catch (Exception ignored) {}
             }
@@ -352,21 +367,6 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 try { filter.close(); } catch (Exception ignored) {}
             }
             sendComplete(respObserver, errMsg);
-        }
-    }
-
-    /**
-     * Write a batch of events to the filter writer. For subscribed events
-     * (TEXT_UNIT), the applier blocks until translations arrive from Go.
-     * Non-subscribed events pass through without blocking.
-     */
-    private static void flushBatch(List<Event> batch, IFilterWriter writer,
-                                    StreamingTranslationApplier applier,
-                                    boolean writeEnabled) {
-        if (!writeEnabled || writer == null) return;
-        for (Event event : batch) {
-            Event modified = applier.applyTranslations(event);
-            writer.handleEvent(modified);
         }
     }
 
