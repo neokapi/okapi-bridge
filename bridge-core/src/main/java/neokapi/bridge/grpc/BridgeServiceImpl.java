@@ -166,6 +166,16 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                         }
                         break;
 
+                    case CONTENT_BLOCK:
+                        handleContentBlock(request.getContentBlock());
+                        break;
+
+                    case CONTENT_BATCH:
+                        for (ContentBlock cb : request.getContentBatch().getBlocksList()) {
+                            handleContentBlock(cb);
+                        }
+                        break;
+
                     default:
                         break;
                 }
@@ -198,14 +208,32 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                     }
                 }
             }
+
+            private void handleContentBlock(ContentBlock cb) {
+                if (!cb.getTranslatable()) return;
+                String locale = header.getOutputLocale().isEmpty()
+                        ? header.getTargetLocale() : header.getOutputLocale();
+                List<FragmentDTO> fragments = extractContentBlockTargets(cb, locale);
+                if (fragments != null) {
+                    try {
+                        translationQueue.offer(
+                                new TranslationEntry(cb.getId(), fragments),
+                                stuckTimeoutSeconds, TimeUnit.SECONDS);
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+            }
         };
     }
 
-    /** Number of parts to accumulate before sending a PartBatch message to Go. */
-    private static final int SEND_BATCH_SIZE = 64;
+    /** Number of content blocks to accumulate before sending a ContentBlockBatch to Go. */
+    private static final int SEND_BATCH_SIZE = 1024;
 
-    /** Capacity of the event queue between the reader and writer threads. */
-    private static final int EVENT_QUEUE_CAPACITY = 256;
+    /** Capacity of the event queue between the reader and writer threads.
+     *  Must be larger than SEND_BATCH_SIZE to prevent the reader from blocking
+     *  on eventQueue.put() before it can send a batch to Go. */
+    private static final int EVENT_QUEUE_CAPACITY = 8192;
 
     /** Sentinel event marking the end of the event stream. */
     private static final Event END_OF_EVENTS = new Event(net.sf.okapi.common.EventType.NO_OP);
@@ -304,7 +332,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             }
 
             // ── Reader thread (this thread): read events, send parts, enqueue ──
-            List<PartMessage> sendBatch = new ArrayList<>(SEND_BATCH_SIZE);
+            List<ContentBlock> sendBatch = new ArrayList<>(SEND_BATCH_SIZE);
             int totalSent = 0;
 
             while (filter.hasNext()) {
@@ -320,12 +348,12 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 if (partDTO != null) {
                     boolean subscribed = sendAll || subscribedTypes.contains(partDTO.getPartType());
                     if (subscribed) {
-                        sendBatch.add(ProtoAdapter.toProto(partDTO));
+                        sendBatch.add(toContentBlock(partDTO));
                         totalSent++;
                         if (sendBatch.size() >= SEND_BATCH_SIZE) {
                             respObserver.onNext(ProcessResponse.newBuilder()
-                                    .setPartBatch(PartBatch.newBuilder()
-                                            .addAllParts(sendBatch).build())
+                                    .setContentBatch(ContentBlockBatch.newBuilder()
+                                            .addAllBlocks(sendBatch).build())
                                     .build());
                             sendBatch.clear();
                         }
@@ -336,8 +364,8 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             // Flush remaining send batch.
             if (!sendBatch.isEmpty()) {
                 respObserver.onNext(ProcessResponse.newBuilder()
-                        .setPartBatch(PartBatch.newBuilder()
-                                .addAllParts(sendBatch).build())
+                        .setContentBatch(ContentBlockBatch.newBuilder()
+                                .addAllBlocks(sendBatch).build())
                         .build());
             }
 
@@ -563,6 +591,92 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             }
         }
         return null;
+    }
+
+    /**
+     * Extract target fragments for the given locale from a ContentBlock proto.
+     */
+    private static List<FragmentDTO> extractContentBlockTargets(ContentBlock cb, String locale) {
+        for (TargetEntry target : cb.getTargetsList()) {
+            if (target.getLocale().equals(locale)) {
+                List<FragmentDTO> fragments = new ArrayList<>(target.getSegmentsCount());
+                for (SegmentMessage seg : target.getSegmentsList()) {
+                    if (seg.hasContent()) {
+                        fragments.add(ProtoAdapter.fromProto(seg.getContent()));
+                    }
+                }
+                return fragments;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Convert a PartDTO to a lightweight ContentBlock proto.
+     * Carries source/target/properties/annotations/displayHint but skips
+     * skeleton and is_referent for smaller wire size.
+     */
+    private static ContentBlock toContentBlock(PartDTO partDTO) {
+        BlockDTO block = partDTO.getBlock();
+        if (block == null) {
+            // Non-block parts: return a minimal ContentBlock with just the ID.
+            return ContentBlock.newBuilder().build();
+        }
+
+        ContentBlock.Builder cb = ContentBlock.newBuilder()
+                .setId(nullSafe(block.getId()))
+                .setName(nullSafe(block.getName()))
+                .setType(nullSafe(block.getType()))
+                .setMimeType(nullSafe(block.getMimeType()))
+                .setTranslatable(block.isTranslatable())
+                .setPreserveWhitespace(block.isPreserveWhitespace());
+
+        // Source segments
+        if (block.getSource() != null) {
+            for (SegmentDTO seg : block.getSource()) {
+                cb.addSource(ProtoAdapter.toProto(seg));
+            }
+        }
+
+        // Target segments
+        if (block.getTargets() != null) {
+            for (TargetDTO target : block.getTargets()) {
+                TargetEntry.Builder te = TargetEntry.newBuilder()
+                        .setLocale(nullSafe(target.getLocale()));
+                if (target.getSegments() != null) {
+                    for (SegmentDTO seg : target.getSegments()) {
+                        te.addSegments(ProtoAdapter.toProto(seg));
+                    }
+                }
+                cb.addTargets(te);
+            }
+        }
+
+        // Properties
+        if (block.getProperties() != null) {
+            cb.putAllProperties(block.getProperties());
+        }
+
+        // Annotations
+        if (block.getAnnotations() != null) {
+            for (Map.Entry<String, AnnotationEntryDTO> entry : block.getAnnotations().entrySet()) {
+                AnnotationEntryDTO ae = entry.getValue();
+                neokapi.bridge.proto.AnnotationEntry.Builder ab =
+                        neokapi.bridge.proto.AnnotationEntry.newBuilder()
+                                .setType(nullSafe(ae.getType()));
+                if (ae.getData() != null) {
+                    ab.setData(com.google.protobuf.ByteString.copyFrom(ae.getData()));
+                }
+                cb.putAnnotations(entry.getKey(), ab.build());
+            }
+        }
+
+        // Display hint
+        if (block.getDisplayHint() != null) {
+            cb.setDisplayHint(ProtoAdapter.toProto(block.getDisplayHint()));
+        }
+
+        return cb.build();
     }
 
     // ── Filter parameter helpers ───────────────────────────────────────────────
