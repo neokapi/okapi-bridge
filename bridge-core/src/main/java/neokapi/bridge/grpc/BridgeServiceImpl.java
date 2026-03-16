@@ -49,6 +49,8 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     private final OutputWriter outputWriter;
     private final CountDownLatch shutdownLatch = new CountDownLatch(1);
     private final ExecutorService filterPool;
+    private final ExecutorService writerPool;
+    private final java.util.concurrent.Semaphore pipelineSemaphore;
     private final long stuckTimeoutSeconds;
     private final Map<String, ParameterFlattener> flattenerCache = new ConcurrentHashMap<>();
     private final Map<String, JsonObject> schemaCache = new ConcurrentHashMap<>();
@@ -69,6 +71,10 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 new LinkedBlockingQueue<>(),
                 r -> { Thread t = new Thread(r, "filter-pool"); t.setDaemon(true); return t; }
         );
+        this.writerPool = Executors.newCachedThreadPool(
+                r -> { Thread t = new Thread(r, "writer-pool"); t.setDaemon(true); return t; }
+        );
+        this.pipelineSemaphore = new java.util.concurrent.Semaphore(concurrency);
         this.idleTimeoutNanos = TimeUnit.SECONDS.toNanos(idleTimeoutSeconds);
 
         if (idleTimeoutNanos > 0) {
@@ -124,6 +130,18 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
     @Override
     public StreamObserver<ProcessRequest> process(StreamObserver<ProcessResponse> responseObserver) {
+        // Limit concurrent pipelines to prevent JVM overload.
+        if (!pipelineSemaphore.tryAcquire()) {
+            responseObserver.onError(io.grpc.Status.RESOURCE_EXHAUSTED
+                    .withDescription("too many concurrent pipelines (limit: " +
+                            pipelineSemaphore.availablePermits() + ")")
+                    .asRuntimeException());
+            return new StreamObserver<ProcessRequest>() {
+                @Override public void onNext(ProcessRequest r) {}
+                @Override public void onCompleted() {}
+                @Override public void onError(Throwable t) {}
+            };
+        }
         streamStarted();
 
         return new StreamObserver<ProcessRequest>() {
@@ -272,7 +290,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 IFilterWriter writerRef = writer;
                 StreamingTranslationApplier applier = new StreamingTranslationApplier(
                         translationQueue, LocaleId.fromString(outputLocale), stuckTimeoutSeconds);
-                writerFuture = filterPool.submit(() -> {
+                writerFuture = writerPool.submit(() -> {
                     Event ev;
                     while ((ev = eventQueue.poll(stuckTimeoutSeconds, TimeUnit.SECONDS)) != END_OF_EVENTS) {
                         if (ev == null) {
@@ -465,6 +483,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             respObserver.onCompleted();
         }
         streamEnded();
+        pipelineSemaphore.release();
     }
 
     // ── Shutdown RPC ───────────────────────────────────────────────────────────
@@ -473,6 +492,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     public void shutdown(ShutdownRequest request, StreamObserver<ShutdownResponse> responseObserver) {
         System.err.println("[bridge] Shutdown requested");
         filterPool.shutdownNow();
+        writerPool.shutdownNow();
         responseObserver.onNext(ShutdownResponse.newBuilder().build());
         responseObserver.onCompleted();
         shutdownLatch.countDown();
