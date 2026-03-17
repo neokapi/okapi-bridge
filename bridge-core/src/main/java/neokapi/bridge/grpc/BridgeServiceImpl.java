@@ -210,18 +210,21 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             }
 
             private void handleContentBlock(ContentBlock cb) {
-                if (!cb.getTranslatable()) return;
-                String locale = header.getOutputLocale().isEmpty()
-                        ? header.getTargetLocale() : header.getOutputLocale();
-                List<FragmentDTO> fragments = extractContentBlockTargets(cb, locale);
-                if (fragments != null) {
-                    try {
-                        translationQueue.offer(
-                                new TranslationEntry(cb.getId(), fragments),
-                                stuckTimeoutSeconds, TimeUnit.SECONDS);
-                    } catch (InterruptedException e) {
-                        Thread.currentThread().interrupt();
-                    }
+                // Must offer an entry for EVERY block (including non-translatable),
+                // because the writer thread polls the queue for each TEXT_UNIT event.
+                // Non-translatable blocks get null fragments → writer skips them.
+                List<FragmentDTO> fragments = null;
+                if (cb.getTranslatable()) {
+                    String locale = header.getOutputLocale().isEmpty()
+                            ? header.getTargetLocale() : header.getOutputLocale();
+                    fragments = extractContentBlockTargets(cb, locale);
+                }
+                try {
+                    translationQueue.offer(
+                            new TranslationEntry(cb.getId(), fragments),
+                            stuckTimeoutSeconds, TimeUnit.SECONDS);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
         };
