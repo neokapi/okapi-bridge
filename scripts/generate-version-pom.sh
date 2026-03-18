@@ -320,7 +320,7 @@ cat >> "$OUTPUT_FILE" << EOF
             <!-- Assembly: fat JAR (config inherited from parent) -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
+                <artifactId>maven-shade-plugin</artifactId>
             </plugin>
         </plugins>
     </build>

@@ -11,7 +11,6 @@ import io.grpc.Server;
 import io.grpc.netty.NettyServerBuilder;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
-import io.netty.channel.unix.DomainSocketAddress;
 
 import java.net.SocketAddress;
 import java.util.List;
@@ -153,37 +152,26 @@ public class OkapiBridgeServer {
     }
 
     /**
-     * Create a gRPC server listening on a Unix domain socket. Uses Netty's
-     * native epoll (Linux) or kqueue (macOS) transport for zero-copy IPC.
-     * Falls back to TCP if native transport is unavailable.
+     * Create a gRPC server listening on a Unix domain socket.
+     * Uses Netty 4.1.110+ NioServerDomainSocketChannel which leverages
+     * Java 16+ NIO UnixDomainSocketAddress — no native kqueue/epoll needed.
+     * Works on Linux, macOS, and Windows 10+.
      */
+    @SuppressWarnings("unchecked")
     private static Server createUnixSocketServer(BridgeServiceImpl service, String socketPath) throws Exception {
-        SocketAddress address = new DomainSocketAddress(socketPath);
-        String os = System.getProperty("os.name", "").toLowerCase();
+        // Use Java 16+ UnixDomainSocketAddress (not Netty's DomainSocketAddress
+        // which is for native kqueue/epoll transports only).
+        SocketAddress address = java.net.UnixDomainSocketAddress.of(socketPath);
 
-        EventLoopGroup bossGroup;
-        EventLoopGroup workerGroup;
-        Class<? extends ServerChannel> channelType;
+        // NioServerDomainSocketChannel (Netty 4.1.110+) uses Java 16+ NIO.
+        // No native transport libraries needed — works on all platforms.
+        EventLoopGroup bossGroup = new io.netty.channel.nio.NioEventLoopGroup(1);
+        EventLoopGroup workerGroup = new io.netty.channel.nio.NioEventLoopGroup();
+        Class<? extends ServerChannel> channelType =
+                (Class<? extends ServerChannel>) Class.forName(
+                        "io.netty.channel.socket.nio.NioServerDomainSocketChannel");
 
-        if (os.contains("linux")) {
-            bossGroup = createEventLoopGroup(
-                    "io.netty.channel.epoll.EpollEventLoopGroup", 1);
-            workerGroup = createEventLoopGroup(
-                    "io.netty.channel.epoll.EpollEventLoopGroup", 0);
-            channelType = loadChannelClass(
-                    "io.netty.channel.epoll.EpollServerDomainSocketChannel");
-        } else if (os.contains("mac")) {
-            bossGroup = createEventLoopGroup(
-                    "io.netty.channel.kqueue.KQueueEventLoopGroup", 1);
-            workerGroup = createEventLoopGroup(
-                    "io.netty.channel.kqueue.KQueueEventLoopGroup", 0);
-            channelType = loadChannelClass(
-                    "io.netty.channel.kqueue.KQueueServerDomainSocketChannel");
-        } else {
-            throw new UnsupportedOperationException("Unix sockets not supported on " + os);
-        }
-
-        System.err.println("[bridge] Using Unix domain socket: " + socketPath);
+        System.err.println("[bridge] Using Unix domain socket (NIO): " + socketPath);
         return NettyServerBuilder.forAddress(address)
                 .channelType(channelType)
                 .bossEventLoopGroup(bossGroup)
@@ -207,24 +195,6 @@ public class OkapiBridgeServer {
                 .initialFlowControlWindow(4 * 1024 * 1024)
                 .build()
                 .start();
-    }
-
-    /**
-     * Reflectively create a Netty EventLoopGroup. Uses reflection so the class
-     * compiles on all platforms — the native library only loads at runtime.
-     */
-    @SuppressWarnings("unchecked")
-    private static EventLoopGroup createEventLoopGroup(String className, int nThreads) throws Exception {
-        Class<?> clazz = Class.forName(className);
-        return (EventLoopGroup) clazz.getConstructor(int.class).newInstance(nThreads);
-    }
-
-    /**
-     * Reflectively load a Netty ServerChannel class.
-     */
-    @SuppressWarnings("unchecked")
-    private static Class<? extends ServerChannel> loadChannelClass(String className) throws Exception {
-        return (Class<? extends ServerChannel>) Class.forName(className);
     }
 
     /**
