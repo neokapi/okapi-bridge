@@ -1,0 +1,25 @@
+{
+  "$id": "tu-filtering",
+  "title": "Text Unit Filtering",
+  "type": "object",
+  "x-component": {
+    "id": "tu-filtering",
+    "type": "step",
+    "displayName": "Text Unit Filtering",
+    "description": "Set the non-translatable flag to the text units accepted by the text unit filter specified in step's parameters. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.common.tufiltering.TuFilteringStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

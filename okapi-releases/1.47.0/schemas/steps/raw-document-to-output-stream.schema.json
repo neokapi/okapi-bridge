@@ -1,0 +1,24 @@
+{
+  "$id": "raw-document-to-output-stream",
+  "title": "RawDocument To OutputStream",
+  "type": "object",
+  "x-component": {
+    "id": "raw-document-to-output-stream",
+    "type": "step",
+    "displayName": "RawDocument To OutputStream",
+    "description": "Write a RawDocument to an output stream."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.common.RawDocumentToOutputStreamStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleRawDocument"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

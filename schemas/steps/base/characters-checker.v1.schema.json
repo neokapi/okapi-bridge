@@ -1,0 +1,49 @@
+{
+  "$id": "characters-checker",
+  "title": "Characters Quality Check",
+  "type": "object",
+  "x-component": {
+    "id": "characters-checker",
+    "type": "step",
+    "displayName": "Characters Quality Check",
+    "description": "Compare source and target for character inconsistencies. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.characterschecker.CharactersCheckerStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleStartSubDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "corruptedCharacters": {
+      "type": "boolean",
+      "default": true
+    },
+    "checkAllowedCharacters": {
+      "type": "boolean",
+      "default": true
+    },
+    "checkCharacters": {
+      "type": "boolean",
+      "default": false
+    },
+    "charset": {
+      "type": "string",
+      "default": "ISO-8859-1"
+    },
+    "extraCharsAllowed": {
+      "type": "string",
+      "default": ""
+    }
+  }
+}

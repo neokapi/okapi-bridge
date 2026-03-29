@@ -1,0 +1,61 @@
+{
+  "$id": "cleanup",
+  "title": "Cleanup",
+  "type": "object",
+  "x-component": {
+    "id": "cleanup",
+    "type": "step",
+    "displayName": "Cleanup",
+    "description": "Cleans strings by normalizing quotes, punctuation, etc. ready for further processing. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.cleanup.CleanupStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "normalizeQuotes": {
+      "type": "boolean",
+      "default": true,
+      "title": "Normalize quotation marks"
+    },
+    "checkCharacters": {
+      "type": "boolean",
+      "default": true,
+      "title": "Check for corrupt or unexpected characters"
+    },
+    "matchRegexExpressions": {
+      "type": "boolean",
+      "default": true,
+      "title": "Mark segments matching default regular expressions for removal"
+    },
+    "matchUserRegex": {
+      "type": "boolean",
+      "default": true,
+      "title": "Mark segments matching user defined regular expressions for removal"
+    },
+    "pruneTextUnit": {
+      "type": "boolean",
+      "default": true,
+      "title": "Remove unnecessary segments from text unit"
+    },
+    "normalizePunctuations": {
+      "type": "boolean",
+      "default": false,
+      "title": "Standardize spaces before and after certain punctuation marks to English writing style."
+    },
+    "keepCrNlIntact": {
+      "type": "boolean",
+      "default": false,
+      "title": "Keep CR and NL characters intact. They are not normalized to an ASCII space with spaces and tabs."
+    }
+  }
+}

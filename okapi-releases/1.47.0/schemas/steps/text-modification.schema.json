@@ -1,0 +1,74 @@
+{
+  "$id": "text-modification",
+  "title": "Text Modification",
+  "type": "object",
+  "x-component": {
+    "id": "text-modification",
+    "type": "step",
+    "displayName": "Text Modification",
+    "description": "Apply various modifications to the text units content of a document. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.textmodification.TextModificationStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "type": {
+      "type": "integer",
+      "default": 0
+    },
+    "addPrefix": {
+      "type": "boolean",
+      "default": false
+    },
+    "prefix": {
+      "type": "string",
+      "default": "{START_"
+    },
+    "addSuffix": {
+      "type": "boolean",
+      "default": false
+    },
+    "suffix": {
+      "type": "string",
+      "default": "_END}"
+    },
+    "applyToExistingTarget": {
+      "type": "boolean",
+      "default": false
+    },
+    "addName": {
+      "type": "boolean",
+      "default": false
+    },
+    "addID": {
+      "type": "boolean",
+      "default": false
+    },
+    "markSegments": {
+      "type": "boolean",
+      "default": false
+    },
+    "applyToBlankEntries": {
+      "type": "boolean",
+      "default": true
+    },
+    "expand": {
+      "type": "boolean",
+      "default": false
+    },
+    "script": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

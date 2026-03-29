@@ -1,0 +1,52 @@
+{
+  "$id": "merging",
+  "title": "Rainbow Translation Kit Merging",
+  "type": "object",
+  "x-component": {
+    "id": "merging",
+    "type": "step",
+    "displayName": "Rainbow Translation Kit Merging",
+    "description": "Post-process a Rainbow translation kit. Expects: filter events. Sends back: filter events or raw documents."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.rainbowkit.postprocess.MergingStep",
+    "parameterMappings": [
+      "FILTER_CONFIGURATION_MAPPER",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartDocument"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "preserveSegmentation": {
+      "type": "boolean",
+      "default": false,
+      "title": "Preserve the segmentation for the next steps"
+    },
+    "returnRawDocument": {
+      "type": "boolean",
+      "default": false,
+      "title": "Return raw documents instead of filter events"
+    },
+    "forceTargetLocale": {
+      "type": "boolean",
+      "default": false,
+      "title": "Specify the target locale from the tool instead of the manifest"
+    },
+    "overrideOutputPath": {
+      "type": "string",
+      "default": "",
+      "title": "Override the output path (leave empty to use the path from the manifest)"
+    },
+    "copyCodeMetadata": {
+      "type": "boolean",
+      "default": true,
+      "title": "Copy the code metadata from the original file"
+    }
+  }
+}

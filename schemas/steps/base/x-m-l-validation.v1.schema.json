@@ -1,0 +1,49 @@
+{
+  "$id": "x-m-l-validation",
+  "title": "XML Validation",
+  "type": "object",
+  "x-component": {
+    "id": "x-m-l-validation",
+    "type": "step",
+    "displayName": "XML Validation",
+    "description": "Validate XML documents. Expects: raw XML document. Sends back: raw XML document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.xmlvalidation.XMLValidationStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleRawDocument",
+      "handleStartBatch"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "schemaPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path of the XML Schema.",
+      "title": "Path of the XML Schema"
+    },
+    "validate": {
+      "type": "boolean",
+      "default": false,
+      "title": "Validate the documents structure [Well-formedness is always checked]"
+    },
+    "validationType": {
+      "type": "integer",
+      "default": 0,
+      "description": "Indicates which validation to use",
+      "title": "Type of validation"
+    },
+    "useFoundDTD": {
+      "type": "boolean",
+      "default": true,
+      "title": "Use DTD declarations found in the input documents"
+    }
+  }
+}

@@ -1,0 +1,65 @@
+{
+  "$id": "general-checker",
+  "title": "General Quality Check",
+  "type": "object",
+  "x-component": {
+    "id": "general-checker",
+    "type": "step",
+    "displayName": "General Quality Check",
+    "description": "Compare source and target for general quality. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.generalchecker.GeneralCheckerStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleStartSubDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "leadingWS": {
+      "type": "boolean",
+      "default": true
+    },
+    "trailingWS": {
+      "type": "boolean",
+      "default": true
+    },
+    "emptyTarget": {
+      "type": "boolean",
+      "default": true
+    },
+    "emptySource": {
+      "type": "boolean",
+      "default": true
+    },
+    "targetSameAsSource": {
+      "type": "boolean",
+      "default": true
+    },
+    "targetSameAsSourceForSameLanguage": {
+      "type": "boolean",
+      "default": true
+    },
+    "targetSameAsSourceWithCodes": {
+      "type": "boolean",
+      "default": true
+    },
+    "doubledWord": {
+      "type": "boolean",
+      "default": true
+    },
+    "doubledWordExceptions": {
+      "type": "string",
+      "default": "sie;vous;nous"
+    }
+  }
+}

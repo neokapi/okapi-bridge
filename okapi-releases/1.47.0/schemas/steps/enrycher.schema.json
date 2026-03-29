@@ -1,0 +1,37 @@
+{
+  "$id": "enrycher",
+  "title": "Enrycher",
+  "type": "object",
+  "x-component": {
+    "id": "enrycher",
+    "type": "step",
+    "displayName": "Enrycher",
+    "description": "Applies Enrycher ITS annotations to the source content. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.enrycher.EnrycherStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "baseUrl": {
+      "type": "string",
+      "default": "http://aidemo.ijs.si/mlw/",
+      "title": "URL of the Enrycher Web service"
+    },
+    "maxEvents": {
+      "type": "integer",
+      "default": 20,
+      "description": "Number of events to store before sending a query",
+      "title": "Events buffer"
+    }
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "$id": "paragraph-aligner",
+  "title": "Paragraph Alignment",
+  "type": "object",
+  "x-component": {
+    "id": "paragraph-aligner",
+    "type": "step",
+    "displayName": "Paragraph Alignment",
+    "description": "Align paragraphs (text units) between a source and a target document. Only TextUnit events are passed along - all other events are lost"
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.paraaligner.ParagraphAlignerStep",
+    "parameterMappings": [
+      "FILTER_CONFIGURATION_MAPPER",
+      "SECOND_INPUT_RAWDOC",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleDocumentPart",
+      "handleEndBatch",
+      "handleEndDocument",
+      "handleEndGroup",
+      "handleEndSubDocument",
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleStartGroup",
+      "handleStartSubDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "outputOneToOneMatchesOnly": {
+      "type": "boolean",
+      "default": true,
+      "description": "Ouput only 1-1 aligned paragraphs?",
+      "title": "Output 1-1 Matches Only?"
+    },
+    "useSkeletonAlignment": {
+      "type": "boolean",
+      "default": false,
+      "description": "Use Skeleton alignment? (Experimental)",
+      "title": "Use Skeleton Alignment? (Experimental)"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$id": "g-m-x-protected-word-count",
+  "title": "GMX Protected Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "g-m-x-protected-word-count",
+    "type": "step",
+    "displayName": "GMX Protected Word Count",
+    "description": "An accumulation of the word count for text that has been marked as 'protected', or otherwise not translatable (XLIFF text enclosed in <mrk mtype=\"protected\"> elements). Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.gmx.GMXProtectedWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

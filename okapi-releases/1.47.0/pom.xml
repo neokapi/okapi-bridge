@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
     Okapi Bridge - Build for Okapi 1.47.0
-    Generated: 2026-03-29T08:56:11Z
+    Generated: 2026-03-29T09:24:23Z
 
     Uses okapi-lib (Okapi SDK) which bundles all filters and steps.
     Inherits infrastructure deps (gRPC, Gson, etc.) and plugin config from parent.

@@ -1,0 +1,22 @@
+{
+  "$id": "phrase-assembled-word-count",
+  "title": "Phrase Assembled Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "phrase-assembled-word-count",
+    "type": "step",
+    "displayName": "Phrase Assembled Word Count",
+    "description": "Matches assembled from phrases in the TM or other resources (different algorithms could be used). Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.PhraseAssembledWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

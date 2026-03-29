@@ -1,0 +1,22 @@
+{
+  "$id": "g-m-x-repetition-matched-character-count",
+  "title": "GMX Repetition Matched Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "g-m-x-repetition-matched-character-count",
+    "type": "step",
+    "displayName": "GMX Repetition Matched Character Count",
+    "description": "An accumulation of the character count for repeating text units that have not been matched in any other form. Repetition matching is deemed to take precedence over fuzzy matching. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.gmx.GMXRepetitionMatchedCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

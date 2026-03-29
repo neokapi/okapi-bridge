@@ -1,0 +1,51 @@
+{
+  "$id": "image-modification",
+  "title": "Image Modification",
+  "type": "object",
+  "x-component": {
+    "id": "image-modification",
+    "type": "step",
+    "displayName": "Image Modification",
+    "description": "Create a modified copy of image files. Expects: image raw document. Sends back: image raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.imagemodification.ImageModificationStep",
+    "parameterMappings": [
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleRawDocument",
+      "handleStartBatchItem"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "scaleHeight": {
+      "type": "integer",
+      "default": 50,
+      "description": "Height percentage (must be greater than 0.",
+      "title": "Percentage of the original height"
+    },
+    "scaleWidth": {
+      "type": "integer",
+      "default": 50,
+      "description": "Width percentage (must be greater than 0.",
+      "title": "Percentage of the original width"
+    },
+    "format": {
+      "type": "string",
+      "default": "",
+      "description": "Format of the output files.",
+      "title": "Output format"
+    },
+    "makeGray": {
+      "type": "boolean",
+      "default": false,
+      "title": "Convert to gray scale"
+    }
+  }
+}

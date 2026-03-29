@@ -1,0 +1,45 @@
+{
+  "$id": "r-t-f-conversion",
+  "title": "RTF Conversion",
+  "type": "object",
+  "x-component": {
+    "id": "r-t-f-conversion",
+    "type": "step",
+    "displayName": "RTF Conversion",
+    "description": "Remove the RTF layer from a text-based file. Expects: raw document. Sends back: raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.rtfconversion.RTFConversionStep",
+    "parameterMappings": [
+      "OUTPUT_ENCODING",
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleRawDocument",
+      "handleStartBatch"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "bomOnUTF8": {
+      "type": "boolean",
+      "default": true,
+      "title": "Use Byte-Order-Mark for UTF-8 output"
+    },
+    "lineBreak": {
+      "type": "string",
+      "default": "$0a$",
+      "description": "Select the type of line-break to use in the output.",
+      "title": "Type of line-break to use"
+    },
+    "updateEncoding": {
+      "type": "boolean",
+      "default": true,
+      "title": "Try to update the encoding declarations (when detected)"
+    }
+  }
+}

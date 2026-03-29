@@ -1,0 +1,75 @@
+{
+  "$id": "id-based-aligner",
+  "title": "Id-Based Aligner",
+  "type": "object",
+  "x-component": {
+    "id": "id-based-aligner",
+    "type": "step",
+    "displayName": "Id-Based Aligner",
+    "description": "Align text units in two id-based files (e.g. Java properties). Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.idaligner.IdBasedAlignerStep",
+    "parameterMappings": [
+      "EXECUTION_CONTEXT",
+      "FILTER_CONFIGURATION_MAPPER",
+      "SECOND_INPUT_RAWDOC",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleEndDocument",
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "tmxOutputPath": {
+      "type": "string",
+      "default": "aligned.tmx",
+      "description": "Full path of the output TMX file",
+      "title": "TMX output path"
+    },
+    "generateTMX": {
+      "type": "boolean",
+      "default": false,
+      "description": "If generateTMX is false generate bilingual TextUnits, otherwise (true) output a TMX file",
+      "title": "Generate a TMX file:"
+    },
+    "replaceWithSource": {
+      "type": "boolean",
+      "default": false,
+      "description": "If no target text is available, use the source text",
+      "title": "Fall back to source text"
+    },
+    "copyToTarget": {
+      "type": "boolean",
+      "default": false,
+      "description": "Copy to/over the target (an annotation will still be created if requested). WARNING: Copied target will not be segmented and any exisiting target will be lost.",
+      "title": "Copy to/over the target (WARNING: Copied target will not be segmented)"
+    },
+    "storeAsAltTranslation": {
+      "type": "boolean",
+      "default": true,
+      "description": "Store the matched target as an alternate translation so that subsequent steps can see it.",
+      "title": "Create an alternate translation annotation"
+    },
+    "suppressTusWithNoTarget": {
+      "type": "boolean",
+      "default": false,
+      "description": "Do not pass on any TUs for which no targets could be found.",
+      "title": "Suppress TUs with no target"
+    },
+    "useTextUnitIds": {
+      "type": "boolean",
+      "default": false,
+      "description": "Align based on TextUnit IDs, rather than resource names.",
+      "title": "Align based on TextUnit IDs"
+    }
+  }
+}

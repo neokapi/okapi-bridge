@@ -1,0 +1,24 @@
+{
+  "$id": "resource-simplifier",
+  "title": "Resource Simplifier",
+  "type": "object",
+  "x-component": {
+    "id": "resource-simplifier",
+    "type": "step",
+    "displayName": "Resource Simplifier",
+    "description": "Simplify resources. Simplification algorythm is format-specific. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.common.ResourceSimplifierStep",
+    "parameterMappings": [
+      "OUTPUT_ENCODING",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE",
+      "TARGET_LOCALES"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

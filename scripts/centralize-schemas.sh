@@ -13,8 +13,8 @@ ROOT_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$ROOT_DIR"
 
 SCHEMAS_DIR="schemas"
-BASE_DIR="$SCHEMAS_DIR/base"
-COMPOSITE_DIR="$SCHEMAS_DIR/composite"
+BASE_DIR="$SCHEMAS_DIR/filters/base"
+COMPOSITE_DIR="$SCHEMAS_DIR/filters/composite"
 OVERRIDES_DIR="schemagen/overrides"
 VERSIONS_FILE="schemas/versions.json"
 
@@ -37,7 +37,7 @@ filter_to_kind() {
 # Initialize versions.json if needed
 init_versions_file() {
     if [[ ! -f "$VERSIONS_FILE" ]]; then
-        echo '{"$schema":"https://neokapi.dev/schemas/schema-versions.json","generatedAt":"","filters":{}}' > "$VERSIONS_FILE"
+        echo '{"$schema":"https://neokapi.dev/schemas/schema-versions.json","generatedAt":"","filters":{},"steps":{}}' > "$VERSIONS_FILE"
     fi
 }
 
@@ -300,7 +300,7 @@ regenerate_all() {
 }
 
 # Regenerate composites only (when overrides change)
-# Uses existing bases in schemas/base/ and re-merges with current overrides
+# Uses existing bases in schemas/filters/base/ and re-merges with current overrides
 # Derives okapiVersions from the actual per-version source schemas (ground truth)
 regenerate_composites() {
     echo "Regenerating composite schemas from existing bases..."
@@ -651,6 +651,112 @@ add_version() {
     echo "Added Okapi $version: $new_bases new schema versions, $updated unchanged"
 }
 
+# ============================================================================
+# Step Schema Versioning
+# ============================================================================
+
+STEPS_BASE_DIR="$SCHEMAS_DIR/steps/base"
+
+# Get step version for a step/hash combination
+get_step_version() {
+    local step_id="$1"
+    local hash="$2"
+    jq -r --arg s "$step_id" --arg h "$hash" '
+        .steps[$s].versions[]? | select(.hash == $h) | .version // empty
+    ' "$VERSIONS_FILE" | head -1
+}
+
+# Get next step version number
+get_next_step_version() {
+    local step_id="$1"
+    jq -r --arg s "$step_id" '
+        (.steps[$s].versions // []) | map(.version) | max // 0 | . + 1
+    ' "$VERSIONS_FILE"
+}
+
+# Add a single Okapi version's step schemas incrementally
+add_step_version() {
+    local version="$1"
+    local steps_dir="okapi-releases/$version/schemas/steps"
+
+    if [[ ! -d "$steps_dir" ]]; then
+        echo "No step schemas found for Okapi $version, skipping step versioning"
+        return
+    fi
+
+    echo "Adding step schemas for Okapi $version..."
+
+    # Ensure directories and steps key exist
+    mkdir -p "$STEPS_BASE_DIR"
+
+    # Initialize steps key in versions.json if missing
+    if ! jq -e '.steps' "$VERSIONS_FILE" > /dev/null 2>&1; then
+        jq '. + {steps: {}}' "$VERSIONS_FILE" > "$VERSIONS_FILE.tmp" && mv "$VERSIONS_FILE.tmp" "$VERSIONS_FILE"
+    fi
+
+    local new_steps=0
+    local updated=0
+
+    for schema_file in "$steps_dir"/*.schema.json; do
+        [[ -f "$schema_file" ]] || continue
+
+        local filename
+        filename=$(basename "$schema_file")
+        local step_id="${filename%.schema.json}"
+
+        # Compute hash of schema content
+        local hash
+        hash=$("$SCRIPT_DIR/compute-hash.sh" "$schema_file")
+
+        # Check if this hash already exists
+        local existing_version
+        existing_version=$(get_step_version "$step_id" "$hash")
+
+        if [[ -n "$existing_version" ]]; then
+            # Same content — just add Okapi version to existing entry
+            jq --arg s "$step_id" --arg h "$hash" --arg ov "$version" '
+                .steps[$s].versions |= map(
+                    if .hash == $h then
+                        .okapiVersions |= (. + [$ov] | unique | sort_by(. | split(".") | map(tonumber? // .)))
+                    else .
+                    end
+                )
+            ' "$VERSIONS_FILE" > "$VERSIONS_FILE.tmp" && mv "$VERSIONS_FILE.tmp" "$VERSIONS_FILE"
+
+            echo "  = $step_id v$existing_version (unchanged, added $version)"
+            updated=$((updated + 1))
+        else
+            # New version needed
+            local new_version
+            new_version=$(get_next_step_version "$step_id")
+
+            # Copy to versioned base location
+            local base_output="$STEPS_BASE_DIR/${step_id}.v${new_version}.schema.json"
+            cp "$schema_file" "$base_output"
+
+            # Add to versions.json
+            jq --arg s "$step_id" \
+               --argjson v "$new_version" \
+               --arg h "$hash" \
+               --arg ov "$version" \
+               --arg intro "$version" '
+                .steps[$s] //= {versions: []} |
+                .steps[$s].versions += [{
+                    version: $v,
+                    hash: $h,
+                    introducedInOkapi: $intro,
+                    okapiVersions: [$ov]
+                }]
+            ' "$VERSIONS_FILE" > "$VERSIONS_FILE.tmp" && mv "$VERSIONS_FILE.tmp" "$VERSIONS_FILE"
+
+            echo "  + $step_id v$new_version (new in $version)"
+            new_steps=$((new_steps + 1))
+        fi
+    done
+
+    echo "Step schemas for Okapi $version: $new_steps new, $updated unchanged"
+}
+
 # Parse command
 case "${1:-}" in
     regenerate-composites)
@@ -662,6 +768,13 @@ case "${1:-}" in
             exit 1
         fi
         add_version "$2"
+        ;;
+    add-step-version)
+        if [[ -z "${2:-}" ]]; then
+            echo "Usage: $0 add-step-version <okapi-version>" >&2
+            exit 1
+        fi
+        add_step_version "$2"
         ;;
     *)
         regenerate_all

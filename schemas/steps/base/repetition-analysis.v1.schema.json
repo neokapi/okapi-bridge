@@ -1,0 +1,26 @@
+{
+  "$id": "repetition-analysis",
+  "title": "Repetition Analysis",
+  "type": "object",
+  "x-component": {
+    "id": "repetition-analysis",
+    "type": "step",
+    "displayName": "Repetition Analysis",
+    "description": "Analyzes repetitions in input documents. Adds AltTranslationsAnnotation and RepetitiveSegmentAnnotation to a repetitive segment. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.repetitionanalysis.RepetitionAnalysisStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndDocument",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$id": "fuzzy-unique-id-match-character-count",
+  "title": "Fuzzy Unique Id Match Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "fuzzy-unique-id-match-character-count",
+    "type": "step",
+    "displayName": "Fuzzy Unique Id Match Character Count",
+    "description": "Matches FUZZY and matches a unique id. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.FuzzyUniqueIdMatchCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

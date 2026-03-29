@@ -1,0 +1,24 @@
+{
+  "$id": "convert-segments-to-text-units",
+  "title": "Segments to Text Units Converter",
+  "type": "object",
+  "x-component": {
+    "id": "convert-segments-to-text-units",
+    "type": "step",
+    "displayName": "Segments to Text Units Converter",
+    "description": "Convert each aligned segment pair (for all target locales) to its own complete text unit Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.common.ConvertSegmentsToTextUnitsStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

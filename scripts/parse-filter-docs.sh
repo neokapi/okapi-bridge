@@ -13,7 +13,7 @@ DOCS_DIR="${1:-filter-docs}"
 RAW_DIR="$DOCS_DIR/raw"
 PARSED_DIR="$DOCS_DIR/parsed"
 JSON_SCHEMA="$SCRIPT_DIR/filter-doc-schema.json"
-COMPOSITE_DIR="$REPO_ROOT/schemas/composite"
+COMPOSITE_DIR="$REPO_ROOT/schemas/filters/composite"
 VERSIONS_FILE="$REPO_ROOT/schemas/versions.json"
 
 # Check prerequisites

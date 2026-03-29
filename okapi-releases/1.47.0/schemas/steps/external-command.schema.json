@@ -1,0 +1,41 @@
+{
+  "$id": "external-command",
+  "title": "External Command",
+  "type": "object",
+  "x-component": {
+    "id": "external-command",
+    "type": "step",
+    "displayName": "External Command",
+    "description": "Execute an external command line."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.externalcommand.ExternalCommandStep",
+    "parameterMappings": [
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleRawDocument",
+      "handleStartBatch"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "command": {
+      "type": "string",
+      "default": "",
+      "description": "Command path to execute",
+      "title": "Command line"
+    },
+    "timeout": {
+      "type": "integer",
+      "default": -1,
+      "description": "Timeout in seconds after which the command is cancelled (use -1 for no timeout)",
+      "title": "Timeout"
+    }
+  }
+}

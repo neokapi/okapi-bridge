@@ -1,0 +1,39 @@
+{
+  "$id": "xliff-joiner",
+  "title": "XLIFF Joiner",
+  "type": "object",
+  "x-component": {
+    "id": "xliff-joiner",
+    "type": "step",
+    "displayName": "XLIFF Joiner",
+    "description": "Join multiple XLIFF documents into one. Expects: raw document. Sends back: raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.xliffsplitter.XliffJoinerStep",
+    "parameterMappings": [
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleRawDocument",
+      "handleStartBatch"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "inputFileMarker": {
+      "type": "string",
+      "default": "_PART",
+      "title": "Input file marker"
+    },
+    "outputFileMarker": {
+      "type": "string",
+      "default": "_CONCAT",
+      "title": "Output file marker"
+    }
+  }
+}

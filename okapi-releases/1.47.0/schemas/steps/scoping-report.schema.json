@@ -1,0 +1,210 @@
+{
+  "$id": "scoping-report",
+  "title": "Scoping Report",
+  "type": "object",
+  "x-component": {
+    "id": "scoping-report",
+    "type": "step",
+    "displayName": "Scoping Report",
+    "description": "Create a template-based scoping report based on word count and leverage annotations. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.scopingreport.ScopingReportStep",
+    "parameterMappings": [
+      "INPUT_URI",
+      "OUTPUT_ENCODING",
+      "OUTPUT_URI",
+      "ROOT_DIRECTORY",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleEndBatchItem",
+      "handleEndDocument",
+      "handleStartBatch",
+      "handleStartBatchItem",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "projectName": {
+      "type": "string",
+      "default": "My Project",
+      "description": "Name of the project to be displayed in the report",
+      "title": "Name of the project"
+    },
+    "customTemplateURI": {
+      "type": "string",
+      "default": "",
+      "description": "URI of the report template",
+      "title": "Custom template URI:"
+    },
+    "customTemplateString": {
+      "type": "string",
+      "default": "",
+      "description": "String for directly specifying the report template",
+      "title": "Custom template string:"
+    },
+    "outputPath": {
+      "type": "string",
+      "default": "${rootDir}/scoping_report.html",
+      "description": "Full path of the report to generate",
+      "title": "Output path:"
+    },
+    "countAsNonTranslatable_GMXProtected": {
+      "type": "boolean",
+      "default": true,
+      "description": "Count as non-translatable the words/characters in PROJECT_GMX_PROTECTED_WORD_COUNT and ITEM_GMX_PROTECTED_WORD_COUNT categories",
+      "title": "GMX Protected Count"
+    },
+    "countAsNonTranslatable_GMXExactMatched": {
+      "type": "boolean",
+      "default": true,
+      "description": "Count as non-translatable the words/characters in PROJECT_GMX_EXACT_MATCHED_WORD_COUNT and ITEM_GMX_EXACT_MATCHED_WORD_COUNT categories",
+      "title": "GMX Exact Matched Count"
+    },
+    "countAsNonTranslatable_GMXLeveragedMatched": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words/characters in PROJECT_GMX_LEVERAGED_MATCHED_WORD_COUNT and ITEM_GMX_LEVERAGED_MATCHED_WORD_COUNT categories",
+      "title": "GMX Leveraged Matched Count"
+    },
+    "countAsNonTranslatable_GMXRepetitionMatched": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words/characters in PROJECT_GMX_REPETITION_MATCHED_WORD_COUNT and ITEM_GMX_REPETITION_MATCHED_WORD_COUNT categories",
+      "title": "GMX Repetition Matched Count"
+    },
+    "countAsNonTranslatable_GMXFuzzyMatch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words/characters in PROJECT_GMX_FUZZY_MATCHED_WORD_COUNT and ITEM_GMX_FUZZY_MATCHED_WORD_COUNT categories",
+      "title": "GMX Fuzzy Matched Count"
+    },
+    "countAsNonTranslatable_GMXAlphanumericOnlyTextUnit": {
+      "type": "boolean",
+      "default": true,
+      "description": "Count as non-translatable the words/characters in PROJECT_GMX_ALPHANUMERIC_ONLY_TEXT_UNIT_WORD_COUNT and ITEM_GMX_ALPHANUMERIC_ONLY_TEXT_UNIT_WORD_COUNT categories",
+      "title": "GMX Alphanumeric Only Text Unit Count"
+    },
+    "countAsNonTranslatable_GMXNumericOnlyTextUnit": {
+      "type": "boolean",
+      "default": true,
+      "description": "Count as non-translatable the words/characters in PROJECT_GMX_NUMERIC_ONLY_TEXT_UNIT_WORD_COUNT and ITEM_GMX_NUMERIC_ONLY_TEXT_UNIT_WORD_COUNT categories",
+      "title": "GMX Numeric Only Text Unit Count"
+    },
+    "countAsNonTranslatable_GMXMeasurementOnlyTextUnit": {
+      "type": "boolean",
+      "default": true,
+      "description": "Count as non-translatable the words/characters in PROJECT_GMX_MEASUREMENT_ONLY_TEXT_UNIT_WORD_COUNT and ITEM_GMX_MEASUREMENT_ONLY_TEXT_UNIT_WORD_COUNT categories",
+      "title": "GMX Measurement Only Text Unit Count"
+    },
+    "countAsNonTranslatable_ExactUniqueIdMatch": {
+      "type": "boolean",
+      "default": true,
+      "description": "Count as non-translatable the words in PROJECT_EXACT_UNIQUE_ID and ITEM_EXACT_UNIQUE_ID categories",
+      "title": "Exact Unique Id Match"
+    },
+    "countAsNonTranslatable_ExactPreviousVersionMatch": {
+      "type": "boolean",
+      "default": true,
+      "description": "Count as non-translatable the words in PROJECT_EXACT_PREVIOUS_VERSION and ITEM_EXACT_PREVIOUS_VERSION categories",
+      "title": "Exact Previous Version Match"
+    },
+    "countAsNonTranslatable_ExactLocalContextMatch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_EXACT_LOCAL_CONTEXT and ITEM_EXACT_LOCAL_CONTEXT categories",
+      "title": "Exact Local Context Match"
+    },
+    "countAsNonTranslatable_ExactDocumentContextMatch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_EXACT_DOCUMENT_CONTEXT and ITEM_EXACT_DOCUMENT_CONTEXT categories",
+      "title": "Exact Document Context Match"
+    },
+    "countAsNonTranslatable_ExactStructuralMatch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_EXACT_STRUCTURAL and ITEM_EXACT_STRUCTURAL categories",
+      "title": "Exact Structural Match"
+    },
+    "countAsNonTranslatable_ExactMatch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_EXACT and ITEM_EXACT categories",
+      "title": "Exact Match"
+    },
+    "countAsNonTranslatable_ExactTextOnlyPreviousVersionMatch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_EXACT_TEXT_ONLY_PREVIOUS_VERSION and ITEM_EXACT_TEXT_ONLY_PREVIOUS_VERSION categories",
+      "title": "Exact Text Only Previous Version Match"
+    },
+    "countAsNonTranslatable_ExactTextOnlyUniqueIdMatch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_EXACT_TEXT_ONLY_UNIQUE_ID and ITEM_EXACT_TEXT_ONLY_UNIQUE_ID categories",
+      "title": "Exact Text Only Unique Id Match"
+    },
+    "countAsNonTranslatable_ExactTextOnly": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_EXACT_TEXT_ONLY and ITEM_EXACT_TEXT_ONLY categories",
+      "title": "Exact Text Only"
+    },
+    "countAsNonTranslatable_ExactRepaired": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_EXACT_REPAIRED and ITEM_EXACT_REPAIRED categories",
+      "title": "Exact Repaired"
+    },
+    "countAsNonTranslatable_FuzzyPreviousVersionMatch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_FUZZY_PREVIOUS_VERSION and ITEM_FUZZY_PREVIOUS_VERSION categories",
+      "title": "Fuzzy Previous Version Match"
+    },
+    "countAsNonTranslatable_FuzzyUniqueIdMatch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_FUZZY_UNIQUE_ID and ITEM_FUZZY_UNIQUE_ID categories",
+      "title": "Fuzzy Unique Id Match"
+    },
+    "countAsNonTranslatable_FuzzyMatch": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_FUZZY and ITEM_FUZZY categories",
+      "title": "Fuzzy Match"
+    },
+    "countAsNonTranslatable_FuzzyRepaired": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_FUZZY_REPAIRED and ITEM_FUZZY_REPAIRED categories",
+      "title": "Fuzzy Repaired"
+    },
+    "countAsNonTranslatable_PhraseAssembled": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_PHRASE_ASSEMBLED and ITEM_PHRASE_ASSEMBLED categories",
+      "title": "Phrase Assembled"
+    },
+    "countAsNonTranslatable_MT": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_MT and ITEM_MT categories",
+      "title": "MT"
+    },
+    "countAsNonTranslatable_Concordance": {
+      "type": "boolean",
+      "default": false,
+      "description": "Count as non-translatable the words in PROJECT_CONCORDANCE and ITEM_CONCORDANCE categories",
+      "title": "Concordance"
+    }
+  }
+}

@@ -1,6 +1,6 @@
 {
   "$schema": "https://neokapi.dev/schemas/schema-versions.json",
-  "generatedAt": "2026-03-13T06:58:09Z",
+  "generatedAt": "2026-03-29T09:25:51Z",
   "filters": {
     "okf_archive": {
       "versions": [
@@ -2509,6 +2509,1472 @@
             "1.48.0"
           ],
           "introducedInOkapi": "1.48.0"
+        }
+      ]
+    }
+  },
+  "steps": {
+    "b-o-m-conversion": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "ebfe6acd182a",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "batch-tm-leveraging": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "c196a67451f4",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "batch-translation": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "e7a82b81b601",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "char-listing": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "191879948cc4",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "fe2194e29994",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "characters-checker": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "92522e3852be",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "cleanup": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "018080bc1be1",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "code-simplifier": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "3672d2374ea7",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "codes-removal": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "ed187afb8201",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "concordance-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "c768ddcc12f4",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "concordance-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "d8a4f040782a",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "convert-segments-to-text-units": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "be2f5bd4be8e",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "copy-or-move": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "b67627f25927",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "copy-source-on-empty-target": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "fc1eeabb74df",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "create-target": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "4054470be8a9",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "desegmentation": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "4c511b7dcebc",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "diff-leverage": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "e6aae8ba49dd",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "encoding-conversion": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "1fcca5318c6b",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "enrycher": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "529e551038db",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-document-context-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "b7c63f6a5cca",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-document-context-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "56ad77f85860",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-local-context-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "4f8e9838d8e8",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-local-context-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "7cd3a6a12d27",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "88b29478552a",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "8da2e2fed211",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-previous-version-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "fe365e604673",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-previous-version-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "d7e64f1eebf8",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-repaired-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "2ca3acaa2f4c",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-repaired-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "8a09f12df5fd",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-structural-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "aef99b1313bc",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-structural-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "d81416942355",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-text-only-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "4fbe60cb93d3",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-text-only-previous-version-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "fcef9378b12f",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-text-only-previous-version-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "71ecd102c4de",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-text-only-unique-id-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "bac760bceb3f",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-text-only-unique-id-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "5c2359d907bd",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-text-only-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "cae3085f850e",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-unique-id-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "9ccbd7a7cf08",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "exact-unique-id-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "cf60a349cad2",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "external-command": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "88c429875fcf",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "extraction-verification": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "915af875e074",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "extraction": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "70d30ac3a499",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "filter-events-to-raw-document": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "9d9c72d44ff2",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "filter-events-writer": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "631096149186",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "format-conversion": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "f3cfc4b2afb1",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "full-width-conversion": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "2192860ce107",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "fuzzy-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "934e404086db",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "fuzzy-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "287ead0c3c40",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "fuzzy-previous-version-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "1b76e2c74fce",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "fuzzy-previous-version-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "719337b62d04",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "fuzzy-repaired-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "1bfcf0929e1a",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "fuzzy-repaired-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "8dad5ca45ab7",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "fuzzy-unique-id-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "9b894f16feff",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "fuzzy-unique-id-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "76e9137ce9d5",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-alphanumeric-only-text-unit-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "829256b2b325",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-alphanumeric-only-text-unit-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "19816f4333f8",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-exact-matched-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "33d7efb4c399",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-exact-matched-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "be0dc0db70e6",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-fuzzy-match-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "ef5676c4dd54",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-fuzzy-match-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "33188d0891e4",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-leveraged-matched-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "6a189bed4451",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-leveraged-matched-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "7b1f4840617c",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-measurement-only-text-unit-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "0d065337eb0f",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-measurement-only-text-unit-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "0794e4ffa4b0",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-numeric-only-text-unit-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "4b67d930ac29",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-numeric-only-text-unit-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "012006a413a7",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-protected-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "cb7de85ac677",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-protected-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "b3f9c104800a",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-repetition-matched-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "2413095415d2",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "g-m-x-repetition-matched-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "65d9e1036503",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "general-checker": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "7ad492e9e646",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "id-based-aligner": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "95f347ff5e5b",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "id-based-copy": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "17b740a2700b",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "image-modification": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "9cd12efe01f6",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "inconsistency-check": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "4f8dea678b29",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "inline-codes-checker": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "a71de53c1e9d",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "length-checker": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "f4c5ee222cef",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "leveraging": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "3f85ba052feb",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "line-break-conversion": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "78f79285c326",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "localizable-checker": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "74d6b79792f2",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "m-s-batch-translation": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "5c98f7ee015c",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "m-t-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "99fb8ddb80f2",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "m-t-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "0dcd6cf67dae",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "merging": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "8126479e11ab",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "paragraph-aligner": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "bf70e5c702d2",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "patterns-checker": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "57faa845565b",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "phrase-assembled-character-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "ea6d9be0eb6f",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "phrase-assembled-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "9ee65cd90fdc",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "post-segmentation-code-simplifier": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "9a03537d473f",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "quality-check": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "cd511973bebe",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "r-t-f-conversion": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "ebbad78a23f5",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "raw-document-to-filter-events": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "940ba221c27e",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "raw-document-to-output-stream": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "14dc5cf93003",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "raw-document-writer": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "635927ae58f0",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "remove-target": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "f6c9855e4579",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "repetition-analysis": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "7279efed23dc",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "resource-simplifier": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "5f89fa5be9c7",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "scoping-report": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "b87d0600af72",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "search-and-replace": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "aa4220ef395d",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "segmentation": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "e5be62dcaa9f",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "sentence-aligner": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "d7ea3103d535",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "simple-word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "085805f4cfd2",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "space-check": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "2a798fea7001",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "t-m-import": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "e6f7434917a3",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "t-t-x-joiner": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "8b7c6c5de970",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "t-t-x-splitter": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "429a29ec48f0",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "term-extraction": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "7b5682ad5e3b",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "terminology-leveraging": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "3a66e3bcbd59",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "text-modification": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "68df30bc5472",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "tokenization": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "b67fb0494f4b",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "translation-comparison": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "5eea7a606c37",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "tu-filtering": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "0333f62caf78",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "uri-conversion": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "9d0cb2f28442",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "whitespace-correction": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "ee88e082febf",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "word-count": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "a876e2b9b084",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "x-m-l-analysis": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "c7263758d28c",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "x-m-l-char-fixing": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "022d67d22248",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "x-m-l-validation": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "ff90fea46edb",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "x-s-l-transform": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "728261c0cd90",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "xliff-joiner": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "26f61fcf635f",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "xliff-splitter": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "37f4594a32ef",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        }
+      ]
+    },
+    "xliff-w-c-splitter": {
+      "versions": [
+        {
+          "version": 1,
+          "hash": "a04abc4264ad",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
         }
       ]
     }

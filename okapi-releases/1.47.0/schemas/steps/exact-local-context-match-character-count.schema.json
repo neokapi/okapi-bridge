@@ -1,0 +1,22 @@
+{
+  "$id": "exact-local-context-match-character-count",
+  "title": "Exact Local Context Match Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-local-context-match-character-count",
+    "type": "step",
+    "displayName": "Exact Local Context Match Character Count",
+    "description": "Matches EXACT and a small number of segments before and/or after. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactLocalContextMatchCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

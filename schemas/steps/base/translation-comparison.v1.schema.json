@@ -1,0 +1,130 @@
+{
+  "$id": "translation-comparison",
+  "title": "Translation Comparison",
+  "type": "object",
+  "x-component": {
+    "id": "translation-comparison",
+    "type": "step",
+    "displayName": "Translation Comparison",
+    "description": "Compare the translated text units between several documents. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.translationcomparison.TranslationComparisonStep",
+    "parameterMappings": [
+      "FILTER_CONFIGURATION_MAPPER",
+      "INPUT_ROOT_DIRECTORY",
+      "INPUT_URI",
+      "ROOT_DIRECTORY",
+      "SECOND_INPUT_RAWDOC",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE",
+      "THIRD_INPUT_RAWDOC"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleEndDocument",
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "generateTMX": {
+      "type": "boolean",
+      "default": false,
+      "description": "Generates an output document in TMX",
+      "title": "Generate a TMX output document"
+    },
+    "tmxPath": {
+      "type": "string",
+      "default": "comparison.tmx",
+      "description": "Full path of the output TMX file",
+      "title": "TMX output path"
+    },
+    "generateHTML": {
+      "type": "boolean",
+      "default": true,
+      "description": "Generates output tables in HTML",
+      "title": "Generate output tables in HTML"
+    },
+    "autoOpen": {
+      "type": "boolean",
+      "default": true,
+      "title": "Opens the first HTML output after completion"
+    },
+    "genericCodes": {
+      "type": "boolean",
+      "default": true,
+      "title": "Use generic representation (e.g. <1>...</1>) for the inline codes"
+    },
+    "caseSensitive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Takes into account case differences",
+      "title": "Take into account case differences"
+    },
+    "whitespaceSensitive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Takes into account whitespace differences",
+      "title": "Take into account whitespace differences"
+    },
+    "punctuationSensitive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Takes into account punctuation differences",
+      "title": "Take into account punctuation differences"
+    },
+    "target2Suffix": {
+      "type": "string",
+      "default": "-t2",
+      "title": "Suffix for target language code of document 2"
+    },
+    "target3Suffix": {
+      "type": "string",
+      "default": "-t3",
+      "title": "Suffix for target language code of document 3"
+    },
+    "document1Label": {
+      "type": "string",
+      "default": "Trans1",
+      "title": "Label for the document 1"
+    },
+    "document2Label": {
+      "type": "string",
+      "default": "Trans2",
+      "title": "Label for the document 2"
+    },
+    "document3Label": {
+      "type": "string",
+      "default": "Trans3",
+      "title": "Label for the document 3"
+    },
+    "useDataLog": {
+      "type": "boolean",
+      "default": false,
+      "title": "Append the average results to a log"
+    },
+    "dataLogPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path for the log file",
+      "title": "Log file"
+    },
+    "useAltTrans": {
+      "type": "boolean",
+      "default": false,
+      "description": "Use the XLIFF alt-trans of the trans-unit",
+      "title": "Use alt-trans for document 1"
+    },
+    "altTransOrigin": {
+      "type": "string",
+      "default": "BING",
+      "description": "Value of the origin attribute of the alt-trans to use",
+      "title": "Value in origin attribute"
+    }
+  }
+}

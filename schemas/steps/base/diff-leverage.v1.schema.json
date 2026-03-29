@@ -1,0 +1,63 @@
+{
+  "$id": "diff-leverage",
+  "title": "Diff Leverage",
+  "type": "object",
+  "x-component": {
+    "id": "diff-leverage",
+    "type": "step",
+    "displayName": "Diff Leverage",
+    "description": "Compare two source documents (i.e., different versions) and copy the old target content when we find a match. Can be a monolingual and bi-lingual input or three monolingual inputs. Paragraphs (TextUnits) must align in all cases"
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.diffleverage.DiffLeverageStep",
+    "parameterMappings": [
+      "FILTER_CONFIGURATION_MAPPER",
+      "SECOND_INPUT_RAWDOC",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE",
+      "THIRD_INPUT_RAWDOC"
+    ],
+    "eventHandlers": [
+      "handleDocumentPart",
+      "handleEndBatch",
+      "handleEndDocument",
+      "handleEndGroup",
+      "handleEndSubDocument",
+      "handleRawDocument",
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleStartGroup",
+      "handleStartSubDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "fuzzyThreshold": {
+      "type": "integer",
+      "default": 100,
+      "description": "Fuzzy Thresholds are between 1 and 100. A score of 100 emans exact match (codes and text) only",
+      "title": "Leverage only if the match is equal or above this score"
+    },
+    "codesensitive": {
+      "type": "boolean",
+      "default": true,
+      "description": "Use codes to compare contents",
+      "title": "Include inline codes in the comparison"
+    },
+    "diffOnly": {
+      "type": "boolean",
+      "default": false,
+      "description": "Diff only and do not copy the match or create a leverage annotation",
+      "title": "Diff only and mark the TextUnit as matched"
+    },
+    "copyToTarget": {
+      "type": "boolean",
+      "default": false,
+      "description": "Copy to/over the target (a leverage annotation will still be created). WARNING: Copied target will not be segmented and any exisiting target will be lost.",
+      "title": "Copy to/over the target? (WARNING: Copied target will not be segmented!)"
+    }
+  }
+}

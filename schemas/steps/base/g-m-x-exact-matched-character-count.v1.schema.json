@@ -1,0 +1,22 @@
+{
+  "$id": "g-m-x-exact-matched-character-count",
+  "title": "GMX Exact Matched Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "g-m-x-exact-matched-character-count",
+    "type": "step",
+    "displayName": "GMX Exact Matched Character Count",
+    "description": "An accumulation of the character count for text units that have been matched unambiguously with a prior translation and thus require no translator input. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.gmx.GMXExactMatchedCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

@@ -1,0 +1,61 @@
+{
+  "$id": "xliff-splitter",
+  "title": "XLIFF Splitter",
+  "type": "object",
+  "x-component": {
+    "id": "xliff-splitter",
+    "type": "step",
+    "displayName": "XLIFF Splitter",
+    "description": "Split an XLIFF document into separate files for each <file> element. Expects: raw document. Sends back: raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.xliffsplitter.XliffSplitterStep",
+    "parameterMappings": [
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleRawDocument",
+      "handleStartBatch",
+      "handleStartBatchItem"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "bigFile": {
+      "type": "boolean",
+      "default": false,
+      "title": "Process big file"
+    },
+    "fileMarker": {
+      "type": "string",
+      "default": "_PART",
+      "title": "File marker"
+    },
+    "updateSDLTranslationStatus": {
+      "type": "boolean",
+      "default": false,
+      "title": "Update the <iws:status> translation status (WorldServer-specific)"
+    },
+    "translationTypeValue": {
+      "type": "string",
+      "default": "manual_translation",
+      "description": "Value to set for the translation_type attribute.",
+      "title": "Value for 'translation_type'"
+    },
+    "translationStatusValue": {
+      "type": "string",
+      "default": "finished",
+      "description": "Value to set for the translation_status attribute.",
+      "title": "Value for 'translation_status'"
+    },
+    "restoreOriginalNames": {
+      "type": "boolean",
+      "default": false,
+      "title": "Restore original file names"
+    }
+  }
+}

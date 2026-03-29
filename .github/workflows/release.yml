@@ -209,7 +209,7 @@ jobs:
                   capabilities: $capabilities
                 }' > staging/manifest.json
 
-          # Include composite schemas for this Okapi version from centralized location
+          # Include composite filter schemas for this Okapi version from centralized location
           # Use max version per filter to handle any duplicate entries in schemas/versions.json
           jq -r --arg ov "${OKAPI_VERSION}" '
             .filters | to_entries[] |
@@ -218,15 +218,24 @@ jobs:
             max_by(.version) | select(.) |
             "\($f) \(.version)"
           ' schemas/versions.json | while read filter version; do
-            cp "schemas/composite/${filter}.v${version}.schema.json" staging/schemas/
+            cp "schemas/filters/composite/${filter}.v${version}.schema.json" staging/schemas/
           done
 
-          # Include step schemas (generated during build by SchemaGenerator)
-          if [ -d "okapi-releases/${OKAPI_VERSION}/schemas/tools" ]; then
-            mkdir -p staging/schemas/tools
-            cp okapi-releases/${OKAPI_VERSION}/schemas/tools/*.schema.json staging/schemas/tools/ 2>/dev/null || true
-            echo "Bundled $(ls staging/schemas/tools/*.schema.json 2>/dev/null | wc -l | tr -d ' ') step schemas"
-          fi
+          # Include step schemas from centralized versioned location
+          mkdir -p staging/schemas/steps
+          jq -r --arg ov "${OKAPI_VERSION}" '
+            .steps // {} | to_entries[] |
+            .key as $s |
+            [.value.versions[] | select(.okapiVersions | index($ov))] |
+            max_by(.version) | select(.) |
+            "\($s) \(.version)"
+          ' schemas/versions.json | while read step_id version; do
+            src="schemas/steps/base/${step_id}.v${version}.schema.json"
+            if [ -f "$src" ]; then
+              cp "$src" "staging/schemas/steps/${step_id}.schema.json"
+            fi
+          done
+          echo "Bundled $(ls staging/schemas/steps/*.schema.json 2>/dev/null | wc -l | tr -d ' ') step schemas"
 
           cd staging
           tar czf "../${ARCHIVE_NAME}.tar.gz" .

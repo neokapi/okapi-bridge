@@ -1,0 +1,53 @@
+{
+  "$id": "extraction-verification",
+  "title": "Extraction Verification",
+  "type": "object",
+  "x-component": {
+    "id": "extraction-verification",
+    "type": "step",
+    "displayName": "Extraction Verification",
+    "description": "Verifies a raw document can be extracted, merged, then extracted again and produces the same set of events during both extractions. Expects: raw document. Sends back: unmodified raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.common.ExtractionVerificationStep",
+    "parameterMappings": [
+      "FILTER_CONFIGURATION_ID",
+      "FILTER_CONFIGURATION_MAPPER",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleRawDocument"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "compareSkeleton": {
+      "type": "boolean",
+      "default": true,
+      "title": "Compare skeleton"
+    },
+    "stepEnabled": {
+      "type": "boolean",
+      "default": true,
+      "title": "Perform the extraction verification"
+    },
+    "allEvents": {
+      "type": "boolean",
+      "default": true,
+      "title": "Verify all events (otherwise only text units are verified)"
+    },
+    "limit": {
+      "type": "integer",
+      "default": 10,
+      "title": "Maximum number of warnings per document"
+    },
+    "interrupt": {
+      "type": "boolean",
+      "default": false,
+      "title": "Interrupt after reaching the maximum number of warnings"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "$id": "filter-events-to-raw-document",
+  "title": "Filter Events to Raw Document",
+  "type": "object",
+  "x-component": {
+    "id": "filter-events-to-raw-document",
+    "type": "step",
+    "displayName": "Filter Events to Raw Document",
+    "description": "Combine filter events into a full document and pass it along as a raw document. Expects: filter events. Sends back: raw document or NO_OP if writing to a stream."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.common.FilterEventsToRawDocumentStep",
+    "parameterMappings": [
+      "OUTPUT_ENCODING",
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartDocument"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  }
+}

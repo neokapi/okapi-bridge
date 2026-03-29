@@ -1,0 +1,28 @@
+{
+  "$id": "simple-word-count",
+  "title": "Simple Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "simple-word-count",
+    "type": "step",
+    "displayName": "Simple Word Count",
+    "description": "Annotates each text unit source with a total word count and gives total source word counts for batches Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.SimpleWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleEndBatchItem",
+      "handleStartBatch",
+      "handleStartBatchItem",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

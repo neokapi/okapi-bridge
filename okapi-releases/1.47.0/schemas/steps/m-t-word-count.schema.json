@@ -1,0 +1,22 @@
+{
+  "$id": "m-t-word-count",
+  "title": "MT Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "m-t-word-count",
+    "type": "step",
+    "displayName": "MT Word Count",
+    "description": "Indicates a translation coming from an MT engine. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.MTWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

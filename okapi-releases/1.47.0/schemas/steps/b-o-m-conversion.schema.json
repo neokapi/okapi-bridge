@@ -1,0 +1,37 @@
+{
+  "$id": "b-o-m-conversion",
+  "title": "BOM Conversion",
+  "type": "object",
+  "x-component": {
+    "id": "b-o-m-conversion",
+    "type": "step",
+    "displayName": "BOM Conversion",
+    "description": "Add or remove Unicode Byte-Order-Mark (BOM) in a text-based file. Expects: raw document. Sends back: raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.bomconversion.BOMConversionStep",
+    "parameterMappings": [
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatchItem",
+      "handleRawDocument",
+      "handleStartBatchItem"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "removeBOM": {
+      "type": "boolean",
+      "default": false
+    },
+    "alsoNonUTF8": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "$id": "desegmentation",
+  "title": "Desegmentation",
+  "type": "object",
+  "x-component": {
+    "id": "desegmentation",
+    "type": "step",
+    "displayName": "Desegmentation",
+    "description": "Joins all segments into a single content. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.desegmentation.DesegmentationStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE",
+      "TARGET_LOCALES"
+    ],
+    "eventHandlers": [
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "desegmentSource": {
+      "type": "boolean",
+      "default": true,
+      "title": "Join all segments of the source text"
+    },
+    "desegmentTarget": {
+      "type": "boolean",
+      "default": true,
+      "title": "Join all segments of the target text"
+    },
+    "renumberCodes": {
+      "type": "boolean",
+      "default": false,
+      "title": "Restore original IDs to renumbered codes"
+    }
+  }
+}

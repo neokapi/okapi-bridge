@@ -1,0 +1,34 @@
+{
+  "$id": "whitespace-correction",
+  "title": "Whitespace Correction",
+  "type": "object",
+  "x-component": {
+    "id": "whitespace-correction",
+    "type": "step",
+    "displayName": "Whitespace Correction",
+    "description": "Correct whitespace following segment-ending punctuation when translating from  a space-delimited language (such as English) to a non-space-delimited language (Chinese or Japanese), or vice-versa. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.whitespacecorrection.WhitespaceCorrectionStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "punctuation": {
+      "type": "string",
+      "default": "FULL_STOP,COMMA,EXCLAMATION_MARK,QUESTION_MARK"
+    },
+    "whitespace": {
+      "type": "string",
+      "default": "LINE_FEED,LINE_TABULATION,FORM_FEED,CARRIAGE_RETURN,NEXT_LINE,LINE_SEPARATOR,PARAGRAPH_SEPARATOR,CHARACTER_TABULATION,SPACE,NO_BREAK_SPACE,EN_QUAD,EM_QUAD,EN_SPACE,EM_SPACE,THREE_PER_EM_SPACE,FOUR_PER_EM_SPACER,SIX_PER_EM_SPACE,FIGURE_SPACE,PUNCUATION_SPACE,THIS_SPACE,HAIR_SPACE,NAORROW_NO_BREAK_SPACE,MEDIUM_MATHEMATICAL_SPACE,IDEOGRAPHIC_SPACE,ZERO_WIDTH_SPACE,ZERO_WIDTH_NON_BREAKING_SPACE"
+    }
+  }
+}

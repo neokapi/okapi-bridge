@@ -128,9 +128,12 @@ endif
 	@# Create meta.json
 	@echo '{"okapiVersion":"$(V)","generatedAt":"'$$(date -u +%Y-%m-%dT%H:%M:%SZ)'","filterCount":'$$(ls -1 okapi-releases/$(V)/schemas/*.schema.json 2>/dev/null | wc -l | tr -d ' ')'}' \
 		| jq . > okapi-releases/$(V)/schemas/meta.json
-	@# Add version incrementally (doesn't reprocess all existing versions)
+	@# Add filter version incrementally (doesn't reprocess all existing versions)
 	@echo "Adding to centralized schema structure..."
 	@./scripts/centralize-schemas.sh add-version $(V)
+	@# Add step version incrementally
+	@echo "Adding step schemas to centralized structure..."
+	@./scripts/centralize-schemas.sh add-step-version $(V)
 	@# Update README matrix
 	@./scripts/update-readme-matrix.sh
 	@echo ""

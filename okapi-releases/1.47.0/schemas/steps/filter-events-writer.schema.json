@@ -1,0 +1,27 @@
+{
+  "$id": "filter-events-writer",
+  "title": "Filter Events Writer",
+  "type": "object",
+  "x-component": {
+    "id": "filter-events-writer",
+    "type": "step",
+    "displayName": "Filter Events Writer",
+    "description": "Write out filter events into a document or stream."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.common.FilterEventsWriterStep",
+    "parameterMappings": [
+      "EXECUTION_CONTEXT",
+      "FILTER_CONFIGURATION_ID",
+      "FILTER_CONFIGURATION_MAPPER",
+      "OUTPUT_ENCODING",
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  }
+}

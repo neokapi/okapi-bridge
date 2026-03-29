@@ -1,0 +1,95 @@
+{
+  "$id": "sentence-aligner",
+  "title": "Sentence Alignment",
+  "type": "object",
+  "x-component": {
+    "id": "sentence-aligner",
+    "type": "step",
+    "displayName": "Sentence Alignment",
+    "description": "Aligns sentences within text units (paragraphs). Produces sentence alignments as bilingual text units or a TMX file."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.sentencealigner.SentenceAlignerStep",
+    "parameterMappings": [
+      "FILTER_CONFIGURATION_MAPPER",
+      "SECOND_INPUT_RAWDOC",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleEndDocument",
+      "handlePipelineParameters",
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "tmxOutputPath": {
+      "type": "string",
+      "default": "aligned.tmx",
+      "description": "Full path of the output TMX file",
+      "title": "TMX output path"
+    },
+    "generateTMX": {
+      "type": "boolean",
+      "default": true,
+      "description": "If generateTMX is false generate bilingual TextUnits, otherwise (true) output a TMX file",
+      "title": "Generate the following TMX document:"
+    },
+    "segmentSource": {
+      "type": "boolean",
+      "default": true,
+      "title": "Segment the source content (overriding possible existing segmentation)"
+    },
+    "useCustomSourceRules": {
+      "type": "boolean",
+      "default": false,
+      "title": "Use custom source segmentation rules (instead of the default ones)"
+    },
+    "customSourceRulesPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path of the SRX document to use for the source",
+      "title": "SRX path for the source"
+    },
+    "segmentTarget": {
+      "type": "boolean",
+      "default": true,
+      "title": "Segment the target content (overriding possible existing segmentation)"
+    },
+    "useCustomTargetRules": {
+      "type": "boolean",
+      "default": false,
+      "title": "Use custom target segmentation rules (instead of the default ones)"
+    },
+    "customTargetRulesPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path of the SRX document to use for the target",
+      "title": "SRX path for the target"
+    },
+    "collapseWhitespace": {
+      "type": "boolean",
+      "default": false,
+      "description": "Collapse whitespace (space, newline etc.) to a single space before segmentation and alignment",
+      "title": "Collapse whitspace"
+    },
+    "outputOneTOneMatchesOnly": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ouput only 1-1 sentence aligned matches",
+      "title": "Output 1-1 matches only"
+    },
+    "forceSimpleOneToOneAlignment": {
+      "type": "boolean",
+      "default": false,
+      "description": "If the number of sentences are the same then align one to one. Otherwise collapse the sentences and align",
+      "title": "Force Simple One to One Alignment"
+    }
+  }
+}

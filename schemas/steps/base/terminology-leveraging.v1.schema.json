@@ -1,0 +1,28 @@
+{
+  "$id": "terminology-leveraging",
+  "title": "Terminology Leveraging",
+  "type": "object",
+  "x-component": {
+    "id": "terminology-leveraging",
+    "type": "step",
+    "displayName": "Terminology Leveraging",
+    "description": "Leverage terminology into the text units content of a document. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.terminologyleveraging.TerminologyLeveragingStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleEndDocument",
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

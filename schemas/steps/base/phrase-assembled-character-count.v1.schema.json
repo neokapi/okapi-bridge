@@ -1,0 +1,22 @@
+{
+  "$id": "phrase-assembled-character-count",
+  "title": "Phrase Assembled Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "phrase-assembled-character-count",
+    "type": "step",
+    "displayName": "Phrase Assembled Character Count",
+    "description": "Matches assembled from phrases in the TM or other resources (different algorithms could be used). Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.PhraseAssembledCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

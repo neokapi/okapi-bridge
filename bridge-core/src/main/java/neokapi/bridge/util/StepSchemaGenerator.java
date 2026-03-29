@@ -1,5 +1,6 @@
 package neokapi.bridge.util;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 import net.sf.okapi.common.IParameters;
@@ -8,14 +9,28 @@ import net.sf.okapi.common.pipeline.BasePipelineStep;
 
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * Generates JSON Schema from Okapi step parameters.
  * Introspects the step's @UsingParameters annotation, instantiates the
  * Parameters class, and parses the serialized ParametersString (#v1 format)
  * to discover parameter names and types.
+ *
+ * Also extracts step metadata via reflection:
+ * - @StepParameterMapping annotations (parameter type mappings)
+ * - Event handler methods (overridden handle* methods)
+ * - Marker interfaces (e.g., ILoadsResources)
+ * - I/O classification based on parameter mappings
  */
 public class StepSchemaGenerator {
+
+    /** Marker interfaces to check for on step classes. */
+    private static final String[] MARKER_INTERFACES = {
+            "net.sf.okapi.common.ILoadsResources"
+    };
 
     /**
      * Generate a ComponentSchema-compatible JSON object for a step.
@@ -28,7 +43,7 @@ public class StepSchemaGenerator {
             return null;
         }
 
-        String stepId = "okapi:" + info.deriveStepId();
+        String stepId = info.deriveStepId();
         String displayName = info.getName() != null ? info.getName() : info.deriveStepId();
 
         JsonObject schema = new JsonObject();
@@ -46,6 +61,12 @@ public class StepSchemaGenerator {
         }
         schema.add("x-component", xComponent);
 
+        // x-step metadata (parameter mappings, event handlers, interfaces, I/O classification)
+        JsonObject xStep = generateStepMetadata(info);
+        if (xStep != null) {
+            schema.add("x-step", xStep);
+        }
+
         // Generate properties from the Parameters class.
         JsonObject properties = generateProperties(info);
         if (properties != null && properties.size() > 0) {
@@ -53,6 +74,148 @@ public class StepSchemaGenerator {
         }
 
         return schema;
+    }
+
+    /**
+     * Generate x-step metadata by introspecting the step class via reflection.
+     */
+    private static JsonObject generateStepMetadata(StepInfo info) {
+        JsonObject xStep = new JsonObject();
+        xStep.addProperty("class", info.getClassName());
+
+        try {
+            Class<?> stepClass = Class.forName(info.getClassName());
+
+            // Extract @StepParameterMapping annotations
+            List<String> parameterMappings = extractParameterMappings(stepClass);
+            JsonArray mappingsArray = new JsonArray();
+            for (String mapping : parameterMappings) {
+                mappingsArray.add(mapping);
+            }
+            xStep.add("parameterMappings", mappingsArray);
+
+            // Extract overridden event handlers
+            List<String> eventHandlers = extractEventHandlers(stepClass);
+            JsonArray handlersArray = new JsonArray();
+            for (String handler : eventHandlers) {
+                handlersArray.add(handler);
+            }
+            xStep.add("eventHandlers", handlersArray);
+
+            // Check marker interfaces
+            List<String> interfaces = extractMarkerInterfaces(stepClass);
+            JsonArray interfacesArray = new JsonArray();
+            for (String iface : interfaces) {
+                interfacesArray.add(iface);
+            }
+            xStep.add("interfaces", interfacesArray);
+
+            // Classify I/O based on parameter mappings and event handlers
+            classifyIO(xStep, parameterMappings, eventHandlers);
+
+        } catch (ClassNotFoundException e) {
+            System.err.println("[bridge] Could not load step class for metadata: " + info.getClassName());
+        }
+
+        return xStep;
+    }
+
+    /**
+     * Extract @StepParameterMapping annotations from the step class and its hierarchy.
+     * Uses reflection to avoid compile-time dependency on the annotation class.
+     */
+    private static List<String> extractParameterMappings(Class<?> stepClass) {
+        List<String> mappings = new ArrayList<>();
+
+        try {
+            Class<? extends Annotation> spmAnnotation =
+                    (Class<? extends Annotation>) Class.forName(
+                            "net.sf.okapi.common.pipeline.annotations.StepParameterMapping");
+            Method parameterTypeMethod = spmAnnotation.getMethod("parameterType");
+
+            // Check all public methods (includes inherited) for the annotation
+            for (Method method : stepClass.getMethods()) {
+                Annotation ann = method.getAnnotation(spmAnnotation);
+                if (ann != null) {
+                    Object paramType = parameterTypeMethod.invoke(ann);
+                    String typeName = ((Enum<?>) paramType).name();
+                    if (!mappings.contains(typeName)) {
+                        mappings.add(typeName);
+                    }
+                }
+            }
+        } catch (ClassNotFoundException e) {
+            // @StepParameterMapping not available in this Okapi version
+        } catch (Exception e) {
+            System.err.println("[bridge] Error extracting parameter mappings from "
+                    + stepClass.getName() + ": " + e.getMessage());
+        }
+
+        Collections.sort(mappings);
+        return mappings;
+    }
+
+    /**
+     * Extract overridden event handler methods.
+     * Checks step.getClass().getDeclaredMethods() for methods starting with "handle"
+     * that override the no-op implementations in BasePipelineStep.
+     */
+    private static List<String> extractEventHandlers(Class<?> stepClass) {
+        List<String> handlers = new ArrayList<>();
+
+        for (Method method : stepClass.getDeclaredMethods()) {
+            String name = method.getName();
+            if (name.startsWith("handle") && !name.equals("handleEvent")) {
+                handlers.add(name);
+            }
+        }
+
+        Collections.sort(handlers);
+        return handlers;
+    }
+
+    /**
+     * Check if the step implements any notable marker interfaces.
+     */
+    private static List<String> extractMarkerInterfaces(Class<?> stepClass) {
+        List<String> interfaces = new ArrayList<>();
+
+        for (String ifaceName : MARKER_INTERFACES) {
+            try {
+                Class<?> ifaceClass = Class.forName(ifaceName);
+                if (ifaceClass.isAssignableFrom(stepClass)) {
+                    // Use simple name for the interface
+                    interfaces.add(ifaceClass.getSimpleName());
+                }
+            } catch (ClassNotFoundException e) {
+                // Interface not available in this Okapi version
+            }
+        }
+
+        return interfaces;
+    }
+
+    /**
+     * Classify step I/O based on parameter mappings and event handlers.
+     * - If step has INPUT_RAWDOC mapping: inputType = "raw-document"
+     * - If step only has filter event handlers: inputType = "filter-events"
+     * - If step has OUTPUT_URI mapping: outputType = "file"
+     * - Otherwise: outputType = "filter-events"
+     */
+    private static void classifyIO(JsonObject xStep, List<String> mappings, List<String> handlers) {
+        // Input classification
+        if (mappings.contains("INPUT_RAWDOC")) {
+            xStep.addProperty("inputType", "raw-document");
+        } else {
+            xStep.addProperty("inputType", "filter-events");
+        }
+
+        // Output classification
+        if (mappings.contains("OUTPUT_URI")) {
+            xStep.addProperty("outputType", "file");
+        } else {
+            xStep.addProperty("outputType", "filter-events");
+        }
     }
 
     /**

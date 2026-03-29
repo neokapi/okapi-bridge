@@ -1,0 +1,22 @@
+{
+  "$id": "concordance-character-count",
+  "title": "Concordance Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "concordance-character-count",
+    "type": "step",
+    "displayName": "Concordance Character Count",
+    "description": "TM concordance or phrase match (usually a word or term only) Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ConcordanceCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

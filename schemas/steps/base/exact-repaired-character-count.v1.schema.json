@@ -1,0 +1,22 @@
+{
+  "$id": "exact-repaired-character-count",
+  "title": "Exact Repaired Match Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-repaired-character-count",
+    "type": "step",
+    "displayName": "Exact Repaired Match Character Count",
+    "description": "Matches text and codes exactly, but only after the result of some automated repair (e.g. number replacement, code repair, capitalization, punctuation etc.) Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactRepairedCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

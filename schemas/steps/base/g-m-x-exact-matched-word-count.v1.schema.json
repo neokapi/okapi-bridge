@@ -1,0 +1,22 @@
+{
+  "$id": "g-m-x-exact-matched-word-count",
+  "title": "GMX Exact Matched Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "g-m-x-exact-matched-word-count",
+    "type": "step",
+    "displayName": "GMX Exact Matched Word Count",
+    "description": "An accumulation of the word count for text units that have been matched unambiguously with a prior translation and thus require no translator input. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.gmx.GMXExactMatchedWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

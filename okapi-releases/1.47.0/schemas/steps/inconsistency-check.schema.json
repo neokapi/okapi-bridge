@@ -1,0 +1,58 @@
+{
+  "$id": "inconsistency-check",
+  "title": "Inconsistency Check",
+  "type": "object",
+  "x-component": {
+    "id": "inconsistency-check",
+    "type": "step",
+    "displayName": "Inconsistency Check",
+    "description": "Checks for source entries that are the same but have different translations or target entries that are the same but have different sources. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.inconsistencycheck.InconsistencyCheckStep",
+    "parameterMappings": [
+      "INPUT_ROOT_DIRECTORY",
+      "ROOT_DIRECTORY",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleEndDocument",
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleStartSubDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "checkInconststencies": {
+      "type": "boolean",
+      "default": true,
+      "title": "Check inconsistencies"
+    },
+    "checkPerFile": {
+      "type": "boolean",
+      "default": false,
+      "title": "Check for inconsistencies on a file-by-file basis"
+    },
+    "outputPath": {
+      "type": "string",
+      "default": "${rootDir}/inconsistency-report.xml",
+      "title": "Path of the report file:"
+    },
+    "displayOption": {
+      "type": "string",
+      "default": "generic",
+      "title": "Representation of the inline codes in the report"
+    },
+    "autoOpen": {
+      "type": "boolean",
+      "default": true,
+      "title": "Open the report file after completion"
+    }
+  }
+}

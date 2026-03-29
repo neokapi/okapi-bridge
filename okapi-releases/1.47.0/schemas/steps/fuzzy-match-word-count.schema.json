@@ -1,0 +1,22 @@
+{
+  "$id": "fuzzy-match-word-count",
+  "title": "Fuzzy Match Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "fuzzy-match-word-count",
+    "type": "step",
+    "displayName": "Fuzzy Match Word Count",
+    "description": "Matches both text and/or codes partially. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.FuzzyMatchWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

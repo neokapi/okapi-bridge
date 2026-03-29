@@ -1,0 +1,22 @@
+{
+  "$id": "exact-structural-match-word-count",
+  "title": "Exact Structural Match Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-structural-match-word-count",
+    "type": "step",
+    "displayName": "Exact Structural Match Word Count",
+    "description": "Matches EXACT and the structural type of the segment (title, paragraph, list element etc.) Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactStructuralMatchWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

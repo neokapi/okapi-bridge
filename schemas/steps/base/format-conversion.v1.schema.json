@@ -1,0 +1,76 @@
+{
+  "$id": "format-conversion",
+  "title": "Format Conversion",
+  "type": "object",
+  "x-component": {
+    "id": "format-conversion",
+    "type": "step",
+    "displayName": "Format Conversion",
+    "description": "Converts the output of a filter into a specified file format. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.formatconversion.FormatConversionStep",
+    "parameterMappings": [
+      "EXECUTION_CONTEXT",
+      "INPUT_URI",
+      "OUTPUT_URI",
+      "ROOT_DIRECTORY",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "singleOutput": {
+      "type": "boolean",
+      "default": true,
+      "title": "Create a single output document"
+    },
+    "autoExtensions": {
+      "type": "boolean",
+      "default": false,
+      "title": "Output paths are the input paths plus the new format extension"
+    },
+    "targetStyle": {
+      "type": "integer",
+      "default": 0,
+      "description": "Type of content to put in the target",
+      "title": "Target content"
+    },
+    "outputPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path of the single output document to generate",
+      "title": "Output path"
+    },
+    "outputFormat": {
+      "type": "string",
+      "default": "tmx",
+      "description": "Format to generate in output",
+      "title": "Output format"
+    },
+    "useGenericCodes": {
+      "type": "boolean",
+      "default": false,
+      "title": "Output generic inline codes"
+    },
+    "skipEntriesWithoutText": {
+      "type": "boolean",
+      "default": true,
+      "title": "Do not output entries without text"
+    },
+    "approvedEntriesOnly": {
+      "type": "boolean",
+      "default": false,
+      "title": "Output only approved entries"
+    },
+    "overwriteSameSource": {
+      "type": "boolean",
+      "default": false,
+      "title": "Overwrite if source is the same (for Pensieve TM)"
+    }
+  }
+}

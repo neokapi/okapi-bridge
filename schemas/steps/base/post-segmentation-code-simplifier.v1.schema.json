@@ -1,0 +1,38 @@
+{
+  "$id": "post-segmentation-code-simplifier",
+  "title": "Post-segmentation Inline Codes Simplifier",
+  "type": "object",
+  "x-component": {
+    "id": "post-segmentation-code-simplifier",
+    "type": "step",
+    "displayName": "Post-segmentation Inline Codes Simplifier",
+    "description": "Merges adjacent inline codes in the source and target part of a text unit. Also where possible, moves leading and trailing codes of the source to inter-segment TextParts. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.common.codesimplifier.PostSegmentationCodeSimplifierStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "removeLeadingTrailingCodes": {
+      "type": "boolean",
+      "default": true,
+      "description": "Removes leading and trailing codes from the source and place them in the skeleton.",
+      "title": "Remove leading and trailing codes"
+    },
+    "mergeCodes": {
+      "type": "boolean",
+      "default": true,
+      "description": "Merges adjacent codes (leading/trailing codes are removed first (if option is enabled)).",
+      "title": "Merge codes"
+    }
+  }
+}

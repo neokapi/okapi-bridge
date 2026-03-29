@@ -1,0 +1,22 @@
+{
+  "$id": "exact-text-only-word-count",
+  "title": "Exact Text Only Match Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-text-only-word-count",
+    "type": "step",
+    "displayName": "Exact Text Only Match Word Count",
+    "description": "Matches text exactly, but there is a difference in one or more codes. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactTextOnlyWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

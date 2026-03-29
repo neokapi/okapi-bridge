@@ -1,0 +1,56 @@
+{
+  "$id": "full-width-conversion",
+  "title": "Full-Width Conversion",
+  "type": "object",
+  "x-component": {
+    "id": "full-width-conversion",
+    "type": "step",
+    "displayName": "Full-Width Conversion",
+    "description": "Convert the text units content of a document to or from full-width characters (zenkaku). Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.fullwidthconversion.FullWidthConversionStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndDocument",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "toHalfWidth": {
+      "type": "boolean",
+      "default": true
+    },
+    "asciiOnly": {
+      "type": "boolean",
+      "default": false
+    },
+    "katakanaOnly": {
+      "type": "boolean",
+      "default": false
+    },
+    "includeSLA": {
+      "type": "boolean",
+      "default": false
+    },
+    "includeLLS": {
+      "type": "boolean",
+      "default": false
+    },
+    "includeKatakana": {
+      "type": "boolean",
+      "default": false
+    },
+    "normalizeOutput": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

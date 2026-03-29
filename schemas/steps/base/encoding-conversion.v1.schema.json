@@ -1,0 +1,66 @@
+{
+  "$id": "encoding-conversion",
+  "title": "Encoding Conversion",
+  "type": "object",
+  "x-component": {
+    "id": "encoding-conversion",
+    "type": "step",
+    "displayName": "Encoding Conversion",
+    "description": "Convert the character set encoding of a text-based file. Expects: raw document. Sends back: raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.encodingconversion.EncodingConversionStep",
+    "parameterMappings": [
+      "INPUT_URI",
+      "OUTPUT_ENCODING",
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleRawDocument",
+      "handleStartBatch"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "unescapeNCR": {
+      "type": "boolean",
+      "default": true
+    },
+    "unescapeCER": {
+      "type": "boolean",
+      "default": true
+    },
+    "unescapeJava": {
+      "type": "boolean",
+      "default": true
+    },
+    "escapeAll": {
+      "type": "boolean",
+      "default": false
+    },
+    "escapeNotation": {
+      "type": "integer",
+      "default": 0
+    },
+    "userFormat": {
+      "type": "string",
+      "default": "%d"
+    },
+    "useBytes": {
+      "type": "boolean",
+      "default": false
+    },
+    "BOMonUTF8": {
+      "type": "boolean",
+      "default": true
+    },
+    "reportUnsupported": {
+      "type": "boolean",
+      "default": true
+    }
+  }
+}

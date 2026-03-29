@@ -1,0 +1,22 @@
+{
+  "$id": "g-m-x-numeric-only-text-unit-character-count",
+  "title": "GMX Numeric Only Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "g-m-x-numeric-only-text-unit-character-count",
+    "type": "step",
+    "displayName": "GMX Numeric Only Character Count",
+    "description": "An accumulation of the character count for text units that have been identified as containing only numeric words. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.gmx.GMXNumericOnlyTextUnitCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

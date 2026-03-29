@@ -126,9 +126,9 @@ public class SchemaGenerator {
      * Generate JSON Schema files for all discovered Okapi pipeline steps.
      */
     private void generateStepSchemas(String outputDir) throws IOException {
-        File toolsDir = new File(outputDir, "tools");
-        if (!toolsDir.exists() && !toolsDir.mkdirs()) {
-            throw new IOException("Failed to create step schemas directory: " + toolsDir);
+        File stepsDir = new File(outputDir, "steps");
+        if (!stepsDir.exists() && !stepsDir.mkdirs()) {
+            throw new IOException("Failed to create step schemas directory: " + stepsDir);
         }
 
         List<StepInfo> steps = StepRegistry.listSteps();
@@ -146,7 +146,7 @@ public class SchemaGenerator {
                     continue;
                 }
                 String filename = step.getStepId() + ".schema.json";
-                File outputFile = new File(toolsDir, filename);
+                File outputFile = new File(stepsDir, filename);
 
                 try (FileWriter writer = new FileWriter(outputFile, StandardCharsets.UTF_8)) {
                     GSON.toJson(schema, writer);

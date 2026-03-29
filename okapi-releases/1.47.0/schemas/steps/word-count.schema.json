@@ -1,0 +1,54 @@
+{
+  "$id": "word-count",
+  "title": "Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "word-count",
+    "type": "step",
+    "displayName": "Word Count",
+    "description": "Count the number of words in the text units of a set of documents or/and in its parts. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.WordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "countInBatch": {
+      "type": "boolean",
+      "default": true,
+      "title": "Batches"
+    },
+    "countInBatchItems": {
+      "type": "boolean",
+      "default": true,
+      "title": "Batch items"
+    },
+    "countInDocuments": {
+      "type": "boolean",
+      "default": false,
+      "title": "Documents"
+    },
+    "countInSubDocuments": {
+      "type": "boolean",
+      "default": false,
+      "title": "Sub-documents"
+    },
+    "countInGroups": {
+      "type": "boolean",
+      "default": false,
+      "title": "Groups"
+    },
+    "bufferSize": {
+      "type": "integer",
+      "default": 0,
+      "title": "Size of text buffer:"
+    }
+  }
+}

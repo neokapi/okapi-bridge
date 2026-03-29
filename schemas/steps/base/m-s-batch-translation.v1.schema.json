@@ -1,0 +1,117 @@
+{
+  "$id": "m-s-batch-translation",
+  "title": "Microsoft Batch Translation",
+  "type": "object",
+  "x-component": {
+    "id": "m-s-batch-translation",
+    "type": "step",
+    "displayName": "Microsoft Batch Translation",
+    "description": "Annotates text units with Microsoft Translator matches or/and creates a TM from them. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.msbatchtranslation.MSBatchTranslationStep",
+    "parameterMappings": [
+      "BATCH_INPUT_COUNT",
+      "INPUT_ROOT_DIRECTORY",
+      "ROOT_DIRECTORY",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "azureKey": {
+      "type": "string",
+      "default": "",
+      "description": "Microsoft Azure subscription key",
+      "title": "Azure Key"
+    },
+    "category": {
+      "type": "string",
+      "default": "",
+      "description": "Category code if accessing a trained system",
+      "title": "Category"
+    },
+    "tmxPath": {
+      "type": "string",
+      "default": "${rootDir}/tmFromMS.tmx",
+      "description": "Full path of the new TMX document to create"
+    },
+    "configPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path of the properties file listing the engines",
+      "title": "Engine mapping"
+    },
+    "markAsMT": {
+      "type": "boolean",
+      "default": true,
+      "title": "Mark the generated translation as machine translation results"
+    },
+    "maxEvents": {
+      "type": "integer",
+      "default": 20,
+      "description": "Number of events to store before sending a query",
+      "title": "Events buffer"
+    },
+    "maxMatches": {
+      "type": "integer",
+      "default": 1,
+      "description": "Maximum number of matches allowed",
+      "title": "Maximum matches"
+    },
+    "threshold": {
+      "type": "integer",
+      "default": 80,
+      "description": "Score below which matches are not retained",
+      "title": "Threshold"
+    },
+    "makeTmx": {
+      "type": "boolean",
+      "default": false,
+      "title": "Generate a TMX document"
+    },
+    "annotate": {
+      "type": "boolean",
+      "default": true,
+      "title": "Annotate the text units with the translations"
+    },
+    "fillTarget": {
+      "type": "boolean",
+      "default": true,
+      "title": "Fill the target with the best translation candidate"
+    },
+    "fillTargetThreshold": {
+      "type": "integer",
+      "default": 95,
+      "description": "Fill the target when the best candidate is equal or above this score",
+      "title": "Fill threshold"
+    },
+    "onlyWhenWithoutCandidate": {
+      "type": "boolean",
+      "default": true,
+      "title": "Query only entries without existing candidate"
+    },
+    "sendTmx": {
+      "type": "boolean",
+      "default": false,
+      "title": "Send the TMX document to the next step"
+    },
+    "useTargetPrefix": {
+      "type": "boolean",
+      "default": false,
+      "title": "Add a prefix to the translation candidate copied in the target"
+    },
+    "targetPrefix": {
+      "type": "string",
+      "default": "!MT__",
+      "description": "Text to use as the target prefix",
+      "title": "Target prefix"
+    }
+  }
+}

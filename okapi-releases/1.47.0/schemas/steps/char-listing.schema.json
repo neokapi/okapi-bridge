@@ -1,0 +1,39 @@
+{
+  "$id": "char-listing",
+  "title": "Used Characters Listing",
+  "type": "object",
+  "x-component": {
+    "id": "char-listing",
+    "type": "step",
+    "displayName": "Used Characters Listing",
+    "description": "Generate a list of all the characters in the source content of a set of documents. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.charlisting.CharListingStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleStartBatch",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "outputPath": {
+      "type": "string",
+      "default": "charlist.txt",
+      "description": "Full path of the result file.",
+      "title": "Path of the result file"
+    },
+    "autoOpen": {
+      "type": "boolean",
+      "default": true,
+      "title": "Open the result file after completion"
+    }
+  }
+}

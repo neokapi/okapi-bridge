@@ -1,0 +1,25 @@
+{
+  "$id": "copy-or-move",
+  "title": "Copy Or Move",
+  "type": "object",
+  "x-component": {
+    "id": "copy-or-move",
+    "type": "step",
+    "displayName": "Copy Or Move",
+    "description": "Copies or moves the listed files to the specified location. Expects: raw documents. Sends back: raw documents."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.copyormove.CopyOrMoveStep",
+    "parameterMappings": [
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleRawDocument"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$id": "exact-match-character-count",
+  "title": "Exact Match Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-match-character-count",
+    "type": "step",
+    "displayName": "Exact Match Character Count",
+    "description": "Matches text and codes exactly. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactMatchCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

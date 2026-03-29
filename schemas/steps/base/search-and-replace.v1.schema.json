@@ -1,0 +1,76 @@
+{
+  "$id": "search-and-replace",
+  "title": "Search and Replace",
+  "type": "object",
+  "x-component": {
+    "id": "search-and-replace",
+    "type": "step",
+    "displayName": "Search and Replace",
+    "description": "Performs search and replace on the entire file or the text units. Expects raw document or filter events. Sends back: raw document or filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.searchandreplace.SearchAndReplaceStep",
+    "parameterMappings": [
+      "INPUT_ROOT_DIRECTORY",
+      "OUTPUT_URI",
+      "ROOT_DIRECTORY",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleRawDocument",
+      "handleStartBatch",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "regEx": {
+      "type": "boolean",
+      "default": false
+    },
+    "dotAll": {
+      "type": "boolean",
+      "default": false
+    },
+    "ignoreCase": {
+      "type": "boolean",
+      "default": false
+    },
+    "multiLine": {
+      "type": "boolean",
+      "default": false
+    },
+    "target": {
+      "type": "boolean",
+      "default": true
+    },
+    "source": {
+      "type": "boolean",
+      "default": false
+    },
+    "replaceALL": {
+      "type": "boolean",
+      "default": true
+    },
+    "replacementsPath": {
+      "type": "string",
+      "default": ""
+    },
+    "logPath": {
+      "type": "string",
+      "default": "${rootDir}/replacementsLog.txt"
+    },
+    "saveLog": {
+      "type": "boolean",
+      "default": false
+    },
+    "count": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

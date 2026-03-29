@@ -1,0 +1,22 @@
+{
+  "$id": "fuzzy-repaired-character-count",
+  "title": "Fuzzy Repaired Match Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "fuzzy-repaired-character-count",
+    "type": "step",
+    "displayName": "Fuzzy Repaired Match Character Count",
+    "description": "Matches both text and/or codes partially and some automated repair (e.g. number replacement, code repair, capitalization, punctuation etc..) was applied to the target. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.FuzzyRepairedCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

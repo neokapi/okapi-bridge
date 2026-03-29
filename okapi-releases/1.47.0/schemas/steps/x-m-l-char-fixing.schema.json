@@ -1,0 +1,35 @@
+{
+  "$id": "x-m-l-char-fixing",
+  "title": "XML Characters Fixing",
+  "type": "object",
+  "x-component": {
+    "id": "x-m-l-char-fixing",
+    "type": "step",
+    "displayName": "XML Characters Fixing",
+    "description": "Fixes invalid characters in XML documents. Expects: raw document. Sends back: raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.xmlcharfixing.XMLCharFixingStep",
+    "parameterMappings": [
+      "OUTPUT_URI",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleRawDocument",
+      "handleStartBatch"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "file"
+  },
+  "properties": {
+    "replacement": {
+      "type": "string",
+      "default": "_#x%X;",
+      "description": "Enter a Java-formatted replacement string.",
+      "title": "Replacement string"
+    }
+  }
+}

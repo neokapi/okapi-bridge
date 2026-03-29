@@ -1,0 +1,49 @@
+{
+  "$id": "inline-codes-checker",
+  "title": "Inline Codes Quality Check",
+  "type": "object",
+  "x-component": {
+    "id": "inline-codes-checker",
+    "type": "step",
+    "displayName": "Inline Codes Quality Check",
+    "description": "Compare source and target for inline code differences. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.inlinescodeschecker.InlineCodesCheckerStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleStartSubDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "codeDifference": {
+      "type": "boolean",
+      "default": true
+    },
+    "guessOpenClose": {
+      "type": "boolean",
+      "default": true
+    },
+    "typesToIgnore": {
+      "type": "string",
+      "default": "mrk;x-df-s;"
+    },
+    "extraCodesAllowed": {
+      "type": "integer",
+      "default": 0
+    },
+    "missingCodesAllowed": {
+      "type": "integer",
+      "default": 0
+    }
+  }
+}

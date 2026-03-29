@@ -1,0 +1,22 @@
+{
+  "$id": "exact-text-only-previous-version-match-character-count",
+  "title": "Exact Text Only Previous Version Match Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-text-only-previous-version-match-character-count",
+    "type": "step",
+    "displayName": "Exact Text Only Previous Version Match Character Count",
+    "description": "Matches EXACT_TEXT_ONLY and comes from a previous version of the same document. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactTextOnlyPreviousVersionMatchCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

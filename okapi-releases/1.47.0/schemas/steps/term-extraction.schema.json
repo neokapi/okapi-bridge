@@ -1,0 +1,107 @@
+{
+  "$id": "term-extraction",
+  "title": "Term Extraction",
+  "type": "object",
+  "x-component": {
+    "id": "term-extraction",
+    "type": "step",
+    "displayName": "Term Extraction",
+    "description": "Extract a list of possible terms found in the source content. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.termextraction.TermExtractionStep",
+    "parameterMappings": [
+      "INPUT_ROOT_DIRECTORY",
+      "ROOT_DIRECTORY",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleStartBatch",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "outputPath": {
+      "type": "string",
+      "default": "${rootDir}/terms.txt",
+      "description": "Full path of the output file",
+      "title": "Output path"
+    },
+    "autoOpen": {
+      "type": "boolean",
+      "default": false,
+      "title": "Open the result file after completion"
+    },
+    "minWordsPerTerm": {
+      "type": "integer",
+      "default": 1,
+      "description": "A term will be made up at least of that many words",
+      "title": "Minimum number of words per term"
+    },
+    "maxWordsPerTerm": {
+      "type": "integer",
+      "default": 3,
+      "description": "A term will be made up at the most of that many words",
+      "title": "Maximum number of words per term"
+    },
+    "minOccurrences": {
+      "type": "integer",
+      "default": 2,
+      "description": "A term will have at least that many occurrences",
+      "title": "Minimum number of occurrences per term"
+    },
+    "stopWordsPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path of the file containing stop words",
+      "title": "Path of the file with stop words (leave empty for default)"
+    },
+    "notStartWordsPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path of the file containing not-start words",
+      "title": "Path of the file with not-start words (leave empty for default)"
+    },
+    "notEndWordsPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path of the file containing not-end words",
+      "title": "Path of the file with not-end words (leave empty for default)"
+    },
+    "keepCase": {
+      "type": "boolean",
+      "default": false,
+      "title": "Preserve case differences"
+    },
+    "removeSubTerms": {
+      "type": "boolean",
+      "default": false,
+      "title": "Remove entries that seem to be sub-strings of longer entries"
+    },
+    "sortByOccurrence": {
+      "type": "boolean",
+      "default": false,
+      "title": "Sort the results by the number of occurrences"
+    },
+    "useTerminologyAnnotations": {
+      "type": "boolean",
+      "default": true,
+      "title": "Use Terminology annotations"
+    },
+    "useTextAnalysisAnnotations": {
+      "type": "boolean",
+      "default": true,
+      "title": "Use Text Analysis annotations"
+    },
+    "useStatistics": {
+      "type": "boolean",
+      "default": true,
+      "title": "Use tokens-grouping statistics"
+    }
+  }
+}

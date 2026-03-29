@@ -1,0 +1,39 @@
+{
+  "$id": "x-m-l-analysis",
+  "title": "XML Analysis",
+  "type": "object",
+  "x-component": {
+    "id": "x-m-l-analysis",
+    "type": "step",
+    "displayName": "XML Analysis",
+    "description": "Generate an analysis report of a set of XML documents. Expects: raw document. Sends back: raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.xmlanalysis.XMLAnalysisStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleRawDocument",
+      "handleStartBatch"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "outputPath": {
+      "type": "string",
+      "default": "analysis.html",
+      "description": "Full path of the result file.",
+      "title": "Path of the result file"
+    },
+    "autoOpen": {
+      "type": "boolean",
+      "default": true,
+      "title": "Open the result file after completion"
+    }
+  }
+}

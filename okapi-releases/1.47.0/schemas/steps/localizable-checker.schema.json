@@ -1,0 +1,26 @@
+{
+  "$id": "localizable-checker",
+  "title": "Localizable Quality Check",
+  "type": "object",
+  "x-component": {
+    "id": "localizable-checker",
+    "type": "step",
+    "displayName": "Localizable Quality Check",
+    "description": "Compare source and target number, date and time patterns to assure they are localized. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.localizablechecker.LocalizableCheckerStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

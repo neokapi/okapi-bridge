@@ -1,0 +1,229 @@
+{
+  "$id": "patterns-checker",
+  "title": "Pattern (regex) Quality Check",
+  "type": "object",
+  "x-component": {
+    "id": "patterns-checker",
+    "type": "step",
+    "displayName": "Pattern (regex) Quality Check",
+    "description": "Compare source and target for pattern differences. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.patternschecker.PatternsCheckerStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleStartSubDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "checkPatterns": {
+      "type": "boolean",
+      "default": true
+    },
+    "patternCount": {
+      "type": "integer",
+      "default": 8
+    },
+    "usePattern0": {
+      "type": "boolean",
+      "default": true
+    },
+    "fromSourcePattern0": {
+      "type": "boolean",
+      "default": true
+    },
+    "severityPattern0": {
+      "type": "integer",
+      "default": 0
+    },
+    "sourcePattern0": {
+      "type": "string",
+      "default": "[\\(\\uFF08]"
+    },
+    "targetPattern0": {
+      "type": "string",
+      "default": "[\\(\\uFF08]"
+    },
+    "descPattern0": {
+      "type": "string",
+      "default": "Opening parenthesis"
+    },
+    "usePattern1": {
+      "type": "boolean",
+      "default": true
+    },
+    "fromSourcePattern1": {
+      "type": "boolean",
+      "default": true
+    },
+    "severityPattern1": {
+      "type": "integer",
+      "default": 0
+    },
+    "sourcePattern1": {
+      "type": "string",
+      "default": "[\\)\\uFF09]"
+    },
+    "targetPattern1": {
+      "type": "string",
+      "default": "[\\)\\uFF09]"
+    },
+    "descPattern1": {
+      "type": "string",
+      "default": "Closing parenthesis"
+    },
+    "usePattern2": {
+      "type": "boolean",
+      "default": true
+    },
+    "fromSourcePattern2": {
+      "type": "boolean",
+      "default": true
+    },
+    "severityPattern2": {
+      "type": "integer",
+      "default": 0
+    },
+    "sourcePattern2": {
+      "type": "string",
+      "default": "[\\p{Ps}\\p{Pe}&&[^\\(\\)\\uFF08\\uFF09]]"
+    },
+    "targetPattern2": {
+      "type": "string",
+      "default": "<same>"
+    },
+    "descPattern2": {
+      "type": "string",
+      "default": "Bracketing characters (except parentheses)"
+    },
+    "usePattern3": {
+      "type": "boolean",
+      "default": true
+    },
+    "fromSourcePattern3": {
+      "type": "boolean",
+      "default": true
+    },
+    "severityPattern3": {
+      "type": "integer",
+      "default": 1
+    },
+    "sourcePattern3": {
+      "type": "string",
+      "default": "[\\w\\.\\-]+@[\\w\\.\\-]+"
+    },
+    "targetPattern3": {
+      "type": "string",
+      "default": "<same>"
+    },
+    "descPattern3": {
+      "type": "string",
+      "default": "Email addresses"
+    },
+    "usePattern4": {
+      "type": "boolean",
+      "default": true
+    },
+    "fromSourcePattern4": {
+      "type": "boolean",
+      "default": true
+    },
+    "severityPattern4": {
+      "type": "integer",
+      "default": 1
+    },
+    "sourcePattern4": {
+      "type": "string",
+      "default": "https?:[\\w/\\.:;+\\-~\\%#\\$?=&,()]+[\\w/:;+\\-~\\%#\\$?=&,()]+|www\\.[\\w/\\.:;+\\-~\\%#\\$?=&,()]+|ftp:[\\w/\\.:;+\\-~\\%#?=&,]+"
+    },
+    "targetPattern4": {
+      "type": "string",
+      "default": "<same>"
+    },
+    "descPattern4": {
+      "type": "string",
+      "default": "URLs"
+    },
+    "usePattern5": {
+      "type": "boolean",
+      "default": true
+    },
+    "fromSourcePattern5": {
+      "type": "boolean",
+      "default": true
+    },
+    "severityPattern5": {
+      "type": "integer",
+      "default": 2
+    },
+    "sourcePattern5": {
+      "type": "string",
+      "default": "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b"
+    },
+    "targetPattern5": {
+      "type": "string",
+      "default": "<same>"
+    },
+    "descPattern5": {
+      "type": "string",
+      "default": "IP addresses"
+    },
+    "usePattern6": {
+      "type": "boolean",
+      "default": true
+    },
+    "fromSourcePattern6": {
+      "type": "boolean",
+      "default": true
+    },
+    "severityPattern6": {
+      "type": "integer",
+      "default": 2
+    },
+    "sourcePattern6": {
+      "type": "string",
+      "default": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]"
+    },
+    "targetPattern6": {
+      "type": "string",
+      "default": "<same>"
+    },
+    "descPattern6": {
+      "type": "string",
+      "default": "C-style printf codes"
+    },
+    "usePattern7": {
+      "type": "boolean",
+      "default": true
+    },
+    "fromSourcePattern7": {
+      "type": "boolean",
+      "default": false
+    },
+    "severityPattern7": {
+      "type": "integer",
+      "default": 1
+    },
+    "sourcePattern7": {
+      "type": "string",
+      "default": "<same>"
+    },
+    "targetPattern7": {
+      "type": "string",
+      "default": "([\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lo}])\\1\\1"
+    },
+    "descPattern7": {
+      "type": "string",
+      "default": "Tripled letter"
+    }
+  }
+}

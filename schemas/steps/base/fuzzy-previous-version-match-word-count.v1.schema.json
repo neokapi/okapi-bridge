@@ -1,0 +1,22 @@
+{
+  "$id": "fuzzy-previous-version-match-word-count",
+  "title": "Fuzzy Previous Version Match Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "fuzzy-previous-version-match-word-count",
+    "type": "step",
+    "displayName": "Fuzzy Previous Version Match Word Count",
+    "description": "Matches FUZZY and comes from a previous version of the same document. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.FuzzyPreviousVersionMatchWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$id": "exact-text-only-unique-id-match-word-count",
+  "title": "Exact Text Only Unique Id Match Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-text-only-unique-id-match-word-count",
+    "type": "step",
+    "displayName": "Exact Text Only Unique Id Match Word Count",
+    "description": "Matches EXACT_TEXT_ONLY and matches a unique id. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactTextOnlyUniqueIdMatchWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

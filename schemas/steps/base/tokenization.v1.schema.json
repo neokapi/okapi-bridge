@@ -1,0 +1,141 @@
+{
+  "$id": "tokenization",
+  "title": "Tokenization Step",
+  "type": "object",
+  "x-component": {
+    "id": "tokenization",
+    "type": "step",
+    "displayName": "Tokenization Step",
+    "description": "Extracts tokens from the text units content of a document. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.tokenization.TokenizationStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "tokenizeSource": {
+      "type": "boolean",
+      "default": true,
+      "description": "Create selected tokens for source locale",
+      "title": "Tokenize Source"
+    },
+    "tokenizeTargets": {
+      "type": "boolean",
+      "default": false,
+      "description": "Create selected tokens for target locales",
+      "title": "Tokenize Targets"
+    },
+    "WORD": {
+      "type": "boolean",
+      "default": false,
+      "description": "A run of characters constituting a word of the given language.",
+      "title": "WORD"
+    },
+    "HYPHENATED_WORD": {
+      "type": "boolean",
+      "default": false,
+      "description": "A word including hyphens of various types",
+      "title": "HYPHENATED_WORD"
+    },
+    "NUMBER": {
+      "type": "boolean",
+      "default": false,
+      "description": "Numbers, including any commas or points symbols.",
+      "title": "NUMBER"
+    },
+    "PUNCTUATION": {
+      "type": "boolean",
+      "default": false,
+      "description": "Punctuation characters as defined by the Unicode Consortium standards.",
+      "title": "PUNCTUATION"
+    },
+    "WHITESPACE": {
+      "type": "boolean",
+      "default": false,
+      "description": "Whitespace characters as defined by the Unicode Consortium standards.",
+      "title": "WHITESPACE"
+    },
+    "ABBREVIATION": {
+      "type": "boolean",
+      "default": false,
+      "description": "Limited types of English abbreviations like pct in 3.3pct, U.S., USD.",
+      "title": "ABBREVIATION"
+    },
+    "INTERNET": {
+      "type": "boolean",
+      "default": false,
+      "description": "An Internet address (URI or IP): http://www.somesite.org/foo/index.html, 192.168.0.5.",
+      "title": "INTERNET"
+    },
+    "EMAIL": {
+      "type": "boolean",
+      "default": false,
+      "description": "E-mail addresses.",
+      "title": "EMAIL"
+    },
+    "EMOTICON": {
+      "type": "boolean",
+      "default": false,
+      "description": "Emoticon sequences like \":-)\".",
+      "title": "EMOTICON"
+    },
+    "EMOJI": {
+      "type": "boolean",
+      "default": false,
+      "description": "All emoji characters defined in Unicode",
+      "title": "EMOJI"
+    },
+    "DATE": {
+      "type": "boolean",
+      "default": false,
+      "description": "Dates in the format MM/DD/YYYY.",
+      "title": "DATE"
+    },
+    "CURRENCY": {
+      "type": "boolean",
+      "default": false,
+      "description": "Sums in various currencies",
+      "title": "CURRENCY"
+    },
+    "TIME": {
+      "type": "boolean",
+      "default": false,
+      "description": "Time separated by either \":\" or \".\" (24 hour, 12 hour with AM or PM).",
+      "title": "TIME"
+    },
+    "MARKUP": {
+      "type": "boolean",
+      "default": false,
+      "description": "A run that begins with \"<\" and ends with \">\" like in HTML and XML.",
+      "title": "MARKUP"
+    },
+    "OTHER_SYMBOL": {
+      "type": "boolean",
+      "default": false,
+      "description": "VVarious Unicode symbols (mathematical etc.)",
+      "title": "OTHER_SYMBOL"
+    },
+    "KANA": {
+      "type": "boolean",
+      "default": false,
+      "description": "Hiragana, Katakana (Japanese).",
+      "title": "KANA"
+    },
+    "IDEOGRAM": {
+      "type": "boolean",
+      "default": false,
+      "description": "Ideograms as defined by the Unicode Consortium standards.",
+      "title": "IDEOGRAM"
+    }
+  }
+}

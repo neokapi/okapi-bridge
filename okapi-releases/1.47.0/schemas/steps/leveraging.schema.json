@@ -1,0 +1,98 @@
+{
+  "$id": "leveraging",
+  "title": "Leveraging",
+  "type": "object",
+  "x-component": {
+    "id": "leveraging",
+    "type": "step",
+    "displayName": "Leveraging",
+    "description": "Leverage existing translation into the text units content of a document. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.leveraging.LeveragingStep",
+    "parameterMappings": [
+      "INPUT_ROOT_DIRECTORY",
+      "ROOT_DIRECTORY",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatch",
+      "handleEndDocument",
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [
+      "ILoadsResources"
+    ],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "leverage": {
+      "type": "boolean",
+      "default": true
+    },
+    "resourceClassName": {
+      "type": "string",
+      "default": "net.sf.okapi.connectors.pensieve.PensieveTMConnector"
+    },
+    "noQueryThreshold": {
+      "type": "integer",
+      "default": 101
+    },
+    "threshold": {
+      "type": "integer",
+      "default": 95
+    },
+    "fillTarget": {
+      "type": "boolean",
+      "default": true
+    },
+    "fillTargetThreshold": {
+      "type": "integer",
+      "default": 95
+    },
+    "fillIfTargetIsEmpty": {
+      "type": "boolean",
+      "default": false
+    },
+    "fillIfTargetIsSameAsSource": {
+      "type": "boolean",
+      "default": false
+    },
+    "downgradeIdenticalBestMatches": {
+      "type": "boolean",
+      "default": false
+    },
+    "makeTMX": {
+      "type": "boolean",
+      "default": false
+    },
+    "tmxPath": {
+      "type": "string",
+      "default": ""
+    },
+    "useMTPrefix": {
+      "type": "boolean",
+      "default": true
+    },
+    "useTargetPrefix": {
+      "type": "boolean",
+      "default": false
+    },
+    "targetPrefix": {
+      "type": "string",
+      "default": "FUZZY__"
+    },
+    "targetPrefixThreshold": {
+      "type": "integer",
+      "default": 99
+    },
+    "copySourceOnNoText": {
+      "type": "boolean",
+      "default": false
+    }
+  }
+}

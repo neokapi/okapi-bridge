@@ -1,0 +1,22 @@
+{
+  "$id": "exact-document-context-match-word-count",
+  "title": "Exact Document Context Match Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-document-context-match-word-count",
+    "type": "step",
+    "displayName": "Exact Document Context Match Word Count",
+    "description": "Matches EXACT and comes from a repeated segment in the same document or a different version of the same document. See also EXACT_PREVIOUS_VERSION Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactDocumentContextMatchWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

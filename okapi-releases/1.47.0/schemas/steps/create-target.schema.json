@@ -1,0 +1,46 @@
+{
+  "$id": "create-target",
+  "title": "Create Target",
+  "type": "object",
+  "x-component": {
+    "id": "create-target",
+    "type": "step",
+    "displayName": "Create Target",
+    "description": "Create target segment container. Optionally copy source content to the target. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.common.createtarget.CreateTargetStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "copyProperties": {
+      "type": "boolean",
+      "default": true,
+      "title": "Copy the source properties to the target"
+    },
+    "copyContent": {
+      "type": "boolean",
+      "default": true,
+      "title": "Copy the source content to the target"
+    },
+    "overwriteExisting": {
+      "type": "boolean",
+      "default": false,
+      "title": "Overwrite the current target content"
+    },
+    "createOnNonTranslatable": {
+      "type": "boolean",
+      "default": true,
+      "title": "Creates target for non-translatable text units"
+    }
+  }
+}

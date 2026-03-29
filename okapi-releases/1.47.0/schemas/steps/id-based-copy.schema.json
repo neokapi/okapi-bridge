@@ -1,0 +1,40 @@
+{
+  "$id": "id-based-copy",
+  "title": "Id-Based Copy",
+  "type": "object",
+  "x-component": {
+    "id": "id-based-copy",
+    "type": "step",
+    "displayName": "Id-Based Copy",
+    "description": "Copies the source text of the second input into the target of the first input based on matching id.\nExpects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.idbasedcopy.IdBasedCopyStep",
+    "parameterMappings": [
+      "FILTER_CONFIGURATION_MAPPER",
+      "SECOND_INPUT_RAWDOC",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndDocument",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "markAsTranslateNo": {
+      "type": "boolean",
+      "default": false,
+      "title": "Set the text unit as non-translatable"
+    },
+    "markAsApproved": {
+      "type": "boolean",
+      "default": true,
+      "title": "Set the target property 'approved' to 'yes'"
+    }
+  }
+}

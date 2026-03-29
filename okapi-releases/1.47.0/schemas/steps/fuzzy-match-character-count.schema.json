@@ -1,0 +1,22 @@
+{
+  "$id": "fuzzy-match-character-count",
+  "title": "Fuzzy Match Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "fuzzy-match-character-count",
+    "type": "step",
+    "displayName": "Fuzzy Match Character Count",
+    "description": "Matches both text and/or codes partially. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.FuzzyMatchCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

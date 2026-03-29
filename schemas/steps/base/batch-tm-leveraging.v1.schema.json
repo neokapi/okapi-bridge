@@ -1,0 +1,27 @@
+{
+  "$id": "batch-tm-leveraging",
+  "title": "Simple Batch Leveraging Step",
+  "type": "object",
+  "x-component": {
+    "id": "batch-tm-leveraging",
+    "type": "step",
+    "displayName": "Simple Batch Leveraging Step",
+    "description": "Simple and fast batch leveraging step that delegates to connectors"
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.leveraging.BatchTmLeveragingStep",
+    "parameterMappings": [
+      "ROOT_DIRECTORY",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndDocument",
+      "handleStartBatch",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$id": "exact-document-context-match-character-count",
+  "title": "Exact Document Context Match Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-document-context-match-character-count",
+    "type": "step",
+    "displayName": "Exact Document Context Match Character Count",
+    "description": "Matches EXACT and comes from a repeated segment in the same document or a different version of the same document. See also EXACT_PREVIOUS_VERSION Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactDocumentContextMatchCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

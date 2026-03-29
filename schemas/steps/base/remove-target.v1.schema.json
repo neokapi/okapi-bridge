@@ -1,0 +1,47 @@
+{
+  "$id": "remove-target",
+  "title": "Remove Target",
+  "type": "object",
+  "x-component": {
+    "id": "remove-target",
+    "type": "step",
+    "displayName": "Remove Target",
+    "description": "Remove targets in all or a given set of text units. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.common.removetarget.RemoveTargetStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "tusForTargetRemoval": {
+      "type": "string",
+      "default": "",
+      "title": "Comma-delimited list of ids of the text units where targets are to be removed (empty - remove all targets)"
+    },
+    "targetLocalesToKeep": {
+      "type": "string",
+      "default": "",
+      "title": "Comma-delimited list of locales of the text units of targets that should be kept (empty - keep all targets)"
+    },
+    "filterBasedOnIds": {
+      "type": "boolean",
+      "default": true,
+      "title": "If true filter on ID's, if false filter on locales (you cannot filter on both)"
+    },
+    "removeTUIfNoTarget": {
+      "type": "boolean",
+      "default": false,
+      "title": "If true remove the Text Unit if it has no remaining targets, if false do nothing"
+    }
+  }
+}

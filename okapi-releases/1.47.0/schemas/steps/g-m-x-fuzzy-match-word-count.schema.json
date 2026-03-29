@@ -1,0 +1,22 @@
+{
+  "$id": "g-m-x-fuzzy-match-word-count",
+  "title": "Fuzzy Match Word Count",
+  "type": "object",
+  "x-component": {
+    "id": "g-m-x-fuzzy-match-word-count",
+    "type": "step",
+    "displayName": "Fuzzy Match Word Count",
+    "description": "An accumulation of the word count for text units that have been fuzzy matched against a leveraged translation memory database. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.gmx.GMXFuzzyMatchWordCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

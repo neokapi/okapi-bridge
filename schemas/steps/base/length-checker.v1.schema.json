@@ -1,0 +1,73 @@
+{
+  "$id": "length-checker",
+  "title": "Length Quality Check",
+  "type": "object",
+  "x-component": {
+    "id": "length-checker",
+    "type": "step",
+    "displayName": "Length Quality Check",
+    "description": "Compare source and target lengths and annotate those that seem mismatched. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.lengthchecker.LengthCheckerStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch",
+      "handleStartDocument",
+      "handleStartSubDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "checkMaxCharLength": {
+      "type": "boolean",
+      "default": true
+    },
+    "maxCharLengthBreak": {
+      "type": "integer",
+      "default": 20
+    },
+    "maxCharLengthAbove": {
+      "type": "integer",
+      "default": 200
+    },
+    "maxCharLengthBelow": {
+      "type": "integer",
+      "default": 350
+    },
+    "checkMinCharLength": {
+      "type": "boolean",
+      "default": true
+    },
+    "minCharLengthBreak": {
+      "type": "integer",
+      "default": 20
+    },
+    "minCharLengthAbove": {
+      "type": "integer",
+      "default": 45
+    },
+    "minCharLengthBelow": {
+      "type": "integer",
+      "default": 30
+    },
+    "checkStorageSize": {
+      "type": "boolean",
+      "default": true
+    },
+    "checkAbsoluteMaxCharLength": {
+      "type": "boolean",
+      "default": false
+    },
+    "absoluteMaxCharLength": {
+      "type": "integer",
+      "default": 255
+    }
+  }
+}

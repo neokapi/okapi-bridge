@@ -1,0 +1,101 @@
+{
+  "$id": "batch-translation",
+  "title": "Batch Translation",
+  "type": "object",
+  "x-component": {
+    "id": "batch-translation",
+    "type": "step",
+    "displayName": "Batch Translation",
+    "description": "Creates translations from an external program for a given input document. Expects: raw document. Sends back: raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.batchtranslation.BatchTranslationStep",
+    "parameterMappings": [
+      "BATCH_INPUT_COUNT",
+      "FILTER_CONFIGURATION_MAPPER",
+      "INPUT_ROOT_DIRECTORY",
+      "ROOT_DIRECTORY",
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndBatchItem",
+      "handleRawDocument",
+      "handleStartBatch",
+      "handleStartBatchItem"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "command": {
+      "type": "string",
+      "default": "",
+      "description": "Command line to execute the batch translation",
+      "title": "Command line"
+    },
+    "origin": {
+      "type": "string",
+      "default": "",
+      "description": "String that identifies the origin of the translation",
+      "title": "Origin identifier"
+    },
+    "markAsMT": {
+      "type": "boolean",
+      "default": true,
+      "title": "Mark the generated translation as machine translation results"
+    },
+    "makeTM": {
+      "type": "boolean",
+      "default": false,
+      "title": "Import into the following Pensieve TM:"
+    },
+    "tmDirectory": {
+      "type": "string",
+      "default": "",
+      "description": "Location of the TM to create or use"
+    },
+    "makeTMX": {
+      "type": "boolean",
+      "default": false,
+      "title": "Create the following TMX document:"
+    },
+    "tmxPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path of the new TMX document to create"
+    },
+    "sendTMX": {
+      "type": "boolean",
+      "default": false,
+      "title": "Send the TMX document to the next step"
+    },
+    "blockSize": {
+      "type": "integer",
+      "default": 1000,
+      "description": "Maximum number of text units to process together",
+      "title": "Block size"
+    },
+    "checkExistingTm": {
+      "type": "boolean",
+      "default": false,
+      "title": "Check for existing entries in an existing Pensieve TM:"
+    },
+    "existingTm": {
+      "type": "string",
+      "default": "",
+      "description": "Location of the TM to lookup"
+    },
+    "segment": {
+      "type": "boolean",
+      "default": false,
+      "title": "Segment the text units, using the following SRX rules:"
+    },
+    "srxPath": {
+      "type": "string",
+      "default": "",
+      "description": "Full path of the segmentation rules file to use"
+    }
+  }
+}

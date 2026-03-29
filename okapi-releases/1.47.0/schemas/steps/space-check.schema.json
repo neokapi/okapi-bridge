@@ -1,0 +1,26 @@
+{
+  "$id": "space-check",
+  "title": "Space Quality Check",
+  "type": "object",
+  "x-component": {
+    "id": "space-check",
+    "type": "step",
+    "displayName": "Space Quality Check",
+    "description": "Compare and fix spaces around inline codes in target based on the source. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.spacecheck.SpaceCheckStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleEndDocument",
+      "handleStartDocument",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

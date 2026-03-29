@@ -1,0 +1,53 @@
+{
+  "$id": "codes-removal",
+  "title": "Inline Codes Removal",
+  "type": "object",
+  "x-component": {
+    "id": "codes-removal",
+    "type": "step",
+    "displayName": "Inline Codes Removal",
+    "description": "Removes inline codes from the text units content of a document. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.codesremoval.CodesRemovalStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleStartBatch",
+      "handleTextUnit"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "stripSource": {
+      "type": "boolean",
+      "default": true,
+      "title": "Strip codes in the source text"
+    },
+    "stripTarget": {
+      "type": "boolean",
+      "default": true,
+      "title": "Strip codes in the target text"
+    },
+    "mode": {
+      "type": "integer",
+      "default": 2,
+      "description": "Select what parts of the inline codes to remove",
+      "title": "What to remove"
+    },
+    "includeNonTranslatable": {
+      "type": "boolean",
+      "default": true,
+      "title": "Apply to non-translatable text units"
+    },
+    "replaceWithSpace": {
+      "type": "boolean",
+      "default": false,
+      "title": "Replace line break codes with spaces (When removing content AND marker)"
+    }
+  }
+}

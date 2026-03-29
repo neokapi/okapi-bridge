@@ -1,0 +1,31 @@
+{
+  "$id": "xliff-w-c-splitter",
+  "title": "XLIFF Word-Count Splitter",
+  "type": "object",
+  "x-component": {
+    "id": "xliff-w-c-splitter",
+    "type": "step",
+    "displayName": "XLIFF Word-Count Splitter",
+    "description": "Split an XLIFF document into separate documents based on word count.Expects: raw document. Sends back: raw document."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.xliffsplitter.XliffWCSplitterStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [
+      "handleRawDocument"
+    ],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  },
+  "properties": {
+    "threshold": {
+      "type": "integer",
+      "default": 200000,
+      "title": "Maximum word-count per part:"
+    }
+  }
+}

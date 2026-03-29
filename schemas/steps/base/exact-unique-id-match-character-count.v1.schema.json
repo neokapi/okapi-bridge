@@ -1,0 +1,22 @@
+{
+  "$id": "exact-unique-id-match-character-count",
+  "title": "Exact Unique Id Match Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-unique-id-match-character-count",
+    "type": "step",
+    "displayName": "Exact Unique Id Match Character Count",
+    "description": "Matches EXACT and matches a unique id. Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactUniqueIdMatchCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}

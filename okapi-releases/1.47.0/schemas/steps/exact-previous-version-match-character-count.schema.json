@@ -1,0 +1,22 @@
+{
+  "$id": "exact-previous-version-match-character-count",
+  "title": "Exact Previous Version Match Character Count",
+  "type": "object",
+  "x-component": {
+    "id": "exact-previous-version-match-character-count",
+    "type": "step",
+    "displayName": "Exact Previous Version Match Character Count",
+    "description": "Matches EXACT and comes from the preceding version of the same document (i.e., if v4 is leveraged this match must come from v3, not v2 or v1!!). Expects: filter events. Sends back: filter events."
+  },
+  "x-step": {
+    "class": "net.sf.okapi.steps.wordcount.categorized.okapi.ExactPreviousVersionMatchCharacterCountStep",
+    "parameterMappings": [
+      "SOURCE_LOCALE",
+      "TARGET_LOCALE"
+    ],
+    "eventHandlers": [],
+    "interfaces": [],
+    "inputType": "filter-events",
+    "outputType": "filter-events"
+  }
+}
