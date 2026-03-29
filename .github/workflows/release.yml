@@ -156,92 +156,10 @@ jobs:
         run: mvn -B package -f okapi-releases/${{ matrix.okapi-version }}/pom.xml
 
       - name: Package release archive
-        run: |
-          TAG="${GITHUB_REF_NAME}"
-          VERSION="${TAG#v}"
-          OKAPI_VERSION="${{ matrix.okapi-version }}"
-          ARCHIVE_NAME="okapi-bridge-${TAG}-okapi${OKAPI_VERSION}"
-
-          mkdir -p staging/schemas
-          JAR_FILE=$(ls okapi-releases/${OKAPI_VERSION}/target/neokapi-bridge-*-jar-with-dependencies.jar 2>/dev/null | head -1)
-          if [ -z "$JAR_FILE" ]; then
-            echo "Error: No jar-with-dependencies found in okapi-releases/${OKAPI_VERSION}/target/"
-            ls -la okapi-releases/${OKAPI_VERSION}/target/
-            exit 1
-          fi
-          cp "$JAR_FILE" staging/neokapi-bridge-jar-with-dependencies.jar
-
-          # Generate unified manifest.json with filter + step capabilities
-          CAP_JSON=$(java -jar "$JAR_FILE" --list-capabilities 2>/dev/null)
-
-          FILTER_CAPS=$(echo "$CAP_JSON" | jq '[.filters[] | {
-                type: "format",
-                id: .id,
-                name: .name,
-                display_name: .display_name,
-                capabilities: .capabilities,
-                mime_types: (if (.mime_types | length) > 0 then .mime_types else null end),
-                extensions: (if (.extensions | length) > 0 then .extensions else null end)
-              } | with_entries(select(.value != null))]')
-
-          STEP_CAPS=$(echo "$CAP_JSON" | jq '[(.steps // [])[] | {
-                type: "tool",
-                id: ("okapi:" + .stepId),
-                name: .name,
-                display_name: .name,
-                description: .description
-              } | with_entries(select(.value != null))]')
-
-          CAPABILITIES=$(jq -n --argjson f "$FILTER_CAPS" --argjson s "$STEP_CAPS" '$f + $s')
-
-          jq -n --arg name "okapi" \
-                --arg version "$VERSION" \
-                --arg framework_version "$OKAPI_VERSION" \
-                --argjson capabilities "$CAPABILITIES" \
-                '{
-                  name: $name,
-                  version: $version,
-                  framework_version: $framework_version,
-                  plugin_type: "bundle",
-                  install_type: "bridge",
-                  command: "java",
-                  args: ["-jar", "neokapi-bridge-jar-with-dependencies.jar"],
-                  capabilities: $capabilities
-                }' > staging/manifest.json
-
-          # Include composite filter schemas for this Okapi version from centralized location
-          # Use max version per filter to handle any duplicate entries in schemas/versions.json
-          jq -r --arg ov "${OKAPI_VERSION}" '
-            .filters | to_entries[] |
-            .key as $f |
-            [.value.versions[] | select(.okapiVersions | index($ov))] |
-            max_by(.version) | select(.) |
-            "\($f) \(.version)"
-          ' schemas/versions.json | while read filter version; do
-            cp "schemas/filters/composite/${filter}.v${version}.schema.json" staging/schemas/
-          done
-
-          # Include step schemas from centralized versioned location
-          mkdir -p staging/schemas/steps
-          jq -r --arg ov "${OKAPI_VERSION}" '
-            .steps // {} | to_entries[] |
-            .key as $s |
-            [.value.versions[] | select(.okapiVersions | index($ov))] |
-            max_by(.version) | select(.) |
-            "\($s) \(.version)"
-          ' schemas/versions.json | while read step_id version; do
-            src="schemas/steps/base/${step_id}.v${version}.schema.json"
-            if [ -f "$src" ]; then
-              cp "$src" "staging/schemas/steps/${step_id}.schema.json"
-            fi
-          done
-          echo "Bundled $(ls staging/schemas/steps/*.schema.json 2>/dev/null | wc -l | tr -d ' ') step schemas"
-
-          cd staging
-          tar czf "../${ARCHIVE_NAME}.tar.gz" .
-          cd ..
-
-          sha256sum "${ARCHIVE_NAME}.tar.gz" > "${ARCHIVE_NAME}.tar.gz.sha256"
+        env:
+          TAG: ${{ github.ref_name }}
+          OKAPI_VERSION: ${{ matrix.okapi-version }}
+        run: ./scripts/package-release.sh "${TAG#v}" "$OKAPI_VERSION"
 
       - name: Extract capabilities JSON for registry
         if: matrix.okapi-version == needs.setup.outputs.latest
@@ -308,53 +226,9 @@ jobs:
 
       - name: Update plugins.json
         env:
+          TAG: ${{ github.ref_name }}
           OKAPI_LATEST: ${{ needs.setup.outputs.latest }}
-        run: |
-          TAG="${GITHUB_REF_NAME}"
-          VERSION="${TAG#v}"
-          BASE_URL="https://github.com/neokapi/okapi-bridge/releases/download/${TAG}"
-
-          # Read capabilities generated from the bridge JAR
-          CAPABILITIES=$(cat artifacts/capabilities.json)
-
-          cd registry
-          echo '{"version":1,"plugins":[]}' > plugins.json
-
-          # Add each Okapi version as a plugin entry (derived from okapi-releases/)
-          for okapi_version in $(ls -1 ../okapi-releases | sort -V); do
-            CHECKSUM=$(cat ../artifacts/okapi-bridge-${TAG}-okapi${okapi_version}.tar.gz.sha256 | awk '{print $1}')
-            URL="${BASE_URL}/okapi-bridge-${TAG}-okapi${okapi_version}.tar.gz"
-
-            # Determine plugin name (latest gets "okapi", others get version suffix)
-            if [ "$okapi_version" = "$OKAPI_LATEST" ]; then
-              PLUGIN_NAME="okapi"
-              DESCRIPTION="Okapi filters (v${okapi_version}, latest)"
-            else
-              PLUGIN_NAME="okapi-${okapi_version}"
-              DESCRIPTION="Okapi filters (v${okapi_version})"
-            fi
-
-            jq --arg name "$PLUGIN_NAME" \
-               --arg version "$VERSION" \
-               --arg framework_version "$okapi_version" \
-               --arg desc "$DESCRIPTION" \
-               --arg checksum "$CHECKSUM" \
-               --arg url "$URL" \
-               --argjson capabilities "$CAPABILITIES" \
-               '.plugins += [{
-                 name: $name,
-                 version: $version,
-                 framework_version: $framework_version,
-                 description: $desc,
-                 plugin_type: "bundle",
-                 install_type: "bridge",
-                 platform: "",
-                 checksum: $checksum,
-                 download_url: $url,
-                 min_host_version: "0.1.0",
-                 capabilities: $capabilities
-               }]' plugins.json > plugins.tmp && mv plugins.tmp plugins.json
-          done
+        run: ./scripts/update-registry.sh "$TAG" registry artifacts "$OKAPI_LATEST"
 
       - name: Commit and push registry update
         run: |
