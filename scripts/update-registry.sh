@@ -14,8 +14,8 @@ if [ $# -lt 4 ]; then
 fi
 
 TAG="$1"
-REGISTRY_DIR="$2"
-ARTIFACTS_DIR="$3"
+REGISTRY_DIR="$(cd "$2" && pwd)"
+ARTIFACTS_DIR="$(cd "$3" && pwd)"
 OKAPI_LATEST="$4"
 VERSION="${TAG#v}"
 BASE_URL="https://github.com/neokapi/okapi-bridge/releases/download/${TAG}"
