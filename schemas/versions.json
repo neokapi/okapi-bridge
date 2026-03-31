@@ -1,6 +1,6 @@
 {
   "$schema": "https://neokapi.dev/schemas/schema-versions.json",
-  "generatedAt": "2026-03-29T09:25:51Z",
+  "generatedAt": "2026-03-31T04:02:43Z",
   "filters": {
     "okf_archive": {
       "versions": [
@@ -2393,8 +2393,7 @@
           "apiVersion": "v2",
           "okapiVersions": [
             "1.46.0",
-            "1.47.0",
-            "1.48.0"
+            "1.47.0"
           ],
           "introducedInOkapi": "1.46.0"
         }
@@ -2412,8 +2411,7 @@
           "apiVersion": "v1",
           "okapiVersions": [
             "1.46.0",
-            "1.47.0",
-            "1.48.0"
+            "1.47.0"
           ],
           "introducedInOkapi": "1.46.0"
         }
@@ -2443,8 +2441,7 @@
           "kind": "OkfMessageformatFilterConfig",
           "apiVersion": "v2",
           "okapiVersions": [
-            "1.47.0",
-            "1.48.0"
+            "1.47.0"
           ],
           "introducedInOkapi": "1.47.0"
         }
