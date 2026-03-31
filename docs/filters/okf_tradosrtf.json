@@ -1,0 +1,16 @@
+{
+  "filterName": "Trados-Tagged RTF Filter",
+  "overview": "The Trados-Tagged RTF Filter implements the IFilter interface for RTF files prepared with the Trados translation layer of styles. It reads Trados-Tagged RTF documents where special styles are associated to different parts of the content and segmentation markers are present. This is a READ-ONLY filter — it cannot merge back extracted data. A Trados-Tagged RTF differs from a normal Trados-translated RTF in that formatting information uses Trados styles (tw4wInternal, tw4wExternal) rather than true RTF codes.",
+  "parameters": {},
+  "limitations": [
+    "This is a READ-ONLY filter. It does not generate an output corresponding to the input and must be used for input only.",
+    "The filter only understands inline codes represented with Trados styles (tw4wInternal, tw4wExternal), not RTF with normal formatting."
+  ],
+  "processingNotes": [
+    "The document encoding is determined from font encoding information declared in the RTF document. If no default encoding is declared, the user-specified encoding is used as the default.",
+    "Only text marked by Trados segmentation markers is extracted. Any text outside the segment markers is ignored and considered non-translatable."
+  ],
+  "examples": [],
+  "filterId": "okf_tradosrtf",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/trados_tagged_rtf_filter"
+}

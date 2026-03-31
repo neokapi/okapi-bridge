@@ -1,0 +1,28 @@
+{
+  "filterName": "Desegmentation Step",
+  "overview": "This step joins all the segments of each source and/or target text of each text unit into a single content. It takes filter events and sends filter events. Non-segmented entries and text units flagged as non-translatable are left untouched.",
+  "parameters": {
+    "desegmentSource": {
+      "description": "Set this option to desegment the source text of the text units. When enabled, all segments of the source content in each text unit are joined into a single content."
+    },
+    "desegmentTarget": {
+      "description": "Set this option to desegment the target of the text units. Only applies if there is a target text present in the text unit."
+    },
+    "renumberCodes": {
+      "description": "Set this option to renumber the IDs of each joined entry to match an original set of IDs that is a single sequence of numbers starting at '1'. This option can be used to restore the original IDs in content that was segmented with the 'Renumber code IDs' option in the Segmentation step.",
+      "notes": [
+        "This is designed to work in conjunction with the 'Renumber code IDs' option in the Segmentation step to restore original code IDs after desegmentation."
+      ]
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Non-segmented entries are left untouched.",
+    "Text units flagged as non-translatable are left untouched."
+  ],
+  "examples": [],
+  "stepId": "desegmentation",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/desegmentation_step"
+}

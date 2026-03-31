@@ -1,0 +1,27 @@
+{
+  "filterName": "Enrycher Step",
+  "overview": "The Enrycher step invokes the Enrycher Web service to provide disambiguation annotations in the content of the source text. It sends groups of source entries to the Enrycher service, gets back ITS annotated results, and maps those results back to Okapi inline annotations that can be used by any other steps. It implements the ITS 2.0 Text Analysis data category for disambiguation.",
+  "parameters": {
+    "baseUrl": {
+      "description": "The URL of the Enrycher Web service to use for disambiguation annotations. The default value points to the demo service at http://aidemo.ijs.si/mlw/."
+    },
+    "maxEvents": {
+      "description": "The number of events to process at once before sending a query to the Web service. The greater the number, the more segments are sent at the same time to the Web service. This generally improves speed, but the more events are buffered the more memory is required.",
+      "notes": [
+        "Higher values improve speed but increase memory usage."
+      ]
+    }
+  },
+  "limitations": [
+    "This step is BETA.",
+    "The Enrycher Web service (as of Aug-18-2013) supports only English and Slovenian."
+  ],
+  "processingNotes": [
+    "The amount of annotations added to the content can be very high depending on the type of text.",
+    "Events are buffered and sent in batches to the Web service for improved performance.",
+    "Results are mapped back to Okapi inline annotations compatible with downstream steps."
+  ],
+  "examples": [],
+  "stepId": "enrycher",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/enrycher_step"
+}

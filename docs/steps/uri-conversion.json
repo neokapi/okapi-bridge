@@ -1,0 +1,40 @@
+{
+  "filterName": "URI Conversion Step",
+  "overview": "This step converts the translatable content of an input document to and from URI escape notation. It can either un-escape URI escape sequences into normal text, or escape normal text characters into URI escape sequences. It takes filter events as input and sends filter events as output.",
+  "parameters": {
+    "conversionType": {
+      "description": "Controls the direction of URI conversion. A value of 0 selects 'Un-escape the URI escape sequences', which converts URI escaped sequences into normal text. A value of 1 selects 'Escape content to URI escape sequences', which converts normal text into text where characters are escaped into URI escape sequences. Which characters get escaped when using escape mode is determined by the escapeList parameter."
+    },
+    "updateAll": {
+      "description": "When enabled, converts all non-ASCII (extended) characters to URI escape sequences. This applies when escaping content to URI escape sequences.",
+      "dependsOn": [
+        {
+          "property": "conversionType",
+          "condition": "must be set to escape mode (1)"
+        }
+      ]
+    },
+    "escapeList": {
+      "description": "A string containing the list of characters to escape when converting to URI escape sequences. Each character in the string will be escaped. Note that the '%' character is always escaped regardless of whether it appears in this list. The UI provides two preset buttons: 'All But Marks' resets the list to all characters except those specified as 'marks' in RFC 2396 (which are: '-', '_', '.', '!', '~', '*', ''', '(', and ')'). 'All But Marks And Reserved' resets the list to all characters except both the RFC 2396 'marks' and the 'reserved' characters (which are: ';', '/', '?', ':', '@', '&', '=', '+', '$', ',').",
+      "notes": [
+        "The '%' character is always escaped regardless of this list."
+      ],
+      "dependsOn": [
+        {
+          "property": "conversionType",
+          "condition": "must be set to escape mode (1)"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "When un-escaping, URI escape sequences (e.g., %20) are converted back to their original characters.",
+    "When escaping, the step uses UTF-8 encoding for converting non-ASCII characters to URI percent-encoded sequences as per RFC 2396."
+  ],
+  "examples": [],
+  "stepId": "uri-conversion",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/uri_conversion_step"
+}

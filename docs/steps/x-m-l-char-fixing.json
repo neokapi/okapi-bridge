@@ -1,0 +1,62 @@
+{
+  "filterName": "XML Characters Fixing Step",
+  "overview": "This step replaces characters that are invalid in XML by a marker. It takes a raw document as input and sends back a raw document. The step recognizes raw characters as well as numeric character references (NCRs), such as &#000B; or &#11;. The output is done in the same encoding as the input document, and Byte-Order-Marks are preserved if present.",
+  "parameters": {
+    "replacement": {
+      "description": "The string used to replace invalid XML characters. Must be a valid Java Formatter string (java.util.Formatter). The parameter passed is always the integer value of the Unicode code-point. For example, to replace the invalid character by its hexadecimal representation placed between braces use: '{%X}'. If you want to remove the invalid characters, leave the replacement string empty. Note that some characters like '%' have special function in the Java Formatter syntax and may need to be escaped (e.g., '%%' to produce a literal '%').",
+      "notes": [
+        "The replacement string must conform to the Java Formatter specification (java.util.Formatter).",
+        "The parameter passed to the formatter is always the integer value of the Unicode code-point.",
+        "To remove invalid characters entirely, leave the replacement string empty.",
+        "Some characters like '%' have special function in the Java Formatter syntax and may need to be escaped."
+      ]
+    }
+  },
+  "limitations": [],
+  "processingNotes": [
+    "You need to specify the input encoding of the document. The only case where encoding specification is not required is for files with a Byte-Order-Mark.",
+    "The output is done in the same encoding as the input document.",
+    "Byte-Order-Marks are preserved if they are present in the input.",
+    "The step recognizes both raw characters and numeric character references (NCRs), such as &#000B; or &#11;."
+  ],
+  "examples": [
+    {
+      "title": "Hexadecimal representation with prefix",
+      "description": "Replace invalid character U+000B with a 3-digit zero-padded hexadecimal representation prefixed with 'x'.",
+      "input": "x%03X",
+      "output": "x0B"
+    },
+    {
+      "title": "NCR-like marker (default)",
+      "description": "Replace invalid character U+000B with an NCR-like marker using underscore prefix instead of ampersand.",
+      "input": "_#x%X;",
+      "output": "_#xB;"
+    },
+    {
+      "title": "Simple character replacement",
+      "description": "Replace invalid character U+000B with a question mark.",
+      "input": "?",
+      "output": "?"
+    },
+    {
+      "title": "Unicode replacement character NCR",
+      "description": "Replace invalid character U+000B with the Unicode replacement character U+FFFD as an NCR.",
+      "input": "&#xFFFD;",
+      "output": "&#xFFFD;"
+    },
+    {
+      "title": "Decimal value with escaped percent signs",
+      "description": "Replace invalid character U+000B with its decimal code-point value surrounded by literal percent signs. The '%' characters must be escaped as '%%' in the Java Formatter syntax.",
+      "input": "%%%d%%",
+      "output": "%11%"
+    },
+    {
+      "title": "Remove invalid characters",
+      "description": "To remove invalid characters entirely, leave the replacement string empty.",
+      "input": "(empty string)",
+      "output": "(characters removed)"
+    }
+  ],
+  "stepId": "x-m-l-char-fixing",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/xml_characters_fixing_step"
+}

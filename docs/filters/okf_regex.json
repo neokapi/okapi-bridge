@@ -1,0 +1,103 @@
+{
+  "filterName": "Regex Filter",
+  "overview": "The Regex Filter is an Okapi component that implements the IFilter interface for any type of text-based formats where text can be captured using regular expressions. You define rules with regular expressions that indicate what part of the document to process, with each rule associated with an action telling the filter what to do with the different capturing groups. The filter can work with any text-based document, making it highly flexible for custom and proprietary formats such as SRT subtitles, Mac .strings files, and line-based or block-based text files.",
+  "parameters": {
+    "extraction.startString": {
+      "description": "The character(s) specifying the start of a string. Entering several characters defines several ways to start a string. For example, if both single and double quotes can start strings, enter both characters. The position of each start character must correspond to the position of its matching end character in the endString parameter.",
+      "notes": [
+        "If you define multiple beginning characters, you must define an equal number of end characters with matching positions."
+      ]
+    },
+    "extraction.endString": {
+      "description": "The character(s) specifying the end of a string. If you have defined several beginning characters in startString, you must define an equal number of end characters, and the position of each end character must correspond to the position of its corresponding beginning character.",
+      "dependsOn": [
+        {
+          "property": "extraction.startString",
+          "condition": "must have the same number of characters, with positions corresponding to each other"
+        }
+      ]
+    },
+    "extraction.regexOptions": {
+      "description": "Bitfield of Java regex options applied to all rules. Common values: 8 = MULTILINE (^ and $ match line terminators), 32 = DOTALL (dot matches line-feed), 40 = MULTILINE + DOTALL, 2 = CASE_INSENSITIVE. These options apply globally to all rules in the configuration. To override an option for a specific rule, use the (?idmsux-idmsux) construct within that rule's pattern.",
+      "notes": [
+        "These options are global to all rules. Use the (?idmsux-idmsux) inline flag construct within a rule's pattern to override options for that specific rule."
+      ]
+    },
+    "extraction.extractOuterStrings": {
+      "description": "Set this option to extract any translatable strings found outside the scope of the defined extraction rules. When enabled, text between the configured startString and endString delimiters that falls outside rule matches will also be extracted as translatable content.",
+      "notes": [
+        "This option is not yet fully implemented according to the filter's known limitations."
+      ]
+    },
+    "extraction.oneLevelGroups": {
+      "description": "When enabled, automatically closes any opened section (START_GROUP) when a new one starts. This allows defining only start-of-section rules without requiring corresponding end-of-section rules. When disabled, each 'Start a section' action must have a corresponding 'End a section' action."
+    },
+    "extraction.mimeType": {
+      "description": "The MIME type value to use when extracting content with these parameters. The value is used to identify the type of document and may also change the way text is written back into the original format. Most of the time 'text/plain' should be fine."
+    },
+    "output.localizeOutside": {
+      "description": "Set this option to extract any translatable item that is not within the scope of a localization directive. Selecting to extract or not outside localization directives allows you to mark up fewer parts of the source document.",
+      "dependsOn": [
+        {
+          "property": "output.useLd",
+          "condition": "must be true for this option to take effect"
+        }
+      ]
+    },
+    "output.useBSlashEscape": {
+      "description": "Set this option if the way to escape a character in the format is to use a back-slash prefix (e.g. \\\" to represent a literal double-quote inside a string). When enabled, the filter will correctly handle backslash-escaped characters during extraction and output."
+    },
+    "output.removeBSlashEscape": {
+      "description": "When enabled, removes backslash escape sequences from the extracted content. This is useful when the source format uses backslash escaping but you want the extracted translatable text to contain the unescaped characters."
+    },
+    "output.useDoubleCharEscape": {
+      "description": "Set this option if the way to escape a character in the format is to double it (e.g. \"\" to represent a literal double-quote inside a string). This is an alternative to backslash escaping used by some formats."
+    },
+    "output.useLd": {
+      "description": "Set this option to enable the filter to recognize localization directives when they are present. If this option is not set, any localization directive in the input file will be ignored."
+    },
+    "subfilters.subFilter": {
+      "description": "Specifies a sub-filter configuration ID to apply to the extracted content. When set, the extracted text units will be further processed by the specified sub-filter, enabling nested content extraction."
+    },
+    "inlineCodes": {
+      "description": "Configuration for detecting and converting parts of extracted text into inline codes. When the 'Has inline codes' option is set on a rule, patterns defined here are used to identify portions of the translatable text that should be treated as non-translatable inline codes (e.g., HTML tags, placeholders, format specifiers)."
+    }
+  },
+  "limitations": [
+    "The whole document is loaded in memory to apply the regular expressions, which may cause issues with very large documents.",
+    "The option 'Extract strings outside the rules' (extractOuterStrings) is not yet implemented."
+  ],
+  "processingNotes": [
+    "Input encoding is determined by Unicode BOM if present; otherwise the default encoding specified when opening the document is used.",
+    "The filter does not recognize any encoding declarations in the document and therefore cannot update them.",
+    "If the output encoding is UTF-8 and the input was also UTF-8, a BOM is used only if one was detected in the input. If the input was not UTF-8, no BOM is used.",
+    "Line-break type in the output matches the original input.",
+    "Parsing proceeds sequentially: the filter searches for the first matching rule from the current position, applies its action, moves the position to the end of the match, and repeats until no more matches are found.",
+    "Rules are evaluated in list order — the first rule that matches at any given position wins."
+  ],
+  "examples": [
+    {
+      "title": "Key-value extraction with regex groups",
+      "description": "Extracting translatable text and identifiers from a simple key=value format using capturing groups. The regex captures the key (group 1) and value (group 3), with group 1 assigned as the identifier and group 3 as the source text.",
+      "input": "[ID1]=Text for ID1\n[ID2]:Text for ID2\n\nRegex: ^\\[(.*?)](=|:)(.*?)$\nAction: Extract the content of the source group\nSource group: 3, Identifier group: 1",
+      "output": "<trans-unit id=\"1\" resname=\"ID1\" xml:space=\"preserve\">\n  <source xml:lang=\"en\">Text for ID1</source>\n</trans-unit>\n<trans-unit id=\"2\" resname=\"ID2\" xml:space=\"preserve\">\n  <source xml:lang=\"en\">Text for ID2</source>\n</trans-unit>"
+    },
+    {
+      "title": "SRT subtitle configuration",
+      "description": "Configuration for extracting translatable text from SRT (Sub-Rip Text) subtitle files. Uses DOTALL+MULTILINE regex options (40), captures timestamp as a note (group 1) and subtitle text as source (group 2), with metadata rules for extracting start and end display times.",
+      "input": "Rule expression: ^(\\d+:\\d+:\\d+.*?)\\n(.*?)(\\n\\n+|\\z)\nregexOptions: 40 (DOTALL + MULTILINE)\nSource group: 2, Note group: 1\npreserveWS: true, useCodeFinder: true\n\nMetadata rules:\n  subtitle_start_display: \\d+:\\S+(?=\\s+-->)\n  subtitle_end_display: (?<=-->\\s{1,50})\\d+:\\S+"
+    },
+    {
+      "title": "Mac .strings file configuration",
+      "description": "Configuration for Macintosh .strings files with multiple rules to handle different patterns: comments followed by quoted keys, comments followed by unquoted keys, standalone strings, block comments, and line comments. Includes code finder rules for format specifiers, escape sequences, and HTML tags.",
+      "input": "Rule 0 (Comments+String): /\\*(.*?)\\*/\\n\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nSource group: 3, Name group: 2, Note group: 1\n\nCode finder rules:\n  %(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)...  (format specifiers)\n  (\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v  (escape sequences)\n  \\<(/?)\\w+[^>]*?>  (HTML tags)"
+    },
+    {
+      "title": "FPRM-only metadata rules",
+      "description": "Metadata rules that are only accessible in the FPRM configuration file (not in the UI). Rule name and matched regex content is added as metadata to the TextUnit.",
+      "input": "metaRuleCount.i=2\nmetaRule0.ruleName=meta1\nmetaRule0.expr=(\\d\\d:\\d\\d:\\d\\d)\nmetaRule1.ruleName=meta2\nmetaRule1.expr=(\\d\\d:\\d\\d:\\d\\d)"
+    }
+  ],
+  "filterId": "okf_regex",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Regex_Filter"
+}

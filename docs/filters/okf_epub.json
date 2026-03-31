@@ -1,0 +1,16 @@
+{
+  "filterName": "EPUB Filter",
+  "overview": "The EPUB filter allows you to process EPUB (Electronic Publication) documents. It handles encoding detection via Byte-Order-Mark and supports configurable default encoding for input files.",
+  "parameters": {},
+  "processingNotes": [
+    "If the file has a Unicode Byte-Order-Mark, the corresponding encoding (e.g. UTF-8, UTF-16) is used; otherwise the default encoding specified in filter options is used.",
+    "For UTF-8 output: if input was also UTF-8, a BOM is written only if one was detected in the input; if input was not UTF-8, no BOM is written.",
+    "No parameter editor is available; custom configurations must be edited with a text editor."
+  ],
+  "limitations": [
+    "None known."
+  ],
+  "examples": [],
+  "filterId": "okf_epub",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/EPUB_Filter"
+}

@@ -1,0 +1,47 @@
+{
+  "filterName": "Terminology Leveraging",
+  "overview": "This step leverages glossary terms into extracted text units by sending segment lists to a terminology resource and retrieving matching glossary terms. It takes filter text unit events and sends back filter text unit events with terminology annotations. The terminology resource connector splits segments into source terms or applies other techniques to find existing glossary terms for each segment. Text units flagged as non-translatable are skipped.",
+  "parameters": {
+    "leverage": {
+      "description": "Master switch to enable or disable the terminology leveraging step. When disabled, the step remains in the pipeline but does not process any text units. This allows you to keep the step configured in your pipeline and toggle it on and off without removing it."
+    },
+    "annotateSource": {
+      "description": "When enabled, source unit segments are annotated with found glossary entries. Annotation is performed only if the term is found within the source segment text. This allows downstream steps or tools to identify which parts of the source text match terminology entries."
+    },
+    "annotateTarget": {
+      "description": "When enabled, target unit segments are annotated with found glossary entries. Annotation is performed only if the translation of the term is found within the target segment text. This allows downstream steps or tools to identify which parts of the target text match terminology translations.",
+      "dependsOn": [
+        {
+          "property": "leverage",
+          "condition": "must be true for annotations to be applied"
+        }
+      ]
+    },
+    "connectorClassName": {
+      "description": "The fully qualified class name of the terminology resource connector to use. It can be a subclass of the BaseTerminologyConnector abstract class or a custom implementation of the ITerminologyQuery interface. The connector is responsible for querying the terminology resource and returning matching glossary entries for each segment.",
+      "notes": [
+        "The terminology resource connector is capable of defining its own strategy for generation of glossary entry IDs and glossary translation IDs."
+      ]
+    },
+    "connectorParameters": {
+      "description": "Configuration parameters for the selected terminology resource connector. These settings are specific to the terminology resource selected via the connector class name and control how the connector communicates with or queries the underlying terminology resource.",
+      "dependsOn": [
+        {
+          "property": "connectorClassName",
+          "condition": "must be set to a valid connector class"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "It is not possible to chain several steps if you want to leverage against several terminology resources."
+  ],
+  "processingNotes": [
+    "Text units flagged as non-translatable are skipped and will not be sent to the terminology resource.",
+    "The terminology resource connector defines its own strategy for generation of glossary entry IDs and glossary translation IDs.",
+    "The step processes filter events in-place: it takes filter text unit events and sends back filter text unit events with terminology annotations added."
+  ],
+  "examples": [],
+  "stepId": "terminology-leveraging",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/terminology_leveraging_step"
+}

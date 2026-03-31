@@ -1,0 +1,27 @@
+{
+  "filterName": "Copy Or Move Step",
+  "overview": "The Copy Or Move step copies or moves files from one location to another within an Okapi pipeline. It takes raw documents as input and sends raw documents as output. Files are copied or moved into the location specified in the output settings tabs, with configurable protection methods for handling existing files at the destination.",
+  "parameters": {
+    "copyProtectionMethod": {
+      "description": "Controls how existing files at the destination are handled during copy or move operations. Available options: 'overwrite' overwrites any existing files without prompt; 'backup' creates a backup of any existing file before copying/moving; 'skip' skips copying/moving when there is already an existing file in the output location.",
+      "notes": [
+        "This is an enum-style parameter with three possible values: overwrite existing files, backup existing files, or skip copy/move."
+      ]
+    },
+    "move": {
+      "description": "When enabled, files are moved (deleted from the source location after transfer) instead of copied. When disabled (default), files are copied, leaving the originals in place.",
+      "notes": []
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Files are copied or moved into the location specified in the output settings tabs.",
+    "The step expects raw documents as input and sends raw documents as output.",
+    "The step supports OUTPUT_URI, SOURCE_LOCALE, and TARGET_LOCALE parameter mappings for determining output file paths."
+  ],
+  "examples": [],
+  "stepId": "copy-or-move",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/copy_or_move_step"
+}

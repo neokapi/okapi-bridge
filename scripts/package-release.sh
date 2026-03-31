@@ -118,13 +118,10 @@ jq -r --arg ov "${OKAPI_VERSION}" '
 done
 echo "  Step schemas: $(ls staging/schemas/steps/*.schema.json 2>/dev/null | wc -l | tr -d ' ')"
 
-# Bundle documentation — prefer split docs/ directory, fall back to monolithic docs.json
-if [ -d "filter-docs/docs" ]; then
-    cp -r "filter-docs/docs" staging/docs
-    echo "  Docs: $(ls staging/docs/filters/ 2>/dev/null | wc -l | tr -d ' ') filters, $(ls staging/docs/steps/ 2>/dev/null | wc -l | tr -d ' ') steps (split)"
-elif [ -f "docs.json" ]; then
-    cp "docs.json" staging/docs.json
-    echo "  Docs: $(du -h staging/docs.json | cut -f1) (legacy bundle)"
+# Bundle documentation (split docs/ directory)
+if [ -d "docs" ]; then
+    cp -r "docs" staging/docs
+    echo "  Docs: $(ls staging/docs/filters/ 2>/dev/null | wc -l | tr -d ' ') filters, $(ls staging/docs/steps/ 2>/dev/null | wc -l | tr -d ' ') steps"
 else
     echo "  Docs: not found (run 'make bundle-docs' to generate)"
 fi

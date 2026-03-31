@@ -1,0 +1,45 @@
+{
+  "filterName": "Table Filter",
+  "overview": "The Table Filter is an Okapi component that implements the IFilter interface for plain text table documents such as CSV, TSV, and fixed-width column files. It supports multiple table types including comma-separated values, tab-separated values, and fixed-width columns, with configurable column definitions for source, target, comment, and ID columns. The filter handles text qualifiers, escaping modes, trimming, inline codes, and multi-line text units.",
+  "parameters": {
+    "simplifierRules": {
+      "description": "Rules for simplifying inline code representation in extracted text. When inline codes are detected (via code finder rules or other mechanisms), these rules control how the codes are simplified for presentation to translators."
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "If the file has a Unicode Byte-Order-Mark, the corresponding encoding (e.g. UTF-8, UTF-16) is used. Otherwise, the default encoding specified in filter options is used.",
+    "For UTF-8 output: a BOM is included only if the input was also UTF-8 and had a BOM. If the input was not UTF-8, no BOM is written.",
+    "The type of line-breaks in the output matches the original input line-breaks."
+  ],
+  "examples": [
+    {
+      "title": "CSV with qualified fields containing delimiters",
+      "description": "When text qualifiers are used, field delimiters inside qualified fields do not split the field. For example, with comma as field delimiter and quotation mark as qualifier, the value [\"Field, containing comma\"] is treated as a single field.",
+      "input": "\"Field, containing comma\"",
+      "output": "Field, containing comma (with qualifiers removed if 'Exclude qualifiers' is enabled)"
+    },
+    {
+      "title": "CSV escaping with duplicate qualifier",
+      "description": "When a field contains the active text qualifier character, escaping by duplication preserves the qualifier within the content.",
+      "input": "\"Text, \"\"quoted text\"\"\"",
+      "output": "Text, \"quoted text\""
+    },
+    {
+      "title": "CSV escaping with backslash",
+      "description": "When backslash escaping mode is used, qualifiers within fields are escaped with a backslash prefix.",
+      "input": "\"Text, \\\"quoted text\\\"\"",
+      "output": "Text, \"quoted text\""
+    },
+    {
+      "title": "Trimming modes for qualified vs non-qualified fields",
+      "description": "When trimming is set to 'Only entries without qualifiers', qualified fields keep their whitespace while non-qualified fields are trimmed. When set to 'All', both types are trimmed.",
+      "input": "\"  text \",  non-qualified  ",
+      "output": "Mode 'Only non-qualified': [  text ] and [non-qualified]. Mode 'All': [text] and [non-qualified]."
+    }
+  ],
+  "filterId": "okf_table",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Table_Filter"
+}

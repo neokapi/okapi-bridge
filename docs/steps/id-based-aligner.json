@@ -1,0 +1,54 @@
+{
+  "filterName": "Id-Based Aligner",
+  "overview": "This step aligns the text units of two input files based on matching ids. The ids are taken from the name (TextUnit.getName()) of each text unit. Any filter that produces unique names for its text units will work with this aligner, for example the Properties Filter. Takes filter events and sends filter events. When TMX generation is disabled, each returned text unit is a new aligned bilingual text unit; when enabled, events are returned unchanged and a TMX file is produced.",
+  "parameters": {
+    "generateTMX": {
+      "description": "When set to true, the step produces a TMX file and the events returned by the step are unchanged. When set to false, each text unit in the returned events is a new text unit with the aligned source and target content.",
+      "notes": [
+        "Note: for target <tuv> data to be generated in the TMX, the 'Copy to/over the target' option (copyToTarget) must also be checked."
+      ]
+    },
+    "tmxOutputPath": {
+      "description": "Full path of the output TMX file to be generated.",
+      "dependsOn": [
+        {
+          "property": "generateTMX",
+          "condition": "must be true for this parameter to take effect"
+        }
+      ]
+    },
+    "replaceWithSource": {
+      "description": "If no target text is available for a given text unit, use the source text as fallback."
+    },
+    "copyToTarget": {
+      "description": "Copy the aligned target content to/over the target of the text unit. Existing target will be lost, and the copied target will not be segmented. If the entry from the 'target' file is set to approved, the approved property is passed along too. An annotation will still be created if requested via storeAsAltTranslation.",
+      "notes": [
+        "WARNING: Copied target will not be segmented and any existing target will be lost.",
+        "Note: This option must also be checked for target <tuv> data to be generated when generateTMX is true."
+      ]
+    },
+    "storeAsAltTranslation": {
+      "description": "Store the matched target as an alternate translation annotation attached to the processed entry, so that subsequent steps in the pipeline can see and use it."
+    },
+    "suppressTusWithNoTarget": {
+      "description": "When enabled, prevents the step from passing on any text units for which no target content could be found during alignment."
+    },
+    "useTextUnitIds": {
+      "description": "Align based on TextUnit IDs rather than resource names (TextUnit.getName()). When false, alignment uses the name property of each text unit."
+    }
+  },
+  "limitations": [
+    "Assumes that each text unit has a unique name value. The filter being used must produce unique names (TextUnit.getName()) for all text units in the documents.",
+    "This step aligns text units only, not the possible segments inside the text units."
+  ],
+  "processingNotes": [
+    "The process expects both inputs to be non-segmented.",
+    "The 'source' file is the first input and provides source content. The 'target' file is the second input and provides target content.",
+    "If the 'target' file is in a monolingual format (like Java properties), the source extracted from that file is used as target content. If the 'target' file is multilingual (like XLIFF), the target extracted from that file is used as target content.",
+    "If the 'target' file is multilingual, in addition to matching on id, the step verifies that the source content of both text units with the same name have the same source text. If they do not match, no alignment is made.",
+    "Text units in the source but not in the target generate a warning. Text units in the target but not in the source are ignored."
+  ],
+  "examples": [],
+  "stepId": "id-based-aligner",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/id_uased_aligner_step"
+}

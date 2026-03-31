@@ -1,0 +1,929 @@
+{
+  "filterName": "Quality Check Step",
+  "overview": "The Quality Check step generates a report of potential issues found by comparing the source and target of text units. It accepts filter events or raw documents and sends them through to the next step unchanged. When processing filter events, the quality check report is generated at the end of the batch; when processing raw documents, a CheckMate session is opened for interactive issue browsing. No check is done on entries set as non-translatable.",
+  "parameters": {
+    "leadingWS": {
+      "description": "Set this option to flag text units where the leading white spaces are different between source and target. Detects whitespace inconsistencies at the start of segments."
+    },
+    "trailingWS": {
+      "description": "Set this option to flag text units where the trailing white spaces are different between source and target. Detects whitespace inconsistencies at the end of segments."
+    },
+    "emptyTarget": {
+      "description": "Set this option to flag segments for which the translation is empty when the corresponding source is not empty. Only applies when the source contains content."
+    },
+    "emptySource": {
+      "description": "Set this option to flag segments for which the target is not empty while its source is empty. Detects unintended target-only content."
+    },
+    "targetSameAsSource": {
+      "description": "Set this option to flag segments where the translation is the same as the source. This check is done only if the source segment contains in its text at least one word-character (a character included in the regular expression: [\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lo}\\p{Nd}]). Inline codes are not part of the text comparison. When a target is found to be the same as its source, the tool checks the list of patterns that have their expected target set to '<same>'. If the string matches one of those patterns, no warning is generated.",
+      "notes": [
+        "For example, '<b>%s</b> : %d' would not be checked (no word-characters), but '-------- S= %d' would be checked.",
+        "Inline codes are not part of the text of the entry."
+      ]
+    },
+    "targetSameAsSourceForSameLanguage": {
+      "description": "Set this option to enable the 'target same as source' verification even when the language of the source and target locale codes are the same (same language family). For example, this enables checking when source is 'en' and target is 'en-GB'.",
+      "dependsOn": [
+        {
+          "property": "targetSameAsSource",
+          "condition": "must be true for this option to have any effect"
+        }
+      ]
+    },
+    "targetSameAsSourceWithCodes": {
+      "description": "Set this option to include inline codes in the comparison when verifying if the target is the same as the source. If this option is set and the only difference between the source and the translation is an inline code, the segment will not be flagged.",
+      "dependsOn": [
+        {
+          "property": "targetSameAsSource",
+          "condition": "must be true for this option to have any effect"
+        }
+      ]
+    },
+    "targetSameAsSourceWithNumbers": {
+      "description": "Set this option to include numbers in the comparison when verifying if the target is the same as the source. When enabled, segments that differ only in numeric values will not be flagged.",
+      "dependsOn": [
+        {
+          "property": "targetSameAsSource",
+          "condition": "must be true for this option to have any effect"
+        }
+      ]
+    },
+    "doubledWord": {
+      "description": "Set this option to flag target segments where there is a sequential repetition of the same word, for example 'is is' in 'this is is an example'. The check is not case-sensitive, so 'This this an example' would also be flagged."
+    },
+    "doubledWordExceptions": {
+      "description": "Enter the list of words that can be repeated without triggering a doubled-word warning. Each word must be separated by semi-colons with no spaces around the semi-colon. The exceptions are not case-sensitive. For example, in French some sentences may have 'vous vous' or 'nous nous' — enter 'vous;nous' to allow these.",
+      "dependsOn": [
+        {
+          "property": "doubledWord",
+          "condition": "must be true for exceptions to be relevant"
+        }
+      ]
+    },
+    "checkXliffSchema": {
+      "description": "Set this option to validate XLIFF documents against an XLIFF schema. A document is detected as XLIFF if it is associated with a filter configuration starting with 'okf_xliff'."
+    },
+    "xliffSchemaType": {
+      "description": "Select the type of XLIFF schema to validate against. Default is 'Transitional' (xliff-core-1.2-transitional.xsd).",
+      "dependsOn": [
+        {
+          "property": "checkXliffSchema",
+          "condition": "must be true for schema type to be used"
+        }
+      ]
+    },
+    "includeTextContainers": {
+      "description": "Set this option to include text containers (non-segment text content) in the quality checks, in addition to segment-level content."
+    },
+    "useGenericCodes": {
+      "description": "Set this option to use generic code representations when comparing inline codes between source and target, rather than the original code content."
+    },
+    "codeDifference": {
+      "description": "Set this option to verify that the target content has the same inline codes as the source content. This compares the content of the codes between source and target when content is available; otherwise the codes' type and id are compared. Both missing codes (in source but not target) and extra codes (in target but not source) are indicated. A difference only in the order of the codes does not trigger a warning. If no extra or missing codes are found, the program checks for possible issues in the sequence of opening/closing codes — groups can be moved, and change of parent as well as switch of closing and opening sequence are reported."
+    },
+    "guessOpenClose": {
+      "description": "Set this option to let the program try to detect whether placeholder codes are really opening or closing codes for XML formats. If an opening/closing type is detected, it is included in the verification of the opening/closing sequence.",
+      "dependsOn": [
+        {
+          "property": "codeDifference",
+          "condition": "must be true for this option to have any effect"
+        }
+      ]
+    },
+    "strictCodeOrder": {
+      "description": "Set this option to require that inline codes appear in exactly the same order in the target as in the source. By default (false), a difference only in the order of codes does not trigger a warning.",
+      "dependsOn": [
+        {
+          "property": "codeDifference",
+          "condition": "must be true for this option to have any effect"
+        }
+      ]
+    },
+    "typesToIgnore": {
+      "description": "Enter the list of all the types of inline codes the verification should ignore, separated by semi-colons. For example, '<mrk>' elements in XLIFF or '<df>' elements in TTX. Default value includes 'mrk' and 'x-df-s'.",
+      "dependsOn": [
+        {
+          "property": "codeDifference",
+          "condition": "must be true for ignored types to be relevant"
+        }
+      ]
+    },
+    "extraCodesAllowed": {
+      "description": "Number of codes allowed to be extra in the target (present in the translation but not in the source). The strings are case-sensitive. Set to 0 to disallow any extra codes.",
+      "dependsOn": [
+        {
+          "property": "codeDifference",
+          "condition": "must be true for this setting to be relevant"
+        }
+      ]
+    },
+    "missingCodesAllowed": {
+      "description": "Number of codes allowed to be missing from the target (present in the source but not in the translation). The strings are case-sensitive. Set to 0 to disallow any missing codes.",
+      "dependsOn": [
+        {
+          "property": "codeDifference",
+          "condition": "must be true for this setting to be relevant"
+        }
+      ]
+    },
+    "checkPatterns": {
+      "description": "Set this option to verify that each source pattern defined in the pattern list has its corresponding expected part in the target content. Patterns are defined as regular expressions with source/target pairs."
+    },
+    "patternCount": {
+      "description": "The number of pattern entries defined. Each pattern entry consists of a set of properties indexed from 0 to patternCount-1: usePatternN, fromSourcePatternN, singlePatternN, severityPatternN, sourcePatternN, targetPatternN, and descPatternN.",
+      "dependsOn": [
+        {
+          "property": "checkPatterns",
+          "condition": "must be true for patterns to be checked"
+        }
+      ]
+    },
+    "showOnlyPatternDescription": {
+      "description": "Set this option to show only the pattern description in the report output instead of the full pattern details.",
+      "dependsOn": [
+        {
+          "property": "checkPatterns",
+          "condition": "must be true for this option to be relevant"
+        }
+      ]
+    },
+    "usePattern0": {
+      "description": "Set whether this pattern entry is active. Uncheck to disable the pattern without removing it.",
+      "dependsOn": [
+        {
+          "property": "checkPatterns",
+          "condition": "must be true for patterns to be checked"
+        }
+      ]
+    },
+    "fromSourcePattern0": {
+      "description": "If true (Src indicator), the source pattern is looked at first — if found, the corresponding pattern is searched in the target. If false (Trg indicator), the target pattern is looked at first, then searched in the source. Setting to false allows detecting extra patterns in the target.",
+      "dependsOn": [
+        {
+          "property": "usePattern0",
+          "condition": "must be true for this pattern to be active"
+        }
+      ]
+    },
+    "singlePattern0": {
+      "description": "If true, the pattern is treated as a single occurrence check rather than a count-based comparison between source and target.",
+      "dependsOn": [
+        {
+          "property": "usePattern0",
+          "condition": "must be true for this pattern to be active"
+        }
+      ]
+    },
+    "severityPattern0": {
+      "description": "The severity level for this pattern's warning. Values: 0 = low, 1 = medium, 2 = high.",
+      "dependsOn": [
+        {
+          "property": "usePattern0",
+          "condition": "must be true for this pattern to be active"
+        }
+      ]
+    },
+    "sourcePattern0": {
+      "description": "The regular expression of the pattern to look for in the source text. This is a Java-compatible regular expression.",
+      "dependsOn": [
+        {
+          "property": "usePattern0",
+          "condition": "must be true for this pattern to be active"
+        }
+      ]
+    },
+    "targetPattern0": {
+      "description": "The target pattern corresponding to the part found in the source. If the part should be the same as in the source, use the '<same>' keyword.",
+      "dependsOn": [
+        {
+          "property": "usePattern0",
+          "condition": "must be true for this pattern to be active"
+        }
+      ]
+    },
+    "descPattern0": {
+      "description": "A short description of this pattern rule, displayed in the report output.",
+      "dependsOn": [
+        {
+          "property": "usePattern0",
+          "condition": "must be true for this pattern to be active"
+        }
+      ]
+    },
+    "usePattern1": {
+      "description": "Set whether pattern entry 1 is active.",
+      "dependsOn": [
+        {
+          "property": "checkPatterns",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "fromSourcePattern1": {
+      "description": "If true, searches source first then verifies target. If false, searches target first then verifies source.",
+      "dependsOn": [
+        {
+          "property": "usePattern1",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "singlePattern1": {
+      "description": "If true, treated as a single occurrence check rather than count-based comparison.",
+      "dependsOn": [
+        {
+          "property": "usePattern1",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "severityPattern1": {
+      "description": "Severity level: 0 = low, 1 = medium, 2 = high.",
+      "dependsOn": [
+        {
+          "property": "usePattern1",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "sourcePattern1": {
+      "description": "Regular expression pattern to search in the source text.",
+      "dependsOn": [
+        {
+          "property": "usePattern1",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "targetPattern1": {
+      "description": "Expected target pattern. Use '<same>' if the match should be identical to source.",
+      "dependsOn": [
+        {
+          "property": "usePattern1",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "descPattern1": {
+      "description": "Short description of this pattern rule.",
+      "dependsOn": [
+        {
+          "property": "usePattern1",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "usePattern2": {
+      "description": "Set whether pattern entry 2 is active.",
+      "dependsOn": [
+        {
+          "property": "checkPatterns",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "fromSourcePattern2": {
+      "description": "If true, searches source first then verifies target. If false, searches target first then verifies source.",
+      "dependsOn": [
+        {
+          "property": "usePattern2",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "singlePattern2": {
+      "description": "If true, treated as a single occurrence check rather than count-based comparison.",
+      "dependsOn": [
+        {
+          "property": "usePattern2",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "severityPattern2": {
+      "description": "Severity level: 0 = low, 1 = medium, 2 = high.",
+      "dependsOn": [
+        {
+          "property": "usePattern2",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "sourcePattern2": {
+      "description": "Regular expression pattern to search in the source text.",
+      "dependsOn": [
+        {
+          "property": "usePattern2",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "targetPattern2": {
+      "description": "Expected target pattern. Use '<same>' if the match should be identical to source.",
+      "dependsOn": [
+        {
+          "property": "usePattern2",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "descPattern2": {
+      "description": "Short description of this pattern rule.",
+      "dependsOn": [
+        {
+          "property": "usePattern2",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "usePattern3": {
+      "description": "Set whether pattern entry 3 is active.",
+      "dependsOn": [
+        {
+          "property": "checkPatterns",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "fromSourcePattern3": {
+      "description": "If true, searches source first then verifies target. If false, searches target first then verifies source.",
+      "dependsOn": [
+        {
+          "property": "usePattern3",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "singlePattern3": {
+      "description": "If true, treated as a single occurrence check rather than count-based comparison.",
+      "dependsOn": [
+        {
+          "property": "usePattern3",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "severityPattern3": {
+      "description": "Severity level: 0 = low, 1 = medium, 2 = high.",
+      "dependsOn": [
+        {
+          "property": "usePattern3",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "sourcePattern3": {
+      "description": "Regular expression pattern to search in the source text.",
+      "dependsOn": [
+        {
+          "property": "usePattern3",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "targetPattern3": {
+      "description": "Expected target pattern. Use '<same>' if the match should be identical to source.",
+      "dependsOn": [
+        {
+          "property": "usePattern3",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "descPattern3": {
+      "description": "Short description of this pattern rule.",
+      "dependsOn": [
+        {
+          "property": "usePattern3",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "usePattern4": {
+      "description": "Set whether pattern entry 4 is active.",
+      "dependsOn": [
+        {
+          "property": "checkPatterns",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "fromSourcePattern4": {
+      "description": "If true, searches source first then verifies target. If false, searches target first then verifies source.",
+      "dependsOn": [
+        {
+          "property": "usePattern4",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "singlePattern4": {
+      "description": "If true, treated as a single occurrence check rather than count-based comparison.",
+      "dependsOn": [
+        {
+          "property": "usePattern4",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "severityPattern4": {
+      "description": "Severity level: 0 = low, 1 = medium, 2 = high.",
+      "dependsOn": [
+        {
+          "property": "usePattern4",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "sourcePattern4": {
+      "description": "Regular expression pattern to search in the source text.",
+      "dependsOn": [
+        {
+          "property": "usePattern4",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "targetPattern4": {
+      "description": "Expected target pattern. Use '<same>' if the match should be identical to source.",
+      "dependsOn": [
+        {
+          "property": "usePattern4",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "descPattern4": {
+      "description": "Short description of this pattern rule.",
+      "dependsOn": [
+        {
+          "property": "usePattern4",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "usePattern5": {
+      "description": "Set whether pattern entry 5 is active.",
+      "dependsOn": [
+        {
+          "property": "checkPatterns",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "fromSourcePattern5": {
+      "description": "If true, searches source first then verifies target. If false, searches target first then verifies source.",
+      "dependsOn": [
+        {
+          "property": "usePattern5",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "singlePattern5": {
+      "description": "If true, treated as a single occurrence check rather than count-based comparison.",
+      "dependsOn": [
+        {
+          "property": "usePattern5",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "severityPattern5": {
+      "description": "Severity level: 0 = low, 1 = medium, 2 = high.",
+      "dependsOn": [
+        {
+          "property": "usePattern5",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "sourcePattern5": {
+      "description": "Regular expression pattern to search in the source text.",
+      "dependsOn": [
+        {
+          "property": "usePattern5",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "targetPattern5": {
+      "description": "Expected target pattern. Use '<same>' if the match should be identical to source.",
+      "dependsOn": [
+        {
+          "property": "usePattern5",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "descPattern5": {
+      "description": "Short description of this pattern rule.",
+      "dependsOn": [
+        {
+          "property": "usePattern5",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "usePattern6": {
+      "description": "Set whether pattern entry 6 is active.",
+      "dependsOn": [
+        {
+          "property": "checkPatterns",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "fromSourcePattern6": {
+      "description": "If true, searches source first then verifies target. If false, searches target first then verifies source.",
+      "dependsOn": [
+        {
+          "property": "usePattern6",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "singlePattern6": {
+      "description": "If true, treated as a single occurrence check rather than count-based comparison.",
+      "dependsOn": [
+        {
+          "property": "usePattern6",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "severityPattern6": {
+      "description": "Severity level: 0 = low, 1 = medium, 2 = high.",
+      "dependsOn": [
+        {
+          "property": "usePattern6",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "sourcePattern6": {
+      "description": "Regular expression pattern to search in the source text.",
+      "dependsOn": [
+        {
+          "property": "usePattern6",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "targetPattern6": {
+      "description": "Expected target pattern. Use '<same>' if the match should be identical to source.",
+      "dependsOn": [
+        {
+          "property": "usePattern6",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "descPattern6": {
+      "description": "Short description of this pattern rule.",
+      "dependsOn": [
+        {
+          "property": "usePattern6",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "usePattern7": {
+      "description": "Set whether pattern entry 7 is active.",
+      "dependsOn": [
+        {
+          "property": "checkPatterns",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "fromSourcePattern7": {
+      "description": "If true, searches source first then verifies target. If false, searches target first then verifies source.",
+      "dependsOn": [
+        {
+          "property": "usePattern7",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "singlePattern7": {
+      "description": "If true, treated as a single occurrence check rather than count-based comparison.",
+      "dependsOn": [
+        {
+          "property": "usePattern7",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "severityPattern7": {
+      "description": "Severity level: 0 = low, 1 = medium, 2 = high.",
+      "dependsOn": [
+        {
+          "property": "usePattern7",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "sourcePattern7": {
+      "description": "Regular expression pattern to search in the source text.",
+      "dependsOn": [
+        {
+          "property": "usePattern7",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "targetPattern7": {
+      "description": "Expected target pattern. Use '<same>' if the match should be identical to source.",
+      "dependsOn": [
+        {
+          "property": "usePattern7",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "descPattern7": {
+      "description": "Short description of this pattern rule.",
+      "dependsOn": [
+        {
+          "property": "usePattern7",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "corruptedCharacters": {
+      "description": "Set this option to check for special patterns that often indicate a file with corrupted characters — for example, a UTF-8 file opened as ISO-8859-1. This feature does not find all possible cases of corrupted characters, only some of the frequent ones."
+    },
+    "checkCharacters": {
+      "description": "Set this option to check the characters of the target text against a given character set encoding specified in 'charset'. You can configure only a character set encoding, only a regular expression of allowed characters (extraCharsAllowed), or both."
+    },
+    "charset": {
+      "description": "Enter the name of a valid character set encoding to check against, such as 'ISO-8859-1'. You can also leave this field empty to use only the list of allowed characters provided in extraCharsAllowed.",
+      "dependsOn": [
+        {
+          "property": "checkCharacters",
+          "condition": "must be true for charset checking to be active"
+        }
+      ]
+    },
+    "extraCharsAllowed": {
+      "description": "Optionally enter a regular expression that matches a list of allowed characters. Characters matching this expression will be allowed even if they are not part of the character set encoding specified in 'charset'. Leave empty to not use any additional character allowance.",
+      "dependsOn": [
+        {
+          "property": "checkCharacters",
+          "condition": "must be true for this to be relevant"
+        }
+      ]
+    },
+    "checkAllowedCharacters": {
+      "description": "Set this option to enable checking of allowed characters in the target text. Works in conjunction with charset and extraCharsAllowed settings."
+    },
+    "checkWithLT": {
+      "description": "Set this option to run the verifications provided by a LanguageTool server. You must have access to a LanguageTool Checker running as a server (most commonly a local server).",
+      "notes": [
+        "Using LanguageTool may increase significantly the processing time.",
+        "Using the auto-translate option increases the processing time further."
+      ]
+    },
+    "serverURL": {
+      "description": "Enter the URL of the LanguageTool server to use for verification. The default is 'http://localhost:8081/' for a local LanguageTool server instance.",
+      "dependsOn": [
+        {
+          "property": "checkWithLT",
+          "condition": "must be true for the server URL to be used"
+        }
+      ]
+    },
+    "ltBilingualMode": {
+      "description": "Set this option to use the 'bitext' mode, where the source text of the segment is also sent to LanguageTool. This may reduce the number of false warnings.",
+      "notes": [
+        "This option does not work with older versions of LanguageTool."
+      ],
+      "dependsOn": [
+        {
+          "property": "checkWithLT",
+          "condition": "must be true for bilingual mode to be used"
+        }
+      ]
+    },
+    "checkTerms": {
+      "description": "Set this option to verify translation terminology. The given glossary file is read and for each segment, the tool searches for existing terms in the source, then searches in the target text for the corresponding translation. If no corresponding translation is found, a warning is issued.",
+      "notes": [
+        "Warning: The Terms feature is under development."
+      ]
+    },
+    "termsPath": {
+      "description": "Enter the full path of the glossary file to use. Supported formats: TBX (TermBase eXchange format), CSV (comma-separated values, must be UTF-8, first column is source terms, second is translation), and tab-delimited (must be UTF-8, first column is source terms, second is translation). Files with .tbx extension are imported as TBX, .csv as CSV, and .txt or any other extension as tab-delimited. Other columns are ignored. CSV values with commas must be enclosed in double-quotes; literal double-quotes must be escaped as two double-quotes.",
+      "dependsOn": [
+        {
+          "property": "checkTerms",
+          "condition": "must be true for terminology verification to be active"
+        }
+      ]
+    },
+    "stringMode": {
+      "description": "Set this option to use the terms as full strings for complete match verification. When enabled, the tool looks for complete matches rather than partial term matches. This can be used to verify UI strings in a document, for example.",
+      "dependsOn": [
+        {
+          "property": "checkTerms",
+          "condition": "must be true for string mode to be relevant"
+        }
+      ]
+    },
+    "betweenCodes": {
+      "description": "Set this option to require that strings match only if they are surrounded by inline codes. Used in combination with stringMode for stricter matching.",
+      "dependsOn": [
+        {
+          "property": "checkTerms",
+          "condition": "must be true for this option to be relevant"
+        }
+      ]
+    },
+    "checkBlacklist": {
+      "description": "Set this option to detect usage of blacklisted terms. The specified blacklist file is read and for each segment, the target text is searched for any blacklisted term. If a blacklisted term is found, a warning is issued."
+    },
+    "blacklistPath": {
+      "description": "Enter the full path of the blacklist file to use. The file must be in UTF-8. Column 1 contains the blacklisted term, column 2 is an optional replacement suggestion, column 3 (M35+) can contain a comment, and column 4 (M35+) can contain an integer indicating severity (0, 1, or 2, with 0/low as default). Other columns are ignored.",
+      "dependsOn": [
+        {
+          "property": "checkBlacklist",
+          "condition": "must be true for blacklist checking to be active"
+        }
+      ]
+    },
+    "allowBlacklistSub": {
+      "description": "Set this option to allow blacklist substitution suggestions to be included in the warning output when a blacklisted term is found.",
+      "dependsOn": [
+        {
+          "property": "checkBlacklist",
+          "condition": "must be true for this option to be relevant"
+        }
+      ]
+    },
+    "blacklistSrc": {
+      "description": "Set this option to also check the source text for blacklisted terms, in addition to the target text.",
+      "dependsOn": [
+        {
+          "property": "checkBlacklist",
+          "condition": "must be true for this option to be relevant"
+        }
+      ]
+    },
+    "scope": {
+      "description": "Determines which entries to process. Value 0 = process all entries, value 1 = process only approved entries (Approved property set to 'yes'), value 2 = process only non-approved entries (no Approved property or not set to 'yes'). The Approved property setting is specific to each file format.",
+      "notes": [
+        "Entries flagged as non-translatable are never processed, regardless of the scope setting."
+      ]
+    },
+    "outputPath": {
+      "description": "Enter the full path of the report file to generate. You can use the variable '${rootDir}' in the path. Default is '${rootDir}/qa-report.html'."
+    },
+    "outputType": {
+      "description": "Select the format of the report output. Value 0 = HTML file, value 1 = tab-delimited file (UTF-8, columns: location, message, source text, target text), value 2 = XML document."
+    },
+    "autoOpen": {
+      "description": "Set this option to automatically open the report file after the process is complete."
+    },
+    "showFullPath": {
+      "description": "Set this option to show the full path of documents with issues in the report. If not set, the report shows relative paths with the longest common root directories removed."
+    },
+    "saveSession": {
+      "description": "Set this option to save the quality check session when the step is run. This is only available when editing parameters for a step (not in CheckMate standalone).",
+      "notes": [
+        "This option is available only when editing the parameters for a step."
+      ]
+    },
+    "sessionPath": {
+      "description": "Enter the full path of the session file to save. You can use the variable '${rootDir}' in the path. Default is '${rootDir}/qa-session.qcs'.",
+      "dependsOn": [
+        {
+          "property": "saveSession",
+          "condition": "must be true for session to be saved"
+        }
+      ]
+    },
+    "checkStorageSize": {
+      "description": "Set this option to check the byte length of text units that have an ITS Storage Size metadata property (its-storageSize)."
+    },
+    "checkMaxCharLength": {
+      "description": "Set this option to flag any target text that is longer than a given percentage of its source text character length. Allows setting different percentages for short versus long text. The length is based on the number of characters without counting inline codes.",
+      "notes": [
+        "These values must be tuned for each source/target language pair."
+      ]
+    },
+    "maxCharLengthBreak": {
+      "description": "Enter the number of characters above which text is considered 'long' (vs. 'short') for maximum length checking. This threshold determines which percentage (maxCharLengthAbove or maxCharLengthBelow) applies.",
+      "dependsOn": [
+        {
+          "property": "checkMaxCharLength",
+          "condition": "must be true for this threshold to be used"
+        }
+      ]
+    },
+    "maxCharLengthAbove": {
+      "description": "Enter the maximum allowed percentage of source length for 'short' text (text with character count at or below the maxCharLengthBreak threshold). For example, 200 means the target can be at most 200% of the source length.",
+      "dependsOn": [
+        {
+          "property": "checkMaxCharLength",
+          "condition": "must be true for this percentage to be used"
+        }
+      ]
+    },
+    "maxCharLengthBelow": {
+      "description": "Enter the maximum allowed percentage of source length for 'long' text (text with character count above the maxCharLengthBreak threshold). For example, 350 means the target can be at most 350% of the source length.",
+      "dependsOn": [
+        {
+          "property": "checkMaxCharLength",
+          "condition": "must be true for this percentage to be used"
+        }
+      ]
+    },
+    "checkMinCharLength": {
+      "description": "Set this option to flag any target text that is shorter than a given percentage of its source text character length. Allows setting different percentages for short versus long text. The length is based on the number of characters without counting inline codes.",
+      "notes": [
+        "These values must be tuned for each source/target language pair."
+      ]
+    },
+    "minCharLengthBreak": {
+      "description": "Enter the number of characters above which text is considered 'long' (vs. 'short') for minimum length checking. This threshold determines which percentage (minCharLengthAbove or minCharLengthBelow) applies.",
+      "dependsOn": [
+        {
+          "property": "checkMinCharLength",
+          "condition": "must be true for this threshold to be used"
+        }
+      ]
+    },
+    "minCharLengthAbove": {
+      "description": "Enter the minimum allowed percentage of source length for 'short' text (text with character count at or below the minCharLengthBreak threshold). For example, 45 means the target must be at least 45% of the source length.",
+      "dependsOn": [
+        {
+          "property": "checkMinCharLength",
+          "condition": "must be true for this percentage to be used"
+        }
+      ]
+    },
+    "minCharLengthBelow": {
+      "description": "Enter the minimum allowed percentage of source length for 'long' text (text with character count above the minCharLengthBreak threshold). For example, 30 means the target must be at least 30% of the source length.",
+      "dependsOn": [
+        {
+          "property": "checkMinCharLength",
+          "condition": "must be true for this percentage to be used"
+        }
+      ]
+    },
+    "checkAbsoluteMaxCharLength": {
+      "description": "Set this option to flag any target text that is longer than an absolute maximum number of characters, regardless of the source length."
+    },
+    "absoluteMaxCharLength": {
+      "description": "Enter the absolute maximum number of characters allowed in the target text. Any target exceeding this length will be flagged.",
+      "dependsOn": [
+        {
+          "property": "checkAbsoluteMaxCharLength",
+          "condition": "must be true for this limit to be enforced"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "No check is done on entries set as non-translatable, regardless of scope settings.",
+    "With filter events input: events are processed and sent to the next step; the quality check report is generated at the end of the batch of input files. No interactive UI is provided.",
+    "With raw documents input: documents are added to a new quality check session and sent to the next step. At the end of the batch, the session is opened in CheckMate for interactive issue browsing.",
+    "Character length calculations are based on the number of characters without counting inline codes.",
+    "Length percentage thresholds must be tuned for each source/target language pair.",
+    "Using LanguageTool may increase processing time significantly.",
+    "The corrupted characters check does not find all possible cases, only some frequent ones.",
+    "The Terms feature is under development."
+  ],
+  "examples": [
+    {
+      "title": "Default pattern: Opening parenthesis",
+      "description": "Default pattern 0 checks that the count of opening parentheses matches between source and target, including both ASCII and fullwidth forms.",
+      "input": "sourcePattern0: [\\(\\uFF08]\ntargetPattern0: [\\(\\uFF08]\nfromSourcePattern0: true\nseverityPattern0: 0 (low)"
+    },
+    {
+      "title": "Same-content pattern with <same> keyword",
+      "description": "Patterns for content that must be identical in source and target (e.g., email addresses, URLs, IP addresses) use the '<same>' keyword as the target pattern.",
+      "input": "sourcePattern3: [\\w\\.\\-]+@[\\w\\.\\-]+\ntargetPattern3: <same>\ndescPattern3: Email addresses\nseverityPattern3: 1 (medium)"
+    },
+    {
+      "title": "Target-only pattern check (tripled letter)",
+      "description": "Pattern 7 demonstrates a target-only check (fromSourcePattern7: false) that looks for tripled letters in the target text, which often indicates a typo.",
+      "input": "fromSourcePattern7: false\nsourcePattern7: <same>\ntargetPattern7: ([\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lo}])\\1\\1\ndescPattern7: Tripled letter\nseverityPattern7: 1 (medium)"
+    },
+    {
+      "title": "Doubled word exceptions for French",
+      "description": "Configure doubled-word checking to allow legitimate repeated words in French like 'vous vous' and 'nous nous'.",
+      "input": "doubledWord: true\ndoubledWordExceptions: sie;vous;nous"
+    },
+    {
+      "title": "Length check with short/long thresholds",
+      "description": "Configure maximum length checking with different percentages for short and long text segments. Text up to 20 characters uses a 200% threshold, while longer text uses 350%.",
+      "input": "checkMaxCharLength: true\nmaxCharLengthBreak: 20\nmaxCharLengthAbove: 200\nmaxCharLengthBelow: 350"
+    }
+  ],
+  "stepId": "quality-check",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/quality_check_step"
+}

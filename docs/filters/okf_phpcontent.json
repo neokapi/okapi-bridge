@@ -1,0 +1,47 @@
+{
+  "filterName": "PHP Content Filter",
+  "overview": "The PHP Content Filter is an Okapi component that implements the IFilter interface for PHP content. The implementation is based on the PHP syntax found in the PHP language Reference documentation. This filter is not meant to process HTML files with PHP content, but rather the content of the PHP tags themselves — many files with a .php extension are actually HTML files with PHP tags. It extracts translatable strings from PHP constructs including simple strings, heredoc/nowdoc syntax, and array declarations.",
+  "parameters": {
+    "inlineCodes": {
+      "description": "Inline code detection and handling. When enabled, the specified regular expressions are applied to the text of extracted items, and any match is converted to an inline code. The default expressions detect: partial HTML tags at start/end of strings, HTML-like tags, escape sequences (\\a, \\b, \\f, \\n, \\r, \\t, \\v), email addresses, and placeholder patterns in square or curly brackets.",
+      "notes": [
+        "The default inline code pattern is: (\\A[^<]*?>)|(<[\\w!?/].*?(>|\\Z))|(\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)|(\\w[-._\\w]*\\w@\\w[-._\\w]*\\w\\.\\w{2,3})|([\\[{][\\w_$]+?[}\\]])"
+      ]
+    },
+    "useDirectives": {
+      "description": "Enable the filter to recognize localization directives when they are present. Localization directives are special comments that override the default extraction behavior of the filter. The syntax and behavior of the directives are the same across all Okapi filters. If this option is not set, any localization directive in the input file will be ignored and all extractable strings will be extracted.",
+      "notes": [
+        "Note: directives override key conditions."
+      ]
+    },
+    "extractOutsideDirectives": {
+      "description": "Extract any translatable item that is not within the scope of a localization directive. Selecting to extract or not outside localization directives allows you to mark up fewer parts of the source document. For example, if most strings should be extracted, enable this option and use directives only to exclude specific strings. Conversely, if most strings should not be extracted, disable this option and use directives only to mark the strings that should be extracted.",
+      "dependsOn": [
+        {
+          "property": "useDirectives",
+          "condition": "must be true (enabled only when 'Use localization directives' is set)"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Support for the define statement is not implemented yet.",
+    "In array declarations, both string key and string value are extracted."
+  ],
+  "processingNotes": [
+    "Encoding detection priority: (1) Unicode BOM if present, (2) charset declaration in first 1000 characters of file, (3) default encoding from filter options. If BOM encoding and header charset conflict, a warning is generated and BOM encoding takes precedence.",
+    "If the charset declaration value is literally 'charset' (case insensitive), the file is treated as a template with no encoding declared, and auto-detected or default encoding is used.",
+    "Output encoding: if the file has a header charset declaration, it is automatically updated to reflect the output encoding.",
+    "UTF-8 BOM handling: BOM is preserved in output only if input was also UTF-8 and had a BOM. If converting from non-UTF-8 to UTF-8, no BOM is added.",
+    "Line-break type in output matches the original input line-break type."
+  ],
+  "examples": [
+    {
+      "title": "PHP content with extractable strings",
+      "description": "Shows a PHP file with various string constructs. Extractable text includes heredoc strings, simple quoted strings in assignments and arrays, and heredoc strings with embedded variables. The filter extracts the string content while preserving PHP variable references and expressions.",
+      "input": "<?php\n$str = <<<EOD\nExample of string\nspanning multiple lines\nusing heredoc syntax.\nEOD;\n\nclass foo\n{\n    var $foo;\n    var $bar;\n\n    function foo()\n    {\n        $this->foo = 'Foo';\n        $this->bar = array('Bar1', 'Bar2', 'Bar3');\n    }\n}\n\n$foo = new foo();\n$name = 'MyName';\n\necho <<<EOT\nMy name is \"$name\". I am printing some $foo->foo.\nNow, I am printing some {$foo->bar[1]}.\nThis should print a capital 'A': \\x41\nEOT;\n?>"
+    }
+  ],
+  "filterId": "okf_phpcontent",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/PHP_Content_Filter"
+}

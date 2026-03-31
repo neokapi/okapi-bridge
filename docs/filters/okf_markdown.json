@@ -1,0 +1,105 @@
+{
+  "filterName": "Markdown Filter",
+  "overview": "The Markdown Filter extracts translatable text from Markdown files. It is designed to work with markdown based on the CommonMark specification, with additional features to support GitHub-flavored Markdown. The filter handles HTML inline elements and blocks via a configurable HTML sub-filter, and supports YAML front matter extraction, code block handling, and URL translation.",
+  "parameters": {
+    "inlineCodes": {
+      "description": "Inline code detection and handling settings. The Inline Code Finder is supported by this filter and applies to translatable text within the proper Markdown document. It does not apply to HTML inline tags or HTML blocks — for those, you need to enable inline code patterns on the HTML filter separately.",
+      "notes": [
+        "The Inline Code Finder support was temporarily unavailable in some snapshot builds of version 0.36, but has been restored.",
+        "For HTML inline tags or HTML blocks, you must configure the inline code pattern on the HTML filter separately, name the configuration as okf_html@arbitrary-name.fprm, and specify that name for the htmlSubfilter parameter."
+      ]
+    },
+    "extraction": {
+      "description": "Controls which content types within the Markdown document are extracted for translation, including URLs, code blocks, image alt text, YAML front matter, and MDX syntax."
+    },
+    "extraction.translateImageAltText": {
+      "description": "Controls whether image alt text is extracted for translation. This applies to both Markdown image syntax (![alt text](url)) and HTML img tags (<img src=\"url\" alt=\"alt text\">). When true, the alt text will be extracted as translatable content.",
+      "notes": []
+    },
+    "extraction.translateUrls": {
+      "description": "Controls whether URLs in link and image statements are exposed for translation. By default, URLs are not extracted. When enabled, matching URLs will be extracted as a subflow — meaning the URL text unit appears before the segment that contains it in the output."
+    },
+    "extraction.urlPattern": {
+      "description": "A regular expression pattern that controls which URLs are extracted for translation when translateUrls is enabled. Only URLs matching this pattern will be extracted. The default value '.+' matches all URLs.",
+      "dependsOn": [
+        {
+          "property": "extraction.translateUrls",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "extraction.translateCodeBlocks": {
+      "description": "Controls whether the contents of fenced code blocks (delimited by triple backticks or tildes) are exposed for translation."
+    },
+    "extraction.translateIndentedCodeBlocks": {
+      "description": "Controls whether the contents of indented code blocks (lines indented by 4 spaces or 1 tab) are exposed for translation."
+    },
+    "extraction.translateInlineCodeBlocks": {
+      "description": "Controls whether the contents of inline code blocks (text delimited by single backticks) are exposed for translation."
+    },
+    "extraction.translateHeaderMetadata": {
+      "description": "Controls whether the YAML metadata header is exposed for translation. Some markdown formats support a YAML Metadata Header (as defined by Pandoc's yaml_metadata_block extension) containing key/value data. When enabled, the header will be parsed and metadata values will be exposed for translation. A custom YAML sub-filter can be specified via the yamlSubfilter parameter to control which metadata fields are extracted."
+    },
+    "extraction.nonTranslateBlocks": {
+      "description": "A comma-separated list of strings that prevents matching block quotes from being translated. Block quotes whose content starts with one of the specified strings will not be extracted. When empty (default), contents in all block quotes will be extracted."
+    },
+    "extraction.parseMdx": {
+      "description": "Experimental. When enabled, parses out certain MDX expressions using regex. Specifically, multi-line 'export' blocks are treated as skeleton (non-translatable content).",
+      "notes": [
+        "This feature is marked as experimental."
+      ]
+    },
+    "output": {
+      "description": "Controls output formatting options including header anchor generation, character escaping, and backslash escape handling."
+    },
+    "output.generateHeaderAnchors": {
+      "description": "Controls whether anchors are automatically generated for headings in the source document. Some markdown parsers support explicit named anchors in header markup using the syntax {#my-anchor}. When enabled, this option generates stable anchors for the purpose of providing reliable hyperlink targets that reference translatable header values."
+    },
+    "output.charactersToEscape": {
+      "description": "A string of punctuation characters that will be backslash-escaped on export when unescapeBackslashCharacters is enabled. Each character in the string is treated as an individual character to escape.",
+      "dependsOn": [
+        {
+          "property": "output.unescapeBackslashCharacters",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "output.htmlEntitiesToEscape": {
+      "description": "A string of characters that will be encoded as HTML entities on export. Each character in the string will be converted to its corresponding HTML entity representation. When empty (default), no additional HTML entity encoding is performed."
+    },
+    "output.unescapeBackslashCharacters": {
+      "description": "Controls support for backslash escaping of punctuation characters. When enabled, the filter parses backslash-escaped punctuation in source documents and uses the charactersToEscape list to determine which characters to backslash-escape on export."
+    },
+    "subfilters": {
+      "description": "Configuration for sub-filters used to process HTML content and YAML front matter within Markdown documents."
+    },
+    "subfilters.htmlSubfilter": {
+      "description": "The custom configuration ID of the HTML filter that will be called to process HTML contents within Markdown documents. The configuration file must be saved in a known location with a '.fprm' suffix. When left empty (default), a default HTML filter configuration tailored for the Markdown filter is used. To configure inline code patterns for HTML content, create a custom HTML filter configuration named okf_html@arbitrary-name.fprm and specify that name here."
+    },
+    "subfilters.yamlSubfilter": {
+      "description": "The custom configuration ID of the YAML filter that will be called to process any YAML metadata header detected in the document. This allows customization of which metadata fields are extracted for translation. When left empty (default), the default YAML filter configuration is used.",
+      "dependsOn": [
+        {
+          "property": "extraction.translateHeaderMetadata",
+          "condition": "must be true for the YAML sub-filter to be invoked"
+        }
+      ]
+    }
+  },
+  "processingNotes": [
+    "If the file has a Unicode Byte-Order-Mark (BOM), the corresponding encoding (e.g., UTF-8, UTF-16) is used. Otherwise, the default encoding specified in the filter options is used.",
+    "HTML inline elements (tags) and HTML blocks (text between block-forming start/end tags) are processed by the HTML filter, which can be customized separately via the htmlSubfilter parameter.",
+    "The Inline Code Finder applies only to translatable text within the Markdown portion of the document — not to HTML inline tags or HTML blocks. Those require separate inline code configuration on the HTML sub-filter."
+  ],
+  "examples": [
+    {
+      "title": "URL translation as subflows",
+      "description": "When translateUrls is enabled, URLs are extracted as subflows that appear before the segment containing them. This example shows a Markdown image link and its XLIFF extraction, where the URL is extracted as a separate translation unit (tu2) referenced from the main text unit (tu1).",
+      "input": "Please click ![The Information desk logo](images/circled-i.jpg) for help.",
+      "output": "<trans-unit id=\"tu2\" restype=\"x-img-link\" xml:space=\"preserve\">\n<source xml:lang=\"en\">images/circled-i.jpg</source>\n</trans-unit>\n<trans-unit id=\"tu1\" xml:space=\"preserve\">\n<source xml:lang=\"en\">Please click <bpt id=\"1\">![</bpt>The Information desk logo<ept id=\"1\">]([#$tu2])</ept> for help.</source>\n</trans-unit>"
+    }
+  ],
+  "limitations": [],
+  "filterId": "okf_markdown",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Markdown_Filter"
+}

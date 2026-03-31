@@ -1,0 +1,27 @@
+{
+  "filterName": "MessageFormat Filter",
+  "overview": "The MessageFormatFilter handles message formats commonly found in software applications, including ICU Message Format and Java MessageFormat. It is designed to be used as a subfilter, where message strings can reside in various container formats such as JSON, YAML, XML, etc.",
+  "parameters": {
+    "addPluralForms": {
+      "description": "When enabled, new plural forms will be added based on the target locale. The source string is modified and then refiltered to provide the new plural forms to the translator. Default is false."
+    },
+    "normalize": {
+      "description": "When enabled, the source will be normalized to move leading and trailing text inside each complex (plural, select, etc.) variant. This makes translation easier by forcing each variant to be a complete phrase or sentence. Default is false.",
+      "notes": [
+        "This option can increase word and character counts for the source!"
+      ]
+    },
+    "prettyPrint": {
+      "description": "When enabled, the output is formatted to enhance readability. Any whitespace added is not significant. The default option (false) returns a compact string, normally a single line. Default is false."
+    }
+  },
+  "limitations": [
+    "The 'choice' syntax is not supported. For example: 'The value {count, choice, 0 #is none |1 #is one |1 <is more than one}'. This syntax is deprecated and should be converted to 'select' or 'plural'."
+  ],
+  "processingNotes": [
+    "This filter is designed to be used as a subfilter — it processes message strings extracted by a parent filter from container formats like JSON, YAML, or XML."
+  ],
+  "examples": [],
+  "filterId": "okf_messageformat",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Message_Format_Filter"
+}

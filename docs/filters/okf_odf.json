@@ -1,0 +1,79 @@
+{
+  "filterName": "OpenOffice Filter (ODF)",
+  "overview": "The OpenOffice Filter is an Okapi component that implements the IFilter interface for OpenOffice.org documents: ODT (text), ODS (spreadsheet), ODP (slides), ODG (graphics), and their corresponding template formats. These documents use the OpenDocument format (ODF). If you need to process directly an XML ODF file, you can use the ODF Filter that the OpenOffice Filter uses internally.",
+  "parameters": {
+    "extraction.extractNotes": {
+      "description": "Set this option to extract the content of <office:annotation> elements (notes) as translatable text. If this option is not set, notes are not extracted.",
+      "notes": [
+        "The option to extract or not the notes is not working yet — notes will be extracted regardless of the option setting."
+      ]
+    },
+    "extraction.extractReferences": {
+      "description": "Set this option to extract the content of <text:bookmark-ref> elements. The content of these elements is only a copy of the content of the referent. It is updated automatically within OpenOffice, so any translation done for this content will be automatically overwritten as soon as the document is updated. However, in some cases it may be useful to have the referenced text as part of the segment where it is inserted.",
+      "notes": [
+        "The option to extract or not the references is not working yet — they will be extracted regardless of the option setting."
+      ]
+    },
+    "extraction.extractMetadata": {
+      "description": "Extract metadata fields in meta.xml for translation. When enabled, the meta.xml sub-document will contain translatable text units for document metadata such as title, subject, and keywords."
+    },
+    "extraction.encodeCharacterEntityReferenceGlyphs": {
+      "description": "Encode character entity reference glyphs. When enabled (default), character entity reference glyphs are encoded in the output."
+    },
+    "inlineCodes.enabled": {
+      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.) within translatable text. When enabled, the rules defined in the code finder rules are applied to identify inline codes."
+    },
+    "inlineCodes.rules": {
+      "description": "Regex patterns used to identify inline codes in translatable text. Each rule defines a regular expression pattern that matches content to be treated as an inline code (placeholder) rather than translatable text.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "inlineCodes.mergeAdjacent": {
+      "description": "Merge consecutive inline codes into a single placeholder. This can simplify the appearance of segments that contain multiple adjacent inline codes.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "inlineCodes.moveBoundaryCodes": {
+      "description": "Move inline codes that appear at the beginning or end of a segment to the skeleton (non-translatable portion). This simplifies segments by removing leading and trailing codes that translators do not need to see.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "inlineCodes.simplifierRules": {
+      "description": "Rules for simplifying inline code representation. These rules control how inline codes are displayed to translators, making complex code sequences easier to work with.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "Some deleted text may get extracted. Make sure you have accepted or rejected the revision changes before processing the input document, as currently some text marked as deleted is still extracted.",
+    "The options to extract or not the notes and the references are not working yet. They will be extracted regardless of the option settings.",
+    "Sequential tabs may get reduced to a single tab during an extraction and merge round trip: the elements for spaces and tabs are supported in output but still incorrectly handled on input.",
+    "The target (output) encoding must be set to UTF-8 when extracting the documents to merge them back properly."
+  ],
+  "processingNotes": [
+    "Input encoding is automatically detected.",
+    "Any user-specified output encoding is ignored by these filters — they always use UTF-8.",
+    "Line-breaks in the output are always set to a simple linefeed (LF).",
+    "An OpenOffice document is a ZIP file with several sub-documents inside. The main one (content.xml) contains the body of the data, but meta.xml and style.xml may also contain translatable text.",
+    "All embedded files are treated as sub-documents by the filter. For example, a single ODT extracted to XLIFF produces three <file> elements: one for content.xml, one for style.xml, and one for meta.xml. Very often only content.xml has extracted text."
+  ],
+  "examples": [],
+  "filterId": "okf_odf",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/OpenOffice_Filter"
+}

@@ -1,0 +1,29 @@
+{
+  "filterName": "Paragraph Alignment Step",
+  "overview": "This step aligns paragraphs (TextUnits) from two documents. It takes filter events as input and sends only TextUnit filter events as output — all other events are lost. The ResourceSimplifier is called internally to flatten out events and expand TextUnits so that all TextUnits are available for alignment and skeleton is available for diffing if the option is enabled.",
+  "parameters": {
+    "outputOneToOneMatchesOnly": {
+      "description": "When enabled, only 1-to-1 paragraph aligned matches are output. Paragraphs that could not be cleanly aligned in a one-to-one correspondence are excluded from the output. This is enabled by default.",
+      "notes": []
+    },
+    "useSkeletonAlignment": {
+      "description": "When enabled, skeleton alignment is used to provide better alignment anchor points. This is an experimental feature that may improve alignments for some formats by leveraging skeleton (non-translatable) content as additional reference points during the alignment process. Disabled by default.",
+      "notes": [
+        "This is an experimental feature."
+      ]
+    }
+  },
+  "limitations": [
+    "Standard Gale and Church alignment is not accurate for long runs of paragraphs.",
+    "The experimental 'Use Skeleton Alignment' option may improve alignments for some formats but is not guaranteed to help in all cases."
+  ],
+  "processingNotes": [
+    "The ResourceSimplifier is called internally to flatten out events and expand TextUnits so that all TextUnits are available for alignment and skeleton is available for diffing.",
+    "Only TextUnit events are passed along — all other event types (document parts, groups, sub-documents, etc.) are lost in the output.",
+    "This step sends a special PIPELINE_PARAMETERS event that informs subsequent steps (e.g., Sentence Aligner) that the target input has been consumed and is no longer available.",
+    "Requires both a source and target document as input, along with source and target locale settings and a filter configuration mapper."
+  ],
+  "examples": [],
+  "stepId": "paragraph-aligner",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/paragraph_alignment_step"
+}

@@ -1,0 +1,28 @@
+{
+  "filterName": "HTML5-ITS Filter",
+  "overview": "This filter processes HTML5 documents that may contain ITS 2.0 (Internationalization Tag Set) markup. Input documents are expected to be valid HTML5. The filter supports global and local ITS rules and most ITS 2.0 data categories, with default behavior based on ITS defaults for language information, id values, within-text elements, and translate attributes. Default behavior can be overridden via ITS markup in the document or by specifying an ITS parameters file.",
+  "parameters": {
+    "simplifierRules": {
+      "description": "Rules for simplifying inline code representation in the extracted content. These rules control how inline codes (tags) are represented in a simplified form during processing."
+    },
+    "path": {
+      "description": "Path to an ITS rules file that overrides the default ITS behavior. The parameters file used by the filter is an ITS document. When specified, the rules in this file override the default ITS processing behavior (lang attribute for Language Information, id attribute for Id Value, phrasing content elements as withinText, and translate attribute handling)."
+    }
+  },
+  "limitations": [
+    "This filter is BETA."
+  ],
+  "processingNotes": [
+    "The filter decides which input encoding to use via the detection mechanism defined by the HTML5 specification.",
+    "Output encoding matches input encoding unless overridden by the calling tool.",
+    "Line-break types in the output match those of the original input.",
+    "Escaping of quote and apostrophe characters can be configured via quoteMode: 0 = no escaping, 1 = escape both to named entities, 2 = double quotes to named entity and single quotes to numeric entity, 3 = escape double quotes only.",
+    "Most phrasing content elements are interpreted as withinText=\"yes\" by default.",
+    "The translate attribute behavior differs from standard XML — it follows the HTML5 specification definition.",
+    "The lang attribute is used by default for the Language Information data category.",
+    "The id attribute is used by default for the Id Value data category."
+  ],
+  "examples": [],
+  "filterId": "okf_html5",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/html5_its_filter"
+}

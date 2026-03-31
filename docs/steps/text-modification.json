@@ -1,0 +1,70 @@
+{
+  "filterName": "Text Modification Step",
+  "overview": "The Text Modification step modifies the content of text units in a document pipeline. It can perform various character substitutions (replacing with Xs/Ns, Extended Latin, Cyrillic, Arabic, or Chinese characters), add prefixes/suffixes, append metadata, mark segments, and expand text length. It takes filter events as input and sends filter events as output. Text units set as non-translatable are not modified.",
+  "parameters": {
+    "type": {
+      "description": "Selects the kind of change to apply to text content. Available options: 0 = Keep the original text; 1 = Replace letters with Xs and digits with Ns; 2 = Remove text but keep inline codes; 3 = Replace selected ASCII characters with Extended Latin characters; 4 = Replace selected ASCII characters with Cyrillic characters; 5 = Replace selected ASCII characters with Arabic characters; 6 = Replace selected ASCII characters with Chinese characters.",
+      "notes": [
+        "The result of the character substitution is not meant to have any specific meaning beyond being a set of characters in a given script. This function does not perform a translation, transliteration, or any other meaningful linguistic operation."
+      ]
+    },
+    "addPrefix": {
+      "description": "When enabled, adds a prefix at the start of each text unit. The actual prefix text is specified by the 'prefix' parameter."
+    },
+    "prefix": {
+      "description": "The text to prepend at the start of each text unit when addPrefix is enabled. Default value is '{START_'.",
+      "dependsOn": [
+        {
+          "property": "addPrefix",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "addSuffix": {
+      "description": "When enabled, adds a suffix at the end of each text unit. The actual suffix text is specified by the 'suffix' parameter."
+    },
+    "suffix": {
+      "description": "The text to append at the end of each text unit when addSuffix is enabled. Default value is '_END}'.",
+      "dependsOn": [
+        {
+          "property": "addSuffix",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "applyToExistingTarget": {
+      "description": "When enabled, applies the changes also to text units that already have a translation (e.g. for multilingual files). By default, text units with existing translations are not modified."
+    },
+    "addName": {
+      "description": "When enabled, appends the name of each text unit at the end of its value. If the text unit has no name associated, the extraction ID is added instead."
+    },
+    "addID": {
+      "description": "When enabled, appends the extraction ID of each text unit at the end of its value. Extraction IDs are filter-specific."
+    },
+    "markSegments": {
+      "description": "When enabled, adds '[' and ']' delimiters around segments in each text unit. The delimiters are placed just around the text — after the prefix if one is added, and before the item name, extraction ID, and suffix if they are added. If the text unit is not segmented, the delimiters are added at the front and back of the full content of the text unit."
+    },
+    "applyToBlankEntries": {
+      "description": "When enabled, applies the changes also to text units that have no text (i.e. are empty, or contain only white spaces or codes). Enabled by default."
+    },
+    "expand": {
+      "description": "When enabled, expands the text to simulate translation-induced text growth. If the content is less than 31 characters, it is expanded by 50% or at least one character. If the content is longer than 30 characters, it is expanded by 100%. Empty strings are not expanded."
+    },
+    "script": {
+      "description": "Integer value controlling the script used for character replacement. Works in conjunction with the type parameter when a script-based replacement mode is selected."
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Text units set as non-translatable are not modified.",
+    "Text units with existing translations are modified only if the applyToExistingTarget option is enabled.",
+    "Character substitution results have no specific linguistic meaning — this is not translation or transliteration.",
+    "Text expansion uses different rates based on content length: 50% (minimum 1 character) for content under 31 characters, 100% for content 31 characters or longer. Empty strings are not expanded.",
+    "Segment markers are placed after prefix and before suffix/name/ID additions."
+  ],
+  "examples": [],
+  "stepId": "text-modification",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/text_modification_step"
+}

@@ -1,0 +1,64 @@
+{
+  "filterName": "Multi-Parsers Filter",
+  "overview": "The Multi-Parsers Filter is an Okapi component for extracting translatable text from two-level complex formats. For example, it can process a CSV file where some columns contain Markdown, some HTML, and some plain text. By default, the filter settings are configured to process a CSV file where all columns are translatable and treated as plain text.",
+  "parameters": {
+    "csvAutoDetectColumnTypes": {
+      "description": "When enabled, the filter uses auto-detection to determine column types from a special row in each input file rather than relying on manual column type configuration. When this is enabled, the manual column configuration options (csvFormatCols, csvNoExtractCols, csvStartingRow) are disabled and the filter reads type information from the row specified by csvAutoDetectColumnTypesRow.",
+      "notes": [
+        "The wiki parameters section is marked as TODO, so detailed behavioral documentation is not yet available."
+      ]
+    },
+    "csvAutoDetectColumnTypesRow": {
+      "description": "Specifies the row number (1-based) at which the special configuration/type-detection information is located in the input file. This row contains metadata that tells the filter how to treat each column. Valid range: 1 to 9999999.",
+      "dependsOn": [
+        {
+          "property": "csvAutoDetectColumnTypes",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "csvFormatCols": {
+      "description": "A comma-separated list of columns with non-plain-text content. Each entry specifies a column index (0-based) followed by a colon and the filter configuration ID to use for that column's content. For example, '3:okf_markdown' means column 3 should be parsed as Markdown. Columns not listed here are treated as plain text by default.",
+      "dependsOn": [
+        {
+          "property": "csvAutoDetectColumnTypes",
+          "condition": "must be false (disabled when auto-detection is enabled)"
+        }
+      ]
+    },
+    "csvNoExtractCols": {
+      "description": "A comma-separated list of column indices (0-based) that should not be extracted for translation. Columns listed here will be skipped during extraction.",
+      "dependsOn": [
+        {
+          "property": "csvAutoDetectColumnTypes",
+          "condition": "must be false (disabled when auto-detection is enabled)"
+        }
+      ]
+    },
+    "csvStartingRow": {
+      "description": "The row number (1-based) at which extraction starts. Rows before this number are skipped. Valid range: 1 to 9999999. Default is 1 (start from the first row).",
+      "dependsOn": [
+        {
+          "property": "csvAutoDetectColumnTypes",
+          "condition": "must be false (disabled when auto-detection is enabled)"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "This filter is BETA."
+  ],
+  "processingNotes": [
+    "If the input file has a Unicode Byte-Order-Mark (BOM), the corresponding encoding (e.g. UTF-8, UTF-16) is used automatically.",
+    "If no BOM is present, the default encoding specified in the filter options is used."
+  ],
+  "examples": [
+    {
+      "title": "CSV with mixed content types",
+      "description": "Configure the filter to process a CSV file where column 3 contains Markdown content while other columns are plain text. Use csvFormatCols to specify the Markdown column.",
+      "input": "csvFormatCols: \"3:okf_markdown\""
+    }
+  ],
+  "filterId": "okf_multiparsers",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/multi_parsers_filter"
+}

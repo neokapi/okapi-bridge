@@ -1,0 +1,24 @@
+{
+  "filterName": "Moses Text Filter",
+  "overview": "The Moses Text Filter processes InlineText files used by the Moses MT system. Each line in the file is read as a separate text unit, with inline codes represented by XLIFF-like elements (`<g>`, `<x>`, `<bx>`, `<ex>`) and line-breaks represented by `<lb/>`. The filter is typically used in conjunction with the Moses InlineText Extraction Step and Moses InlineText Leveraging Step for round-trip processing of various document formats through Moses.",
+  "parameters": {},
+  "processingNotes": [
+    "If the document has a BOM, it is used to determine the input encoding; otherwise UTF-8 is used as the default encoding regardless of any specified default.",
+    "The output encoding is always forced to UTF-8.",
+    "The type of line-breaks in the output matches the original input.",
+    "Reading a Moses InlineText file may yield more text units than the original document because each segment (or unsegmented text unit) of the original is extracted as a single entry. Multiple segments from one original text unit become separate entries with no grouping information in the Moses file."
+  ],
+  "limitations": [
+    "None known."
+  ],
+  "examples": [
+    {
+      "title": "Moses InlineText file format",
+      "description": "Example of a Moses InlineText file with four text units. Translatable text appears directly on each line, while inline codes use XLIFF-like markup elements (<g>, <x>, <bx>, <ex>). Line-breaks within an entry are represented by <lb/>.",
+      "input": "Text in the first entry.\nText of the second entry<lb/>which spans<lb/>several lines\nThird entry.\nFourth entry with <g id=\"1\">bold words</g> and some code:<x id=\"2\"/>",
+      "output": "Four separate text units are extracted, one per line."
+    }
+  ],
+  "filterId": "okf_mosestext",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Moses_Text_Filter"
+}

@@ -1,0 +1,38 @@
+{
+  "filterName": "XLIFF Joiner",
+  "overview": "The XLIFF Joiner step re-joins multiple XLIFF documents into one or more documents based on a naming pattern defined by the input file marker parameter. The first document of each naming pattern group provides content up to the first &lt;file&gt; element and after the last &lt;file&gt; element, while subsequent documents contribute their &lt;file&gt; elements and any content between multiple &lt;file&gt; elements. It takes raw documents as input and sends raw documents as output. To perform the reverse operation, use the XLIFF Splitter Step.",
+  "parameters": {
+    "inputFileMarker": {
+      "description": "The marker text used to identify and group files with similar naming patterns. Files whose names contain this marker followed by an index number (e.g., '_PART001', '_PART002') are grouped together and joined into a single output file. Files whose filenames do not contain the expected marker are skipped entirely.",
+      "notes": [
+        "Files are joined in the order they arrive in the pipeline, regardless of the index number added by the XLIFF Splitter Step, due to sequential processing of files in the pipeline.",
+        "Subsequent documents of the same naming pattern group ignore content before their first <file> element and after their last <file> element, because the XLIFF Splitter Step writes out this content for each document."
+      ]
+    },
+    "outputFileMarker": {
+      "description": "The marker text used to generate the filename(s) of the output file(s). The input file marker portion of the filename is replaced with this output file marker to produce the output filename. For example, if the input file marker is '_PART' and the output file marker is '_CONCAT', then 'File1_PART001.xlf' becomes 'File1_CONCAT.xlf'.",
+      "notes": [
+        "If files with the same names already exist in the output directory, they will be overridden without warning."
+      ]
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Because of the sequential processing of files in the pipeline, files are joined in the order they arrive in the pipeline, regardless of the index number added by the XLIFF Splitter Step.",
+    "Subsequent documents of the same naming pattern group ignore content before their first <file> element and after their last <file> element, since the XLIFF Splitter Step writes out this content for each document.",
+    "The received event is unaltered. The step outputs one or more output XLIFF documents depending on the input filenames pattern.",
+    "Files whose filenames do not contain the expected input file marker are skipped."
+  ],
+  "examples": [
+    {
+      "title": "Joining split XLIFF files",
+      "description": "Demonstrates how the input and output file markers are used to group split XLIFF files and produce joined output files. Files without the expected marker are skipped.",
+      "input": "Input file marker: _PART\nOutput file marker: _CONCAT\nInput file list:\n  C:\\Project\\FolderABC\\File1_PART001.xlf\n  C:\\Project\\FolderABC\\File1_PART002.xlf\n  C:\\Project\\FolderABC\\File2_PART001.xlf\n  C:\\Project\\FolderABC\\File2_PART002.xlf\n  C:\\Project\\FolderABC\\File3.xlf",
+      "output": "C:\\Project\\FolderABC\\File1_CONCAT.xlf\nC:\\Project\\FolderABC\\File2_CONCAT.xlf\n\nC:\\Project\\FolderABC\\File3.xlf -> Skipped file, the filename does not have the expected marker \"_PART\"."
+    }
+  ],
+  "stepId": "xliff-joiner",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/xliff_joiner_step"
+}

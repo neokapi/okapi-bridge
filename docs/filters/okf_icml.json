@@ -1,0 +1,33 @@
+{
+  "filterName": "ICML Filter",
+  "overview": "The ICML Filter processes WCML/ICML (InCopy Markup Language) documents, which are XML-based formats used by Adobe InDesign/InCopy. It is very similar to the IDML Filter. The filter supports extraction of notes, master spreads, and provides options for inline code simplification and handling of large spread files.",
+  "parameters": {
+    "extraction.extractNotes": {
+      "description": "When enabled, extracts the content of notes (<Note> elements) from the ICML document as translator notes."
+    },
+    "extraction.extractMasterSpreads": {
+      "description": "When enabled, extracts the content of master spreads if they exist in the document. If this option is not set, only the normal spreads are extracted."
+    },
+    "extraction.simplifyCodes": {
+      "description": "When enabled, reduces the number of inline codes by re-grouping adjacent codes when it is possible. This simplifies the translatable segments by merging consecutive inline formatting codes."
+    },
+    "extraction.skipThreshold": {
+      "description": "Sets the maximum size for the spread files (in KBytes). Any spread file above the given value will either generate an error or will be skipped from extraction depending on the specified option. This allows you to skip over large spread files that may contain only graphics and require too much memory to be opened. Valid range is 1 to 32000.",
+      "notes": [
+        "Note: skipped files are not checked for translatable text."
+      ]
+    },
+    "extraction.newTuOnBr": {
+      "description": "Controls whether a Br (break) tag creates a new text unit (segment). When enabled, <Br/> elements in the ICML content will cause the filter to start a new paragraph/text unit at that point. Default is false."
+    }
+  },
+  "limitations": [
+    "The wiki states limitations are TODO — no specific limitations are documented."
+  ],
+  "processingNotes": [
+    "Processing details are not yet documented in the wiki (marked as TODO)."
+  ],
+  "examples": [],
+  "filterId": "okf_icml",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/ICML_Filter"
+}

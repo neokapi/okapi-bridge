@@ -1,0 +1,191 @@
+{
+  "filterName": "XLIFF Filter",
+  "overview": "The XLIFF Filter is an Okapi component that implements the IFilter interface for XLIFF 1.2 (XML Localisation Interchange File Format) documents. XLIFF is an OASIS Standard that defines a file format for transporting translatable text and localization-related information across a chain of translation and localization tools. The filter supports standard XLIFF as well as SDL XLIFF and IWS XLIFF variants, with configurable segmentation, alt-trans handling, and ITS annotation support.",
+  "parameters": {
+    "extraction.preserveSpaceByDefault": {
+      "description": "When enabled, whitespace is preserved by default in source and target content. When disabled, if a <trans-unit> element has xml:space=\"preserve\", white spaces inside source and target are left as-is; if xml:space is not present or has a value different from \"preserve\", the content is unwrapped."
+    },
+    "extraction.includeExtensions": {
+      "description": "Set this option to include non-standard information (e.g. match types) in added <alt-trans> elements. When enabled, extra information beyond the XLIFF standard is preserved in alt-trans output."
+    },
+    "extraction.includeIts": {
+      "description": "When enabled, ITS and ITSXLF annotations are included during extraction. These annotations carry localization metadata such as translate, terminology, and localization note information."
+    },
+    "extraction.inlineCdata": {
+      "description": "When enabled, CDATA sections encountered in source/target content are treated as inline codes rather than as text content."
+    },
+    "extraction.subAsTextUnit": {
+      "description": "When enabled, <sub> elements found inside <bpt>, <ept>, <ph>, and <it> elements are processed as separate text units instead of being included in the code of the parent inline element."
+    },
+    "extraction.ignoreInputSegmentation": {
+      "description": "Set this option to ignore any segmentation information contained in the input XLIFF. When this option is set, all segmented content is reduced to new unsegmented content when extracted. Note that any <alt-trans> data attached to a given segment is also lost when this option is enabled.",
+      "notes": [
+        "Any <alt-trans> data attached to a given segment is also lost when this option is enabled."
+      ]
+    },
+    "extraction.skipNoMrkSegSource": {
+      "description": "When enabled, <seg-source> elements that do not contain <mrk mtype='seg'> marker elements are skipped. If the content of <seg-source> has no explicit <mrk mtype='seg'> element, it is normally treated as if the whole content is a single segment; this option skips such entries instead."
+    },
+    "extraction.fallbackToID": {
+      "description": "Select this option to use the value of the id attribute of the <trans-unit> element as a fall-back value for the text unit name if resname is not present. This may be useful for XLIFF documents that use resname-like values for id but do not bother providing resname (as they should)."
+    },
+    "extraction.forceUniqueIds": {
+      "description": "When enabled, the filter forces all text unit IDs to be unique. This is useful when processing XLIFF documents that may contain duplicate trans-unit id values across different file elements."
+    },
+    "states.targetStateMode": {
+      "description": "Controls how the target state attribute is handled in the output. Valid values: 0 = do not modify; 1 = set to a specific value; 2 = set only if not already present. The specific state value is controlled by the targetStateValue parameter."
+    },
+    "states.targetStateValue": {
+      "description": "The state value to set on target elements when targetStateMode is configured to set a state value. Common values include 'needs-translation', 'translated', 'final', etc. as defined by the XLIFF 1.2 specification.",
+      "dependsOn": [
+        {
+          "property": "states.targetStateMode",
+          "condition": "must be set to a non-zero value for this to take effect"
+        }
+      ]
+    },
+    "states.useTranslationTargetState": {
+      "description": "When enabled, translation-specific target state handling is used. This applies the configured target state value specifically when translations are provided."
+    },
+    "states.editAltTrans": {
+      "description": "Set this option to allow <alt-trans> elements that exist in the input to be modified in the output. The existing entries will be treated like added ones, allowing their content to be updated during processing."
+    },
+    "states.addAltTrans": {
+      "description": "Set this option to allow the addition of new <alt-trans> elements in the output. For example, when this option is set and the Leveraging Step is applied to a given XLIFF input document, its output includes the translation matches possibly found during leveraging."
+    },
+    "states.addAltTransGMode": {
+      "description": "Set this option to use the <g>/<x> notation for inline codes (instead of the <bpt>/<ept>/<ph> notation) in the added <alt-trans> elements. Only applies when addAltTrans is enabled.",
+      "dependsOn": [
+        {
+          "property": "states.addAltTrans",
+          "condition": "must be true for this to take effect"
+        }
+      ]
+    },
+    "output.addTargetLanguage": {
+      "description": "Set this option to add the target-language attribute in <file> if it is not present. When enabled, the filter ensures that each <file> element in the output includes a target-language attribute."
+    },
+    "output.overrideTargetLanguage": {
+      "description": "Set this option to override the language of the target set in the input XLIFF. When enabled, the value of the target-language attribute and the value of xml:lang in all <target> elements are set to the target language specified by the user, regardless of their original values. This is useful when using an XLIFF document as a template for several outputs in different target languages.",
+      "notes": [
+        "Depending on what the original XLIFF document contains, this option may result in outputs where existing <alt-trans> elements do not correspond to the target language of a given <trans-unit> anymore."
+      ]
+    },
+    "output.allowEmptyTargets": {
+      "description": "Set this option to prevent copying of source text into an empty target. When enabled, empty <target> elements are allowed in the output XLIFF document rather than being populated with source text."
+    },
+    "output.alwaysAddTargets": {
+      "description": "When enabled, target elements are always added to trans-units in the output, even if no translation is available. Without this option, target elements are only added when translations exist."
+    },
+    "output.alwaysUseSegSource": {
+      "description": "When enabled, the <seg-source> element is always used in the output, even when the content consists of a single unsegmented segment."
+    },
+    "output.outputSegmentationType": {
+      "description": "Select the type of segmentation representation to use for the output. Values: 0 = 'Segment only if the input text unit is segmented' — each text unit uses <seg-source> only if the original was segmented; 1 = 'Always segment' — all text units use <seg-source>, even if the original was not segmented or is a single segment; 2 = 'Never segment' — no text units are segmented, all <seg-source> elements are removed; 3 = 'Segment only if segmented, regardless of input' — only text units made of more than one part are segmented, regardless of input."
+    },
+    "parser.useCustomParser": {
+      "description": "Set this option to use an XML stream parser different from the default one. The default parser for this filter is the Woodstox XML parser. The reason for this is that the Java parser that comes with most VMs implements the collapsing of whitespace characters using a recursive method that can cause a stack overflow error in XLIFF documents with large chunks of element content (e.g. in SDLXLIFF files)."
+    },
+    "parser.factoryClass": {
+      "description": "The name of the factory class that will instantiate the custom XML stream parser to use. For example: com.ctc.wstx.stax.WstxInputFactory. Only used when useCustomParser is enabled.",
+      "dependsOn": [
+        {
+          "property": "parser.useCustomParser",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "sdl.useSdlXliffWriter": {
+      "description": "When enabled, the SDL-specific XLIFF writer is used for output. This writer handles SDL-specific metadata and formatting conventions found in SDLXLIFF files."
+    },
+    "sdl.useSegsForSdlProps": {
+      "description": "When enabled, SDL properties (locked, conf, origin) are read from and written to segments rather than the TextContainer level. From M35 on, the three properties are stored at the segment level with correct values, but those segment-level properties are read-only.",
+      "introducedIn": "M35"
+    },
+    "sdl.sdlSegConfValue": {
+      "description": "The SDL segment confirmation value to set on output segments. Common values include 'Translated', 'Draft', 'ApprovedTranslation', etc."
+    },
+    "iws.useIwsXliffWriter": {
+      "description": "When enabled, the Idiom WorldServer-specific XLIFF writer is used for output. This writer handles IWS-specific metadata and formatting conventions."
+    },
+    "iws.iwsBlockFinished": {
+      "description": "When enabled, segments with a 'finished' translation status in IWS XLIFF are blocked from further modification."
+    },
+    "iws.iwsBlockLockStatus": {
+      "description": "When enabled, segments with a locked status in IWS XLIFF are blocked from modification."
+    },
+    "iws.iwsBlockMultipleExact": {
+      "description": "When enabled, segments with multiple exact TM matches in IWS XLIFF are blocked from modification.",
+      "dependsOn": [
+        {
+          "property": "iws.iwsIncludeMultipleExact",
+          "condition": "should be true to include the multiple exact matches that this option blocks"
+        }
+      ]
+    },
+    "iws.iwsBlockTmScore": {
+      "description": "When enabled, segments with a TM score at or above the threshold specified by iwsBlockTmScoreValue are blocked from modification."
+    },
+    "iws.iwsBlockTmScoreValue": {
+      "description": "The TM score threshold value for blocking segments. Segments with a TM match score at or above this value are blocked when iwsBlockTmScore is enabled. Default is 100.00.",
+      "dependsOn": [
+        {
+          "property": "iws.iwsBlockTmScore",
+          "condition": "must be true for this threshold to be applied"
+        }
+      ]
+    },
+    "iws.iwsIncludeMultipleExact": {
+      "description": "When enabled, multiple exact TM matches are included in the IWS XLIFF output rather than being reduced to a single match."
+    },
+    "iws.iwsRemoveTmOrigin": {
+      "description": "When enabled, TM origin metadata is removed from the IWS XLIFF output."
+    },
+    "iws.iwsTransStatusValue": {
+      "description": "The translation status value to set on IWS XLIFF segments. Common values include 'finished', 'pending', etc."
+    },
+    "iws.iwsTransTypeValue": {
+      "description": "The translation type value to set on IWS XLIFF segments. Common values include 'manual_translation', 'machine_translation', etc."
+    },
+    "inlineCodes.enabled": {
+      "description": "When enabled, the code finder is used to detect inline codes in translatable text based on regular expression patterns defined in the rules. This allows identification of placeholders, tags, and other non-translatable patterns within text content."
+    },
+    "xtmAttributes": {
+      "description": "When enabled, XTM-specific attributes are processed and preserved in the XLIFF output."
+    }
+  },
+  "limitations": [
+    "The content of the <sub> element is currently not supported as text. Any element found inside <bpt>, <ept>, <ph>, and <it> (including <sub>) is included in the code of the parent inline element. A warning is generated when a <sub> element is detected.",
+    "The special marker <mrk mtype='protected'> is supported by converting content into an inline code. If <mrk mtype='x-its-translate-yes'> is used within such a marker, it is not supported and its content is placed into the original data part of the inline code.",
+    "The pre-defined configuration okf_xliff-sdl provides additional support for SDLXLIFF files. SDL properties (locked, conf, origin) are stored in the TextContainer of the target rather than in each segment; if there are several segments, the values are those of the last segment. From M35 on, segment-level properties are also stored with correct values but are read-only."
+  ],
+  "processingNotes": [
+    "If the document has an encoding declaration it is used; otherwise UTF-8 is used as the default encoding regardless of any specified default.",
+    "If input and output encoding are both UTF-8, a BOM is used in output only if one was detected in the input. If input was not UTF-8, no BOM is used in the UTF-8 output.",
+    "Line-break type in the output matches the original input.",
+    "If a <trans-unit> has xml:space=\"preserve\", whitespace in source/target is preserved. Otherwise, content is unwrapped.",
+    "The <seg-source> segmentation is only carried over if its content (without segment markers) matches the <source> element content.",
+    "Alt-trans entries are sorted based on match types and score. The match-quality attribute is used as score if it is an integer or percentage; otherwise score is set to 0.",
+    "The default parser is Woodstox because the standard Java XML parser can cause stack overflow errors in XLIFF documents with large element content (e.g. SDLXLIFF files)."
+  ],
+  "examples": [
+    {
+      "title": "Alt-trans mapping",
+      "description": "How <alt-trans> elements are mapped to Okapi AltTranslationsAnnotation. The match-quality attribute is used as score (integer or percentage), origin attribute maps to annotation origin (defaults to 'SourceDoc'), and entries are sorted by match type and score. Entries with score above 99 are typed as EXACT, above 0 as FUZZY.",
+      "input": "<alt-trans match-quality=\"95\" origin=\"MyTM\" alttranstype=\"proposal\">\n  <source>Hello</source>\n  <target>Bonjour</target>\n</alt-trans>",
+      "output": "AltTranslationsAnnotation with score=95, origin='MyTM', matchType=FUZZY"
+    },
+    {
+      "title": "Segmentation in seg-source",
+      "description": "How <seg-source> segmentation is handled. The segmentation is carried over only if the content of <seg-source> without markers matches <source>. If no explicit <mrk mtype='seg'> elements exist, the whole content is treated as a single segment.",
+      "input": "<trans-unit id=\"1\">\n  <source>First sentence. Second sentence.</source>\n  <seg-source>\n    <mrk mtype=\"seg\" mid=\"1\">First sentence.</mrk>\n    <mrk mtype=\"seg\" mid=\"2\">Second sentence.</mrk>\n  </seg-source>\n</trans-unit>",
+      "output": "Two segments extracted: 'First sentence.' and 'Second sentence.'"
+    },
+    {
+      "title": "Output segmentation types",
+      "description": "The four output segmentation modes control how segmentation is represented in output: (0) preserve input segmentation, (1) always add seg-source, (2) never segment/remove all seg-source, (3) segment only multi-part entries regardless of input."
+    }
+  ],
+  "filterId": "okf_xliff",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/XLIFF_Filter"
+}

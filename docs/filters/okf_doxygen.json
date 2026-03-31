@@ -1,0 +1,89 @@
+{
+  "filterName": "Doxygen Filter",
+  "overview": "The Doxygen Filter extracts Doxygen-style comments from source code files for localization. It supports C++-style (///), Javadoc-style (/**), Qt-style (/*!), and Python-style (''' or \"\"\") comment blocks. The filter recognizes the full set of Doxygen special commands, HTML commands, and XML commands, interpreting them as inline codes or structural elements. It preserves line numbers so that a one-to-one correspondence between source and translated line numbers is maintained.",
+  "parameters": {
+    "parser": {
+      "description": "Parser configuration group containing settings for Doxygen command definitions, HTML command definitions, and whitespace handling."
+    },
+    "parser.preserveWhitespace": {
+      "description": "When set to true, prevents the filter from collapsing whitespace in extracted text. By default (false), the filter collapses single linebreaks within text runs, essentially merging each translatable paragraph into a single (potentially very long) line. Setting this to true preserves whitespace as-is in the extracted content."
+    },
+    "parser.doxygenCommands": {
+      "description": "Defines how each Doxygen special command is handled during extraction. Each entry is keyed by the command name (without prefix, case-sensitive) and specifies the command type (PLACEHOLDER, OPENING, or CLOSING), whether it is inline, its paired command (for OPENING/CLOSING types), whether its content is translatable, and an ordered list of parameters. Parameters define their name, length (WORD, LINE, PHRASE, or PARAGRAPH), whether they are required, and whether they are translatable. WORD matches a single whitespace-delimited token, LINE matches to end of line, PHRASE matches a double-quoted string like '\"image caption\"', and PARAGRAPH matches to the next blank line or command. Untranslatable parameters following translatable ones are recorded as separate inline codes. Parameters should be listed in the order they appear after the command. Parameters with non-whitespace delimiters (e.g. '.py' in \\code{.py}) are not currently supported.",
+      "notes": [
+        "The parameters listing is optional for each command entry.",
+        "When present, parameters should be listed in the order in which they are written following the command.",
+        "Parameters with non-whitespace delimiters (e.g. '.py' in \\code{.py}) are not currently supported."
+      ]
+    },
+    "parser.htmlCommands": {
+      "description": "Defines how HTML and XML commands within Doxygen comments are handled. Each entry is keyed by the tag name and specifies the command type (OPENING, CLOSING, or PLACEHOLDER) and whether it is an inline element. Supports standard HTML tags recognized by Doxygen (a, b, code, em, strong, table, etc.) as well as XML documentation tags (summary, param, returns, see, etc.)."
+    },
+    "inlineCodes": {
+      "description": "Configuration for pattern-based detection of inline codes (placeholders, tags, etc.) within translatable text segments extracted from Doxygen comments."
+    },
+    "inlineCodes.enabled": {
+      "description": "When enabled, applies regex-based pattern matching to detect inline codes within translatable text. These detected patterns are converted to inline code placeholders in the extracted segments."
+    },
+    "inlineCodes.rules": {
+      "description": "Regex patterns used to identify inline codes in translatable text. Each rule specifies a pattern that, when matched, causes the matched text to be treated as a non-translatable inline code placeholder."
+    },
+    "inlineCodes.mergeAdjacent": {
+      "description": "When enabled, consecutive inline codes that appear next to each other are merged into a single placeholder, reducing the number of inline code tags in the extracted segment."
+    },
+    "inlineCodes.moveBoundaryCodes": {
+      "description": "When enabled, inline codes that appear at the beginning or end of a segment are moved to the skeleton (non-translatable portion), simplifying the translatable text."
+    },
+    "inlineCodes.simplifierRules": {
+      "description": "Rules for simplifying the representation of inline codes in extracted segments."
+    },
+    "path": {
+      "description": "Path to an external YAML configuration file containing the filter parameters."
+    }
+  },
+  "limitations": [
+    "Single linebreaks in a text run that are not part of a Doxygen command are collapsed. No effort is made to enforce a maximum line width upon output, so each translatable paragraph is collapsed to a single (potentially very long) line.",
+    "Command parameters with non-whitespace delimiters (e.g. '.py' in \\code{.py}) are not currently supported.",
+    "Non-translatable command parameters are not exposed for any special processing."
+  ],
+  "processingNotes": [
+    "If the file has a Unicode Byte-Order-Mark, the corresponding encoding (UTF-8, UTF-16, etc.) is used. Otherwise, the default encoding specified when opening the document is used.",
+    "The full set of Doxygen special commands, HTML commands, and XML commands are recognized and interpreted as inline codes or structural elements.",
+    "Line numbers are preserved so that a one-to-one correspondence between source line number and translated line number is maintained.",
+    "C++-style (///), Javadoc-style (/**), Qt-style (/*!), and Python-style (''' or \"\"\") comment blocks are all supported."
+  ],
+  "examples": [
+    {
+      "title": "Basic Doxygen comment extraction",
+      "description": "Shows how a Doxygen comment block with \\class and \\brief commands is extracted into text units with inline codes",
+      "input": "/*! \\class Test class.h \"inc/class.h\"\n *  \\brief This is a test class.\n *\n * Some details about the Test class\n */",
+      "output": "Text Unit 1: <1/><2/> This is a test class.\nText Unit 2: Some details about the Test class"
+    },
+    {
+      "title": "Various comment styles",
+      "description": "Demonstrates the different Doxygen comment styles supported by the filter, including Javadoc (/**), Qt (/*!), member (//!<, /**<), and inline (/*!<) styles",
+      "input": "/*! A test class */\nclass Test\n{\n  public:\n    /** An enum type.\n     * The documentation block cannot be put after the enum!\n     */\n    enum EnumType\n    {\n      int EVal1, /**< enum value 1 */\n      int EVal2 /**< enum value 2 */\n    };\n    void member(); //!< a member function.\n  protected:\n    int value; /*!< an integer value */\n};",
+      "output": "Highlighted text is extracted: 'A test class', 'An enum type.', 'The documentation block cannot be put after the enum!', 'enum value 1', 'enum value 2', 'a member function.', 'an integer value'"
+    },
+    {
+      "title": "Custom command definition",
+      "description": "Shows how to define a custom Doxygen command in the YAML configuration with type, inline flag, pair, translatability, and parameter definitions",
+      "input": "doxygen_commands:\n  mycommand:\n    type: PLACEHOLDER\n    inline: true\n    parameters:\n      - name: name\n        length: WORD\n        required: true\n        translatable: false\n      - name: title\n        length: LINE\n        required: false\n        translatable: true",
+      "output": "Defines a custom inline placeholder command 'mycommand' with a non-translatable WORD parameter and an optional translatable LINE parameter"
+    },
+    {
+      "title": "Custom regex-based command",
+      "description": "Shows how to define a custom command using a regex pattern that matches arbitrary text patterns within comments",
+      "input": "custom_commands:\n  - pattern: \"###ACCESS_CHECKS###.*?;\"\n    type: PLACEHOLDER",
+      "output": "Matches runs of text like '###ACCESS_CHECKS###someValue;' and treats them as non-translatable placeholder codes"
+    },
+    {
+      "title": "Preserve whitespace configuration",
+      "description": "Shows how to prevent the filter from collapsing whitespace by enabling the preserve_whitespace setting",
+      "input": "preserve_whitespace: true",
+      "output": "Whitespace in extracted Doxygen comments is preserved as-is instead of being collapsed"
+    }
+  ],
+  "filterId": "okf_doxygen",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Doxygen_Filter"
+}

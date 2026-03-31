@@ -1,0 +1,15 @@
+{
+  "filterName": "Simple Word Count Step",
+  "overview": "This step performs word counts on the source content of the text units of a set of documents. It is intended for fast and simple word counts; for more sophisticated counts, see the Word Count Step. The word counts are saved as annotations that can be used in other steps, such as the Translation Comparison Step which can use the word count annotation in its report. Takes filter events and sends filter events.",
+  "parameters": {},
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Word counts are saved as annotations on text units that can be consumed by downstream steps (e.g., Translation Comparison Step).",
+    "This is a lightweight counting step; for more sophisticated counts use the Word Count Step."
+  ],
+  "examples": [],
+  "stepId": "simple-word-count",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/simple_word_count_step"
+}

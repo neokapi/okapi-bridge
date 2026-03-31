@@ -1,0 +1,29 @@
+{
+  "filterName": "TTX Splitter Step",
+  "overview": "The TTX Splitter step splits a single TTX document into a given number of documents of roughly equal size, calculated based on the total source word count of the original input. It takes raw documents as input and sends raw documents as output. The new documents are output at the same location as the input document with an extra marker and number appended to the file name, which is later used by the TTX Joiner Step to reassemble the files.",
+  "parameters": {
+    "partCount": {
+      "description": "The number of output files to create from one input document. The step will split the source TTX document into this many parts of roughly equal word count. Must be an integer; defaults to 2.",
+      "notes": [
+        "The extra part appended to each output file name (marker + number) is used later by the TTX Joiner Step to reassemble the split documents."
+      ]
+    }
+  },
+  "limitations": [
+    "Works on segmented TTX files only."
+  ],
+  "processingNotes": [
+    "The received event is passed through unaltered; the step outputs the new split documents at the same location as the input document.",
+    "Output file names include an extra marker and number suffix that the TTX Joiner Step uses to reassemble the documents.",
+    "Document splitting is based on total source word count of the original input, aiming for roughly equal parts."
+  ],
+  "examples": [
+    {
+      "title": "Split TTX into 3 parts",
+      "description": "Splitting a single TTX document into 3 roughly equal parts by word count. The output files are created alongside the original input with marker suffixes for later rejoining via the TTX Joiner Step.",
+      "input": "partCount: 3"
+    }
+  ],
+  "stepId": "t-t-x-splitter",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/ttx_splitter_step"
+}

@@ -1,0 +1,97 @@
+{
+  "filterName": "Sentence Alignment Step",
+  "overview": "This step aligns the sentences of each text unit from two documents. It takes filter events and sends filter events. The aligner algorithm finds the best possible alignment based on character lengths of sentences, with internal parameters accounting for language-specific character length ratios. Possible match types produced include 1-1, 2-1, 1-2, 0-1, 1-0, 2-0, 2-3, 3-2, etc. The step can optionally output results as a TMX file or as bilingual text units.",
+  "parameters": {
+    "generateTMX": {
+      "description": "When set to true, generates a TMX file with the aligned entries and the step returns the events it received (possibly re-segmented). When set to false, the step returns the bilingual text units corresponding to the alignment (also segmented). If the TMX output file already exists it will be overwritten.",
+      "notes": [
+        "Currently the events sent by this step when generateTMX is true are the same as the events it received (and not the generated aligned text units). Bilingual text unit output will be implemented in a future version."
+      ]
+    },
+    "tmxOutputPath": {
+      "description": "Full path of the output TMX file to generate. If the file already exists it will be overwritten.",
+      "dependsOn": [
+        {
+          "property": "generateTMX",
+          "condition": "must be true for the TMX file to be generated"
+        }
+      ]
+    },
+    "segmentSource": {
+      "description": "Set this option to segment the source content before trying to align it. If this option is not set, the content is expected to be already segmented. If this option is set and the content is already segmented, the existing segmentation will be reset to the new one."
+    },
+    "useCustomSourceRules": {
+      "description": "Set this option to use a specified SRX file for segmenting the source. If this option is not set and segmentation is required, the default rules are used.",
+      "notes": [
+        "The default rules are hard-coded with the step. They are not the rules defined in the config sub-directory of the installation directory."
+      ],
+      "dependsOn": [
+        {
+          "property": "segmentSource",
+          "condition": "must be true for segmentation rules to take effect"
+        }
+      ]
+    },
+    "customSourceRulesPath": {
+      "description": "Full path of the SRX file to use for segmenting the source.",
+      "dependsOn": [
+        {
+          "property": "useCustomSourceRules",
+          "condition": "must be true for this path to be used"
+        }
+      ]
+    },
+    "segmentTarget": {
+      "description": "Set this option to segment the target content before trying to align it. If this option is not set, the content is expected to be already segmented. If this option is set and the content is already segmented, the existing segmentation will be reset to the new one."
+    },
+    "useCustomTargetRules": {
+      "description": "Set this option to use a specified SRX file for segmenting the target. If this option is not set and segmentation is required, the default rules are used.",
+      "notes": [
+        "The default rules are hard-coded with the step. They are not the rules defined in the config sub-directory of the installation directory."
+      ],
+      "dependsOn": [
+        {
+          "property": "segmentTarget",
+          "condition": "must be true for segmentation rules to take effect"
+        }
+      ]
+    },
+    "customTargetRulesPath": {
+      "description": "Full path of the SRX file to use for segmenting the target.",
+      "dependsOn": [
+        {
+          "property": "useCustomTargetRules",
+          "condition": "must be true for this path to be used"
+        }
+      ]
+    },
+    "collapseWhitespace": {
+      "description": "Collapse whitespace (space, newline, etc.) to a single space before performing the segmentation and alignment."
+    },
+    "outputOneTOneMatchesOnly": {
+      "description": "Set this option to output only 1-1 sentence aligned matches, filtering out all other match types (2-1, 1-2, 0-1, 1-0, etc.).",
+      "notes": [
+        "This option is overridden by forceSimpleOneToOneAlignment when that option is enabled."
+      ]
+    },
+    "forceSimpleOneToOneAlignment": {
+      "description": "For each paragraph, if there are the same number of sentences, align the sentences one-to-one. Otherwise, join the sentences in the paragraph back together and output the aligned paragraph. When enabled, this overrides the outputOneTOneMatchesOnly option.",
+      "notes": [
+        "If checked, this overrides the Output 1-1 matches only option."
+      ]
+    }
+  },
+  "processingNotes": [
+    "Text units from the source and target documents must be perfectly synchronized (aligned). If the source document has more text units than the target document, an error will be generated.",
+    "The aligner algorithm finds the best possible alignment based on character lengths of sentences, with internal parameters that account for language-specific expansion/contraction ratios.",
+    "Entries set as non-translatable are not processed.",
+    "When processing bilingual documents (e.g., TMX, PO), use only a single input list.",
+    "Currently the events sent by this step are the same as the events it received (not the generated aligned text units) when generating TMX. This will be implemented in a future version."
+  ],
+  "limitations": [
+    "None known."
+  ],
+  "examples": [],
+  "stepId": "sentence-aligner",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/sentence_alignment_step"
+}

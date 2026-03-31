@@ -1,0 +1,111 @@
+{
+  "filterName": "Batch Translation Step",
+  "overview": "This step creates a translation memory from text units extracted from a raw document, using an external tool to provide the translation. It extracts content via the document's associated filter, creates a temporary HTML document with source segments, invokes an external translation tool via a user-defined command line, and then aligns source and translated entries into a Pensieve TM and/or TMX document. Takes: Raw document. Sends: Raw document (or optionally the generated TMX document).",
+  "parameters": {
+    "command": {
+      "description": "The command line used to invoke the external translation tool. The command must take the temporary HTML document named ${inputPath} and generate an output document in the same format named ${outputPath}. The temporary HTML document contains one paragraph per source segment (or per source text unit if not segmented). Available variables in the command line: ${inputPath} (full path of input document), ${inputURI} (URI of input document), ${outputPath} (full path of output document), ${outputURI} (URI of output document), ${srcLangName} (English name of source language, e.g. 'German' for 'de-ch'), ${trgLangName} (English name of target language, e.g. 'Japanese' for 'ja-jp'), ${rootDir} (root directory for the project/batch; in Rainbow this is the parameters folder), ${inputRootDir} (root directory for input files). Additionally, all locale-related variables are available (${srcLang}, ${trgLang}, ${srcLoc}, ${trgLoc}, etc.).",
+      "notes": [
+        "The external tool must create the translated HTML output at the path corresponding to ${outputPath} or ${outputURI}."
+      ]
+    },
+    "blockSize": {
+      "description": "The maximum number of text units that should be passed at the same time to the external tool. This allows processing of very large input documents even with external tools that can only handle small documents. Each input document can be processed using one or more temporary HTML files based on this block size.",
+      "notes": []
+    },
+    "origin": {
+      "description": "An optional string that identifies the origin of the translation. The given string is output as a property of the translated entry named 'Origin'. For example, in TMX output it will be generated as <prop type=\"Txt::Origin\">myText</prop>, where myText is the given string.",
+      "notes": []
+    },
+    "markAsMT": {
+      "description": "When enabled, marks the TM entries generated as the result of machine translation. For example, when this option is set, the creationId attribute of the target in the generated output is set to 'MT!'.",
+      "notes": []
+    },
+    "segment": {
+      "description": "When enabled, segments the extracted text units using SRX rules before sending them to the temporary HTML document. If set, each paragraph of the HTML document will be a sentence. If not set, each paragraph will be an un-segmented paragraph.",
+      "notes": [
+        "Note: Only entries processed by the external tool are placed in the TMX output. Entries that already exist in the TM being populated or in the existing TM are not copied into the TMX output."
+      ]
+    },
+    "srxPath": {
+      "description": "Full path to the segmentation rules file in SRX format that should be used to segment the text units. You can use the variables ${rootDir} and ${inputRootDir} in the path, as well as any of the locale variables.",
+      "dependsOn": [
+        {
+          "property": "segment",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "makeTM": {
+      "description": "When enabled, imports the translated entries into a given Pensieve TM. The entries added to the TM are indexed at the end of each input document, so other steps down the pipeline can only access entries generated from previous documents for a given document.",
+      "notes": []
+    },
+    "tmDirectory": {
+      "description": "The directory of the Pensieve TM where to import the entries. If the TM does not exist it will be created. If the TM already exists, entries will be added to the existing TM. You can use the variables ${rootDir} and ${inputRootDir} in the path, as well as any of the locale variables.",
+      "dependsOn": [
+        {
+          "property": "makeTM",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "makeTMX": {
+      "description": "When enabled, creates a TMX document with the translated entries. A single TMX file is created for all input documents. The file is not generated until the end of the last document, and therefore cannot be used by other steps down the pipeline.",
+      "notes": []
+    },
+    "tmxPath": {
+      "description": "Full path of the TMX document to generate. If the file already exists it will be overwritten. You can use the variables ${rootDir} and ${inputRootDir} in the path, as well as any of the locale variables.",
+      "dependsOn": [
+        {
+          "property": "makeTMX",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "sendTMX": {
+      "description": "When enabled, sends the generated TMX document as the raw document to the next step, instead of the original input document.",
+      "dependsOn": [
+        {
+          "property": "makeTMX",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "checkExistingTm": {
+      "description": "When enabled, looks up each entry that may be sent for translation in an existing Pensieve TM. This allows sending only entries for which no existing translation exists. Existing entries are not re-processed and are not placed in the optional TMX output.",
+      "notes": []
+    },
+    "existingTm": {
+      "description": "The directory of the Pensieve TM to look up for existing entries. You can use the variables ${rootDir} and ${inputRootDir} in the path, as well as any of the locale variables.",
+      "dependsOn": [
+        {
+          "property": "checkExistingTm",
+          "condition": "must be true"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "The step extracts content from the raw document using its associated filter and places it in a temporary HTML document where each paragraph corresponds to a source segment (or source text unit if not segmented).",
+    "Each input document can be processed using one or more temporary HTML files based on the block size, allowing tools with size limitations to translate very large documents.",
+    "Entries added to the Pensieve TM are indexed at the end of each input document, so downstream steps can only access entries generated from previous documents.",
+    "The TMX file is not generated until the end of the last document and therefore cannot be used by downstream steps.",
+    "The step sends the input raw document unmodified to the next step, unless 'Send the TMX document to the next step' is enabled."
+  ],
+  "examples": [
+    {
+      "title": "Apertium translation on Linux",
+      "description": "Uses the open-source Apertium machine translation program under Linux to translate the temporary HTML document.",
+      "input": "apertium -f html ${srcLang}-${trgLang} ${inputPath} ${outputPath}"
+    },
+    {
+      "title": "ProMT translation on Windows",
+      "description": "Uses the commercial ProMT application under Windows to translate the temporary HTML document.",
+      "input": "\"C:\\Program Files\\PRMT9\\FILETRANS\\FileTranslator.exe\" ${inputPath} /as /ac /d:${srcLangName}-${trgLangName} /o:${outputPath}"
+    }
+  ],
+  "stepId": "batch-translation",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/uatch_translation_step"
+}

@@ -1,0 +1,42 @@
+{
+  "filterName": "Id-Based Copy Step",
+  "overview": "This step copies text from a reference file (second input) into a destination file (first input) for text units that share the same id (based on TextUnit.getName()). It works with any filter that produces unique names for its text units, such as the Properties Filter. The reference file is read into an in-memory table indexed by text unit name, and for each text unit in the destination file, a matching entry is looked up and its content copied into the target. Takes filter events and sends filter events.",
+  "parameters": {
+    "markAsTranslateNo": {
+      "description": "When a text unit has a match in the reference file, setting this option marks the text unit as non-translatable in the destination file. Entries that do not have a match in the reference file have this property left unchanged. Only applies to matched text units.",
+      "notes": [
+        "Entries in the destination file that are already set to non-translatable are not modified regardless of this setting."
+      ]
+    },
+    "markAsApproved": {
+      "description": "When a text unit has a match in the reference file, setting this option sets the target property 'approved' to 'yes' on the matched text unit in the destination file. Entries that do not have a match in the reference file have this property left as it was.",
+      "notes": []
+    }
+  },
+  "limitations": [
+    "Uses an in-memory table for the reference file, so very large reference files may cause memory limitations.",
+    "No adjustment is made for inline codes when copying content from the reference file into the destination file — results may vary depending on file formats and whether inline codes are present.",
+    "The process copies complete text unit content with no adjustment for segmented entries. Use the Desegmentation Step beforehand if needed.",
+    "Both files must have text units with unique names (e.g., unique resname in XLIFF)."
+  ],
+  "processingNotes": [
+    "The reference file (second input) is read entirely into an in-memory table indexed on text unit name before the destination file is processed.",
+    "If the reference file is monolingual (e.g., properties file), the source text of matched text units is copied into the target. If the reference file is multilingual (e.g., PO file), the target text is used instead.",
+    "Entries in the destination file that are set to non-translatable are never modified, regardless of parameter settings.",
+    "After processing each pair of input files, entries in the reference table that were not used are listed as warnings.",
+    "No warning is generated if an entry in the destination file is not found in the reference file.",
+    "If a destination file is not associated with a reference file, a warning is generated and the file is treated as having an empty reference file.",
+    "When working with lists of input files, they should be paired — the first file in Input List 1 must correspond to the first file in Input List 2, and so forth.",
+    "The entries in the reference and destination files do not have to be sorted."
+  ],
+  "examples": [
+    {
+      "title": "Copying properties translations into a destination file",
+      "description": "Using two properties files where text units share the same key names. The reference file contains translated values and the destination file contains the original keys. The step matches entries by their property key (text unit name) and copies the reference source text into the destination target. markAsApproved is set to true (default) so matched entries are marked as approved, and markAsTranslateNo is false (default) so entries remain translatable.",
+      "input": "Destination file (Input List 1): app_en.properties\nReference file (Input List 2): app_fr.properties\nmarkAsApproved: true\nmarkAsTranslateNo: false",
+      "output": "Matched text units in the destination file receive the French text as their target, with the approved property set to yes."
+    }
+  ],
+  "stepId": "id-based-copy",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/id_uased_copy_step"
+}

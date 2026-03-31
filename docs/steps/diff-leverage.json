@@ -1,0 +1,37 @@
+{
+  "filterName": "Diff Leverage",
+  "overview": "This step compares the source text of two (or three) documents to try to leverage existing translation for new source content. It takes filter events and sends filter events. It supports either a bilingual second input (old source + old translation) or two monolingual inputs (old source and old translation separately), where text units between the second and third documents must be aligned.",
+  "parameters": {
+    "fuzzyThreshold": {
+      "description": "Sets the leverage threshold score between 1 and 100. If the result of the comparison process is equal to or above the specified threshold, the old target text is leveraged; otherwise it is ignored. A score of 100 means exact match (both codes and text must match).",
+      "notes": [
+        "A score of 100 means exact match only, requiring both codes and text to match."
+      ]
+    },
+    "codesensitive": {
+      "description": "When enabled, inline codes are taken into consideration when computing the quality of matches between old and new source text. When disabled, only the textual content is compared.",
+      "notes": []
+    },
+    "diffOnly": {
+      "description": "When enabled, the step performs a diff comparison only without copying the match or creating a leverage annotation. The TextUnit is simply marked as matched.",
+      "notes": []
+    },
+    "copyToTarget": {
+      "description": "When enabled, copies the leveraged translation to (or over) the target. A leverage annotation will still be created regardless of this setting.",
+      "notes": [
+        "WARNING: Copied target will not be segmented and any existing target will be lost."
+      ]
+    }
+  },
+  "limitations": [
+    "The comparison process of the text units is done in memory: you may not be able to process very large documents."
+  ],
+  "processingNotes": [
+    "The step requires two or three inputs: (1) the new document to translate, (2) a bilingual document with old source and old translation, OR (2) old source document and (3) old translation document.",
+    "When using three documents, the text units between the second and third must be aligned (same number, same order).",
+    "The comparison process is performed in memory, which may limit the size of documents that can be processed."
+  ],
+  "examples": [],
+  "stepId": "diff-leverage",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/diff_leverage_step"
+}

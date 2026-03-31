@@ -1,0 +1,56 @@
+{
+  "filterName": "Remove Target Step",
+  "overview": "The Remove Target step removes target entries from text units in a filter events pipeline. It can remove all targets across all text units, or selectively remove targets based on text unit IDs or target locales. The step takes filter events as input and sends filter events as output.",
+  "parameters": {
+    "tusForTargetRemoval": {
+      "description": "A comma-delimited list of text unit IDs specifying which text units should have their targets removed. When this field is empty, all targets on all text units are removed. Only used when filterBasedOnIds is true.",
+      "dependsOn": [
+        {
+          "property": "filterBasedOnIds",
+          "condition": "must be true for this parameter to be used as the filter criterion"
+        }
+      ]
+    },
+    "targetLocalesToKeep": {
+      "description": "A comma-delimited list of locale codes identifying which target locales should be kept (not removed). Targets for locales not in this list will be removed. When this field is empty, all targets are kept (none are removed based on locale). Only used when filterBasedOnIds is false.",
+      "dependsOn": [
+        {
+          "property": "filterBasedOnIds",
+          "condition": "must be false for this parameter to be used as the filter criterion"
+        }
+      ]
+    },
+    "filterBasedOnIds": {
+      "description": "Controls the filtering mode for target removal. When true, the step filters text units based on the IDs specified in tusForTargetRemoval. When false, the step filters based on the locales specified in targetLocalesToKeep. You cannot filter on both IDs and locales simultaneously — only one mode is active at a time.",
+      "notes": [
+        "You cannot filter on both IDs and locales simultaneously; this boolean selects which mode is active."
+      ]
+    },
+    "removeTUIfNoTarget": {
+      "description": "Controls whether a text unit should be completely removed from the event stream if it has no remaining targets after the removal operation. When true, text units left with no targets are removed entirely. When false, text units with no remaining targets are passed through unchanged."
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "All target languages are removed by default when no specific text unit IDs are provided.",
+    "The step operates on filter events, processing each text unit individually as it passes through the pipeline."
+  ],
+  "examples": [
+    {
+      "title": "Remove all targets from all text units",
+      "description": "Leave the tusForTargetRemoval field empty and set filterBasedOnIds to true. This removes every target from every text unit in the input.",
+      "input": "tusForTargetRemoval: \"\", filterBasedOnIds: true",
+      "output": "All text units have their targets removed."
+    },
+    {
+      "title": "Remove targets from specific text units by ID",
+      "description": "Specify a comma-delimited list of text unit IDs to selectively remove targets only from those text units.",
+      "input": "tusForTargetRemoval: \"tu1,tu2,tu5\", filterBasedOnIds: true",
+      "output": "Only text units with IDs tu1, tu2, and tu5 have their targets removed."
+    }
+  ],
+  "stepId": "remove-target",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/remove_target_step"
+}

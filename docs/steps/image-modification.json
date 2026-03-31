@@ -1,0 +1,31 @@
+{
+  "filterName": "Image Modification Step",
+  "overview": "This step allows you to modify the size or the format of an image. It takes a raw document as input and sends back a raw document. It can scale image dimensions by percentage and convert between image formats or to grayscale.",
+  "parameters": {
+    "scaleWidth": {
+      "description": "Set the percentage of the width for the new image, compared to the original. Must be greater than 0. Use 100 for the same width as the original."
+    },
+    "scaleHeight": {
+      "description": "Set the percentage of the height for the new image, compared to the original. Must be greater than 0. Use 100 for the same height as the original."
+    },
+    "makeGray": {
+      "description": "Set this option to convert the image to an image where colors are converted into a set of grays."
+    },
+    "format": {
+      "description": "Select the format for the output images. Use an empty string (same as the original) to create an output in the same format as the original. If the original format is not supported for output, a warning is generated and the output is done in PNG if possible.",
+      "notes": [
+        "If you select a specific format, the extension is not changed automatically."
+      ]
+    }
+  },
+  "limitations": [
+    "The image formats supported on input varies depending on your Java VM, version and platform."
+  ],
+  "processingNotes": [
+    "If the original image format is not supported for output, a warning is generated and the output falls back to PNG if possible.",
+    "Selecting a specific output format does not automatically change the file extension."
+  ],
+  "examples": [],
+  "stepId": "image-modification",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/image_modification_step"
+}

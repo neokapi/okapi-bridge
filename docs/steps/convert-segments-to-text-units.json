@@ -1,0 +1,22 @@
+{
+  "filterName": "Segments to Text Units Converter",
+  "overview": "Converts segmented text units (paragraphs) into multiple text units, one per aligned sentence pair, for each target locale. This step is useful for preparing input for steps such as the Diff Leverage Step which require un-segmented text units. It accepts filter events and outputs filter events. If a TextUnit resource refers to another IResource or is a referent, it is passed through unchanged even if it has segments.",
+  "parameters": {},
+  "limitations": [
+    "Using this step may prevent merging, so it should only be used in pipelines that do not require translated translation kits to be merged.",
+    "TextUnit resources that refer to another IResource or are referents are passed through as-is even if they have segments — processing these would require considerable implementation effort."
+  ],
+  "processingNotes": [
+    "The step has no configurable parameters — it operates automatically on all segmented text units.",
+    "Each aligned segment pair for all target locales is converted into its own complete text unit.",
+    "Referent and reference TextUnit resources are passed through unchanged to preserve resource linkage integrity."
+  ],
+  "examples": [
+    {
+      "title": "Preparing input for Diff Leverage Step",
+      "description": "Use this step before the Diff Leverage Step to convert segmented paragraphs into individual text units with single segments, which is required by Diff Leverage Step."
+    }
+  ],
+  "stepId": "convert-segments-to-text-units",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/segments_to_text_units_converter_step"
+}

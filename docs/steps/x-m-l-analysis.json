@@ -1,0 +1,22 @@
+{
+  "filterName": "XML Analysis Step",
+  "overview": "This step generates a report on the elements present in a set of input XML documents. It takes raw documents as input and sends raw documents as output. The report can be used to guess localization-related aspects of the input documents, such as which elements should have their content extracted, which elements are likely to be inline, and whether there are any CDATA sections.",
+  "parameters": {
+    "outputPath": {
+      "description": "Full path of the result file where the analysis report will be written. The report contains information about the elements present in the input XML documents, including localization-related hints such as which elements should be extracted, which are likely inline, and whether CDATA sections exist."
+    },
+    "autoOpen": {
+      "description": "When enabled, the result file is automatically opened after the analysis process is complete. Defaults to true."
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "The step processes a set of XML documents and produces a single analysis report.",
+    "Input and output type is raw document — the step passes through the raw documents unchanged while generating the report as a side effect."
+  ],
+  "examples": [],
+  "stepId": "x-m-l-analysis",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/xml_analysis_step"
+}

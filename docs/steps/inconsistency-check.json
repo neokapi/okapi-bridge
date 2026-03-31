@@ -1,0 +1,46 @@
+{
+  "filterName": "Inconsistency Check Step",
+  "overview": "Generates a report of potential inconsistencies found by comparing source and target segments across multiple input documents. It checks for inconsistencies by comparing the target of each unique source and the source of each unique target. The XML report lists all potential inconsistencies by their \"key text\" with corresponding source or target strings for easy review. Takes filter events and sends filter events.",
+  "parameters": {
+    "checkInconststencies": {
+      "description": "Set this option to perform the check for inconsistencies. This option allows you to disable the step in a given pipeline without removing it.",
+      "notes": []
+    },
+    "checkPerFile": {
+      "description": "Set this option to process each input file individually rather than comparing across all input documents. When enabled, inconsistencies are checked on a file-by-file basis instead of across the entire batch.",
+      "notes": [
+        "Consider selecting this option if there are issues with memory usage."
+      ]
+    },
+    "outputPath": {
+      "description": "The full path of the XML report file to generate. You can use the variable ${rootDir} or ${inputRootDir} in the path.",
+      "notes": []
+    },
+    "displayOption": {
+      "description": "Controls how the report displays inline codes. The choices are: 'original' — display inline codes as they appear in the input documents; 'generic' — display inline codes as generic markers (e.g., <1></1> or <2/>); 'plaintext' — remove all inline codes from the report.",
+      "notes": []
+    },
+    "autoOpen": {
+      "description": "Set this option to automatically open the generated XML report file after the process is complete.",
+      "notes": []
+    }
+  },
+  "limitations": [
+    "You may run out of memory when processing a large number of segments.",
+    "Inline codes are not taken into account when doing comparisons.",
+    "The comparison is case-sensitive and whitespace-sensitive.",
+    "Text units or segments that have no target are not included in the check.",
+    "Text units or segments that are empty are included in the check."
+  ],
+  "processingNotes": [
+    "Inline codes are not taken into account when doing comparisons.",
+    "The comparison is case-sensitive and whitespace-sensitive.",
+    "Text units or segments that have no target are not included in the check.",
+    "Text units or segments that are empty are included in the check.",
+    "The step compares both directions: target of each unique source, and source of each unique target.",
+    "The generated report is in XML format and lists inconsistencies grouped by their key text."
+  ],
+  "examples": [],
+  "stepId": "inconsistency-check",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/inconsistency_check_step"
+}

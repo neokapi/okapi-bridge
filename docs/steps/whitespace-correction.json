@@ -1,0 +1,35 @@
+{
+  "filterName": "Whitespace Correction Step",
+  "overview": "This step simplifies the addition or removal of inter-segment whitespace when translating to or from Chinese or Japanese scripts that do not typically use spaces. When translating from a space-delimited language to a non-space-delimited language, whitespace following segment-ending punctuation is removed; in the reverse direction, whitespace is added. The step also converts between full-width and standard punctuation forms (e.g., Ideographic Full Stop U+3002 to/from period). It performs no action when translating between two space-delimited languages or between Chinese and Japanese.",
+  "parameters": {
+    "punctuation": {
+      "description": "Comma-separated list of punctuation classes to which the whitespace correction should be applied. Each class controls both whitespace adjustment and punctuation form conversion between full-width/ideographic and standard forms. Valid values are: FULL_STOP (converts Ideographic Full Stop U+3002 and Full-width Full Stop U+FF0E to/from a period), COMMA (converts Ideographic Comma U+3001 and Full-width Comma U+FF0C to/from a comma), EXCLAMATION_MARK (converts Full-width Exclamation Mark U+FF01 to/from an exclamation point), QUESTION_MARK (converts Full-width Question Mark U+FF1F to/from a question mark). By default all four punctuation classes are enabled."
+    },
+    "whitespace": {
+      "description": "Comma-separated list of Unicode whitespace character names that the step considers as whitespace for removal or addition operations. The default value includes a comprehensive set of Unicode whitespace characters: standard spaces (SPACE, NO_BREAK_SPACE), line breaks (LINE_FEED, CARRIAGE_RETURN, NEXT_LINE, LINE_SEPARATOR, PARAGRAPH_SEPARATOR), tabs (CHARACTER_TABULATION, LINE_TABULATION), form feeds (FORM_FEED), typographic spaces (EN_QUAD, EM_QUAD, EN_SPACE, EM_SPACE, THREE_PER_EM_SPACE, FOUR_PER_EM_SPACE, SIX_PER_EM_SPACE, FIGURE_SPACE, PUNCUATION_SPACE, THIS_SPACE, HAIR_SPACE, NARROW_NO_BREAK_SPACE, MEDIUM_MATHEMATICAL_SPACE), ideographic space (IDEOGRAPHIC_SPACE), and zero-width characters (ZERO_WIDTH_SPACE, ZERO_WIDTH_NON_BREAKING_SPACE)."
+    }
+  },
+  "limitations": [
+    "Relies on the assumption that each source segment contains a single sentence and has been translated to a single sentence in the target language, so results may be incorrect for multi-sentence segments.",
+    "Performs no action when translating between two space-delimited languages (e.g., English to French) or between Chinese and Japanese."
+  ],
+  "processingNotes": [
+    "The step operates on filter events (takes filter events, sends filter events) and processes text units.",
+    "The step requires both SOURCE_LOCALE and TARGET_LOCALE to determine whether to add or remove whitespace based on whether each locale uses space-delimited script.",
+    "When translating from a space-delimited to a non-space-delimited language, whitespace following segment-ending punctuation is removed.",
+    "When translating from a non-space-delimited to a space-delimited language, whitespace is added following segment-ending punctuation.",
+    "In addition to whitespace adjustment, the step converts punctuation between full-width/ideographic forms and standard ASCII forms as appropriate for the target locale."
+  ],
+  "examples": [
+    {
+      "title": "English to Chinese translation whitespace removal",
+      "description": "When translating from English (space-delimited) to Chinese (non-space-delimited), the step removes whitespace after segment-ending punctuation and converts standard punctuation to full-width/ideographic equivalents. For example, a period followed by a space would become an Ideographic Full Stop (U+3002) with no trailing space."
+    },
+    {
+      "title": "Chinese to English translation whitespace addition",
+      "description": "When translating from Chinese (non-space-delimited) to English (space-delimited), the step adds whitespace after segment-ending punctuation and converts full-width/ideographic punctuation to standard ASCII equivalents. For example, an Ideographic Full Stop (U+3002) would become a period followed by a space."
+    }
+  ],
+  "stepId": "whitespace-correction",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/whitespace_correction_step"
+}

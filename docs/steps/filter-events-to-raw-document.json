@@ -1,0 +1,23 @@
+{
+  "filterName": "Filter Events to Raw Document Step",
+  "overview": "This step merges back extracted content coming as filter events into its original format. It takes filter events as input and sends a raw document as output. To create the initial filter events from an input document, use the Raw Document to Filter Events Step. A simple extract-then-merge pipeline can be constructed by chaining Raw Document to Filter Events Step followed by this step.",
+  "parameters": {},
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "This step has no user-configurable parameters.",
+    "Expects filter events as input and produces a raw document as output, or NO_OP if writing to a stream.",
+    "Uses pipeline-level parameter mappings for OUTPUT_ENCODING, OUTPUT_URI, SOURCE_LOCALE, and TARGET_LOCALE rather than step-specific parameters."
+  ],
+  "examples": [
+    {
+      "title": "Simple extract-merge pipeline",
+      "description": "A minimal pipeline that extracts a document into filter events and then merges them back into the original format. This is the simplest way to round-trip a document through Okapi filters.",
+      "input": "Pipeline:\n1. Raw Document to Filter Events Step\n2. Filter Events to Raw Document Step",
+      "output": "The original document reconstructed from filter events."
+    }
+  ],
+  "stepId": "filter-events-to-raw-document",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/filter_events_to_raw_document_step"
+}

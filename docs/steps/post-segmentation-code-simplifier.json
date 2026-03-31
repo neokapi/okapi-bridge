@@ -1,0 +1,25 @@
+{
+  "filterName": "Post-segmentation Inline Codes Simplifier",
+  "overview": "This step simplifies inline codes by trimming and merging them within linguistically distinct segments of a TextUnit. It must be run after segmentation. It joins adjacent inline codes inside segments and optionally moves leading and trailing codes from the segment to inter-segment TextParts. Original un-merged codes are preserved as okp:merged attributes in generated XLIFF output, and trimmed codes are written outside the \"mrk\" elements. Takes filter events and sends filter events.",
+  "parameters": {
+    "removeLeadingTrailingCodes": {
+      "description": "When enabled, removes leading and trailing inline codes from the text units and places them outside the segment. In practice, this moves leading and trailing codes from the source to inter-segment TextParts. Trimmed codes are written outside the 'mrk' elements in the generated output. Enabled by default.",
+      "notes": []
+    },
+    "mergeCodes": {
+      "description": "When enabled, merges adjacent inline codes within the text units into a single code. Original un-merged codes are saved as okp:merged attributes inside the generated XLIFF file. Enabled by default.",
+      "notes": []
+    }
+  },
+  "limitations": [
+    "Bi-lingual formats such as XLIFF, TMX, TTX etc. will not have their codes simplified, as the codes may differ in source and target. Codes must align with IDs across source and target."
+  ],
+  "processingNotes": [
+    "This step must be run after segmentation — it operates on linguistically distinct segments within a TextUnit.",
+    "Original un-merged codes are preserved as okp:merged attributes inside the generated XLIFF file.",
+    "Trimmed codes are written outside the 'mrk' elements in the output."
+  ],
+  "examples": [],
+  "stepId": "post-segmentation-code-simplifier",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/post_segmentation_inline_codes_removal_step"
+}

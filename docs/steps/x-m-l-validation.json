@@ -1,0 +1,51 @@
+{
+  "filterName": "XML Validation Step",
+  "overview": "This step performs validation of XML input documents. It always checks for well-formedness, and can optionally perform DTD, W3C Schema, or RelaxNG Schema validation. It takes raw XML documents as input and sends raw XML documents as output, making it suitable for inserting into a pipeline to verify document integrity before further processing.",
+  "parameters": {
+    "schemaPath": {
+      "description": "Full path of the XML Schema to use for validation. If performing a schema validation (W3C or RelaxNG), enter the path of the schema here. Any schema declared in the documents themselves will also be used in addition to the one specified here. For W3C and RelaxNG schemas, the path can be a URL. This field is only relevant when schema validation is selected.",
+      "notes": [
+        "Any schema declared in the documents themselves will be used as well.",
+        "For W3C and RelaxNG schema the path can be a URL."
+      ],
+      "dependsOn": [
+        {
+          "property": "validate",
+          "condition": "must be true"
+        },
+        {
+          "property": "validationType",
+          "condition": "must be set to W3C Schema or RelaxNG Schema validation"
+        }
+      ]
+    },
+    "validate": {
+      "description": "Set this option to perform a DTD, W3C Schema, or RelaxNG Schema validation of the input documents in addition to the well-formedness verification. Well-formedness checking is always performed regardless of this setting."
+    },
+    "validationType": {
+      "description": "Select the type of validation to perform. The available types are: DTD, W3C Schema, or RelaxNG Schema. When performing DTD validation, the DTD must be specified in the input documents.",
+      "notes": [
+        "When performing a DTD validation, the DTD must be specified in the input documents."
+      ],
+      "dependsOn": [
+        {
+          "property": "validate",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "useFoundDTD": {
+      "description": "Set this option to validate the document against the DTDs found in the documents. If the option is not set, DTD declarations in the input documents are ignored."
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Well-formedness checking is always performed regardless of whether structural validation is enabled.",
+    "When performing DTD validation, the DTD must be specified in the input documents themselves."
+  ],
+  "examples": [],
+  "stepId": "x-m-l-validation",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/xml_validation_step"
+}

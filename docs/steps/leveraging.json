@@ -1,0 +1,106 @@
+{
+  "filterName": "Leveraging",
+  "overview": "This step leverages existing translations into extracted text units by querying translation resources (TM engines or MT systems) and applying matching translations. It processes filter events, sending text units or segments to a configured translation resource connector and attaching matching translations as annotations or copying them directly into the target content. Non-translatable and approved text units are skipped. Multiple leveraging steps can be chained to query several resources in sequence (e.g., TM first, then MT for unleveraged entries).",
+  "parameters": {
+    "leverage": {
+      "description": "Enables or disables the leveraging step. When set to false, the step is effectively bypassed. This option allows you to keep the step in your pipeline and toggle it on and off without removing it."
+    },
+    "resourceClassName": {
+      "description": "The fully qualified Java class name of the translation resource connector to use. It can be a TM or an MT engine; the available connectors may vary based on your installation. A summary of the current options for the selected resource is displayed in the UI. Internet-based resources may be slow and result in lengthy processing time. For more information see the Connectors documentation.",
+      "notes": [
+        "Internet-based resources may be slow and result in lengthy processing time."
+      ]
+    },
+    "noQueryThreshold": {
+      "description": "The no-query threshold score. If an entry already has a candidate with a score equal to or above this value, no query is performed for it. This allows you to skip for-fee translation resources if the entry already has a good enough candidate. Use 101 to always allow the query to be done (effectively disabling this optimization)."
+    },
+    "threshold": {
+      "description": "The minimum match score threshold. Matches with a score below this value are not taken into account. Matches equal to or above this score are placed into annotations attached to the target container or target segments of the text unit."
+    },
+    "fillTarget": {
+      "description": "When enabled, fills the target with the best translation candidate if its score is equal to or above the fillTargetThreshold value. The match is still added to the list of potential matches regardless of this setting."
+    },
+    "fillTargetThreshold": {
+      "description": "The threshold score equal to or above which the best match is copied into the target content. If the score of the match is lower than this threshold, the match is not copied into the target content but is still added to the list of potential matches for the given text unit.",
+      "dependsOn": [
+        {
+          "property": "fillTarget",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "fillIfTargetIsEmpty": {
+      "description": "When enabled, the best match translation is only copied into the target if the target is currently empty, preventing overwriting of existing translations.",
+      "dependsOn": [
+        {
+          "property": "fillTarget",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "fillIfTargetIsSameAsSource": {
+      "description": "When enabled, overwrites target content that is the same (text and codes) as the source with the leveraged translation. This option is only enabled when fillIfTargetIsEmpty is also set.",
+      "dependsOn": [
+        {
+          "property": "fillIfTargetIsEmpty",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "downgradeIdenticalBestMatches": {
+      "description": "When enabled, downgrades by 1% the score of top exact matches that are identical. Some connectors may return a set of exact matches that are identical except for their translation. Because some components may trigger automated processes when the best match is an exact match, setting this option ensures that nothing is triggered automatically when there are several identical best matches."
+    },
+    "makeTMX": {
+      "description": "When enabled, creates a TMX document containing all entries for which a match was found. A single TMX document is created for all input files. The output path is specified by the tmxPath parameter."
+    },
+    "tmxPath": {
+      "description": "The full path for the generated TMX document. Supports the variables ${rootDir} and ${inputRootDir}, as well as source or target locale variables (${srcLoc}, ${trgLoc}, etc.).",
+      "dependsOn": [
+        {
+          "property": "makeTMX",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "useMTPrefix": {
+      "description": "When enabled, adds an MT-specific prefix to the source text if the entry is coming from an MT engine. This ensures the entry will only be used as a fuzzy match in tools that cannot identify the origin of the entry as MT using the creationid attribute."
+    },
+    "useTargetPrefix": {
+      "description": "When enabled, adds the specified prefix (targetPrefix) at the front of the translated text when a match is found and copied into the target, depending on its score relative to targetPrefixThreshold."
+    },
+    "targetPrefix": {
+      "description": "The prefix string to add at the front of leveraged translations when useTargetPrefix is enabled and the match score is equal to or below targetPrefixThreshold.",
+      "dependsOn": [
+        {
+          "property": "useTargetPrefix",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "targetPrefixThreshold": {
+      "description": "The threshold score equal to or below which the prefix is added at the front of the leveraged translation. Only applies when useTargetPrefix is enabled.",
+      "dependsOn": [
+        {
+          "property": "useTargetPrefix",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "copySourceOnNoText": {
+      "description": "When enabled, copies the content of the source entry into the target if the source has no text (i.e., it contains only white spaces and/or codes). The copy overwrites any existing target content."
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Text units flagged as non-translatable are skipped.",
+    "Text units flagged as approved (the 'approved' property is set to 'yes') are skipped.",
+    "Matches are placed into annotations attached to the target container or target segments of the text unit.",
+    "Multiple leveraging steps can be chained to leverage against several translation resources in sequence (e.g., TM first, then MT for unleveraged entries).",
+    "A single TMX document is created for all input files when TMX generation is enabled."
+  ],
+  "examples": [],
+  "stepId": "leveraging",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/leveraging_step"
+}

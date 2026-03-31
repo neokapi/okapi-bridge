@@ -1,0 +1,30 @@
+{
+  "filterName": "TM Import Step",
+  "overview": "The TM Import step imports text units from an input document into a Pensieve TM. Each text unit is imported into the specified TM, and if the text unit is segmented, each segment is imported individually. The step takes filter events as input and sends filter events as output.",
+  "parameters": {
+    "tmDirectory": {
+      "description": "Full path of the directory of the TM where to import the text units. If the TM does not exist, it is created automatically. If the TM already exists, the new entries are added to the existing ones. The variable `${rootDir}` can be used in the path to reference the root directory.",
+      "notes": [
+        "Supports the ${rootDir} variable in the path",
+        "Creates the TM if it does not already exist",
+        "Adds entries to existing TM if it already exists"
+      ]
+    },
+    "overwriteSameSource": {
+      "description": "When enabled, if an entry to import has the same source text as one or more entries in the existing TM, all matching existing entries will be replaced by the new one. When disabled, different translations for the same source text are allowed to coexist in the TM.",
+      "notes": [
+        "When set, ALL matching existing entries with the same source text are replaced by the new one, not just the first match",
+        "Do not set this option if you want to allow different translations for the same source"
+      ]
+    }
+  },
+  "processingNotes": [
+    "If a text unit is segmented and the number of segments differs between the source and the target, the whole text unit is imported instead of individual segments.",
+    "If a text unit does not have text for the specified target locale, that text unit is skipped and not imported.",
+    "Each text unit is imported individually; segmented text units have each segment imported separately (unless segment counts differ between source and target)."
+  ],
+  "limitations": [],
+  "examples": [],
+  "stepId": "t-m-import",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/tm_import_step"
+}

@@ -1,0 +1,132 @@
+{
+  "filterName": "Translation Comparison Step",
+  "overview": "The Translation Comparison step compares translations between two or three documents. The first document contains the base translations, while the second (and optionally third) contain translations to compare against the baseline. For each text unit, the step calculates ED-Score (Edit Distance based on Levenshtein distance) and FM-Score (Fuzzy Match based on Sørensen-Dice's Coefficient with 3-grams), both ranging from 0 (extreme difference) to 100 (no difference). The step outputs HTML reports, optional TMX documents, and tab-delimited score files, and computes summary statistics including an Edit Effort Score.",
+  "parameters": {
+    "generateHTML": {
+      "description": "When enabled, creates one HTML file for each input document listing comparison results (source text, translation text, and scores). The HTML file name is the first document's name plus an .html extension. When this option is selected, the step also generates a tab-delimited file with the scores of each entry, named as the first document plus a .txt extension.",
+      "notes": [
+        "Enabling this option also generates a tab-delimited .txt file alongside the HTML output."
+      ]
+    },
+    "autoOpen": {
+      "description": "When enabled, automatically opens the first HTML result file when the comparison process is completed.",
+      "dependsOn": [
+        {
+          "property": "generateHTML",
+          "condition": "must be true for HTML files to exist to open"
+        }
+      ]
+    },
+    "genericCodes": {
+      "description": "When enabled, the HTML report uses a generic representation for inline codes (e.g. <1>...</1>). If not set, the output uses the original code whenever possible. Note that some formats may have long and complicated original codes.",
+      "dependsOn": [
+        {
+          "property": "generateHTML",
+          "condition": "must be true for HTML report to be generated"
+        }
+      ]
+    },
+    "generateTMX": {
+      "description": "When enabled, creates a single TMX document containing all compared translations and their scores for all input documents. The path supports variables ${rootDir} and ${inputRootDir}, as well as source or target locale variables (${srcLoc}, ${trgLoc}, etc.)."
+    },
+    "tmxPath": {
+      "description": "Full path of the TMX document to generate. Supports the variables ${rootDir}, ${inputRootDir}, and locale variables such as ${srcLoc} and ${trgLoc}.",
+      "dependsOn": [
+        {
+          "property": "generateTMX",
+          "condition": "must be true for TMX output to be generated"
+        }
+      ]
+    },
+    "target2Suffix": {
+      "description": "Suffix appended to the target language code for the second set of target entries in the TMX output. For example, enter '-mt' to indicate that the second target language is machine-translation generated text. If no suffix is entered, the language code for both target entries will be the same and the TMX document will include only the last one.",
+      "dependsOn": [
+        {
+          "property": "generateTMX",
+          "condition": "must be true for TMX output to be generated"
+        }
+      ]
+    },
+    "target3Suffix": {
+      "description": "Suffix appended to the target language code for the third set of target entries in the TMX output. Functions the same as the document 2 suffix but applies to the optional third document.",
+      "dependsOn": [
+        {
+          "property": "generateTMX",
+          "condition": "must be true for TMX output to be generated"
+        }
+      ]
+    },
+    "useAltTrans": {
+      "description": "When enabled and document 1 is an XLIFF file, uses the target of a given <alt-trans> element as the base target instead of the main target. This allows comparing, for example, a human translation done by a linguist with an MT candidate provided in the same XLIFF file — you specify the same file for both document 1 and 2."
+    },
+    "altTransOrigin": {
+      "description": "The value of the 'origin' attribute of the <alt-trans> element to use as the base target. If no matching <alt-trans> element is found for a given trans-unit, that trans-unit will not be included in the report.",
+      "dependsOn": [
+        {
+          "property": "useAltTrans",
+          "condition": "must be true for alt-trans lookup to occur"
+        }
+      ],
+      "notes": [
+        "The wiki refers to this as the 'original' attribute but the schema names it 'altTransOrigin' with default 'BING', corresponding to the XLIFF alt-trans origin attribute."
+      ]
+    },
+    "document1Label": {
+      "description": "Optional label used in the report to identify the base translation (document 1)."
+    },
+    "document2Label": {
+      "description": "Optional label used in the report to identify the second translation (document 2)."
+    },
+    "document3Label": {
+      "description": "Optional label used in the report to identify the optional third translation (document 3)."
+    },
+    "caseSensitive": {
+      "description": "When enabled, case differences are taken into account when calculating the ED-Score and FM-Score. Disabling this option makes the comparison case-insensitive."
+    },
+    "whitespaceSensitive": {
+      "description": "When enabled, whitespace differences are taken into account when calculating the ED-Score and FM-Score. Disabling this option ignores whitespace variations between compared texts."
+    },
+    "punctuationSensitive": {
+      "description": "When enabled, punctuation differences are taken into account when calculating the ED-Score and FM-Score. Disabling this option ignores punctuation variations between compared texts."
+    },
+    "useDataLog": {
+      "description": "When enabled, appends the average scores for each document at the end of a log file. The log file is a tab-delimited file in UTF-8 with fields: time stamp in UTC, path of the base document, path of the second document, edit-distance score, fuzzy score."
+    },
+    "dataLogPath": {
+      "description": "Full path of the log file where average scores are appended. The log file is tab-delimited UTF-8 with fields: timestamp (UTC), base document path, second document path, edit-distance score, and fuzzy score.",
+      "dependsOn": [
+        {
+          "property": "useDataLog",
+          "condition": "must be true for logging to occur"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Input documents must have the same number of text units and the text units must be in the same order (but different events between text units are allowed).",
+    "Two scoring metrics are calculated: ED-Score (Edit Distance based on Levenshtein distance) and FM-Score (Fuzzy Match based on Sørensen-Dice's Coefficient with 3-grams), both ranging from 0 to 100.",
+    "Neither score is very accurate on short segments.",
+    "The HTML report includes average scores. If text units have word count annotations (e.g., from the Simple Word Count Step or Word Count Step placed before this step), the report will include word counts for each source segment.",
+    "The Edit Effort Score is calculated as: 100 - (Average ED-Score by word + Average FM-Score by word) / 2. A score of 0 means no change; 100 means the translation was entirely rewritten.",
+    "The summary section includes: Total Number of Segments, Total Number of Words, Average word count per segment, Average ED/FM-Score (by segment and by word), and Edit Effort Score."
+  ],
+  "examples": [
+    {
+      "title": "Data log output format",
+      "description": "Example of the tab-delimited log file entry produced when 'Append the average results to a log' is enabled, showing timestamp, document paths, and scores.",
+      "input": "useDataLog: true, dataLogPath: /C:/myProject1/scores.log",
+      "output": "2013-04-01 16:09:14+0000\t/C:/myProject1/machine.tmx\t/C:/myProject1/human.tmx\t93.75\t96.50"
+    },
+    {
+      "title": "Comparing MT output with human translation using alt-trans",
+      "description": "Use the same XLIFF file for both document 1 and 2, with useAltTrans enabled, to compare a human translation with an MT candidate provided as an alt-trans element in the XLIFF file.",
+      "input": "useAltTrans: true, altTransOrigin: \"BING\", document1: same-file.xlf, document2: same-file.xlf",
+      "output": "HTML report showing per-segment ED-Score and FM-Score comparing the main target (human translation) against the alt-trans target (MT candidate)."
+    }
+  ],
+  "stepId": "translation-comparison",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/translation_comparison_step"
+}

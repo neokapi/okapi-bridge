@@ -1,0 +1,28 @@
+{
+  "filterName": "Create Target Step",
+  "overview": "This step creates the target entry for text units, and optionally copies the source content and/or properties into the newly created target. It takes filter events as input and sends filter events as output. It is commonly used in pipelines where a target language container needs to be initialized before translation or other processing steps.",
+  "parameters": {
+    "copyContent": {
+      "description": "When enabled, copies the source content into the created target. This is useful when you want the target to start as a copy of the source text, which can then be modified by subsequent translation or transformation steps."
+    },
+    "copyProperties": {
+      "description": "When enabled, copies the source properties into the created target. Properties include metadata attached to the text unit source that should also be present on the target side."
+    },
+    "overwriteExisting": {
+      "description": "When enabled, copies the source content and/or the source properties to the target even if the target already exists. By default (false), existing target content is preserved and not overwritten."
+    },
+    "createOnNonTranslatable": {
+      "description": "When enabled, creates a target entry even if the text unit is marked as non-translatable. This ensures all text units have a target container regardless of their translatable status."
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "The step processes filter events and handles text units, creating target segments as they pass through the pipeline.",
+    "Requires both source and target locale to be set in the pipeline context."
+  ],
+  "examples": [],
+  "stepId": "create-target",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/create_target_step"
+}

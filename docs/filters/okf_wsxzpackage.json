@@ -1,0 +1,17 @@
+{
+  "filterName": "WSXZ Package Filter",
+  "overview": "The WSXZ Package Filter is an Okapi component that implements the IFilter interface for WSXZ (Worldserver TKIT) files. It is an extension of the Archive Filter that reads input packages, detects SDLXLIFF files for the specified language pair, and uses the XLIFF Filter (with the okf_xliff-sdl configuration) to process the content. Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events.",
+  "parameters": {},
+  "limitations": [
+    "TMX and TBX files are ignored.",
+    "Subject to all limitations of the XLIFF Filter."
+  ],
+  "processingNotes": [
+    "This filter is an extension of the Archive Filter.",
+    "It detects SDLXLIFF files for the specified language pair within the input package.",
+    "Uses the XLIFF Filter with the okf_xliff-sdl configuration to process content.",
+    "Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events."
+  ],
+  "filterId": "okf_wsxzpackage",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/WSXZ_Package_Filter"
+}

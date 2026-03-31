@@ -1,0 +1,14 @@
+{
+  "filterName": "Pensieve TM Filter",
+  "overview": "The Pensieve TM Filter is an Okapi component that implements the IFilter interface for Pensieve TMs. It allows you to use a Pensieve TM as an input or output document, just like other translatable documents such as TMX, PO, etc.",
+  "parameters": {},
+  "limitations": [
+    "The method setOutput(OutputStream output) of the PensieveFilterWriter class is not implemented because Pensieve TM content is binary. You cannot output the content of a Pensieve TM to other types of stream without going through a format conversion."
+  ],
+  "processingNotes": [
+    "The filter always uses its internal encoding, so any user-specific setting for encoding is ignored."
+  ],
+  "examples": [],
+  "filterId": "okf_pensieve",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Pensieve_TM_Filter"
+}

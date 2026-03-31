@@ -1,0 +1,145 @@
+{
+  "filterName": "Scoping Report Step",
+  "overview": "The Scoping Report Step creates a template-based report on various counts (word count, character count, etc.) and optionally leveraged data. It takes filter events as input and sends filter events as output. To include leveraging statistics, the pipeline must include prior steps that leverage translations (such as the Leveraging Step). For just word- or character-count annotations without a report, use the Word Count Step or Character Count Step instead.",
+  "parameters": {
+    "projectName": {
+      "description": "The name of the project to be displayed in the title of the report. This value populates the PROJECT_NAME report field in the generated output.",
+      "notes": []
+    },
+    "customTemplateURI": {
+      "description": "URI or full path of a custom template to be used to generate the report. Templates support plain text and HTML formats and contain text with report field placeholders enclosed in brackets. If this field is left empty, or if the specified URI is not found, the default HTML template is used. See the Templates section for the template format.",
+      "notes": [
+        "If the custom template field is left empty or the specified URI is not found, the default template is used."
+      ]
+    },
+    "customTemplateString": {
+      "description": "A string for directly specifying the report template content inline, rather than pointing to a file via customTemplateURI. Templates contain text and report field placeholders enclosed in brackets. Table rows are enclosed in brackets around a row of column fields.",
+      "notes": []
+    },
+    "outputPath": {
+      "description": "Full path of the report file to generate. You can use the ${rootDir} variable, as well as source or target locale variables (${srcLoc}, ${trgLoc}, etc.).",
+      "notes": []
+    },
+    "countAsNonTranslatable_GMXProtected": {
+      "description": "When enabled, words/characters in the PROJECT_GMX_PROTECTED_WORD_COUNT and ITEM_GMX_PROTECTED_WORD_COUNT categories are counted as non-translatable. These represent text marked as 'protected' or otherwise not translatable (e.g., XLIFF text enclosed in <mrk mtype=\"protected\"> elements).",
+      "notes": []
+    },
+    "countAsNonTranslatable_GMXExactMatched": {
+      "description": "When enabled, words/characters in the PROJECT_GMX_EXACT_MATCHED_WORD_COUNT and ITEM_GMX_EXACT_MATCHED_WORD_COUNT categories are counted as non-translatable. These represent text units matched unambiguously with a prior translation requiring no translator input. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_GMXLeveragedMatched": {
+      "description": "When enabled, words/characters in the PROJECT_GMX_LEVERAGED_MATCHED_WORD_COUNT and ITEM_GMX_LEVERAGED_MATCHED_WORD_COUNT categories are counted as non-translatable. These represent text units matched against a leveraged translation memory database. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_GMXRepetitionMatched": {
+      "description": "When enabled, words/characters in the PROJECT_GMX_REPETITION_MATCHED_WORD_COUNT and ITEM_GMX_REPETITION_MATCHED_WORD_COUNT categories are counted as non-translatable. These represent repeating text units not matched in any other form. Repetition matching takes precedence over fuzzy matching. Typically provided by the Repetition Analysis Step.",
+      "notes": [
+        "Repetition matching is deemed to take precedence over fuzzy matching."
+      ]
+    },
+    "countAsNonTranslatable_GMXFuzzyMatch": {
+      "description": "When enabled, words/characters in the PROJECT_GMX_FUZZY_MATCHED_WORD_COUNT and ITEM_GMX_FUZZY_MATCHED_WORD_COUNT categories are counted as non-translatable. These represent text units fuzzy matched against a leveraged translation memory database. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_GMXAlphanumericOnlyTextUnit": {
+      "description": "When enabled, words/characters in the PROJECT_GMX_ALPHANUMERIC_ONLY_TEXT_UNIT_WORD_COUNT and ITEM_GMX_ALPHANUMERIC_ONLY_TEXT_UNIT_WORD_COUNT categories are counted as non-translatable. These represent text units identified as containing only alphanumeric words.",
+      "notes": []
+    },
+    "countAsNonTranslatable_GMXNumericOnlyTextUnit": {
+      "description": "When enabled, words/characters in the PROJECT_GMX_NUMERIC_ONLY_TEXT_UNIT_WORD_COUNT and ITEM_GMX_NUMERIC_ONLY_TEXT_UNIT_WORD_COUNT categories are counted as non-translatable. These represent text units identified as containing only numeric words.",
+      "notes": []
+    },
+    "countAsNonTranslatable_GMXMeasurementOnlyTextUnit": {
+      "description": "When enabled, words/characters in the PROJECT_GMX_MEASUREMENT_ONLY_TEXT_UNIT_WORD_COUNT and ITEM_GMX_MEASUREMENT_ONLY_TEXT_UNIT_WORD_COUNT categories are counted as non-translatable. These represent word counts from measurement-only text units.",
+      "notes": []
+    },
+    "countAsNonTranslatable_ExactUniqueIdMatch": {
+      "description": "When enabled, words in the PROJECT_EXACT_UNIQUE_ID and ITEM_EXACT_UNIQUE_ID categories are counted as non-translatable. These represent segments that match EXACT and also match a unique id. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_ExactPreviousVersionMatch": {
+      "description": "When enabled, words in the PROJECT_EXACT_PREVIOUS_VERSION and ITEM_EXACT_PREVIOUS_VERSION categories are counted as non-translatable. These represent segments that match EXACT and come from the preceding version of the same document (e.g., if v4 is leveraged, this match must come from v3, not v2 or v1). Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_ExactLocalContextMatch": {
+      "description": "When enabled, words in the PROJECT_EXACT_LOCAL_CONTEXT and ITEM_EXACT_LOCAL_CONTEXT categories are counted as non-translatable. These represent segments that match EXACT and also match a small number of segments before and/or after. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_ExactDocumentContextMatch": {
+      "description": "When enabled, words in the PROJECT_EXACT_DOCUMENT_CONTEXT and ITEM_EXACT_DOCUMENT_CONTEXT categories are counted as non-translatable. These represent segments that match EXACT and come from the same document. Typically provided by the Repetition Analysis Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_ExactStructuralMatch": {
+      "description": "When enabled, words in the PROJECT_EXACT_STRUCTURAL and ITEM_EXACT_STRUCTURAL categories are counted as non-translatable. These represent segments that match EXACT and also match the structural type of the segment (title, paragraph, list element, etc.). Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_ExactMatch": {
+      "description": "When enabled, words in the PROJECT_EXACT and ITEM_EXACT categories are counted as non-translatable. These represent segments that match text and codes exactly. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_ExactTextOnlyPreviousVersionMatch": {
+      "description": "When enabled, words in the PROJECT_EXACT_TEXT_ONLY_PREVIOUS_VERSION and ITEM_EXACT_TEXT_ONLY_PREVIOUS_VERSION categories are counted as non-translatable. These represent segments that match EXACT_TEXT_ONLY and come from a previous version of the same document. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_ExactTextOnlyUniqueIdMatch": {
+      "description": "When enabled, words in the PROJECT_EXACT_TEXT_ONLY_UNIQUE_ID and ITEM_EXACT_TEXT_ONLY_UNIQUE_ID categories are counted as non-translatable. These represent segments that match EXACT_TEXT_ONLY and also match a unique id. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_ExactTextOnly": {
+      "description": "When enabled, words in the PROJECT_EXACT_TEXT_ONLY and ITEM_EXACT_TEXT_ONLY categories are counted as non-translatable. These represent segments that match text exactly, but have a difference in one or more codes. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_ExactRepaired": {
+      "description": "When enabled, words in the PROJECT_EXACT_REPAIRED and ITEM_EXACT_REPAIRED categories are counted as non-translatable. These represent segments that match text and codes exactly, but only after some automated repair (e.g., number replacement, code repair, capitalization, punctuation, etc.). Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_FuzzyPreviousVersionMatch": {
+      "description": "When enabled, words in the PROJECT_FUZZY_PREVIOUS_VERSION and ITEM_FUZZY_PREVIOUS_VERSION categories are counted as non-translatable. These represent segments that match FUZZY and come from a previous version of the same document. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_FuzzyUniqueIdMatch": {
+      "description": "When enabled, words in the PROJECT_FUZZY_UNIQUE_ID and ITEM_FUZZY_UNIQUE_ID categories are counted as non-translatable. These represent segments that match FUZZY and also match a unique id. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_FuzzyMatch": {
+      "description": "When enabled, words in the PROJECT_FUZZY and ITEM_FUZZY categories are counted as non-translatable. These represent segments that match both text and/or codes partially. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_FuzzyRepaired": {
+      "description": "When enabled, words in the PROJECT_FUZZY_REPAIRED and ITEM_FUZZY_REPAIRED categories are counted as non-translatable. These represent segments that match both text and/or codes partially and some automated repair (e.g., number replacement, code repair, capitalization, punctuation, etc.) was applied to the target. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_PhraseAssembled": {
+      "description": "When enabled, words in the PROJECT_PHRASE_ASSEMBLED and ITEM_PHRASE_ASSEMBLED categories are counted as non-translatable. These represent matches assembled from phrases in the TM or other resources (different algorithms could be used).",
+      "notes": []
+    },
+    "countAsNonTranslatable_MT": {
+      "description": "When enabled, words in the PROJECT_MT and ITEM_MT categories are counted as non-translatable. These represent translations coming from a machine translation engine. Typically provided by the Leveraging Step.",
+      "notes": []
+    },
+    "countAsNonTranslatable_Concordance": {
+      "description": "When enabled, words in the PROJECT_CONCORDANCE and ITEM_CONCORDANCE categories are counted as non-translatable. These represent TM concordance or phrase matches (usually a word or term only).",
+      "notes": []
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "The Scoping Report Step is primarily a presentation layer — it displays information provided by other steps. If required upstream steps (e.g., Word Count Step, Character Count Step, Leveraging Step) are not included in the pipeline, their corresponding report fields will show zeros.",
+    "To have leveraging statistics, the pipeline must include prior steps that leverage translations, such as the Leveraging Step. Some filters like the XLIFF Filter may also generate resources with leveraged data.",
+    "Character count report fields exclude whitespace and punctuation characters. Separate fields exist for whitespace and punctuation counts.",
+    "The countAsNonTranslatable_* parameters determine which match categories are subtracted from the total to compute translatable vs. non-translatable word/character counts."
+  ],
+  "examples": [
+    {
+      "title": "CSV-style plain text template",
+      "description": "A custom template that produces a CSV report with per-item leveraging breakdown and project totals. Report fields are enclosed in brackets, and table rows use double-bracket notation [[...]] to iterate over items.",
+      "input": "Project Name: [PROJECT_NAME]\nCreation Date: [PROJECT_DATE]\nTarget Locale: [PROJECT_TARGET_LOCALE]\n\nFile,Exact Previous Version Matches,Exact Local Context Matches,100% Matches,Fuzzy Matches,Repetitions,Total,\n[[ITEM_NAME],[ITEM_EXACT_PREVIOUS_VERSION],[ITEM_EXACT_LOCAL_CONTEXT],[ITEM_EXACT],[ITEM_FUZZY],[ITEM_GMX_REPETITION_MATCHED_WORD_COUNT],[ITEM_TOTAL_WORD_COUNT],]\nTotal,[PROJECT_EXACT_PREVIOUS_VERSION],[PROJECT_EXACT_LOCAL_CONTEXT],[PROJECT_EXACT],[PROJECT_FUZZY],[PROJECT_GMX_REPETITION_MATCHED_WORD_COUNT],[PROJECT_TOTAL_WORD_COUNT]",
+      "output": "Project Name: Community website\nCreation Date: 17.03.2011 23:21:23 CET\nTarget Locale: fr-ca\n\nFile,Exact Previous Version Matches,Exact Local Context Matches,100% Matches,Fuzzy Matches,Repetitions,Total,\naa324.html,10,23,12,57,132,23,\nform.html,31,22,13,17,19,17,\nW3CHTMHLTest1.html,10,23,12,57,12,54,\nTotal,210,323,512,357,312,154"
+    }
+  ],
+  "stepId": "scoping-report",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/scoping_report_step"
+}

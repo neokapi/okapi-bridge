@@ -1,0 +1,59 @@
+{
+  "filterName": "Archive Filter",
+  "overview": "The Archive Filter allows you to process different types of files stored in a ZIP archive file (e.g. .zip or .jar files). It extracts files matching specified name patterns from the archive and processes them using designated Okapi filter configurations.",
+  "parameters": {
+    "identification": {
+      "description": "File identification settings that control which files within the archive are extracted and which filters process them."
+    },
+    "identification.mimeType": {
+      "description": "The MIME type for the format of the archive file itself (not the files contained within it). This identifies the container format."
+    },
+    "identification.fileNames": {
+      "description": "One or more file names or patterns to match against files inside the archive. If several file names are listed they must be comma-delimited. You can use file wild-chars (? for single character, * for multiple characters). Files matching these patterns (in any directory inside the ZIP file) will be extracted for processing. There should be as many file names as filter configuration identifiers in the configIds field, with entries in the same order.",
+      "notes": [
+        "You should have as many file names as filter configuration identifiers in the configIds field."
+      ],
+      "dependsOn": [
+        {
+          "property": "identification.configIds",
+          "condition": "must have the same number of entries, in the same order"
+        }
+      ]
+    },
+    "identification.configIds": {
+      "description": "One or more filter configuration identifiers that specify which Okapi filter to use for processing each matched file. There must be as many configuration IDs as there are file names in the fileNames field, and they must be in the same order. For example, 'okf_properties' would use the Properties Filter with its default configuration.",
+      "dependsOn": [
+        {
+          "property": "identification.fileNames",
+          "condition": "must have the same number of entries, in the same order"
+        }
+      ]
+    },
+    "inlineCodes": {
+      "description": "Inline code detection and handling settings. When enabled, allows pattern-based detection of inline codes (placeholders, tags, etc.) within the extracted translatable text."
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "The filter takes an archive document (e.g. a ZIP file) as input and extracts any files matching the specified name or pattern, processing each with the filter specified by the corresponding filter configuration identifier.",
+    "Files are matched in any directory inside the ZIP file — the match applies to the file name only, not the full path within the archive."
+  ],
+  "examples": [
+    {
+      "title": "Extract properties files from a ZIP archive",
+      "description": "Configure the filter to extract all files named Res.properties from anywhere inside the ZIP file and process them using the Properties Filter with its default configuration.",
+      "input": "File names: Res.properties\nFilter configuration ids: okf_properties",
+      "output": "All files named Res.properties (in any directory inside the ZIP file) will be extracted and processed using the Properties Filter with its default configuration."
+    },
+    {
+      "title": "Multiple file types from an archive",
+      "description": "The default configuration extracts TMX and XLIFF files from the archive, using the appropriate filter for each format. File names and config IDs are comma-delimited and matched by position.",
+      "input": "File names: *.tmx,*.xlf,*.xlff\nFilter configuration ids: okf_tmx,okf_xliff,okf_xliff",
+      "output": "All .tmx files are processed with the TMX filter, and all .xlf/.xlff files are processed with the XLIFF filter."
+    }
+  ],
+  "filterId": "okf_archive",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Archive_Filter"
+}

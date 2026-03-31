@@ -1,0 +1,74 @@
+{
+  "filterName": "Transifex Filter",
+  "overview": "The Transifex Filter is an Okapi component that implements the IFilter interface to process online Transifex projects. Transifex is an open-source translation collaborative platform where one party can upload files for translation, and another party can access these files to translate them online or locally. The filter takes a local Transifex project file (.txp) as input, connects to the Transifex host to retrieve PO resources, and processes them as standard filter events. When used with a filter-writer, modified PO files are pushed back to the Transifex project.",
+  "parameters": {
+    "general.openProject": {
+      "description": "Set this option to open the project file (.txp), and possibly modify it, before processing it. This allows you to select which resource you want to process. When enabled, a dialog box is presented where you can configure the project ID, host, credentials, and select which resources to include in processing. When disabled, the filter processes the .txp file directly without prompting.",
+      "notes": [
+        "The default configuration (okf_transifex) has this set to true, while the alternate configuration (okf_transifex-noPrompt) sets it to false for non-interactive processing."
+      ]
+    },
+    "inlineCodes.enabled": {
+      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.) within the translatable text extracted from the PO resources downloaded from Transifex."
+    },
+    "inlineCodes.rules": {
+      "description": "Regex patterns to identify inline codes in translatable text extracted from Transifex PO resources.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "inlineCodes.mergeAdjacent": {
+      "description": "Merge consecutive inline codes into a single placeholder.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "inlineCodes.moveBoundaryCodes": {
+      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable).",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "inlineCodes.simplifierRules": {
+      "description": "Rules for simplifying inline code representation.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "This filter is BETA.",
+    "Transifex loses fuzzy flags and the corresponding translations when downloading a PO file that was uploaded with fuzzy entries. The filter avoids labelling as fuzzy to prevent losing target text during round-trips, which may result in resources marked as 100% translated in Transifex even when translations are not final.",
+    "Only PO-based files in Transifex are handled, not TS files.",
+    "Due to limitations in the pipeline mechanism, this filter cannot be used with steps that re-write different output corresponding to the resource, other than the Filter Events to Raw Document Step. For example, it will not work properly with the Rainbow Translation Kit Creation Step."
+  ],
+  "processingNotes": [
+    "The filter takes a local .txp project file as input. If the file contains no resources, the filter connects to the Transifex host using the credentials specified in the file and fetches the list of all resources. If the file already contains resources, the list is not refreshed.",
+    "For each PO resource in the project whose source language matches the specified source locale, the filter downloads the translation file for the given target language. If no translation file exists, an empty one is created.",
+    "Downloaded PO files are opened and processed, sending standard filter events as received from a PO file. When one resource is done, it moves to the next.",
+    "If the filter-writer is used (e.g., in the Filter Events to Raw Document Step), modified PO files are recreated and pushed back into the Transifex project using the same credentials.",
+    "The .txp project file must be UTF-8 encoded. Lines with only spaces/tabs and lines starting with # are ignored.",
+    "Source and target locale values in the .txp file are used only as fall-back values; in most situations the locales are driven by the application calling the filter."
+  ],
+  "examples": [
+    {
+      "title": "Transifex project file format",
+      "description": "Example .txp project file showing the format for configuring a Transifex project connection, including host, credentials, locale settings, and resource selection. Each resource can optionally have a tab-separated yes/no flag to indicate whether it should be processed (defaults to yes if omitted).",
+      "input": "host=http://www.transifex.net\nuser=johndoe\npassword=xrt34@asf\nprojectId=myproject\nprotectApproved=yes\n# Fall-back values for the source and target locales:\nsourceLocale=en\nsourceLocale=fr\n# Resources\nmyfile1xmlpo\tyes\nmyfile2odtpo\tno"
+    }
+  ],
+  "filterId": "okf_transifex",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Transifex_Filter"
+}

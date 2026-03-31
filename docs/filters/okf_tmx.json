@@ -1,0 +1,81 @@
+{
+  "filterName": "TMX Filter",
+  "overview": "The TMX Filter is an Okapi component that implements the IFilter interface for TMX (Translation Memory eXchange) documents. TMX is a standard that defines a file format for transporting translation memory data from one translation tool to another. The filter processes TMX 1.4b documents, supporting multiple target languages, segmentation control, and inline code detection.",
+  "parameters": {
+    "extraction.processAllTargets": {
+      "description": "Set this option to read all target <tuv> elements into the text unit. When disabled, only the selected target is read and all remaining ones become part of the skeleton. Any effect this setting has depends on the following pipeline steps and the ability they have to process multiple targets.",
+      "notes": [
+        "Any effect this setting has depends on the following pipeline steps and the ability they have to process multiple targets."
+      ]
+    },
+    "extraction.consolidateDpSkeleton": {
+      "description": "Set this option to consolidate the skeleton parts and send fewer events through the pipeline. This is sufficient in most cases, but as a pipeline developer sometimes you might want to have access to more fine-grained resources in the pipeline."
+    },
+    "extraction.exitOnInvalid": {
+      "description": "By default invalid <tu>s are skipped along with warning message(s). By using the default setting or ignoring the warning messages you might run the risk of getting a processed file that doesn't match the input file. Enable this option if you want to be notified immediately of invalid content and want to correct the file before re-running it.",
+      "notes": [
+        "Warning: By using the default (false) setting or ignoring the warning messages you might run the risk of getting a processed file that doesn't match the input file."
+      ]
+    },
+    "extraction.segType": {
+      "description": "Controls whether a segment is created for each extracted <tu> entry, based on the segtype attribute. The following integer values are available: 'Always creates the segment' — Creates the segment regardless of what the value of the segtype attribute is. 'Never creates the segment' — Never creates the segment, even if the segtype attribute is set to 'sentence'. 'Creates the segment if segtype is sentence or is undefined' — Creates the segment when the segtype attribute is set to 'sentence' or if it is not defined. 'Creates the segment only if segtype is sentence' — Creates the segment only if the segtype attribute is set to 'sentence'."
+    },
+    "output.escapeGT": {
+      "description": "Set this option to have all greater-than characters ('>') escaped as '&gt;' in the output."
+    },
+    "extraction.propValueSep": {
+      "description": "This string will be used to separate duplicate property values when there are duplicate properties. Default is ', '."
+    },
+    "inlineCodes.enabled": {
+      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.) in translatable text segments."
+    },
+    "inlineCodes.rules": {
+      "description": "Regex patterns to identify inline codes in translatable text. Each rule defines a pattern that matches inline code sequences.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "inlineCodes.mergeAdjacent": {
+      "description": "Merge consecutive inline codes into a single placeholder to simplify the translatable text.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "inlineCodes.moveBoundaryCodes": {
+      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable portion), keeping translatable text cleaner.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    },
+    "inlineCodes.simplifierRules": {
+      "description": "Rules for simplifying inline code representation to reduce complexity for translators.",
+      "dependsOn": [
+        {
+          "property": "inlineCodes.enabled",
+          "condition": "must be true"
+        }
+      ]
+    }
+  },
+  "limitations": [
+    "The <sub> element is not supported. When such element is found, a warning is issued, and the element content is put with the content of its parent element.",
+    "The filter is not able to reconstruct any DTD declaration."
+  ],
+  "processingNotes": [
+    "If the document has an encoding declaration it is used; otherwise, UTF-8 is used as the default encoding regardless of the actual default encoding specified when opening the document.",
+    "If the output encoding is UTF-8 and the input encoding was also UTF-8, a Byte-Order-Mark is used for the output only if one was detected in the input. If the input encoding was not UTF-8, no BOM is used.",
+    "The type of line-breaks of the output is the same as the one of the original input."
+  ],
+  "examples": [],
+  "filterId": "okf_tmx",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/TMX_Filter"
+}

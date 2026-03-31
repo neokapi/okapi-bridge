@@ -1,0 +1,52 @@
+{
+  "filterName": "MIF Filter",
+  "overview": "The MIF Filter processes MIF (Maker Interchange Format) documents generated and read by Adobe FrameMaker. It supports extraction of body pages, master pages, reference pages, hidden pages, variables, index markers, and cross-reference links. The MIF specification for version 9.0 is available on the Adobe Web site.",
+  "parameters": {
+    "extraction.extractVariables": {
+      "description": "When enabled, extracts the definitions of the variables defined in the MIF document."
+    },
+    "extraction.extractIndexMarkers": {
+      "description": "When enabled, extracts the index markers in the extractable pages. The text of each index entry is extracted in a separate text unit, placed before the text unit that contains the index marker."
+    },
+    "extraction.extractLinks": {
+      "description": "When enabled, extracts URLs of the links in the extractable pages. Each URL is extracted in a separate text unit, placed before the text unit that contains the hypertext marker."
+    },
+    "extraction.extractBodyPages": {
+      "description": "When enabled, extracts the body pages of the MIF document."
+    },
+    "extraction.extractHiddenPages": {
+      "description": "When enabled, extracts the hidden pages of the MIF document."
+    },
+    "extraction.extractMasterPages": {
+      "description": "When enabled, extracts the master pages of the MIF document."
+    },
+    "extraction.extractReferencePages": {
+      "description": "When enabled, extracts the reference pages of the MIF document. Note that by default FrameMaker creates its new documents with several reference pages that contain text.",
+      "notes": [
+        "By default FrameMaker creates its new documents with several reference pages that contain text."
+      ]
+    },
+    "inlineCodes.enabled": {
+      "description": "When enabled, uses the specified regular expressions on the text of the extracted items. Any match will be converted to an inline code. By default the expression is: <\\$.*?>"
+    }
+  },
+  "limitations": [
+    "Versions < MIF 8.0 are not supported.",
+    "You may run into Java heap memory issues if the document includes very large embedded insets (e.g. images). The workaround is to link to external objects rather than embed them.",
+    "The filter does not do font mapping yet, so if the translated file is in a language not supported by the fonts used in the source document, you need to update the paragraph and character catalogs to use fonts providing the proper support."
+  ],
+  "processingNotes": [
+    "The encoding of the input MIF document is automatically detected based on the version of the file and different other information in the document.",
+    "MIF v8 and above use UTF-8.",
+    "MIF v8 and above are automatically output in UTF-8."
+  ],
+  "examples": [
+    {
+      "title": "Default inline code pattern",
+      "description": "The default inline code regular expression pattern used by the MIF filter to detect FrameMaker variables in extracted text.",
+      "input": "<\\$.*?>"
+    }
+  ],
+  "filterId": "okf_mif",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/MIF_Filter"
+}

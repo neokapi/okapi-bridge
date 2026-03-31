@@ -1,0 +1,61 @@
+{
+  "filterName": "XLIFF-2 Filter",
+  "overview": "The XLIFF-2 Filter is an Okapi component that implements the IFilter interface for XLIFF 2.x (XML Localisation Interchange File Format) documents. XLIFF v2 is an OASIS Standard that defines a file format for transporting translatable text and localization-related information across a chain of translation and localization tools. The filter provides basic support for XLIFF 2.x core features including extended attributes/namespaces, segments and ignorables, inline codes, notes, groups, and the XLIFF 2.x Metadata Module.",
+  "parameters": {
+    "extraction.needsSegmentation": {
+      "description": "When enabled, resegments any unit that is marked with canSegment=\"yes\". Units with an existing target cannot be segmented. This controls whether the filter applies segmentation to content during extraction.",
+      "notes": [
+        "Units with an existing target cannot be segmented even when this option is enabled."
+      ]
+    },
+    "extraction.forceUniqueIds": {
+      "description": "Forces text unit IDs to be unique within units. When enabled, ensures that tag IDs do not collide within the same unit."
+    },
+    "extraction.simplifyTags": {
+      "description": "Simplifies inline tags during extraction, reducing complex tag structures to simpler representations."
+    },
+    "extraction.ignoreTagTypeMatch": {
+      "description": "When enabled, ignores tag type mismatch between source and target elements. Normally the filter validates that tag types in the target match those in the source."
+    },
+    "states.discardInvalidTargets": {
+      "description": "When enabled, discards invalid target elements rather than rejecting the entire file. This allows processing to continue even when some target elements do not conform to the expected format."
+    },
+    "states.subfilterOverwriteTarget": {
+      "description": "Controls whether the sub-filter always overwrites the target content. When enabled, the sub-filter output replaces any existing target content."
+    },
+    "output.writeOriginalData": {
+      "description": "When enabled, the output includes original data when available. Controls whether the filter writes originalData attributes in the output XLIFF document."
+    },
+    "output.maxValidation": {
+      "description": "When enabled, ensures the XLIFF-2 parser used by the filter performs the maximum verification of the format during parsing. This provides stricter validation of the input document structure and content."
+    },
+    "inlineCodes.enabled": {
+      "description": "Enables pattern-based detection of inline codes using the configured code finder rules. When enabled, the filter will scan text content for patterns matching the defined regular expressions and treat matches as inline codes."
+    },
+    "inlineCodes.rules": {
+      "description": "Regex patterns used for inline code detection. Each rule defines a regular expression pattern that identifies inline codes within text content."
+    },
+    "inlineCodes.mergeAdjacent": {
+      "description": "When enabled, merges consecutive inline codes into a single placeholder, simplifying the tag structure for translation."
+    },
+    "inlineCodes.moveBoundaryCodes": {
+      "description": "When enabled, moves inline codes that appear at segment boundaries (leading or trailing) to the skeleton, removing them from the translatable content."
+    },
+    "inlineCodes.simplifierRules": {
+      "description": "Rules for simplifying inline code representation. Defines how complex inline code structures should be reduced to simpler forms."
+    }
+  },
+  "limitations": [
+    "Skeleton not supported.",
+    "Comments are lost in the merged document.",
+    "Original XML formatting lost in merged document.",
+    "Attributes can be reordered.",
+    "Attributes may be removed/added compared to the original depending on the default values and logic in the XLIFF 2 Toolkit."
+  ],
+  "processingNotes": [
+    "Provides basic support for XLIFF 2.x core including: extended attributes and namespaces, segments and ignorables, inline codes, notes, groups, and XLIFF 2.x Metadata Module."
+  ],
+  "examples": [],
+  "filterId": "okf_xliff2",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/xliff_2_filter"
+}

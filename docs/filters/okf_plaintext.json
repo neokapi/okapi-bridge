@@ -1,0 +1,47 @@
+{
+  "filterName": "Plain Text Filter",
+  "overview": "The Plain Text filter is an Okapi component that implements the IFilter interface for plain text documents. It processes text files encoded in ANSI, Unicode, UTF-8, and UTF-16, with byte-order mark detection. The filter provides three extraction modes: by paragraphs (groups of lines separated by empty lines), by individual lines, and by custom regex rules. It also supports spliced lines (continuation lines in source code) and inline code detection via regular expressions.",
+  "parameters": {
+    "simplifierRules": {
+      "description": "Rules for simplifying inline code representation. These rules control how inline codes are simplified in the extracted text, reducing complex code patterns to simpler placeholder representations for easier translation."
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "The filter decides input encoding by first checking for a Unicode Byte-Order-Mark (BOM). If a BOM is found, the corresponding encoding (UTF-8, UTF-16, etc.) is used. Otherwise, the default encoding specified in filter options is used.",
+    "For UTF-8 output: if the input was also UTF-8, a BOM is written only if one was detected in the input. If the input was not UTF-8, no BOM is written to the output.",
+    "The type of line-breaks in the output is preserved to match the original input."
+  ],
+  "examples": [
+    {
+      "title": "Extract by paragraphs",
+      "description": "When 'Extract by paragraphs' mode is used, groups of lines separated by one or more empty lines are extracted as single text units. Line breaks within a paragraph are treated according to the Multi-line text units settings."
+    },
+    {
+      "title": "Extract by lines",
+      "description": "Every line of text is extracted as a separate text unit. This mode also supports spliced lines where a splicer character (backslash, underscore, or custom) at the end of a line indicates continuation on the next line."
+    },
+    {
+      "title": "Extract with regex rule (line-based)",
+      "description": "Uses a Java regular expression to extract translatable text. The source group parameter defines which capture group contains the text to extract.",
+      "input": "Rule: (^(?=.+))(.*?)$\nSource group: 2\nRegex options: MULTILINE\n\nInput:\nThis is the first sentence. And this is the second one.\nSecond paragraph. Each one ends at the line-break.",
+      "output": "Each line is extracted as a separate text unit based on the regex match."
+    },
+    {
+      "title": "Extract with regex rule (paragraph-based)",
+      "description": "Uses a regex pattern that matches text between double newlines to extract paragraphs.",
+      "input": "Rule: (\\n*)(.*?)(\\n\\n|\\Z)\nSource group: 2\nRegex options: DOTALL | MULTILINE\n\nInput:\nFirst paragraph line one.\nFirst paragraph line two.\n\nSecond paragraph.",
+      "output": "Two text units are extracted, one per paragraph block."
+    },
+    {
+      "title": "Spliced lines with backslash",
+      "description": "In 'Extract by lines' mode, lines ending with a backslash are merged with the following line. The splicer character can optionally be replaced with an inline code placeholder.",
+      "input": "This is a long \\\nline of text",
+      "output": "Extracted as a single text unit: 'This is a long <x1/>line of text' (with inline code for the splicer)"
+    }
+  ],
+  "filterId": "okf_plaintext",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Plain_Text_Filter"
+}

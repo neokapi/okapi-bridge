@@ -1,0 +1,20 @@
+{
+  "filterName": "Inline Codes Simplifier",
+  "overview": "This step joins adjacent inline codes in text units, and optionally moves leading and trailing codes from the text unit to the skeleton. It takes filter events as input and sends filter events as output. Only the source codes are affected by this step, so it should be used before any target is created in the text unit.",
+  "parameters": {
+    "removeLeadingTrailingCodes": {
+      "description": "When enabled, removes leading and trailing inline codes from the text units and places them into the skeleton. This effectively strips codes that appear at the boundaries of text content and relocates them to the non-translatable skeleton portion. Only works with GenericSkeleton-based content."
+    },
+    "mergeCodes": {
+      "description": "When enabled, merges adjacent inline codes in the text units into a single code. This simplifies the inline code structure by combining codes that appear next to each other with no text content between them."
+    }
+  },
+  "limitations": [],
+  "processingNotes": [
+    "Only the source codes are affected by this step — it should be used before any target is created in the text unit.",
+    "Moving leading and trailing codes to the skeleton only works for GenericSkeleton-based content."
+  ],
+  "examples": [],
+  "stepId": "code-simplifier",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/inline_codes_simplifier_step"
+}

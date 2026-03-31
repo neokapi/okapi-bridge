@@ -1,0 +1,17 @@
+{
+  "filterName": "Localizable Quality Check",
+  "overview": "This step checks that all localizables (dates, times, and numbers) exist in the target and are localized correctly. It compares source and target number, date, and time patterns to assure they are properly localized for the target locale. The step takes filter events as input and sends filter events as output, adding issue annotations if a target localizable is missing or not properly localized.",
+  "parameters": {},
+  "limitations": [
+    "Numbers that use different units in the source and target will be flagged as false positives (e.g., imperial vs. metric and currency conversions)."
+  ],
+  "processingNotes": [
+    "The step checks source and target for dates, times (in various formats), and numbers.",
+    "Issues are reported as annotations on the filter events when a target localizable is missing or not properly localized for the locale.",
+    "The step has no user-configurable parameters; all checking behavior is automatic based on source and target locales.",
+    "Requires both source and target locale to be set via parameter mappings (SOURCE_LOCALE, TARGET_LOCALE)."
+  ],
+  "examples": [],
+  "stepId": "localizable-checker",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/localizaules_check_step"
+}

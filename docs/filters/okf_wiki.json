@@ -1,0 +1,45 @@
+{
+  "filterName": "Wiki Filter",
+  "overview": "The Wiki Filter is an Okapi component for extracting translatable text from wiki markup. Currently the only supported style of markup is Dokuwiki. It extracts translatable content from headers, paragraphs, list items, image captions, and table cells/headers.",
+  "parameters": {
+    "preserve_whitespace": {
+      "description": "When set to true, prevents the filter from collapsing whitespace in the extracted content. When false (the default), the filter collapses whitespace normally.",
+      "notes": [
+        "Set via YAML configuration as 'preserve_whitespace: true'"
+      ]
+    },
+    "simplifierRules": {
+      "description": "Rules for simplifying inline code representation. All Dokuwiki syntax as described in the Dokuwiki syntax documentation is supported as inline codes. Custom inline codes can be defined using the 'custom_codes' YAML configuration with either a single 'pattern' for placeholder tags, or a 'start_pattern' and 'end_pattern' pair for opening/closing tag pairs. Patterns are specified as regular expressions that match non-zero-width runs of text, and matches are turned into inline codes.",
+      "notes": [
+        "Custom codes are defined in YAML using 'custom_codes' with entries containing either 'pattern' for placeholders or 'start_pattern'/'end_pattern' for paired tags",
+        "Patterns must be valid regular expressions matching non-zero-width text runs"
+      ]
+    },
+    "path": {
+      "description": "Path to an external YAML configuration file for the filter parameters."
+    }
+  },
+  "limitations": [
+    "Attributes of inline codes (link and image URLs, etc.) are not exposed for translation or special processing.",
+    "Embedded HTML, PHP, etc., is not extracted."
+  ],
+  "processingNotes": [
+    "If the file has a Unicode Byte-Order-Mark, the corresponding encoding (e.g. UTF-8, UTF-16, etc.) is used. Otherwise, the input encoding used is the default encoding that was specified when opening the document.",
+    "All Dokuwiki syntax is supported as inline codes."
+  ],
+  "examples": [
+    {
+      "title": "Dokuwiki markup extraction",
+      "description": "Shows which parts of typical Dokuwiki markup are extracted as translatable text. Headers, paragraphs, list items, image captions, and table cells/headers are all extracted.",
+      "input": "=== Header ===\nParagraph\n * List item\n  * List item\n\n{{image.jpg|Image caption}}\n\n^ Table header 1 ^ Table header 2 |\n| Table cell 1 | Table cell 2 |",
+      "output": "Extracted text units: 'Header', 'Paragraph', 'List item' (x2), 'Image caption', 'Table header 1', 'Table header 2', 'Table cell 1', 'Table cell 2'"
+    },
+    {
+      "title": "Custom inline codes configuration",
+      "description": "Shows how to define custom inline codes in YAML configuration using regex patterns. A single 'pattern' creates placeholder tags, while 'start_pattern'/'end_pattern' creates paired opening/closing tags.",
+      "input": "custom_codes:\n  - pattern: \"\\\\[(path|menu)[^\\\\]]*\\\\]\"\n  - {start_pattern: \"REGEX_PATTERN\", end_pattern: \"REGEX_PATTERN\"}"
+    }
+  ],
+  "filterId": "okf_wiki",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Wiki_Filter"
+}
