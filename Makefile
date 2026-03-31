@@ -265,11 +265,12 @@ parse-filter-docs:
 parse-filter-docs-force:
 	@FORCE=1 ./scripts/parse-filter-docs.sh $(FILTER_DOCS_DIR)
 
-# Bundle parsed docs into docs.json for plugin release
+# Bundle parsed docs into docs/ directory for plugin release
 bundle-docs:
 	@./scripts/bundle-docs.sh $(FILTER_DOCS_DIR)
-	@cp $(FILTER_DOCS_DIR)/docs.json docs.json
-	@echo "Copied to docs.json (commit this file)"
+	@rm -rf docs
+	@cp -r $(FILTER_DOCS_DIR)/docs docs
+	@echo "Copied to docs/ (commit this directory)"
 
 # Bundle parsed docs into a single JSON file for UI consumption (legacy)
 bundle-filter-docs:
