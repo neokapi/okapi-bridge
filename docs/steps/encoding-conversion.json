@@ -1,84 +1,113 @@
 {
-  "filterName": "Encoding Conversion Step",
-  "overview": "This step converts the character set encoding of an input document, and in some cases, updates its encoding declaration. It takes a raw document as input and sends back a raw document. The step can un-escape various character reference notations (NCR, CER, Java-style) during reading, and re-escape characters using a configurable notation during writing. It also automatically detects and updates encoding declarations in XML and HTML documents.",
+  "filterName": "Encoding Conversion",
+  "overview": "Converts the character set encoding of an input document and optionally updates encoding declarations in XML and HTML files. The step can un-escape various character reference notations (NCR, CER, Java-style) on input, and re-escape characters using a choice of notations on output. It operates on raw documents and produces raw documents.",
   "parameters": {
     "unescapeNCR": {
-      "description": "When enabled, un-escapes all types of numeric character references (NCRs) when reading the input document. For example: `&#255;`, `&#xE1;` and `&#e1;` will be un-escaped to 'á'. If this option is not set, any NCR in the input document will remain in the exact same form in the output document.",
-      "notes": []
+      "help": "Un-escapes all types of **numeric character references** (NCRs) when reading the input document.\n\nFor example, `&#255;`, `&#xE1;`, and `&#e1;` are all un-escaped to the literal character `á`.\n\nIf disabled, any NCR in the input document remains in the exact same form in the output.",
+      "examples": [
+        "`&#255;` → `ÿ` (decimal NCR)",
+        "`&#xE1;` → `á` (hex NCR)",
+        "`&#e1;` → `á` (lowercase hex NCR)"
+      ]
     },
     "unescapeCER": {
-      "description": "When enabled, un-escapes the standard HTML character entity references (CERs) when reading the input document. For example: `&aacute;` will be un-escaped to 'á'. If this option is not set, any CER in the input document will remain in the exact same form in the output document.",
+      "help": "Un-escapes standard **HTML character entity references** (CERs) when reading the input document.\n\nFor example, `&aacute;` is un-escaped to `á`.\n\nIf disabled, any CER in the input document remains in the exact same form in the output.",
       "notes": [
-        "The character entity references &amp;, &lt;, &gt;, &apos; and &quot; are NOT un-escaped as they may need to be preserved regardless of the encoding in HTML and XML documents."
+        "The five XML-reserved entity references `&amp;`, `&lt;`, `&gt;`, `&apos;`, and `&quot;` are **never** un-escaped, as they may need to be preserved regardless of encoding in HTML and XML documents."
+      ],
+      "examples": [
+        "`&aacute;` → `á`",
+        "`&amp;` — not un-escaped (preserved)"
       ]
     },
     "unescapeJava": {
-      "description": "When enabled, un-escapes Java-style escaped characters when reading the input document. For example: `\\u00e1` and `\\u00E1` will be un-escaped to 'á'. If this option is not set, all Java-style escaped characters in the input document will remain in the exact same form in the output document.",
-      "notes": []
+      "help": "Un-escapes **Java-style** escaped characters (`\\uXXXX`) when reading the input document.\n\nFor example, `\\u00e1` and `\\u00E1` are both un-escaped to `á`.\n\nIf disabled, all Java-style escaped characters remain in the exact same form in the output.",
+      "examples": [
+        "`\\u00e1` → `á`",
+        "`\\u00E1` → `á`"
+      ]
     },
     "escapeAll": {
-      "description": "Controls which characters should be escaped in the output. When false (default), only characters not supported by the output encoding are escaped. When true, all extended characters are escaped.",
-      "notes": []
+      "help": "Controls which characters are escaped in the output:\n\n- **Disabled** (default): Only characters not supported by the output encoding are escaped.\n- **Enabled**: All extended characters (non-ASCII) are escaped, regardless of whether the output encoding supports them."
     },
     "escapeNotation": {
-      "description": "Selects the escape notation to use when escaping characters in the output. Integer values map to: 0 = Uppercase hexadecimal NCR (e.g., `&#xE1;`), 1 = Lowercase hexadecimal NCR (e.g., `&#xe1;`), 2 = Decimal NCR (e.g., `&#255;`), 3 = Character entity references (e.g., `&aacute;`; falls back to uppercase hexadecimal NCR if no entity is defined for the character), 4 = Uppercase Java-style notation (e.g., `\\u00E1`), 5 = Lowercase Java-style notation (e.g., `\\u00e1`), 6 = User-defined notation (uses the format specified in userFormat).",
-      "notes": [
-        "When using character entity references (value 3), if there is no corresponding entity defined for the character to escape, the uppercase hexadecimal NCR form is used instead."
+      "help": "Selects the escape notation used when characters must be escaped in the output.",
+      "values": "Integer selecting the notation:\n- `0` — Uppercase hexadecimal NCR (e.g. `&#xE1;`)\n- `1` — Lowercase hexadecimal NCR (e.g. `&#xe1;`)\n- `2` — Decimal NCR (e.g. `&#255;`)\n- `3` — Character entity reference (e.g. `&aacute;`). Falls back to uppercase hex NCR if no entity is defined for the character.\n- `4` — Uppercase Java-style (e.g. `\\u00E1`)\n- `5` — Lowercase Java-style (e.g. `\\u00e1`)\n- `6` — User-defined notation (uses `userFormat`)",
+      "examples": [
+        "`á` → `&#xE1;` (notation 0)",
+        "`á` → `&#xe1;` (notation 1)",
+        "`á` → `&#255;` (notation 2)",
+        "`á` → `&aacute;` (notation 3)",
+        "`á` → `\\u00E1` (notation 4)",
+        "`á` → `\\u00e1` (notation 5)"
       ]
     },
     "userFormat": {
-      "description": "A Java format expression that takes an integer as the value to display, used when escapeNotation is set to user-defined (6). For example, the expression `[[%d]]` for 'á' will give `[[255]]`, and the expression `'%x` for 日本語 will give `'65e5'672c'8a9e`. The value displayed is the Unicode code point of the character to escape (unless useBytes is set).",
-      "notes": [],
+      "help": "A **Java format expression** that takes an integer value and produces the escaped output. Only used when `escapeNotation` is set to `6` (user-defined).\n\nThe integer value is the **Unicode code point** of the character to escape (unless `useBytes` is enabled).",
+      "values": "Any valid Java `String.format()` expression accepting one integer argument. Use `%d` for decimal, `%x` for lowercase hex, `%X` for uppercase hex.",
       "dependsOn": [
         {
           "property": "escapeNotation",
-          "condition": "must be set to 6 (user-defined notation)"
+          "condition": "must be 6 (user-defined) for this to take effect"
         }
+      ],
+      "examples": [
+        "`[[%d]]` — `á` becomes `[[255]]`",
+        "`\\'%x` — `日本語` becomes `\\'65e5\\'672c\\'8a9e`",
+        "`\\x%02X` — custom hex notation with zero-padding"
       ]
     },
     "useBytes": {
-      "description": "When enabled, the values applied to the user-defined format expression are the byte values of the output encoding rather than the Unicode code points. For example, the expression `'%x` for 日本語 will give `'93'fa'96'7b'8c'ea` if this option is set and the output encoding is Shift-JIS, instead of the Unicode code points.",
-      "notes": [],
+      "help": "When enabled, the values passed to the `userFormat` expression are the **byte values of the output encoding** rather than Unicode code points.\n\nThis is useful when the target format expects encoding-specific byte escapes rather than Unicode escapes.",
       "dependsOn": [
         {
           "property": "escapeNotation",
-          "condition": "must be set to 6 (user-defined notation)"
+          "condition": "must be 6 (user-defined) for this to take effect"
+        },
+        {
+          "property": "userFormat",
+          "condition": "defines the format expression that receives the byte values"
         }
+      ],
+      "examples": [
+        "With format `\\'%x` and Shift-JIS output: `日本語` → `\\'93\\'fa\\'96\\'7b\\'8c\\'ea` (byte values)",
+        "Without this option: `日本語` → `\\'65e5\\'672c\\'8a9e` (Unicode code points)"
       ]
     },
     "BOMonUTF8": {
-      "description": "When enabled, adds a Byte-Order-Mark (BOM) at the beginning of the output when the output encoding is UTF-8.",
-      "notes": []
+      "help": "Adds a **Byte-Order-Mark** (BOM) at the beginning of UTF-8 output files.\n\nThe BOM (`U+FEFF`) is sometimes required by certain tools or specifications but is generally optional for UTF-8. Some systems may misinterpret a BOM as visible characters.",
+      "notes": [
+        "Only applies when the output encoding is UTF-8."
+      ]
     },
     "reportUnsupported": {
-      "description": "When enabled, lists in the log all characters not supported by the output encoding.",
-      "notes": []
+      "help": "Logs all characters that are not supported by the output encoding. Useful for identifying potential data loss when converting to a more limited encoding.\n\nUnsupported characters are listed in the pipeline log output."
     }
   },
   "processingNotes": [
-    "Encoding declarations are automatically updated for XML and HTML documents. The detection algorithm runs on the first 1024 characters of each document.",
-    "The encoding declaration detection routine is not XML or HTML aware and cannot distinguish between normal XML/HTML code and XML/HTML comments.",
-    "For XML documents: if an XML encoding declaration is detected, the encoding value is updated; if only an XML declaration exists, an encoding declaration is inserted; if the file ends with .xml, an XML declaration with encoding is added at the top.",
-    "For HTML documents: if an HTML charset declaration is detected, the charset value is updated; otherwise, if the file extension starts with .htm, a charset declaration is added after the <head> element or inserted with a new <head> element after <html>.",
-    "A document can be both an XML and HTML document and have both types of encoding/charset declarations."
+    "Encoding declaration updates are performed on the **first 1024 characters** of each document only.",
+    "The declaration update routine is **not** XML/HTML-aware — it cannot distinguish between normal code and comments. Encoding declarations inside comments may be incorrectly updated.",
+    "A document can be both an XML and HTML document and have **both** types of encoding/charset declarations updated.",
+    "For XML documents: if an XML declaration exists, its encoding attribute is updated; if only a `.xml` extension is present, a full XML declaration is prepended.",
+    "For HTML documents: if a charset declaration exists, it is updated; if a `.htm*` extension is present, a `<meta charset>` is inserted after `<head>` or synthesized after `<html>`."
   ],
   "limitations": [
-    "Encoding declaration detection operates on the first 1024 characters only — declarations beyond this point are not updated.",
-    "The detection routine is not XML/HTML aware, so encoding declarations inside XML/HTML comments may be incorrectly modified.",
-    "Character entity references &amp;, &lt;, &gt;, &apos; and &quot; are never un-escaped, as they may need to be preserved in HTML and XML documents."
+    "Declaration detection uses simple string matching on the first 1024 chars — not a real XML/HTML parser.",
+    "Cannot distinguish encoding declarations inside comments from real declarations.",
+    "HTML charset insertion heuristic relies on finding `<head>` or `<html` strings, which may fail with unusual document structures."
   ],
   "examples": [
     {
-      "title": "User-defined escape format with Unicode code points",
-      "description": "Using a custom format expression with Unicode code points (useBytes=false). The expression `[[%d]]` for 'á' produces `[[255]]`, and `'%x` for 日本語 produces `'65e5'672c'8a9e`.",
-      "input": "escapeNotation: 6, userFormat: \"'%x\", useBytes: false",
-      "output": "日本語 → '65e5'672c'8a9e"
+      "title": "Convert Latin-1 to UTF-8 with NCR un-escaping",
+      "description": "Converts a Latin-1 encoded file to UTF-8, un-escaping all numeric character references and character entity references in the process. The BOM is added to the UTF-8 output.",
+      "config": "```yaml\nunescapeNCR: true\nunescapeCER: true\nunescapeJava: false\nescapeAll: false\nescapeNotation: 0\nBOMonUTF8: true\nreportUnsupported: true\n```"
     },
     {
-      "title": "User-defined escape format with byte values",
-      "description": "Using a custom format expression with byte values of the output encoding instead of Unicode code points. With Shift-JIS output encoding, the expression `'%x` for 日本語 produces byte-level escapes.",
-      "input": "escapeNotation: 6, userFormat: \"'%x\", useBytes: true, output encoding: Shift-JIS",
-      "output": "日本語 → '93'fa'96'7b'8c'ea"
+      "title": "Custom byte-level escaping for Shift-JIS",
+      "description": "Uses a user-defined format with byte values to produce encoding-specific escape sequences for a Shift-JIS output file.",
+      "config": "```yaml\nunescapeNCR: true\nunescapeCER: true\nunescapeJava: true\nescapeAll: true\nescapeNotation: 6\nuserFormat: \"\\\\x%02X\"\nuseBytes: true\nBOMonUTF8: false\nreportUnsupported: true\n```",
+      "input": "```\n日本語\n```",
+      "output": "```\n\\x93\\xFA\\x96\\x7B\\x8C\\xEA\n```"
     }
   ],
   "stepId": "encoding-conversion",

@@ -1,16 +1,14 @@
 {
   "filterName": "Resource Simplifier",
-  "overview": "The Resource Simplifier step simplifies the resources of filter events by splitting the generic skeleton of a given event resource into parts that contain no references. Skeleton parts are attached to newly created DOCUMENT_PART events, original references are converted to skeleton parts or TEXT_UNIT events, and the resulting sequence is packed into a single MULTI_EVENT event. It takes filter events as input and sends filter events as output.",
+  "overview": "Simplifies the resources of filter events by splitting generic skeletons into parts that contain no references. Original references are converted to skeleton parts or `TEXT_UNIT` events, and the resulting sequence is packed into a single `MULTI_EVENT` event. This is a format-specific transformation that operates on filter events.",
   "parameters": {},
-  "limitations": [
-    "None known."
-  ],
   "processingNotes": [
-    "Skeleton parts are attached to newly created DOCUMENT_PART events.",
-    "Original references are converted either to skeleton parts or TEXT_UNIT events.",
-    "The sequence of DOCUMENT_PART and TEXT_UNIT events is packed into a single MULTI_EVENT event.",
-    "Simplification algorithm is format-specific."
+    "Skeleton parts from the split are attached to newly created `DOCUMENT_PART` events.",
+    "Original references are converted either to skeleton parts or `TEXT_UNIT` events.",
+    "The resulting sequence of `DOCUMENT_PART` and `TEXT_UNIT` events is packed into a single `MULTI_EVENT` event.",
+    "The simplification algorithm is format-specific — behavior varies depending on the filter that produced the events."
   ],
+  "limitations": [],
   "examples": [],
   "stepId": "resource-simplifier",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/resource_simplifier_step"

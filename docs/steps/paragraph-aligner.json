@@ -1,27 +1,36 @@
 {
-  "filterName": "Paragraph Alignment Step",
-  "overview": "This step aligns paragraphs (TextUnits) from two documents. It takes filter events as input and sends only TextUnit filter events as output — all other events are lost. The ResourceSimplifier is called internally to flatten out events and expand TextUnits so that all TextUnits are available for alignment and skeleton is available for diffing if the option is enabled.",
+  "filterName": "Paragraph Alignment",
+  "overview": "This step aligns paragraphs (TextUnits) from two documents — a source and a target. It internally calls the `ResourceSimplifier` to flatten events and expand TextUnits so all are available for alignment. **Only TextUnit events are passed along — all other event types are discarded.** The step also sends a special `EventType.PIPELINE_PARAMETERS` event to inform subsequent steps (e.g., Sentence Aligner) that the target input has been consumed and is no longer available.",
   "parameters": {
     "outputOneToOneMatchesOnly": {
-      "description": "When enabled, only 1-to-1 paragraph aligned matches are output. Paragraphs that could not be cleanly aligned in a one-to-one correspondence are excluded from the output. This is enabled by default.",
-      "notes": []
+      "help": "Controls whether the step outputs only paragraph pairs where exactly one source paragraph aligns to one target paragraph (1-to-1 matches). When enabled, paragraphs involved in 1-to-many, many-to-1, or many-to-many alignments are discarded from the output. This is useful when downstream steps (e.g., Sentence Aligner) require clean, unambiguous paragraph pairs.",
+      "notes": [
+        "Enabling this discards any paragraphs that could not be cleanly aligned 1-to-1, which may result in content loss in the output."
+      ]
     },
     "useSkeletonAlignment": {
-      "description": "When enabled, skeleton alignment is used to provide better alignment anchor points. This is an experimental feature that may improve alignments for some formats by leveraging skeleton (non-translatable) content as additional reference points during the alignment process. Disabled by default.",
+      "help": "Uses the document skeleton (structural markup around text) as additional anchor points to improve paragraph alignment accuracy. The `ResourceSimplifier` makes skeleton data available for diffing when this option is enabled.\n\nThis is marked **experimental** and may improve results for formats where structural markup provides reliable alignment cues.",
       "notes": [
-        "This is an experimental feature."
+        "**Experimental feature** — results may vary across document formats.",
+        "Standard Gale and Church alignment (used when this is disabled) is not accurate for long runs of paragraphs. Enabling skeleton alignment may improve results in those cases."
+      ],
+      "dependsOn": [
+        {
+          "property": "outputOneToOneMatchesOnly",
+          "condition": "skeleton alignment may produce more 1-1 matches by providing better anchor points, improving the usefulness of the 1-1 filter"
+        }
       ]
     }
   },
   "limitations": [
     "Standard Gale and Church alignment is not accurate for long runs of paragraphs.",
-    "The experimental 'Use Skeleton Alignment' option may improve alignments for some formats but is not guaranteed to help in all cases."
+    "All non-TextUnit events (document parts, skeleton, sub-documents, etc.) are lost — only TextUnit events survive the step.",
+    "After this step runs, the target input is consumed and unavailable to subsequent steps (signaled via `PIPELINE_PARAMETERS` event)."
   ],
   "processingNotes": [
-    "The ResourceSimplifier is called internally to flatten out events and expand TextUnits so that all TextUnits are available for alignment and skeleton is available for diffing.",
-    "Only TextUnit events are passed along — all other event types (document parts, groups, sub-documents, etc.) are lost in the output.",
-    "This step sends a special PIPELINE_PARAMETERS event that informs subsequent steps (e.g., Sentence Aligner) that the target input has been consumed and is no longer available.",
-    "Requires both a source and target document as input, along with source and target locale settings and a filter configuration mapper."
+    "The `ResourceSimplifier` is called internally to flatten and expand all events before alignment.",
+    "A special `EventType.PIPELINE_PARAMETERS` event is sent downstream to signal that the target input has been consumed — steps like the Sentence Aligner use this to know the target document is no longer directly available.",
+    "Requires both source and target language to be set in the pipeline."
   ],
   "examples": [],
   "stepId": "paragraph-aligner",

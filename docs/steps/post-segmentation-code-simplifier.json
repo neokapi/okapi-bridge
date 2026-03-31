@@ -1,23 +1,22 @@
 {
   "filterName": "Post-segmentation Inline Codes Simplifier",
-  "overview": "This step simplifies inline codes by trimming and merging them within linguistically distinct segments of a TextUnit. It must be run after segmentation. It joins adjacent inline codes inside segments and optionally moves leading and trailing codes from the segment to inter-segment TextParts. Original un-merged codes are preserved as okp:merged attributes in generated XLIFF output, and trimmed codes are written outside the \"mrk\" elements. Takes filter events and sends filter events.",
+  "overview": "This step simplifies inline codes within segmented text units by merging adjacent codes and optionally moving leading/trailing codes out of segments into inter-segment TextParts. **It must be run after segmentation.** Original (un-merged) codes are preserved as `okp:merged` attributes in the generated XLIFF file, and trimmed codes are written outside `mrk` elements.",
   "parameters": {
     "removeLeadingTrailingCodes": {
-      "description": "When enabled, removes leading and trailing inline codes from the text units and places them outside the segment. In practice, this moves leading and trailing codes from the source to inter-segment TextParts. Trimmed codes are written outside the 'mrk' elements in the generated output. Enabled by default.",
-      "notes": []
+      "help": "Moves leading and trailing inline codes out of segments and places them in inter-segment TextParts (outside `mrk` elements in XLIFF). This reduces translator-visible clutter by ensuring codes that wrap a segment but carry no translatable meaning are excluded from the segment content.\n\nFor example, if a segment starts or ends with formatting codes like `<b>` or `</b>`, those codes are moved to the skeleton surrounding the segment."
     },
     "mergeCodes": {
-      "description": "When enabled, merges adjacent inline codes within the text units into a single code. Original un-merged codes are saved as okp:merged attributes inside the generated XLIFF file. Enabled by default.",
-      "notes": []
+      "help": "Joins adjacent inline codes within segments into a single code. When codes are merged, the original individual codes are preserved as `okp:merged` attributes in the XLIFF output, allowing round-trip fidelity.\n\nFor example, two adjacent codes like `</i><b>` would be merged into a single inline code in the segment."
     }
   },
   "limitations": [
-    "Bi-lingual formats such as XLIFF, TMX, TTX etc. will not have their codes simplified, as the codes may differ in source and target. Codes must align with IDs across source and target."
+    "Bi-lingual formats (XLIFF, TMX, TTX, etc.) will **not** have their codes simplified, because codes may differ between source and target — code IDs must align across source and target.",
+    "Must be placed **after** a segmentation step in the pipeline; running it on unsegmented content will have no effect."
   ],
   "processingNotes": [
-    "This step must be run after segmentation — it operates on linguistically distinct segments within a TextUnit.",
-    "Original un-merged codes are preserved as okp:merged attributes inside the generated XLIFF file.",
-    "Trimmed codes are written outside the 'mrk' elements in the output."
+    "Original un-merged codes are saved as `okp:merged` attributes inside the generated XLIFF file, preserving round-trip fidelity.",
+    "Trimmed (leading/trailing) codes are written outside `mrk` elements in XLIFF output.",
+    "The step operates on each linguistically distinct segment within a TextUnit."
   ],
   "examples": [],
   "stepId": "post-segmentation-code-simplifier",

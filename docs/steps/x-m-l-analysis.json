@@ -1,22 +1,31 @@
 {
-  "filterName": "XML Analysis Step",
-  "overview": "This step generates a report on the elements present in a set of input XML documents. It takes raw documents as input and sends raw documents as output. The report can be used to guess localization-related aspects of the input documents, such as which elements should have their content extracted, which elements are likely to be inline, and whether there are any CDATA sections.",
+  "filterName": "XML Analysis",
+  "overview": "Generates an analysis report on the elements present in a set of input XML documents. The report helps guess localization-related aspects of the input documents, such as which elements should have their content extracted, which elements are likely to be inline, and whether there are any CDATA sections. Expects raw documents and passes them through unchanged.",
   "parameters": {
     "outputPath": {
-      "description": "Full path of the result file where the analysis report will be written. The report contains information about the elements present in the input XML documents, including localization-related hints such as which elements should be extracted, which are likely inline, and whether CDATA sections exist."
+      "help": "Full path (including filename) where the HTML analysis report will be written. The report summarizes element usage across all processed XML documents to help determine localization properties.",
+      "values": "A file system path ending in `.html`. Can be absolute or relative to the working directory.",
+      "examples": [
+        "`analysis.html` — writes to current directory",
+        "`/reports/xml-analysis.html` — absolute path"
+      ]
     },
     "autoOpen": {
-      "description": "When enabled, the result file is automatically opened after the analysis process is complete. Defaults to true."
+      "help": "Automatically opens the generated report file in the system's default browser/application after the pipeline finishes processing all documents."
     }
   },
-  "limitations": [
-    "None known."
-  ],
   "processingNotes": [
-    "The step processes a set of XML documents and produces a single analysis report.",
-    "Input and output type is raw document — the step passes through the raw documents unchanged while generating the report as a side effect."
+    "The step passes raw documents through unchanged — it only reads and analyzes the XML content without modifying it.",
+    "The report aggregates information across **all** XML documents processed in the batch, not just a single file.",
+    "The generated report is HTML format and covers element inventory, inline element candidates, and CDATA section detection."
   ],
-  "examples": [],
+  "limitations": [],
+  "examples": [
+    {
+      "title": "Basic XML analysis",
+      "description": "Run the step with default settings to generate an `analysis.html` report that opens automatically after completion. Use the report to determine which elements contain translatable content and which are inline before configuring an XML filter."
+    }
+  ],
   "stepId": "x-m-l-analysis",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/xml_analysis_step"
 }

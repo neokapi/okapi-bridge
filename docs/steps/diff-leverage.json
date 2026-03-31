@@ -1,37 +1,61 @@
 {
   "filterName": "Diff Leverage",
-  "overview": "This step compares the source text of two (or three) documents to try to leverage existing translation for new source content. It takes filter events and sends filter events. It supports either a bilingual second input (old source + old translation) or two monolingual inputs (old source and old translation separately), where text units between the second and third documents must be aligned.",
+  "overview": "Compares source text between two or three document versions to leverage existing translations for new source content. Supports both bilingual (old source + old translation in one file) and trilingual (separate old source and old translation files) input modes. Paragraphs (TextUnits) must be aligned across all input documents.",
   "parameters": {
     "fuzzyThreshold": {
-      "description": "Sets the leverage threshold score between 1 and 100. If the result of the comparison process is equal to or above the specified threshold, the old target text is leveraged; otherwise it is ignored. A score of 100 means exact match (both codes and text must match).",
-      "notes": [
-        "A score of 100 means exact match only, requiring both codes and text to match."
-      ]
+      "help": "Controls the minimum match quality required to leverage an old translation. A score of **100** means only exact matches (both text and inline codes) are leveraged. Lower values allow fuzzy matches — e.g., setting to **95** will leverage translations where the source has minor differences from the old version.\n\nWhen a match score falls below this threshold, the old target text is ignored entirely.",
+      "values": "Integer from 1 to 100. **100** = exact match only. Lower values = more permissive fuzzy matching."
     },
     "codesensitive": {
-      "description": "When enabled, inline codes are taken into consideration when computing the quality of matches between old and new source text. When disabled, only the textual content is compared.",
-      "notes": []
+      "help": "When enabled, inline codes (formatting tags, placeholders) are included in the comparison algorithm. This makes matching stricter — segments that differ only in their inline codes will score lower.\n\nDisabling this compares only the textual content, ignoring any inline code differences. Useful when code positions or types frequently change between versions but the text remains the same.",
+      "dependsOn": [
+        {
+          "property": "fuzzyThreshold",
+          "condition": "Only meaningful when fuzzyThreshold < 100; at 100, code differences already prevent a match"
+        }
+      ]
     },
     "diffOnly": {
-      "description": "When enabled, the step performs a diff comparison only without copying the match or creating a leverage annotation. The TextUnit is simply marked as matched.",
-      "notes": []
+      "help": "Runs the comparison without copying translations or creating leverage annotations. The TextUnit is simply marked as matched or not.\n\nUseful for analysis or reporting — lets you see which segments changed between document versions without actually applying any leveraged translations.",
+      "dependsOn": [
+        {
+          "property": "copyToTarget",
+          "condition": "conflicts with copyToTarget — when diffOnly is true, no content is copied regardless of copyToTarget"
+        }
+      ]
     },
     "copyToTarget": {
-      "description": "When enabled, copies the leveraged translation to (or over) the target. A leverage annotation will still be created regardless of this setting.",
+      "help": "Copies the leveraged old translation directly into the target content. A leverage annotation is still created.\n\n**Use with caution:** the copied target will **not** be segmented, and any existing target content will be **overwritten** and lost.",
       "notes": [
-        "WARNING: Copied target will not be segmented and any existing target will be lost."
+        "**Warning:** Copied target will not be segmented. If downstream steps expect segmented content, this may cause issues.",
+        "**Warning:** Any existing target content is permanently overwritten when a match is found."
+      ],
+      "dependsOn": [
+        {
+          "property": "diffOnly",
+          "condition": "conflicts with diffOnly — has no effect when diffOnly is true"
+        }
       ]
     }
   },
   "limitations": [
-    "The comparison process of the text units is done in memory: you may not be able to process very large documents."
+    "The comparison process is done **in memory** — very large documents may cause memory issues.",
+    "TextUnits must be aligned (same number, same order) across all input documents. Misaligned documents will produce incorrect leverage results."
   ],
   "processingNotes": [
-    "The step requires two or three inputs: (1) the new document to translate, (2) a bilingual document with old source and old translation, OR (2) old source document and (3) old translation document.",
-    "When using three documents, the text units between the second and third must be aligned (same number, same order).",
-    "The comparison process is performed in memory, which may limit the size of documents that can be processed."
+    "Accepts two input modes: **bilingual** (new source + bilingual old document) or **trilingual** (new source + old source + old translation as separate files).",
+    "When using three documents, the second (old source) and third (old translation) must have matching TextUnit counts and order."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "title": "Bilingual leverage (two inputs)",
+      "description": "The new document is compared against a bilingual file containing both old source and old translation. Matched segments above the threshold get their old translations leveraged."
+    },
+    {
+      "title": "Trilingual leverage (three inputs)",
+      "description": "The new document is compared against a separate old source file and a separate old translation file. The old source and old translation files must have aligned TextUnits (same count, same order)."
+    }
+  ],
   "stepId": "diff-leverage",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/diff_leverage_step"
 }

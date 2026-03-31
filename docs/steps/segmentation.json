@@ -1,81 +1,93 @@
 {
   "filterName": "Segmentation Step",
-  "overview": "The Segmentation step segments the content of extracted text units into smaller parts, usually corresponding to sentences, using SRX 2.0 (Segmentation Rules eXchange) rules. It takes filter events as input and sends filter events as output. Text units flagged as non-translatable, text units with no content, and text units that are already segmented (unless overwrite is enabled) are not segmented.",
+  "overview": "Segments the content of extracted text units into smaller parts (usually sentences) using SRX 2.0 segmentation rules. The step operates on filter events, applying language-specific break/non-break rules defined by regular expressions in an SRX document. Text units flagged as non-translatable or with no content are skipped. Already-segmented text units are preserved unless overwrite or deepen options are set.",
   "parameters": {
     "segmentSource": {
-      "description": "When enabled, segments the source text of the text units using the specified SRX rules document. The SRX document path can use the variables ${rootDir} and ${inputRootDir}.",
+      "help": "Applies SRX segmentation rules to the **source** text of each text unit. Requires an SRX document path to be configured.\n\nThe SRX document path supports the variables `${rootDir}` and `${inputRootDir}`.",
       "notes": [
-        "Text units flagged as non-translatable are not segmented.",
-        "Text units with no content are not segmented."
+        "Text units flagged as non-translatable are never segmented, regardless of this setting.",
+        "Text units with no content are skipped."
       ]
     },
     "segmentTarget": {
-      "description": "When enabled, segments the existing target text of the text units using the specified SRX rules document, if there is text for the target locales being processed. Only the locales currently being processed are affected, even if the document contains more locales. The SRX document can be the same as for source segmentation. The path can use the variables ${rootDir} and ${inputRootDir}.",
-      "notes": [
-        "Only target locales being processed are affected, even if the document contains additional locales."
-      ]
+      "help": "Applies SRX segmentation rules to the **target** text of each text unit, if target text exists for the locales being processed. Only the target locales currently being processed are affected, even if the document contains additional locales.\n\nThe SRX document for the target can be the same as for the source. The path supports `${rootDir}` and `${inputRootDir}` variables."
     },
     "renumberCodes": {
-      "description": "When enabled, changes the IDs of inline codes in each resulting segment so they all start at '1'. This can be useful when working with translation memories where each segment restarts the IDs of its inline codes. The 'Restore original IDs to renumbered codes' option in the Desegmentation Step can be used to restore the original IDs when desegmenting.",
+      "help": "Changes the IDs of inline codes in each resulting segment so they all start at `1`. Useful when working with translation memories where each segment restarts inline code IDs sequentially.\n\nUse the **Restore original IDs to renumbered codes** option in the Desegmentation Step to restore the original IDs when desegmenting.",
       "notes": [
-        "Warning: This option cannot work with documents where the ID values are not numeric, or not sequential.",
-        "Using this option when creating a translation kit requires a separate Desegmentation Step when merging back, and may not be possible with some formats that are segment-based like TTX."
-      ]
+        "**Warning:** This option cannot work with documents where the ID values are not numeric, or not sequential.",
+        "Using this option when creating a translation kit requires a separate Desegmentation Step when merging back, and may not be possible with some segment-based formats like TTX."
+      ],
+      "seeAlso": "Desegmentation_Step"
     },
     "checkSegments": {
-      "description": "When enabled, verifies that if there is a target available, all source segments have a corresponding target segment in the target content. This also verifies that both source and target have the same number of segments.",
-      "notes": [
-        "This verification does not ensure that the content of a target segment is the translation of its corresponding source text. It only matches their segment ID."
-      ]
+      "help": "Verifies that when target content exists, every source segment has a corresponding target segment, and that both source and target have the same number of segments.\n\nThis verification matches segments by their segment ID only — it does **not** verify that the target segment content is actually a translation of the source text."
     },
     "trimSrcLeadingWS": {
-      "description": "Controls trimming of leading whitespace from source segments. A value of -1 means no trimming (default behavior)."
+      "help": "Controls trimming of leading whitespace in source segments.",
+      "values": "Integer value where `-1` means use the default behavior (no explicit trimming override)."
     },
     "trimSrcTrailingWS": {
-      "description": "Controls trimming of trailing whitespace from source segments. A value of -1 means no trimming (default behavior)."
+      "help": "Controls trimming of trailing whitespace in source segments.",
+      "values": "Integer value where `-1` means use the default behavior (no explicit trimming override)."
     },
     "trimTrgLeadingWS": {
-      "description": "Controls trimming of leading whitespace from target segments. A value of -1 means no trimming (default behavior)."
+      "help": "Controls trimming of leading whitespace in target segments.",
+      "values": "Integer value where `-1` means use the default behavior (no explicit trimming override)."
     },
     "trimTrgTrailingWS": {
-      "description": "Controls trimming of trailing whitespace from target segments. A value of -1 means no trimming (default behavior)."
+      "help": "Controls trimming of trailing whitespace in target segments.",
+      "values": "Integer value where `-1` means use the default behavior (no explicit trimming override)."
     },
     "forceSegmentedOutput": {
-      "description": "When enabled, forces file formats that can represent segmentation to show the segments, regardless of what is set in the filter configuration. For example, the XLIFF Filter by default outputs segments only for entries that had segments in the input XLIFF document. When this option is set, the filter's output option is changed to show segments as needed, even for text units that had no segments in the input. If this option is off, segments are shown only if the filter configuration allows it."
+      "help": "Forces file formats that can represent segmentation to show segments in the output, regardless of the filter configuration's own setting.\n\nFor example, the XLIFF Filter by default outputs segments only for entries that had segments in the input XLIFF document. With this option enabled, the filter's output option is overridden to show segments as needed, even for text units that originally had no segments.\n\nIf disabled, segments are shown only if the filter's own configuration allows it.",
+      "seeAlso": "XLIFF_Filter"
     },
     "overwriteSegmentation": {
-      "description": "Controls behavior when input text is already segmented. When enabled, if a text unit is already segmented, it is re-segmented against the SRX rules specified in the step parameters. Previous segmentation will be lost. When disabled (and deepenSegmentation is also disabled), existing segmentation is preserved unchanged.",
-      "notes": [
-        "This is one of three mutually exclusive segmentation behaviors: keep existing (both overwrite and deepen off), overwrite (this option on), or deepen (deepenSegmentation on)."
+      "help": "Re-segments text units that are already segmented, applying the SRX rules configured in this step. **Previous segmentation will be lost.**\n\nThis is one of three mutually exclusive segmentation behaviors:\n- Both `overwriteSegmentation` and `deepenSegmentation` off → keep existing segmentation unchanged\n- `overwriteSegmentation` on → discard and re-segment\n- `deepenSegmentation` on → keep existing but segment further",
+      "dependsOn": [
+        {
+          "property": "deepenSegmentation",
+          "condition": "conflicts with — only one of overwriteSegmentation or deepenSegmentation should be enabled"
+        }
       ]
     },
     "deepenSegmentation": {
-      "description": "Controls behavior when input text is already segmented. When enabled, keeps existing segmentation but tries to segment existing segments further, creating more segments and text parts out of existing segments. Segmentation gets deeper only if the new SRX rules in the step parameters provide higher granularity than the original segmentation.",
-      "notes": [
-        "This is one of three mutually exclusive segmentation behaviors: keep existing (both overwrite and deepen off), overwrite (overwriteSegmentation on), or deepen (this option on)."
+      "help": "Keeps existing segmentation intact but attempts to segment existing segments further using the SRX rules, creating more granular segments and text parts. Only produces additional breaks if the configured SRX rules provide higher granularity than the existing segmentation.\n\nThis is one of three mutually exclusive segmentation behaviors:\n- Both `overwriteSegmentation` and `deepenSegmentation` off → keep existing segmentation unchanged\n- `overwriteSegmentation` on → discard and re-segment\n- `deepenSegmentation` on → keep existing but segment further",
+      "dependsOn": [
+        {
+          "property": "overwriteSegmentation",
+          "condition": "conflicts with — only one of overwriteSegmentation or deepenSegmentation should be enabled"
+        }
       ]
     },
     "treatIsolatedCodesAsWhitespace": {
-      "description": "When enabled, treats isolated inline codes as whitespace during segmentation. This can affect where segment breaks are placed when inline codes appear between potential segments."
+      "help": "Treats isolated inline codes as whitespace for the purpose of segmentation rule matching. This can help achieve correct sentence breaks when inline codes appear at segment boundaries."
     },
     "doNotSegmentIfHasTarget": {
-      "description": "When enabled, skips segmentation of a text unit if it already has target content. This can be used to preserve pre-existing aligned source-target pairs without applying segmentation."
+      "help": "Skips segmentation of a text unit if it already has target content. This preserves the original structure of pre-translated text units."
     }
   },
   "limitations": [
-    "Strict implementation of SRX syntax in Java is not possible. See the 'SRX and Java' page for details on the limitations.",
-    "Using the 'Renumber code IDs' option when creating a translation kit requires a separate Desegmentation Step when merging back, and may not be possible with some segment-based formats like TTX.",
-    "The renumber codes option cannot work with documents where inline code ID values are not numeric or not sequential."
+    "Strict implementation of SRX syntax in Java is not fully possible — see the **SRX and Java** wiki page for details.",
+    "Using **Renumber code IDs** when creating a translation kit requires a separate Desegmentation Step when merging back.",
+    "Renumber code IDs may not work with some segment-based formats like TTX.",
+    "Renumber code IDs cannot work with documents where inline code ID values are not numeric or not sequential."
   ],
   "processingNotes": [
-    "Text units flagged as non-translatable are not segmented.",
-    "Text units with no content are not segmented.",
-    "Text units that are already segmented are not re-segmented unless the 'overwriteSegmentation' or 'deepenSegmentation' option is set.",
-    "SRX document paths support ${rootDir} and ${inputRootDir} variable substitution.",
-    "The step uses SRX 2.0 rules, which define break and non-break positions using regular expression patterns.",
-    "The separation between text units is based on the structure of the original file format (e.g., each <p> element in HTML produces a separate text unit); this step further breaks down text unit content into segments."
+    "Text units flagged as **non-translatable** are never segmented.",
+    "Text units with **no content** are skipped.",
+    "Already-segmented text units are preserved by default unless `overwriteSegmentation` or `deepenSegmentation` is enabled.",
+    "SRX rules are language-specific — the step requires both source and target language to be set in the pipeline.",
+    "Segmentation uses SRX 2.0 format, which defines break/non-break positions via before/after regular expression patterns."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "title": "Overwrite vs. Deepen segmentation behavior",
+      "description": "The three segmentation behaviors for already-segmented text are controlled by a combination of `overwriteSegmentation` and `deepenSegmentation`:\n\n- **Keep existing** (default): both `false` — no re-segmentation\n- **Overwrite**: `overwriteSegmentation: true` — discard old segments, apply new SRX rules\n- **Deepen**: `deepenSegmentation: true` — keep old segments, split further if new rules are more granular",
+      "config": "```yaml\n# Overwrite existing segmentation\nsegmentSource: true\noverwriteSegmentation: true\ndeepenSegmentation: false\n\n# OR: Deepen existing segmentation\nsegmentSource: true\noverwriteSegmentation: false\ndeepenSegmentation: true\n```"
+    }
+  ],
   "stepId": "segmentation",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/segmentation_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Segmentation_Step"
 }

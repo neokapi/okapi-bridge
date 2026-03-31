@@ -1,27 +1,38 @@
 {
   "filterName": "MessageFormat Filter",
-  "overview": "The MessageFormatFilter handles message formats commonly found in software applications, including ICU Message Format and Java MessageFormat. It is designed to be used as a subfilter, where message strings can reside in various container formats such as JSON, YAML, XML, etc.",
+  "overview": "The MessageFormat Filter handles message formats commonly found in software applications, including **ICU Message Format** and **Java MessageFormat**. It is designed to be used as a **subfilter** — the message strings can live in various container formats such as JSON, YAML, XML, etc. The filter parses complex message syntax (plural, select, etc.) into translatable segments.",
   "parameters": {
     "addPluralForms": {
-      "description": "When enabled, new plural forms will be added based on the target locale. The source string is modified and then refiltered to provide the new plural forms to the translator. Default is false."
+      "help": "Adds missing plural forms to the source based on the **target locale's** CLDR plural rules. The source string is modified and re-filtered so that all required plural categories (e.g., `zero`, `one`, `two`, `few`, `many`, `other`) are presented to the translator.\n\nThis is useful when the source locale (e.g., English) has fewer plural categories than the target locale (e.g., Arabic with six categories).",
+      "notes": [
+        "The source string is modified and then refiltered — this means the segment structure may change when this option is active."
+      ]
     },
     "normalize": {
-      "description": "When enabled, the source will be normalized to move leading and trailing text inside each complex (plural, select, etc.) variant. This makes translation easier by forcing each variant to be a complete phrase or sentence. Default is false.",
+      "help": "Moves leading and trailing text that appears outside complex message variants (`plural`, `select`, etc.) **inside each variant**. This forces each variant to be a complete phrase or sentence, which produces better translations.\n\nFor example, `Hello {count, plural, one {# item} other {# items}} found` becomes variants like `Hello # item found` and `Hello # items found`.",
       "notes": [
-        "This option can increase word and character counts for the source!"
+        "**Warning:** This option can increase word and character counts for the source, since shared text is duplicated into each variant."
       ]
     },
     "prettyPrint": {
-      "description": "When enabled, the output is formatted to enhance readability. Any whitespace added is not significant. The default option (false) returns a compact string, normally a single line. Default is false."
+      "help": "Formats the output with indentation and line breaks to enhance readability. Any whitespace added is **not significant** to the message format syntax.\n\nWhen disabled (default), the output is a compact string, normally a single line."
     }
   },
   "limitations": [
-    "The 'choice' syntax is not supported. For example: 'The value {count, choice, 0 #is none |1 #is one |1 <is more than one}'. This syntax is deprecated and should be converted to 'select' or 'plural'."
+    "`choice` syntax is **not supported** (e.g., `{count, choice, 0#is none|1#is one|1<is more than one}`). This syntax is deprecated and should be converted to `select` or `plural` before processing."
   ],
   "processingNotes": [
-    "This filter is designed to be used as a subfilter — it processes message strings extracted by a parent filter from container formats like JSON, YAML, or XML."
+    "This filter is intended to be used as a **subfilter** — it processes message format strings extracted by a parent filter (JSON, YAML, XML, etc.).",
+    "Supports ICU Message Format and Java `MessageFormat` syntax, including `plural` and `select` message types."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "title": "ICU plural message",
+      "description": "A typical ICU MessageFormat plural string that the filter processes. With `normalize` enabled, the surrounding text is pushed into each variant.",
+      "input": "```\n{count, plural, one {# item} other {# items}} found\n```",
+      "output": "```\n{count, plural, one {# item found} other {# items found}}\n```"
+    }
+  ],
   "filterId": "okf_messageformat",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Message_Format_Filter"
 }

@@ -1,0 +1,60 @@
+{
+  "filterName": "XLIFF Splitter",
+  "overview": "Splits a single XLIFF document into multiple documents, one per `<file>` element. All content outside `<file>` elements (e.g., `<header>`, processing instructions) is copied as-is into each split document. An XLIFF document with only one `<file>` element is written out unaltered. Use the **XLIFF Joiner Step** to reassemble split files.",
+  "parameters": {
+    "bigFile": {
+      "help": "Uses a **stream-based (SAX) parser** instead of the default DOM-based parser. This allows processing very large XLIFF files (e.g., several hundreds of MB) that would otherwise exceed available memory.\n\nWhen disabled, a DOM-based parser is used, which loads the entire document into memory.",
+      "notes": [
+        "When using stream-based processing, any XML content **between** `<file>` elements is ignored and not copied into the output files."
+      ]
+    },
+    "fileMarker": {
+      "help": "The marker string appended to the base filename of each generated output file, placed just before the numeric counter.\n\nFor example, with marker `_PART` and input `document.xlf`, outputs are named `document_PART1.xlf`, `document_PART2.xlf`, etc.",
+      "examples": [
+        "`_PART` → `document_PART1.xlf`, `document_PART2.xlf`",
+        "`_split` → `document_split1.xlf`, `document_split2.xlf`"
+      ]
+    },
+    "updateSDLTranslationStatus": {
+      "help": "Updates the `translation_type` and `translation_status` flags in `<iws:status>` elements of the output documents. This is specific to **WorldServer XLIFF** documents.\n\nAlso **removes** the `target_content` attribute from `<iws:status>` elements.",
+      "notes": [
+        "This option is specific to SDL WorldServer XLIFF documents and has no effect on standard XLIFF files."
+      ]
+    },
+    "translationTypeValue": {
+      "help": "The value written into the `translation_type` attribute of `<iws:status>` elements in the output documents.",
+      "values": "A WorldServer translation type string (e.g., `manual_translation`, `machine_translation`).",
+      "dependsOn": [
+        {
+          "property": "updateSDLTranslationStatus",
+          "condition": "must be true for this value to be applied"
+        }
+      ]
+    },
+    "translationStatusValue": {
+      "help": "The value written into the `translation_status` attribute of `<iws:status>` elements in the output documents.",
+      "values": "A WorldServer translation status string (e.g., `finished`, `in_review`).",
+      "dependsOn": [
+        {
+          "property": "updateSDLTranslationStatus",
+          "condition": "must be true for this value to be applied"
+        }
+      ]
+    },
+    "restoreOriginalNames": {
+      "help": "Restores the original file names stored in the XLIFF `<file>` element's `original` attribute, instead of using the generated numbered naming convention."
+    }
+  },
+  "limitations": [
+    "When using the **Process big file** (stream-based) option, XML content between `<file>` elements is ignored and not copied into the output files.",
+    "An XLIFF document with only one `<file>` element is written out unaltered (no splitting occurs)."
+  ],
+  "processingNotes": [
+    "The step outputs multiple numbered XLIFF documents to the output path.",
+    "The received input event is passed through unaltered — the split files are written as side-output.",
+    "Content outside `<file>` elements (e.g., `<header>`, XML declarations) is duplicated into each output file when using the default DOM parser."
+  ],
+  "examples": [],
+  "stepId": "xliff-splitter",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/xliff_splitter_step"
+}

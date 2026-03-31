@@ -1,64 +1,93 @@
 {
   "filterName": "Rainbow Translation Kit Creation Step",
-  "overview": "This step creates a translation package from a set of input documents. It takes filter events as input and sends filter events or raw documents to the next step. The extracted files can be merged back after translation using the Rainbow Translation Kit Merging Step. It supports multiple package formats including Generic XLIFF, PO, OmegaT, Transifex, XLIFF 2.0, and others.",
+  "overview": "Creates a translation package (kit) from a set of input documents processed through Okapi filter events. Supports multiple output formats including Generic XLIFF, PO, OmegaT, XLIFF 2.0, and others. The extracted files can be merged back after translation using the **Rainbow Translation Kit Merging Step**. Typically used after a Raw Document to Filter Events step, optionally preceded by segmentation and leveraging steps.",
   "parameters": {
     "writerClass": {
-      "description": "Selects the type of translation kit to create. The value is the fully-qualified Java class name of the package writer. Available package formats are: Generic XLIFF (files extracted to XLIFF documents), PO Package (files extracted to PO files), Original with RTF (files get an RTF layer), XLIFF with RTF (files extracted to XLIFF then get an RTF layer), OmegaT Project (files extracted to a new OmegaT project), Transifex Project (files uploaded to a new or existing Transifex project), ONTRAM XINI (files extracted to an ONTRAM XINI package), Translation Table (files extracted to tab-delimited files), and XLIFF 2.0 (files extracted to XLIFF v2 documents). Each package type may have its own specific options. Not all types of package have configurable options.",
+      "help": "Fully-qualified Java class name that determines the **package format** (kit type) to create. Each writer class produces a different translation kit format.\n\nAvailable writers:\n- `net.sf.okapi.steps.rainbowkit.xliff.XLIFFPackageWriter` — Generic XLIFF\n- `net.sf.okapi.steps.rainbowkit.po.POPackageWriter` — PO Package\n- `net.sf.okapi.steps.rainbowkit.rtf.OriginalRTFPackageWriter` — Original with RTF layer\n- `net.sf.okapi.steps.rainbowkit.rtf.XLIFFRTFPackageWriter` — XLIFF with RTF layer\n- `net.sf.okapi.steps.rainbowkit.omegat.OmegaTPackageWriter` — OmegaT Project\n- `net.sf.okapi.steps.rainbowkit.transifex.TransifexPackageWriter` — Transifex Project\n- `net.sf.okapi.steps.rainbowkit.ontram.OntramPackageWriter` — ONTRAM XINI\n- `net.sf.okapi.steps.rainbowkit.table.TablePackageWriter` — Translation Table (tab-delimited)\n- `net.sf.okapi.steps.rainbowkit.xliff.XLIFF2PackageWriter` — XLIFF 2.0",
+      "values": "Fully-qualified Java class name of a Rainbow kit package writer implementation. Must be on the classpath.",
       "notes": [
-        "The default writer class 'net.sf.okapi.steps.rainbowkit.xliff.XLIFFPackageWriter' corresponds to the Generic XLIFF package format."
-      ]
+        "Not all package types have additional options. Some formats (like Transifex) upload to external services rather than producing local files.",
+        "The package format affects whether `sendOutput` has any effect — formats that do not produce one output file per input file ignore that option."
+      ],
+      "seeAlso": "Rainbow_Translation_Kit_Creation_Step#Package_Format"
     },
     "packageName": {
-      "description": "The name of the package directory to create within the output directory. This becomes the directory name containing the translation kit files.",
-      "notes": []
+      "help": "Name of the package directory that will be created inside the output directory. This becomes the top-level folder containing the extracted translation files, manifest, and support materials.",
+      "examples": [
+        "`pack1` — default package name",
+        "`my-project-de` — project-specific name with target language"
+      ]
     },
     "packageDirectory": {
-      "description": "The root of the output directory where the package will be created. You can use the variables ${rootDir} and ${inputRootDir}, as well as any of the source or target locale variables (${srcLoc}, ${trgLoc}, etc.).",
-      "notes": []
+      "help": "Root directory where the translation package will be created. The actual package is placed in a subdirectory named by **packageName** within this directory.\n\nSupports pipeline variables:\n- `${inputRootDir}` — root directory of the input files\n- `${rootDir}` — pipeline root directory\n- Source/target locale variables: `${srcLoc}`, `${trgLoc}`, etc.",
+      "values": "Directory path. Supports `${inputRootDir}`, `${rootDir}`, and locale variables (`${srcLoc}`, `${trgLoc}`, etc.).",
+      "examples": [
+        "`${inputRootDir}` — create package alongside input files (default)",
+        "`/output/kits/${trgLoc}` — organize packages by target locale"
+      ],
+      "seeAlso": "Rainbow_Translation_Kit_Creation_Step#Output_Location"
     },
     "supportFiles": {
-      "description": "A list of support material files to include in the package. Each item specifies an origin path and a destination path within the package. The origin path supports * and ? wildcard characters (e.g., C:\\myProj\\myExtra.* will copy all files starting with 'myExtra.' from that directory). The destination path must start with \\ or / indicating the root of the package directory; use <same> to keep the original filename. If the origin does not use wildcards, the destination can specify a different name to rename the copied file. Both origin and destination support the variables ${rootDir}, ${inputRootDir}, and locale variables (${srcLoc}, ${trgLoc}, etc.).",
-      "notes": []
+      "help": "List of additional files to include in the translation package as support material. Each item specifies an **origin** path and a **destination** within the package.\n\n**Origin** paths support `*` and `?` wildcards, plus variables (`${rootDir}`, `${inputRootDir}`, locale variables).\n\n**Destination** paths must start with `/` or `\\` (relative to the package root). Use `<same>` to keep the original filename. When origin does not use wildcards, the destination can rename the file.",
+      "values": "Semicolon-separated list of origin→destination file mapping pairs. Origin supports wildcards (`*`, `?`) and variables.",
+      "examples": [
+        "Origin: `C:\\myProj\\myExtra.*` — copies all files matching `myExtra.*`",
+        "Destination: `/resources/<same>` — places files in a `resources` subfolder keeping original names"
+      ],
+      "seeAlso": "Rainbow_Translation_Kit_Creation_Step#Support_Material"
     },
     "message": {
-      "description": "An optional message to include with the translation package.",
-      "notes": []
+      "help": "Optional message or note to include with the translation package. Can be used to provide instructions or context to translators."
     },
     "outputManifest": {
-      "description": "When true, outputs a manifest file with the translation package that contains metadata needed for merging the translated files back.",
-      "notes": []
+      "help": "Controls whether a manifest file is generated with the package. The manifest is required by the **Rainbow Translation Kit Merging Step** to merge translated files back into the original format.",
+      "notes": [
+        "Disabling this will prevent the package from being mergeable using the standard merging step."
+      ]
     },
     "createZip": {
-      "description": "When true, creates a ZIP file from the generated package. The ZIP file has the same name as the project and is placed in the same directory with a .rkp extension.",
-      "notes": []
+      "help": "Compresses the generated package into a single ZIP file with a `.rkp` (Rainbow Kit Package) extension. The ZIP file is placed in the same directory as the package and shares its name.",
+      "notes": [
+        "The `.rkp` extension is specific to Okapi Rainbow translation kits."
+      ],
+      "seeAlso": "Rainbow_Translation_Kit_Creation_Step#Output_Location"
     },
     "sendOutput": {
-      "description": "When true, sends the prepared files to the next step as raw documents instead of the filter events of the original input file. This allows further processing of the extracted translation kit files in subsequent pipeline steps.",
+      "help": "Instead of passing the original filter events downstream, sends the **prepared/extracted files** as raw documents to the next pipeline step. This allows further processing of the kit output files.\n\nOnly effective when the selected package format produces one output file per input file — formats that bundle multiple inputs into a single output ignore this option.",
       "notes": [
-        "This option has no effect if the selected package format does not support one output file for each input file."
-      ]
+        "Has no effect if the selected package format does not support one output file for each input file."
+      ],
+      "dependsOn": [
+        {
+          "property": "writerClass",
+          "condition": "only effective when the selected writer produces one output file per input file"
+        }
+      ],
+      "seeAlso": "Rainbow_Translation_Kit_Creation_Step#Package_Format"
     }
   },
   "limitations": [
-    "If this step is used in a pipeline that modifies the input file (e.g. with a Search and Replace Step), the 'original' files saved in the generated project may not be usable to merge back the translated files. For example, a search and replace may result in more or less inline codes. You would need to change those files so they reflect the content that was really used at the point the content was extracted."
+    "If the pipeline modifies input files before this step (e.g., via Search and Replace), the \"original\" files saved in the package may not match the extracted content, making merge-back impossible without manual correction.",
+    "Inline code count changes from upstream steps (e.g., search and replace adding/removing codes) will cause merge failures — the saved originals must reflect the content at the point of extraction."
   ],
   "processingNotes": [
-    "The step supports locale variables (${srcLoc}, ${trgLoc}, etc.) in directory paths, package names, and support file paths.",
-    "The step can be combined with segmentation and leveraging steps in a pipeline to segment text and pre-translate before creating the kit.",
-    "Package formats that do not support one output file per input file will ignore the sendOutput option."
+    "Takes **filter events** as input (requires a Raw Document to Filter Events step upstream).",
+    "Sends back either **filter events** (original) or **raw documents** (extracted files), depending on the `sendOutput` setting.",
+    "Requires both source and target language to be set in the pipeline.",
+    "This is a **batch-oriented** step — it accumulates documents and produces a complete translation kit."
   ],
   "examples": [
     {
       "title": "Simple extraction pipeline",
-      "description": "The simplest pipeline to create a translation kit: convert raw documents to filter events, then create the kit.",
-      "input": "Raw Document to Filter Events Step → Rainbow Translation Kit Creation Step"
+      "description": "Minimal pipeline that extracts documents into a Generic XLIFF translation kit.",
+      "config": "```yaml\nsteps:\n  - Raw Document to Filter Events\n  - Rainbow Translation Kit Creation\n```"
     },
     {
-      "title": "Pre-translated extraction pipeline",
-      "description": "A more advanced pipeline that segments text and applies leveraging from multiple translation resources before creating the kit.",
-      "input": "Raw Document to Filter Events Step → Segmentation Step → First Leveraging Step → Second Leveraging Step → Rainbow Translation Kit Creation Step"
+      "title": "Full pre-translation pipeline",
+      "description": "Segments text and leverages existing translations from two TMs before creating the kit. This is one of the pre-defined pipelines available in Rainbow.",
+      "config": "```yaml\nsteps:\n  - Raw Document to Filter Events\n  - Segmentation\n  - Leveraging (TM 1)\n  - Leveraging (TM 2)\n  - Rainbow Translation Kit Creation\n```"
     }
   ],
   "stepId": "extraction",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/rainuow_translation_kit_creation_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/rainbow_translation_kit_creation_step"
 }

@@ -1,54 +1,64 @@
 {
-  "filterName": "Remove Target Step",
-  "overview": "The Remove Target step removes target entries from text units in a filter events pipeline. It can remove all targets across all text units, or selectively remove targets based on text unit IDs or target locales. The step takes filter events as input and sends filter events as output.",
+  "filterName": "Remove Target",
+  "overview": "Removes target-language content from text units in a filter event pipeline. By default all targets on all text units are removed. You can restrict removal to specific text units by ID or preserve specific locale targets, and optionally remove the entire text unit if no targets remain.",
   "parameters": {
     "tusForTargetRemoval": {
-      "description": "A comma-delimited list of text unit IDs specifying which text units should have their targets removed. When this field is empty, all targets on all text units are removed. Only used when filterBasedOnIds is true.",
+      "help": "Restricts target removal to only the listed text units. When left empty, targets are removed from **all** text units.\n\nProvide a comma-separated list of text unit IDs (as they appear in the source document). Only effective when `filterBasedOnIds` is `true`.",
+      "values": "Comma-separated text unit IDs, e.g. `tu1,tu2,tu5`. Empty string means all text units.",
+      "examples": [
+        "`tu1,tu2` — only remove targets from text units with IDs `tu1` and `tu2`",
+        "`` (empty) — remove targets from every text unit"
+      ],
       "dependsOn": [
         {
           "property": "filterBasedOnIds",
-          "condition": "must be true for this parameter to be used as the filter criterion"
+          "condition": "must be true for this parameter to take effect"
         }
       ]
     },
     "targetLocalesToKeep": {
-      "description": "A comma-delimited list of locale codes identifying which target locales should be kept (not removed). Targets for locales not in this list will be removed. When this field is empty, all targets are kept (none are removed based on locale). Only used when filterBasedOnIds is false.",
+      "help": "Specifies which locale targets to **keep** (all others are removed). When left empty, all targets are kept by default (i.e. no locale-based filtering).\n\nOnly effective when `filterBasedOnIds` is `false`.",
+      "values": "Comma-separated locale codes, e.g. `fr-FR,de-DE`. Empty string means keep all locales (no filtering).",
+      "examples": [
+        "`fr-FR,de-DE` — keep only French and German targets, remove all others",
+        "`` (empty) — keep all locale targets"
+      ],
       "dependsOn": [
         {
           "property": "filterBasedOnIds",
-          "condition": "must be false for this parameter to be used as the filter criterion"
+          "condition": "must be false for this parameter to take effect"
         }
       ]
     },
     "filterBasedOnIds": {
-      "description": "Controls the filtering mode for target removal. When true, the step filters text units based on the IDs specified in tusForTargetRemoval. When false, the step filters based on the locales specified in targetLocalesToKeep. You cannot filter on both IDs and locales simultaneously — only one mode is active at a time.",
-      "notes": [
-        "You cannot filter on both IDs and locales simultaneously; this boolean selects which mode is active."
-      ]
+      "help": "Switches the filtering mode between ID-based and locale-based. The two modes are **mutually exclusive** — you cannot filter on both IDs and locales simultaneously.\n\n- **true** (default): uses `tusForTargetRemoval` to select which text units have their targets removed.\n- **false**: uses `targetLocalesToKeep` to decide which locale targets to preserve."
     },
     "removeTUIfNoTarget": {
-      "description": "Controls whether a text unit should be completely removed from the event stream if it has no remaining targets after the removal operation. When true, text units left with no targets are removed entirely. When false, text units with no remaining targets are passed through unchanged."
+      "help": "Controls whether a text unit should be completely removed from the event stream if it has no remaining targets after the removal process. Useful for cleaning up empty text units that would otherwise pass through as source-only entries."
     }
   },
   "limitations": [
-    "None known."
+    "The wiki notes no known limitations."
   ],
   "processingNotes": [
-    "All target languages are removed by default when no specific text unit IDs are provided.",
-    "The step operates on filter events, processing each text unit individually as it passes through the pipeline."
+    "All target languages are removed by default — not just the current target language.",
+    "ID-based filtering and locale-based filtering are mutually exclusive; `filterBasedOnIds` controls which mode is active."
   ],
   "examples": [
     {
       "title": "Remove all targets from all text units",
-      "description": "Leave the tusForTargetRemoval field empty and set filterBasedOnIds to true. This removes every target from every text unit in the input.",
-      "input": "tusForTargetRemoval: \"\", filterBasedOnIds: true",
-      "output": "All text units have their targets removed."
+      "description": "Default configuration — removes every target from every text unit in the pipeline.",
+      "config": "```yaml\ntusForTargetRemoval: \"\"\nfilterBasedOnIds: true\nremoveTUIfNoTarget: false\n```"
     },
     {
-      "title": "Remove targets from specific text units by ID",
-      "description": "Specify a comma-delimited list of text unit IDs to selectively remove targets only from those text units.",
-      "input": "tusForTargetRemoval: \"tu1,tu2,tu5\", filterBasedOnIds: true",
-      "output": "Only text units with IDs tu1, tu2, and tu5 have their targets removed."
+      "title": "Remove targets from specific text units only",
+      "description": "Only removes targets from text units with IDs `tu1` and `tu2`, leaving all other text units untouched.",
+      "config": "```yaml\ntusForTargetRemoval: \"tu1,tu2\"\nfilterBasedOnIds: true\nremoveTUIfNoTarget: false\n```"
+    },
+    {
+      "title": "Keep only specific locales and clean up empty TUs",
+      "description": "Switches to locale-based mode, keeping only French and German targets. Text units left with no targets are removed entirely.",
+      "config": "```yaml\ntargetLocalesToKeep: \"fr-FR,de-DE\"\nfilterBasedOnIds: false\nremoveTUIfNoTarget: true\n```"
     }
   ],
   "stepId": "remove-target",

@@ -1,71 +1,61 @@
 {
   "filterName": "XML Filter",
-  "overview": "The XML Filter processes XML documents using a DOM-based parser with full ITS (Internationalization Tag Set) support for W3C ITS 1.0 and 2.0 specifications. It determines translatable content, inline elements, and other localization-related aspects through ITS rules, either embedded in the document or specified via an external parameters file. Because it uses DOM parsing and loads the entire file into memory, very large XML documents may be better served by the XML Stream Filter. The filter's parameters are stored in an XML file (an ITS document) that can include both standard ITS rules and Okapi-specific filter options using the okapi-framework:xmlfilter-options namespace.",
+  "overview": "Processes XML documents using a DOM-based parser with full **ITS (Internationalization Tag Set)** support (both 1.0 and 2.0). By default, all element content is translatable and no attribute values are translatable, following ITS defaults. Behavior is customized through ITS rules files (`.fprm`) that define translatability, inline elements, ID values, white-space handling, and more. For very large XML documents without ITS requirements, consider the **XML Stream Filter** instead, as this filter loads the entire document into memory.",
   "parameters": {
-    "simplifierRules": {
-      "description": "Rules for simplifying inline code representation in extracted content. Defines how inline codes within translatable text are simplified for cleaner segmentation and processing."
-    },
     "path": {
-      "description": "Path to an external ITS rules file (.fprm) that defines the filter's parameters. The parameters file is an ITS document that can contain standard ITS rules (translateRule, withinTextRule, locNoteRule, etc.) as well as Okapi-specific filter options using the okapi-framework:xmlfilter-options namespace. By default (without a parameters file), the filter uses ITS defaults: all element content is translatable and no attribute values are translatable. The parameters file can override these defaults and configure additional options such as lineBreakAsCode, codeFinder, omitXMLDeclaration, escapeQuotes, escapeGT, escapeNbsp, extractIfOnlyCodes, inlineCdata, and extractUntranslatable.",
+      "help": "Path to an **ITS rules file** (`.fprm`) that controls extraction behavior — which elements/attributes are translatable, inline codes, white-space handling, etc.\n\nWithout a rules file, ITS defaults apply:\n- All element **content** is translatable\n- No **attribute values** are translatable\n\nThe rules file is an XML document using ITS namespace `http://www.w3.org/2005/11/its`. Filter-specific options use the `okapi-framework:xmlfilter-options` namespace.\n\nSee the Okapi wiki article *\"How to Create a Custom Configuration for the XML Filter\"* for a walkthrough.",
+      "values": "Path to an ITS-format XML file (`.fprm`). The file defines `<its:rules>` with ITS data categories and optional Okapi filter extensions.",
       "notes": [
-        "Filter options (okp:options, okp:codeFinder) must be placed in the parameters file (.fprm), not in embedded or linked ITS rules. Options placed in embedded or linked ITS rules have no effect.",
-        "When multiple options are used, they must be set in a single <okp:options> element.",
-        "The parameters file uses the ITS XML format and supports ITS extensions via the namespace http://www.w3.org/2008/12/its-extensions (idValue, whiteSpaces)."
-      ]
+        "Filter options (`<okp:options>`) **must** be placed in the parameters file, not in embedded or linked ITS rules — options in embedded/linked rules have no effect.",
+        "The `xml:id` attribute takes precedence over `itsx:idValue` declarations when both are present on an element.",
+        "The `xml:space` attribute takes precedence over the `itsx:whiteSpaces` extension."
+      ],
+      "seeAlso": "XML_Filter#ITS_Support"
+    },
+    "simplifierRules": {
+      "help": "Defines rules for simplifying inline code representation in extracted segments. Simplifier rules reduce complex inline markup to simpler placeholders, making segments easier for translators to work with."
+    },
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "help": "Inline codes that appear at the very start or end of a segment are often structural markup (e.g., wrapping `<b>...</b>`) rather than meaningful inline content. Moving them to the skeleton removes them from the translatable text, reducing clutter for translators while preserving them in the output."
+    },
+    "mergeAdjacentCodes": {
+      "help": "When multiple inline codes appear next to each other (e.g., `</b><i>` or a closing tag immediately followed by an opening tag), they are combined into a single placeholder. This simplifies segments by reducing the number of codes translators must manage."
     }
   },
   "limitations": [
-    "In some cases, the ITS rule withinTextRule with the value 'nested' may act like it has a value 'yes' instead.",
-    "In output, the values of xml:lang attributes are not updated to reflect the target language.",
-    "The whole input file is loaded into memory during extraction, which may cause memory limitations for very large documents."
+    "The ITS `withinTextRule` with value `nested` may behave as `yes` in some cases.",
+    "`xml:lang` attribute values are **not** updated to reflect the target language in output.",
+    "The entire input file is loaded into memory (DOM-based) — very large documents may cause memory issues. Use the **XML Stream Filter** for large files."
   ],
   "processingNotes": [
-    "Input encoding: Uses the document's encoding declaration if present; otherwise defaults to UTF-8 regardless of any specified default encoding.",
-    "Output BOM handling: If output encoding is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. If input was not UTF-8, no BOM is written.",
-    "If the original document had an XML encoding declaration it is updated in the output; if it did not, one is automatically added.",
-    "Line-breaks in output match the type used in the original input document.",
-    "DOM-based parser loads the entire document into memory; for very large files without ITS needs, consider the XML Stream Filter instead."
+    "**Input encoding**: Uses the document's encoding declaration if present; otherwise defaults to UTF-8 regardless of any externally specified default encoding.",
+    "**Output BOM**: When output is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. If input was a different encoding, no BOM is added.",
+    "**XML declaration**: Always written in output (with updated encoding) unless suppressed via `omitXMLDeclaration` option in the rules file. Added automatically even if the original lacked one.",
+    "**Line breaks**: Output preserves the same line-break style as the input.",
+    "**Attribute quoting**: All attributes in output use double-quotes. Double-quotes inside attribute values are always escaped; single-quotes are never escaped."
   ],
   "examples": [
     {
-      "title": "ITS rules for RESX files",
-      "description": "Parameters file defining ITS rules for processing Microsoft RESX documents. Demonstrates translateRule selectors, idValue for resource names, localization notes, and codeFinder for inline codes.",
-      "input": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<its:rules xmlns:its=\"http://www.w3.org/2005/11/its\"\n xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\"\n xmlns:okp=\"okapi-framework:xmlfilter-options\"\n its:translate=\"no\" version=\"1.0\">\n <its:translateRule selector=\"/root\" translate=\"no\"/>\n <its:translateRule selector=\"//data[not(@type) and not(starts-with(@name, '>'))]/value\" translate=\"yes\" itsx:idValue=\"../@name\"/>\n <its:translateRule selector=\"//data[@mimetype]/value\" translate=\"no\"/>\n <its:locNoteRule locNoteType=\"description\"\n  locNotePointer=\"../comment\" selector=\"//data[not(@type) and not(starts-with(@name, '>') or starts-with(@name, '$'))]/value\"/>\n <okp:codeFinder useCodeFinder=\"yes\">#v1\ncount.i=2\nrule0=(\\{[^}]+?\\})\nrule1=&lt;(/?)\\w+[^>]*?&gt;\n </okp:codeFinder>\n</its:rules>"
+      "title": "ITS rules file with filter options",
+      "description": "A `.fprm` parameters file combining ITS translation rules with Okapi-specific filter options. Filter options use the `okapi-framework:xmlfilter-options` namespace and must be in the parameters file (not embedded in the XML).",
+      "config": "```xml\n<its:rules version=\"1.0\"\n xmlns:its=\"http://www.w3.org/2005/11/its\"\n xmlns:okp=\"okapi-framework:xmlfilter-options\">\n <okp:options lineBreakAsCode=\"yes\"\n              escapeQuotes=\"no\"\n              escapeGT=\"yes\"\n />\n <its:translateRule selector=\"//text\" translate=\"yes\"/>\n <its:translateRule selector=\"//desc\" translate=\"yes\"/>\n</its:rules>\n```"
     },
     {
-      "title": "Using idValue for resource names",
-      "description": "Demonstrates how the itsx:idValue extension attribute defines XPath expressions to generate text unit resource names from element attributes. The @name attribute value becomes the resource name for each <p> element.",
-      "input": "<doc>\n <its:rules version=\"1.0\" xmlns:its=\"http://www.w3.org/2005/11/its\"\n  xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\">\n  <its:translateRule selector=\"//p\" translate=\"yes\" itsx:idValue=\"@name\"/>\n </its:rules>\n <p name=\"id1\">text 1</p>\n</doc>",
-      "output": "Text unit with resource name 'id1' containing 'text 1'. Note: xml:id has precedence over idValue if both are present."
+      "title": "Code finder rules for inline patterns",
+      "description": "Use `<okp:codeFinder>` to define regex patterns that match variable placeholders or embedded markup within translatable text. Patterns must be XML-escaped. The `#v1` header, `count.i`, and `ruleN` format is required.",
+      "config": "```xml\n<its:rules version=\"1.0\"\n xmlns:its=\"http://www.w3.org/2005/11/its\"\n xmlns:okp=\"okapi-framework:xmlfilter-options\">\n <okp:codeFinder useCodeFinder=\"yes\">#v1\ncount.i=2\nrule0=&lt;(/?)(\\w+)[^&gt;]*?&gt;\nrule1=(#\\w+?\\#)|(%\\d+?%)\n </okp:codeFinder>\n</its:rules>\n```"
     },
     {
-      "title": "Compound idValue using concat()",
-      "description": "Shows how to build unique IDs from multiple attributes using XPath string functions when multiple translatable elements share a parent ID.",
-      "input": "<doc>\n <its:rules version=\"1.0\" xmlns:its=\"http://www.w3.org/2005/11/its\"\n  xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\">\n  <its:translateRule selector=\"//text\" translate=\"yes\" itsx:idValue=\"concat(../@name, '_t')\"/>\n  <its:translateRule selector=\"//desc\" translate=\"yes\" itsx:idValue=\"concat(../@name, '_d')\"/>\n </its:rules>\n <msg name=\"id1\">\n  <text>Value of text</text>\n  <desc>Value of desc</desc>\n </msg>\n</doc>",
-      "output": "Two text units: 'id1_t' for <text> content and 'id1_d' for <desc> content."
+      "title": "ITS idValue for custom resource names",
+      "description": "Use `itsx:idValue` with an XPath expression to assign unique resource names to text units. Useful when sibling elements share a parent ID and need disambiguation.",
+      "config": "```xml\n<its:rules version=\"1.0\"\n xmlns:its=\"http://www.w3.org/2005/11/its\"\n xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\">\n <its:translateRule selector=\"//text\" translate=\"yes\"\n  itsx:idValue=\"concat(../@name, '_t')\"/>\n <its:translateRule selector=\"//desc\" translate=\"yes\"\n  itsx:idValue=\"concat(../@name, '_d')\"/>\n</its:rules>\n```",
+      "input": "```xml\n<doc>\n <msg name=\"id1\">\n  <text>Value of text</text>\n  <desc>Value of desc</desc>\n </msg>\n</doc>\n```",
+      "output": "```\nResource name for <text>: id1_t\nResource name for <desc>: id1_d\n```"
     },
     {
-      "title": "Filter options: lineBreakAsCode and escapeQuotes",
-      "description": "Shows how to configure multiple filter options in a single okp:options element. lineBreakAsCode treats line-breaks (e.g. &#10;) as inline codes, escapeQuotes controls double-quote escaping in element content, and escapeGT controls greater-than escaping.",
-      "input": "<its:rules version=\"1.0\"\n xmlns:its=\"http://www.w3.org/2005/11/its\"\n xmlns:okp=\"okapi-framework:xmlfilter-options\">\n <okp:options lineBreakAsCode=\"yes\"\n              escapeQuotes=\"no\"\n              escapeGT=\"yes\"\n />\n</its:rules>"
-    },
-    {
-      "title": "codeFinder for inline code detection",
-      "description": "Defines regular expressions to capture text spans that should be treated as inline codes. Rule0 matches XML-type tags, rule1 matches variables enclosed in # or numbers enclosed in %.",
-      "input": "<its:rules version=\"1.0\"\n xmlns:its=\"http://www.w3.org/2005/11/its\"\n xmlns:okp=\"okapi-framework:xmlfilter-options\">\n <okp:codeFinder useCodeFinder=\"yes\">#v1\ncount.i=2\nrule0=&lt;(/?)\n+[^&gt;]*?&gt;\nrule1=(#\\w+?\\#)|(%\\d+?%)\n </okp:codeFinder>\n</its:rules>",
-      "output": "Matches like <b>, </b>, <br/> are treated as inline codes from rule0. Matches like #VAR# and %1% are treated as inline codes from rule1."
-    },
-    {
-      "title": "extractUntranslatable with selective exclusion",
-      "description": "Extracts untranslatable content for context purposes while excluding specific elements using the localeFilterList ITS attribute workaround.",
-      "input": "<its:rules version=\"1.0\"\n xmlns:its=\"http://www.w3.org/2005/11/its\"\n xmlns:okp=\"okapi-framework:xmlfilter-options\">\n <okp:options extractUntranslatable=\"yes\"/>\n <its:localeFilterRule selector=\"//yourTagThatShouldNotBeExtracted\" localeFilterList=\"!*\"/>\n</its:rules>",
-      "output": "Untranslatable contents are extracted but marked as translate='no' in XLIFF, except elements matching the localeFilterRule which are excluded entirely."
-    },
-    {
-      "title": "whiteSpaces extension for preserving spaces",
-      "description": "Uses the itsx:whiteSpaces extension to globally apply space preservation to specific elements, equivalent to xml:space='preserve'. Note: xml:space has precedence over whiteSpaces if both are present.",
-      "input": "<doc>\n <its:rules version=\"1.0\" xmlns:its=\"http://www.w3.org/2005/11/its\"\n  xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\">\n  <its:translateRule selector=\"//pre\" translate=\"yes\" itsx:whiteSpaces=\"preserve\"/>\n </its:rules>\n <pre>Some txt with    many spaces.  </pre>\n</doc>",
-      "output": "The <pre> element content is extracted with all spaces, tabs, and line breaks preserved."
+      "title": "Extract untranslatable content with exclusions",
+      "description": "Extract `its:translate=\"no\"` content for context, but exclude specific elements using `localeFilterList=\"!*\"` as a workaround.",
+      "config": "```xml\n<its:rules version=\"1.0\"\n xmlns:its=\"http://www.w3.org/2005/11/its\"\n xmlns:okp=\"okapi-framework:xmlfilter-options\">\n <okp:options extractUntranslatable=\"yes\"/>\n <its:localeFilterRule selector=\"//internalTag\"\n  localeFilterList=\"!*\"/>\n</its:rules>\n```"
     }
   ],
   "filterId": "okf_xml",

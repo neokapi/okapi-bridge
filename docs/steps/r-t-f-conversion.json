@@ -1,31 +1,33 @@
 {
   "filterName": "RTF Conversion Step",
-  "overview": "This step removes the RTF layer from input files, outputting only the visible text. It takes raw documents and sends back raw documents. Only visible text is output — hidden or deleted text, images, and other special content is discarded, as is any formatting beyond spaces, line-breaks, and tabs. It can be used to post-process Trados-Tagged RTF files, outputting only the translated sections.",
+  "overview": "Removes the RTF layer from text-based input files, outputting only the visible text content. Formatting other than spaces, line-breaks, and tabs is discarded, along with hidden/deleted text, images, and special content. Commonly used to post-process Trados-Tagged RTF files, extracting only the translated sections.",
   "parameters": {
     "bomOnUTF8": {
-      "description": "When enabled, adds a Byte-Order-Mark (BOM) at the beginning of the output file if the output encoding is UTF-8. The BOM is a special Unicode character used to signal the byte order of a text stream. Only applies when the output encoding is UTF-8. For more information on the BOM see the Unicode FAQ on UTF BOM.",
-      "notes": []
+      "help": "Adds a Byte-Order-Mark (BOM) at the beginning of the output file when the output encoding is UTF-8. Has no effect for non-UTF-8 encodings.\n\nSee the [Unicode BOM FAQ](http://www.unicode.org/faq/utf_bom.html) for details on when a BOM is appropriate.",
+      "notes": [
+        "Only applies when the output encoding is UTF-8 — ignored for other encodings."
+      ]
     },
     "updateEncoding": {
-      "description": "When enabled, automatically updates the encoding declaration in the output file to match the selected output encoding. This option works for XML and HTML files. In XML files, the encoding attribute of the XML declaration is updated, or added if not present. If the file has no XML declaration, nothing is updated. In HTML files, the step looks for the pattern 'content=... charset=...' and when found, sets the charset value to the output encoding. If the pattern is not found, nothing is updated.",
+      "help": "Automatically updates encoding declarations in the output file to match the actual output encoding. Supports two formats:\n\n- **XML files**: Updates the `encoding=\"...\"` attribute in the XML declaration. If the declaration exists but has no encoding attribute, one is added. If the file has no XML declaration at all, nothing is changed.\n- **HTML files**: Looks for a `content=... charset=...` pattern and updates the `charset` value. If the pattern is not found, nothing is changed.",
       "notes": [
-        "The automatic update of encoding declarations for XML and HTML works based on pattern matching, not by parsing the files, and therefore is not perfectly accurate. For example, a commented-out declaration could be updated."
+        "Warning: The encoding update uses pattern matching, not full XML/HTML parsing. A commented-out declaration could be incorrectly updated."
       ]
     },
     "lineBreak": {
-      "description": "Selects the type of line-break to use in the output files. Valid choices are: DOS/Windows (Carriage Return + Line-Feed, \\r\\n, 0x0D+0x0A), Unix/Linux (Line-Feed, \\n, 0x0A), or Macintosh (Carriage-Return, \\r, 0x0D). The default value '$0a$' corresponds to Unix/Linux line-feed.",
-      "notes": []
+      "help": "Controls the line-break style used in the output file.",
+      "values": "Predefined line-break options:\n- `$0d$$0a$` — DOS/Windows: Carriage Return + Line-Feed (`\\r\\n`, 0x0D+0x0A)\n- `$0a$` — Unix/Linux: Line-Feed (`\\n`, 0x0A)\n- `$0d$` — Macintosh: Carriage-Return (`\\r`, 0x0D)"
     }
   },
-  "limitations": [
-    "Characters encoded as SYMBOL fields are not currently output. These include drawing symbols inserted from Word's menu using fonts such as Dingbats or Wingdings.",
-    "The automatic update of encoding declarations for XML and HTML works based on pattern matching, not by parsing the files, and therefore is not perfectly accurate. For example, a commented-out declaration could be updated."
-  ],
   "processingNotes": [
-    "Only visible text of the RTF is output; hidden or deleted text, images, and other special content is discarded.",
-    "Any formatting done other than using spaces, line-breaks, and tabs is discarded.",
+    "Only the **visible text** of the RTF is output — hidden text, deleted text, images, and other special content are discarded.",
+    "All formatting except spaces, line-breaks, and tabs is stripped.",
     "A warning is issued for each line where one or more characters cannot be represented in the selected output encoding.",
-    "Can be used to post-process Trados-Tagged RTF files — only the translated sections are output. Alternatively, the Trados-Tagged RTF Filter can be used to access both source and target text with inline codes."
+    "Can be used to post-process **Trados-Tagged RTF** files — only translated sections are output. For access to both source and target text with inline codes, use the Trados-Tagged RTF Filter instead."
+  ],
+  "limitations": [
+    "Characters encoded as `SYMBOL` fields (e.g., drawing symbols inserted from Word using fonts like Dingbats or Wingdings) are not output.",
+    "Encoding declaration updates for XML and HTML use pattern matching rather than parsing, so commented-out declarations may be incorrectly updated."
   ],
   "examples": [],
   "stepId": "r-t-f-conversion",

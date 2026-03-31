@@ -1,104 +1,96 @@
 {
   "filterName": "Tokenization Step",
-  "overview": "The Tokenization step creates annotations containing different tokenized forms of text units. It takes filter events as input and sends filter events as output. It recognizes a wide range of token types including words, numbers, punctuation, dates, times, currencies, email addresses, internet addresses, emoticons, ideograms, and more. The step can tokenize source content, target content, or both, and supports locale-based filtering to control which languages are tokenized.",
+  "overview": "This step creates annotations containing different tokenized forms of text units in a document. It uses ICU-based rules to break text content into classified tokens (words, numbers, URLs, etc.) and attaches them as annotations to the filter events. Both source and target content can be tokenized independently, with locale-aware processing.",
   "parameters": {
     "tokenizeSource": {
-      "description": "When enabled, the step tokenizes the content of the source text. This controls whether source-language text units are processed for token extraction."
+      "help": "Tokenizes the content of the source text units. At least one of **Tokenize Source** or **Tokenize Targets** should be enabled for the step to produce output."
     },
     "tokenizeTargets": {
-      "description": "When enabled, the step tokenizes the content of the different selected targets. This controls whether target-language text units are processed for token extraction."
+      "help": "Tokenizes the content of all selected target locales. Useful when you need token-level analysis of translated content, e.g. for quality checks or metrics that compare source and target tokens."
     },
     "WORD": {
-      "description": "A run of characters constituting a word of the given language. This is a locale-sensitive token type that relies on the language rules for the specified locale to identify word boundaries."
+      "help": "Matches runs of characters that constitute a word in the given language. Word boundaries are determined by Unicode rules and are language-aware."
     },
     "HYPHENATED_WORD": {
-      "description": "A word including hyphens of various types. Matches compound words joined by hyphens."
+      "help": "Matches words that include hyphens of various types (e.g. `self-contained`, `well-known`). These would otherwise be split into separate `WORD` tokens at hyphen boundaries."
     },
     "NUMBER": {
-      "description": "Numbers, including any commas or points symbols. Matches numeric values with optional thousands separators and decimal points."
+      "help": "Matches numeric values including those with commas or decimal points (e.g. `1,234.56`, `3.14`)."
     },
     "PUNCTUATION": {
-      "description": "Punctuation characters as defined by the Unicode Consortium standards."
+      "help": "Matches punctuation characters as classified by the Unicode Consortium standards."
     },
     "WHITESPACE": {
-      "description": "Whitespace characters as defined by the Unicode Consortium standards. Includes spaces, tabs, and other Unicode whitespace."
+      "help": "Matches whitespace characters as classified by the Unicode Consortium standards, including spaces, tabs, and other Unicode whitespace."
     },
     "ABBREVIATION": {
-      "description": "Abbreviations like pct in 3.3pct, U.S., USD. Matches limited types of English abbreviations including percentage shorthand, dotted acronyms, and currency codes."
-    },
-    "INTERNET": {
-      "description": "An Internet address (URI or IP). Matches URLs such as http://www.somesite.org/foo/index.html and IP addresses like 192.168.0.5."
-    },
-    "EMAIL": {
-      "description": "E-mail addresses. Listed as 'E-MAIL' in the wiki token type table."
-    },
-    "EMOTICON": {
-      "description": "Emoticon sequences like \":-)\". Matches common text-based emoticon patterns."
-    },
-    "EMOJI": {
-      "description": "All emoji characters defined in Unicode.",
+      "help": "Matches limited types of abbreviations such as `pct` in `3.3pct`, `U.S.`, and `USD`.",
       "notes": [
-        "Not listed in the wiki token type table; may be a newer addition."
+        "The abbreviation detection is primarily designed for English abbreviations and may not cover abbreviation patterns in other languages."
       ]
     },
+    "INTERNET": {
+      "help": "Matches Internet addresses including URIs and IP addresses.",
+      "examples": [
+        "`http://www.somesite.org/foo/index.html`",
+        "`192.168.0.5`"
+      ]
+    },
+    "EMAIL": {
+      "help": "Matches e-mail address patterns (e.g. `user@example.com`)."
+    },
+    "EMOTICON": {
+      "help": "Matches text-based emoticon sequences.",
+      "examples": [
+        "`:-)`, `:(`, `;-)`"
+      ]
+    },
+    "EMOJI": {
+      "help": "Matches all emoji characters as defined in the Unicode standard."
+    },
     "DATE": {
-      "description": "Dates in the format MM/DD/YYYY."
+      "help": "Matches dates in `MM/DD/YYYY` format.",
+      "notes": [
+        "Only recognizes the US-style `MM/DD/YYYY` format. Other date formats (e.g. `DD/MM/YYYY`, `YYYY-MM-DD`) will not be matched as DATE tokens."
+      ]
     },
     "CURRENCY": {
-      "description": "Sums in various currencies. The wiki specifically mentions US dollars, but the schema indicates broader currency support.",
+      "help": "Matches sums in various currencies.",
       "notes": [
-        "The wiki describes this as 'Sums in US dollars', while the schema says 'Sums in various currencies'."
+        "The wiki documents this as primarily supporting US dollar amounts — coverage of other currency formats may be limited."
       ]
     },
     "TIME": {
-      "description": "Time separated by either \":\" or \".\" (24 hour, 12 hour with AM or PM). Matches time expressions in both common formats."
-    },
-    "MARKUP": {
-      "description": "A run that begins with \"<\" and ends with \">\" like in HTML and XML. Matches inline markup tags that may appear in text content."
-    },
-    "OTHER_SYMBOL": {
-      "description": "Various Unicode symbols (mathematical etc.). Matches symbol characters from the Unicode Symbol categories.",
-      "notes": [
-        "Not listed in the wiki token type table; may be a newer addition."
+      "help": "Matches time expressions using `:` or `.` as separators, in both 24-hour and 12-hour (with AM/PM) formats.",
+      "examples": [
+        "`14:30`, `2:30 PM`, `14.30`"
       ]
     },
+    "MARKUP": {
+      "help": "Matches runs that begin with `<` and end with `>`, such as HTML and XML tags. Useful for detecting inline markup that appears within text content."
+    },
+    "OTHER_SYMBOL": {
+      "help": "Matches various Unicode symbols including mathematical operators, arrows, and other symbol characters."
+    },
     "KANA": {
-      "description": "Hiragana, Katakana (Japanese). Matches runs of Japanese syllabary characters."
+      "help": "Matches Japanese Hiragana and Katakana characters. Useful for CJK text processing where you need to distinguish kana from kanji (ideograms)."
     },
     "IDEOGRAM": {
-      "description": "Ideograms as defined by the Unicode Consortium standards. Matches CJK ideographic characters (Chinese, Japanese Kanji, Korean Hanja)."
+      "help": "Matches ideographic characters (CJK unified ideographs) as defined by the Unicode Consortium standards. Covers Chinese characters (hanzi), Japanese kanji, and Korean hanja."
     }
   },
-  "limitations": [
-    "None known (per wiki)."
-  ],
   "processingNotes": [
-    "The step supports locale filtering with a rich syntax: locale tags (e.g. 'en', 'en-us', 'en-us-win'), wildcards ('en-*', '*-us'), regular expressions prefixed with @ (e.g. '@e[ns]-.+'), exclusion with ! prefix (e.g. 'en !en-nz'), and regex flags with ^ prefix (e.g. '^8').",
-    "Leave the locale filter empty to select all locales for tokenization.",
-    "Leave the token type selection empty to generate all available token types.",
-    "The wiki lists additional token types COMPANY and STOPWORD that are not present in the schema, suggesting they may be handled differently or removed from the configurable parameters.",
-    "The step requires both SOURCE_LOCALE and TARGET_LOCALE parameter mappings from the pipeline."
+    "The step takes filter events as input and sends filter events as output — it adds token annotations to existing events rather than transforming the event stream.",
+    "If no token types are selected, all available token types are generated.",
+    "Token detection is rule-based using Unicode character properties and pattern matching, not statistical NLP.",
+    "The wiki lists two additional token types (`COMPANY` and `STOPWORD`) that are not exposed in the current schema — `COMPANY` matches patterns like `AT&T`, `P&G`, `Johnson&Johnson`; `STOPWORD` matches frequent words with no significant meaning."
   ],
-  "examples": [
-    {
-      "title": "Locale filter: all English except New Zealand",
-      "description": "Shows how to use the locale filter syntax with exclusion to tokenize all English locales except en-nz.",
-      "input": "en !en-nz",
-      "output": "Tokenizes en-us, en-gb, en-au, etc. but skips en-nz."
-    },
-    {
-      "title": "Locale filter: regex for English and Spanish",
-      "description": "Uses a regular expression prefixed with @ to match all English (en-*) and Spanish (es-*) locales.",
-      "input": "@e[ns]-.+",
-      "output": "Matches locale tags starting with 'en-' or 'es-' followed by one or more characters."
-    },
-    {
-      "title": "Locale filter: regex with flags",
-      "description": "Shows how to append regex flags using the ^ prefix. The decimal value 8 corresponds to specific Java regex flags.",
-      "input": "@e[ns]-.+ ^8",
-      "output": "Same as above but with Java regex flags applied (8 = MULTILINE)."
-    }
+  "limitations": [
+    "DATE token only recognizes `MM/DD/YYYY` format — other date formats are not detected.",
+    "ABBREVIATION detection is limited to English abbreviation patterns.",
+    "CURRENCY detection may be primarily oriented toward US dollar amounts."
   ],
+  "examples": [],
   "stepId": "tokenization",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/tokenization_step"
 }

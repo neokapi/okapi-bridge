@@ -1,31 +1,56 @@
 {
-  "filterName": "Image Modification Step",
-  "overview": "This step allows you to modify the size or the format of an image. It takes a raw document as input and sends back a raw document. It can scale image dimensions by percentage and convert between image formats or to grayscale.",
+  "filterName": "Image Modification",
+  "overview": "This step modifies the size or format of image files. It takes a raw document containing an image and produces a modified raw document with the resized or reformatted image. Both source and target languages are required in the pipeline context.",
   "parameters": {
     "scaleWidth": {
-      "description": "Set the percentage of the width for the new image, compared to the original. Must be greater than 0. Use 100 for the same width as the original."
+      "help": "Sets the width of the output image as a percentage of the original width. Use `100` to keep the original width unchanged.",
+      "values": "Integer greater than 0. A value of `100` means no change; values below 100 shrink, above 100 enlarge.",
+      "examples": [
+        "`50` — half the original width",
+        "`100` — same as the original width",
+        "`200` — double the original width"
+      ]
     },
     "scaleHeight": {
-      "description": "Set the percentage of the height for the new image, compared to the original. Must be greater than 0. Use 100 for the same height as the original."
+      "help": "Sets the height of the output image as a percentage of the original height. Use `100` to keep the original height unchanged.",
+      "values": "Integer greater than 0. A value of `100` means no change; values below 100 shrink, above 100 enlarge.",
+      "examples": [
+        "`50` — half the original height",
+        "`100` — same as the original height",
+        "`200` — double the original height"
+      ]
     },
     "makeGray": {
-      "description": "Set this option to convert the image to an image where colors are converted into a set of grays."
+      "help": "Converts the image to grayscale, replacing all colors with corresponding gray values."
     },
     "format": {
-      "description": "Select the format for the output images. Use an empty string (same as the original) to create an output in the same format as the original. If the original format is not supported for output, a warning is generated and the output is done in PNG if possible.",
+      "help": "Selects the output image format. Leave empty (or use the default) to output in the same format as the original. If a specific format is chosen, the file extension is **not** changed automatically.",
       "notes": [
-        "If you select a specific format, the extension is not changed automatically."
+        "If the original format is not supported for output, a warning is generated and the output falls back to PNG if possible.",
+        "Selecting a specific format does **not** automatically change the file extension — you may need a separate renaming step."
       ]
     }
   },
   "limitations": [
-    "The image formats supported on input varies depending on your Java VM, version and platform."
+    "Supported image formats on input vary depending on the Java VM, version, and platform.",
+    "When converting to a specific output format, the file extension is not changed automatically."
   ],
   "processingNotes": [
-    "If the original image format is not supported for output, a warning is generated and the output falls back to PNG if possible.",
-    "Selecting a specific output format does not automatically change the file extension."
+    "Width and height scaling are independent — setting different percentages will change the aspect ratio.",
+    "If the original image format is unsupported for output, the step falls back to PNG."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "title": "Scale images to 50%",
+      "description": "Reduce both width and height to half the original size (the default configuration).",
+      "config": "```yaml\nscaleWidth: 50\nscaleHeight: 50\nformat: ''\nmakeGray: false\n```"
+    },
+    {
+      "title": "Convert to grayscale PNG",
+      "description": "Convert images to grayscale and force PNG output format.",
+      "config": "```yaml\nscaleWidth: 100\nscaleHeight: 100\nformat: png\nmakeGray: true\n```"
+    }
+  ],
   "stepId": "image-modification",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/image_modification_step"
 }

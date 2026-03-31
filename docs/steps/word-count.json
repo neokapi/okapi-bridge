@@ -1,35 +1,39 @@
 {
   "filterName": "Word Count Step",
-  "overview": "This step performs word counts on the different parts of a set of documents. It takes filter events and sends filter events. The word counts are saved as annotations that can be used in other steps, such as the Scoping Report Step which can generate a report from the word counts. The word count generated follows the GMX-V 2.0 standard.",
+  "overview": "Performs word counts on the different parts of a set of documents following the [GMX-V 2.0 standard](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html). Word counts are saved as annotations on resources (text units, batches, documents, etc.) that can be consumed by downstream steps such as the Scoping Report Step.",
   "parameters": {
     "countInBatch": {
-      "description": "Set this option to get an annotation of the word count per batch. A word count annotation is always set to each text unit regardless of this setting; this option adds an additional annotation at the batch level."
+      "help": "Adds a word count annotation aggregated across the entire batch. This annotation sums up counts from all batch items within the batch.\n\nA word count annotation is **always** set on each individual text unit regardless of this setting — this controls the additional batch-level aggregation."
     },
     "countInBatchItems": {
-      "description": "Set this option to get an annotation of the word count per batch item. A word count annotation is always set to each text unit regardless of this setting; this option adds an additional annotation at the batch item level."
+      "help": "Adds a word count annotation for each batch item. This aggregates the word counts of all documents within a single batch item.\n\nA word count annotation is **always** set on each individual text unit regardless of this setting — this controls the additional batch-item-level aggregation."
     },
     "countInDocuments": {
-      "description": "Set this option to get an annotation of the word count per document. A word count annotation is always set to each text unit regardless of this setting; this option adds an additional annotation at the document level."
+      "help": "Adds a word count annotation for each document. Useful when processing multiple documents and you need per-document totals.\n\nA word count annotation is **always** set on each individual text unit regardless of this setting — this controls the additional document-level aggregation."
     },
     "countInSubDocuments": {
-      "description": "Set this option to get an annotation of the word count per sub-document. A word count annotation is always set to each text unit regardless of this setting; this option adds an additional annotation at the sub-document level."
+      "help": "Adds a word count annotation for each sub-document. Sub-documents are logical sections within a document (e.g., embedded content or sub-flows).\n\nA word count annotation is **always** set on each individual text unit regardless of this setting — this controls the additional sub-document-level aggregation."
     },
     "countInGroups": {
-      "description": "Set this option to get an annotation of the word count per group. A word count annotation is always set to each text unit regardless of this setting; this option adds an additional annotation at the group level."
+      "help": "Adds a word count annotation for each group. Groups are structural containers that hold related text units together.\n\nA word count annotation is **always** set on each individual text unit regardless of this setting — this controls the additional group-level aggregation."
     },
     "bufferSize": {
-      "description": "Size of the text buffer used during word counting. A value of 0 indicates no buffering limit."
+      "help": "Size of the internal text buffer used during word counting. A value of `0` means no explicit buffer size limit (uses the default).",
+      "values": "`0` for default/unlimited, or a positive integer specifying the buffer size."
     }
   },
-  "limitations": [
-    "None known."
-  ],
   "processingNotes": [
-    "Word count annotations are always set on each text unit, regardless of the batch/document/group-level options.",
-    "The word count follows the GMX-V 2.0 standard (http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html).",
-    "Word count annotations can be consumed by downstream steps such as the Scoping Report Step."
+    "Word count annotations are **always** set on each individual text unit — the boolean options control whether *additional* aggregated annotations are set on higher-level resources (batches, documents, groups, etc.).",
+    "Word counts follow the [GMX-V 2.0 standard](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html) (Global information management Metrics eXchange — Volume).",
+    "The generated annotations can be consumed by downstream steps such as the **Scoping Report Step** to produce word count reports."
   ],
-  "examples": [],
+  "limitations": [],
+  "examples": [
+    {
+      "title": "Generate a scoping report with word counts",
+      "description": "A common pattern is to pair the Word Count step with the Scoping Report Step. The Word Count step annotates resources with GMX-V metrics, and then the Scoping Report Step reads those annotations to produce a summary report."
+    }
+  ],
   "stepId": "word-count",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/word_count_step"
 }

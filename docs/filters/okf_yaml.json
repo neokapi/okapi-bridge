@@ -1,96 +1,81 @@
 {
   "filterName": "YAML Filter",
-  "overview": "The YAML Filter is an Okapi component that implements the IFilter interface for YAML files and supports Ruby on Rails message variables. It extracts translatable string values from YAML key-value pairs, arrays, and maps, assigning each extracted entry a name based on the full path of its parent identifiers (e.g., fr/activerecord/errors/messages/exclusion). The filter is implemented in the class net.sf.okapi.filters.yaml.YamlFilter.",
+  "overview": "The YAML Filter extracts translatable content from [YAML files](http://www.yaml.org/) and supports [Ruby on Rails](http://rubyonrails.org/) message variables. It extracts string values from key-value pairs, maps, and arrays, assigning each entry a hierarchical name built from the sequence of all parent identifiers (e.g., `fr/activerecord/errors/messages/exclusion`). The filter handles Unicode BOM detection for encoding and preserves original line-break types in output.",
+  "limitations": [
+    "Wrapped lines in the original source document will be **unwrapped** in the target document — all text will appear on a single line.",
+    "If an illegal character is introduced during translation, the user must manually add double or single quotes to keep the target YAML valid. The filter issues a **WARNING** when it can detect this scenario."
+  ],
+  "processingNotes": [
+    "**Encoding detection**: If the file has a Unicode BOM (UTF-8, UTF-16, etc.), that encoding is used. Otherwise, the default encoding specified when opening the document applies.",
+    "**Line-breaks**: Output line-break type matches the original input document.",
+    "**Identifiers**: Each extracted entry's name is the `/`-separated path of all parent keys, e.g. `fr/activerecord/errors/messages/exclusion`."
+  ],
   "parameters": {
     "extraction.extractAll": {
-      "description": "When enabled, extracts all strings that have a key associated. When disabled, no strings with associated keys are extracted. If a regular expression for exceptions (excludeKeys) is defined, the behavior is inverted for keys matching that expression: when extractAll is true, matching keys are excluded; when extractAll is false, matching keys are included.",
-      "notes": [
-        "Works in conjunction with excludeKeys — the exceptions regex inverts the default extraction behavior for matching keys."
-      ]
+      "help": "Controls the default extraction behavior for key-value pairs.\n\n- **Enabled**: All key/string pairs are extracted, *except* those whose key matches the `excludeKeys` regex.\n- **Disabled**: No key/string pairs are extracted, *except* those whose key matches the `excludeKeys` regex (inverted behavior).\n\nThe `excludeKeys` pattern always acts as the **inverse** of whichever mode is selected here."
     },
     "extraction.includeIsolatedStrings": {
-      "description": "Set this option to extract strings that are not associated directly to a key value. These are stand-alone string values such as items in YAML arrays or sequences that exist without a key-value mapping."
+      "help": "Extracts string values that are not directly associated with a key, such as bare strings in arrays:\n\n```yaml\nlist: [one, two, three]\n```\n\nWithout this option, only key-value pairs like `key: value` are extracted."
     },
     "extraction.excludeKeys": {
-      "description": "A regular expression that corresponds to the keys that should have a behavior inverse to the default behavior selected for key/string pairs. When extractAll is true, keys matching this expression are NOT extracted. When extractAll is false, keys matching this expression ARE extracted. If useFullPath is enabled, the regular expression applies to the full key path rather than just the immediate key name.",
+      "help": "A regular expression matched against keys. Its behavior **depends on the Extract All setting**:\n\n- When **Extract All** is enabled: keys matching this pattern are **excluded** from extraction.\n- When **Extract All** is disabled: keys matching this pattern are **included** for extraction.\n\nWhen **Use Full Path** is also enabled, the regex is matched against the full key path (e.g., `menu/value/popup/menuitem/value`) rather than just the immediate key.",
+      "values": "Java regular expression pattern matched against YAML keys (or full key paths when `keys.useFullPath` is enabled).",
+      "examples": [
+        "`^(id|type|format)$` — exclude specific key names",
+        "`^config/.*` — exclude all keys under the `config` parent"
+      ],
       "dependsOn": [
         {
           "property": "extraction.extractAll",
-          "condition": "determines whether matching keys are excluded (when true) or included (when false)"
+          "condition": "Inverts behavior: when extractAll is true, matching keys are excluded; when false, matching keys are included"
         },
         {
           "property": "keys.useFullPath",
-          "condition": "when true, exception regular expressions apply to the full key path"
+          "condition": "When enabled, regex is matched against the full `/`-separated key path instead of just the immediate key"
         }
       ]
     },
     "keys.useAsName": {
-      "description": "Use the value of the YAML key as the name (resname) of the extracted item. In XLIFF output, this corresponds to the resname attribute. For example, in a YAML structure like 'messages: exclusion: \"text\"', the resname would be set to 'exclusion' (or the full path if useFullPath is enabled)."
+      "help": "Uses the YAML key as the `resname` (resource name) of the extracted text unit. This provides a stable, human-readable identifier for each translatable entry — equivalent to `resname` in XLIFF."
     },
     "keys.useFullPath": {
-      "description": "Use the full nested key path as the name (resname) instead of just the immediate key. For example: 'menu/value/popup/menuitem/value'. The useAsName option must be enabled for this option to take effect. When enabled, exception regular expressions (excludeKeys) also apply to the full path rather than just the immediate key.",
+      "help": "Uses the complete `/`-separated path of nested keys as the name instead of just the immediate key.\n\nFor example, given nested YAML:\n```yaml\nmenu:\n  value:\n    popup:\n      label: \"Click me\"\n```\nThe name becomes `menu/value/popup/label` instead of just `label`.\n\nWhen enabled, the `excludeKeys` regex also matches against the full path.",
       "dependsOn": [
         {
           "property": "keys.useAsName",
-          "condition": "must be true for useFullPath to take effect"
+          "condition": "Must be enabled for this option to take effect"
         }
       ]
     },
     "output.escapeNonAscii": {
-      "description": "When enabled, non-ASCII characters in the output are escaped using YAML escape sequences."
+      "help": "Escapes characters outside the ASCII range in the output using YAML unicode escape sequences. Useful when the target system or workflow requires ASCII-safe files."
     },
     "output.wrap": {
-      "description": "Controls line wrapping in the output. Note that wrapped lines in the original source document will be unwrapped in the target document regardless of this setting — all text will be placed on a single line during processing."
-    },
-    "output.subFilterProcessLiteralAsBlock": {
-      "description": "When enabled, YAML literal block scalars (using the | indicator) are processed with the configured sub-filter. A sub-filter (e.g., okf_html) can be specified to process the content of all translatable text with that filter."
-    },
-    "inlineCodes.enabled": {
-      "description": "Set this option to use the specified regular expressions on the text of extracted items. Any match will be converted to an inline code. The default expressions match printf-style format specifiers (e.g., %d, %s), common escape sequences (\\n, \\r, \\t, etc.), and curly-brace placeholders (e.g., {0}, {1}).",
+      "help": "Controls whether long lines are wrapped in the output. Note that regardless of this setting, wrapped lines from the **original** source are always unwrapped during processing — this is a known limitation of the filter.",
       "notes": [
-        "This option cannot be used together with the sub-filtering option."
+        "Wrapped lines in the original source will always be unwrapped in the output, regardless of this setting."
       ]
     },
-    "inlineCodes.rules": {
-      "description": "Regular expression patterns used to detect inline codes in extracted text. Each pattern match is converted to an inline code placeholder. The default patterns are: (1) printf-style format specifiers like %d, %s, %0.2f; (2) escape sequences like \\n, \\r, \\t, \\a, \\b, \\f, \\v; (3) curly-brace placeholders like {0}, {1}. The default expression is: ((%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([-\\d*]*)(\\.[-\\d*]*)?)[dioxXucsfeEgGpn])|((\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)|(\\{\\d.*?\\}))"
+    "output.subFilterProcessLiteralAsBlock": {
+      "help": "When a sub-filter is configured (e.g., `okf_html`), this option causes YAML literal block scalars (`|`) to also be processed through the sub-filter. Without this, only regular string values are sub-filtered."
     },
-    "inlineCodes.mergeAdjacent": {
-      "description": "When enabled, consecutive inline codes that appear next to each other are merged into a single placeholder, reducing clutter in the translatable segment."
-    },
-    "inlineCodes.moveBoundaryCodes": {
-      "description": "When enabled, inline codes that appear at the beginning or end of a segment are moved to the skeleton (non-translatable portion), keeping the translatable text cleaner."
-    },
-    "inlineCodes.simplifierRules": {
-      "description": "Rules for simplifying the representation of inline codes in extracted segments."
+    "inlineCodes": {
+      "help": "Defines regex patterns to detect inline codes within extracted text. Any match is converted to an inline code placeholder in the extracted content.\n\n**Cannot be used together with sub-filtering** — if a sub-filter is specified, inline code patterns are ignored.\n\nThe default pattern matches:\n- `printf`-style format specifiers (e.g., `%d`, `%s`, `%2$f`)\n- Escape sequences (`\\n`, `\\r`, `\\t`, etc.)\n- Numbered placeholders (`{0}`, `{1}`, etc.)",
+      "notes": [
+        "**Warning:** This option cannot be used together with the sub-filtering option."
+      ]
     }
   },
-  "limitations": [
-    "Wrapped lines in the original source document will be unwrapped in the target document — all text will be on a single line.",
-    "If an illegal character is introduced during translation, the user will need to manually add double or single quotes so that the target YAML file is valid. A WARNING will be issued by the filter if this scenario can be detected."
-  ],
-  "processingNotes": [
-    "If the file has a Unicode Byte-Order-Mark, the corresponding encoding (e.g., UTF-8, UTF-16) is used. Otherwise, the default encoding specified when opening the document is used.",
-    "The type of line-breaks in the output is the same as the one in the original input.",
-    "Each extracted entry is assigned a name based on the sequence of all its parent identifiers. For example, a value under fr/activerecord/errors/messages/exclusion gets that full path as its name."
-  ],
   "examples": [
     {
-      "title": "Ruby on Rails YAML extraction",
-      "description": "Shows which parts of a typical Ruby on Rails i18n YAML file are extracted for translation. All string values in key-value pairs, arrays, and maps are extractable.",
-      "input": "fr:\n  activerecord:\n    errors:\n      template:\n        header:\n          list: [one, two, three]\n          map: {key: value, key2: value2}\n          one: \"Impossible d'enregistrer {{model}}: 1 erreur\"\n          other: \"Impossible d'enregistrer {{model}}: {{count}} erreurs.\"\n        body: \"Veuillez vérifier les champs suivants :\"\n      messages:\n        inclusion: \"n'est pas inclus(e) dans la liste\"\n        exclusion: \"n'est pas disponible\"\n        invalid: \"n'est pas valide\"\n        confirmation: \"ne concorde pas avec la confirmation\"",
-      "output": "Extracted text units: 'one', 'two', 'three' (list items), 'value', 'value2' (map values), and all quoted string values in key-value pairs."
+      "title": "Ruby on Rails i18n file",
+      "description": "A typical Rails locale file showing extractable content. The filter extracts all highlighted string values and assigns hierarchical names based on the key path.",
+      "input": "```yaml\nfr:\n  activerecord:\n    errors:\n      template:\n        header:\n          list: [one, two, three]\n          map: {key: value, key2: value2}\n          one: \"Impossible d'enregistrer {{model}}: 1 erreur\"\n          other: \"Impossible d'enregistrer {{model}}: {{count}} erreurs.\"\n        body: \"Veuillez vérifier les champs suivants :\"\n      messages:\n        inclusion: \"n'est pas inclus(e) dans la liste\"\n        exclusion: \"n'est pas disponible\"\n```"
     },
     {
-      "title": "Text unit naming with full key path",
-      "description": "Demonstrates how extracted text units are named using the full path of parent identifiers. The text 'n'est pas disponible' gets the name 'fr/activerecord/errors/messages/exclusion'.",
-      "input": "fr:\n  activerecord:\n    errors:\n      messages:\n        exclusion: \"n'est pas disponible\"",
-      "output": "Text unit name: fr/activerecord/errors/messages/exclusion\nText unit content: n'est pas disponible"
-    },
-    {
-      "title": "Default inline code patterns",
-      "description": "The default code finder expressions detect printf-style format specifiers, escape sequences, and curly-brace placeholders as inline codes.",
-      "input": "((%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([-\\d*]*)(\\.[-\\d*]*)?)[dioxXucsfeEgGpn])|((\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)|(\\{\\d.*?\\}))",
-      "output": "Matches: %d, %s, %0.2f (format specifiers); \\n, \\r, \\t (escape sequences); {0}, {1} (placeholders)"
+      "title": "Selective extraction with key exclusion",
+      "description": "Extract all pairs except metadata keys by using `extractAll: true` with an `excludeKeys` regex pattern.",
+      "config": "```yaml\nextraction:\n  extractAll: true\n  excludeKeys: \"^(id|type|version|format)$\"\n```"
     }
   ],
   "filterId": "okf_yaml",

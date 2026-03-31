@@ -1,20 +1,23 @@
 {
   "filterName": "Inline Codes Simplifier",
-  "overview": "This step joins adjacent inline codes in text units, and optionally moves leading and trailing codes from the text unit to the skeleton. It takes filter events as input and sends filter events as output. Only the source codes are affected by this step, so it should be used before any target is created in the text unit.",
+  "overview": "Joins adjacent inline codes in text units and optionally moves leading and trailing codes from the text unit to the skeleton. Only the **source** codes are affected — this step should be used **before** any target is created in the text unit. Works only with `GenericSkeleton`-based filters.",
   "parameters": {
     "removeLeadingTrailingCodes": {
-      "description": "When enabled, removes leading and trailing inline codes from the text units and places them into the skeleton. This effectively strips codes that appear at the boundaries of text content and relocates them to the non-translatable skeleton portion. Only works with GenericSkeleton-based content."
+      "help": "Strips inline codes that appear at the very beginning or end of the source content in each text unit and relocates them into the surrounding skeleton. This simplifies the translatable text by removing markup that wraps the entire segment (e.g., outer `<b>...</b>` tags) so translators see cleaner content.\n\nOnly works with filters that produce `GenericSkeleton` — skeleton-based relocation is not possible with other skeleton types.",
+      "notes": [
+        "Only affects **source** codes. Must be applied **before** any target content is created in the text unit."
+      ]
     },
     "mergeCodes": {
-      "description": "When enabled, merges adjacent inline codes in the text units into a single code. This simplifies the inline code structure by combining codes that appear next to each other with no text content between them."
+      "help": "Combines adjacent inline codes into a single code. For example, if a filter produces separate codes for `</b>` and `<i>` right next to each other, they are merged into one inline code `</b><i>`. This reduces the number of codes translators must handle and reorder."
     }
   },
-  "limitations": [],
   "processingNotes": [
-    "Only the source codes are affected by this step — it should be used before any target is created in the text unit.",
-    "Moving leading and trailing codes to the skeleton only works for GenericSkeleton-based content."
+    "Only **source** codes are affected by this step — it should be placed in the pipeline **before** any step that creates target content in text units.",
+    "Leading/trailing code removal works only with `GenericSkeleton`-based filter events."
   ],
+  "limitations": [],
   "examples": [],
   "stepId": "code-simplifier",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/inline_codes_simplifier_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Inline_Codes_Simplifier_Step"
 }

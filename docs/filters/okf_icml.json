@@ -1,32 +1,32 @@
 {
   "filterName": "ICML Filter",
-  "overview": "The ICML Filter processes WCML/ICML (InCopy Markup Language) documents, which are XML-based formats used by Adobe InDesign/InCopy. It is very similar to the IDML Filter. The filter supports extraction of notes, master spreads, and provides options for inline code simplification and handling of large spread files.",
+  "overview": "Processes WCML/ICML (InCopy Markup Language) documents, which are XML-based files used by Adobe InDesign/InCopy. This filter is very similar to the [IDML Filter](IDML_Filter) and handles `.wcml` and `.icml` file extensions.",
   "parameters": {
     "extraction.extractNotes": {
-      "description": "When enabled, extracts the content of notes (<Note> elements) from the ICML document as translator notes."
+      "help": "Extracts the content of `<Note>` elements in the ICML document as translator notes, making them visible to translators as contextual information."
     },
     "extraction.extractMasterSpreads": {
-      "description": "When enabled, extracts the content of master spreads if they exist in the document. If this option is not set, only the normal spreads are extracted."
+      "help": "Extracts translatable content from master spreads if they exist in the document. When disabled, only normal spreads are extracted.\n\nMaster spreads typically contain repeating elements like headers, footers, and page numbers that appear across multiple pages."
     },
     "extraction.simplifyCodes": {
-      "description": "When enabled, reduces the number of inline codes by re-grouping adjacent codes when it is possible. This simplifies the translatable segments by merging consecutive inline formatting codes."
+      "help": "Reduces the number of inline codes by re-grouping adjacent codes when possible. This produces cleaner segments for translators by merging consecutive formatting tags into single inline codes."
     },
     "extraction.skipThreshold": {
-      "description": "Sets the maximum size for the spread files (in KBytes). Any spread file above the given value will either generate an error or will be skipped from extraction depending on the specified option. This allows you to skip over large spread files that may contain only graphics and require too much memory to be opened. Valid range is 1 to 32000.",
+      "help": "Maximum size for spread files in **KBytes**. Any spread file above this value will either generate an error or be skipped from extraction.\n\nThis is useful for skipping large spread files that may contain only graphics and would require too much memory to process.",
+      "values": "Size in KBytes (1–32000). Default is 1000 KB.",
       "notes": [
-        "Note: skipped files are not checked for translatable text."
+        "Skipped files are **not** checked for translatable text — content in oversized spreads will be silently excluded from extraction."
       ]
     },
     "extraction.newTuOnBr": {
-      "description": "Controls whether a Br (break) tag creates a new text unit (segment). When enabled, <Br/> elements in the ICML content will cause the filter to start a new paragraph/text unit at that point. Default is false."
+      "help": "Controls whether `<Br/>` (hard return) elements cause a paragraph break, starting a new text unit. By default, hard returns are kept as inline codes within the same text unit.\n\nEnable this when translators need to handle text segments separated by hard returns independently."
     }
   },
-  "limitations": [
-    "The wiki states limitations are TODO — no specific limitations are documented."
-  ],
   "processingNotes": [
-    "Processing details are not yet documented in the wiki (marked as TODO)."
+    "The ICML filter is very similar to the [IDML Filter](IDML_Filter) and shares much of the same processing logic.",
+    "ICML (InCopy Markup Language) is an XML-based format used by Adobe InDesign and InCopy."
   ],
+  "limitations": [],
   "examples": [],
   "filterId": "okf_icml",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/ICML_Filter"

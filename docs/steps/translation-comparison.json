@@ -1,132 +1,155 @@
 {
   "filterName": "Translation Comparison Step",
-  "overview": "The Translation Comparison step compares translations between two or three documents. The first document contains the base translations, while the second (and optionally third) contain translations to compare against the baseline. For each text unit, the step calculates ED-Score (Edit Distance based on Levenshtein distance) and FM-Score (Fuzzy Match based on Sørensen-Dice's Coefficient with 3-grams), both ranging from 0 (extreme difference) to 100 (no difference). The step outputs HTML reports, optional TMX documents, and tab-delimited score files, and computes summary statistics including an Edit Effort Score.",
+  "overview": "Compares translations between two or three documents, calculating similarity scores (ED-Score and FM-Score) for each text unit. The first document contains the baseline translation; the second (and optionally third) contain translations to compare against it. Outputs HTML reports with per-segment scores and summary statistics, and optionally a TMX document. Also calculates an **Edit Effort Score** useful for measuring MT post-editing effort.",
   "parameters": {
     "generateHTML": {
-      "description": "When enabled, creates one HTML file for each input document listing comparison results (source text, translation text, and scores). The HTML file name is the first document's name plus an .html extension. When this option is selected, the step also generates a tab-delimited file with the scores of each entry, named as the first document plus a .txt extension.",
+      "help": "Creates one HTML file per input document listing source text, translation text, and comparison scores.\n\nAlso generates a **tab-delimited `.txt` file** with per-entry scores. The output file name is the first document's name plus `.html` (or `.txt`).",
       "notes": [
-        "Enabling this option also generates a tab-delimited .txt file alongside the HTML output."
+        "Generates both an HTML report AND a tab-delimited text file with scores when enabled."
       ]
     },
     "autoOpen": {
-      "description": "When enabled, automatically opens the first HTML result file when the comparison process is completed.",
+      "help": "Automatically opens the first HTML result file in the default browser when processing completes. Only applies when HTML output is enabled.",
       "dependsOn": [
         {
           "property": "generateHTML",
-          "condition": "must be true for HTML files to exist to open"
+          "condition": "only meaningful when generateHTML is true"
         }
       ]
     },
     "genericCodes": {
-      "description": "When enabled, the HTML report uses a generic representation for inline codes (e.g. <1>...</1>). If not set, the output uses the original code whenever possible. Note that some formats may have long and complicated original codes.",
+      "help": "Controls how inline codes appear in the HTML report.\n\n- **Enabled**: codes shown as `<1>...</1>` generic placeholders\n- **Disabled**: original codes are used where possible\n\nOriginal codes from some formats can be very long and complicated, making the report harder to read.",
       "dependsOn": [
         {
           "property": "generateHTML",
-          "condition": "must be true for HTML report to be generated"
+          "condition": "only meaningful when generateHTML is true"
         }
       ]
     },
     "generateTMX": {
-      "description": "When enabled, creates a single TMX document containing all compared translations and their scores for all input documents. The path supports variables ${rootDir} and ${inputRootDir}, as well as source or target locale variables (${srcLoc}, ${trgLoc}, etc.)."
+      "help": "Creates a single TMX document containing all compared translations and their scores across all input documents."
     },
     "tmxPath": {
-      "description": "Full path of the TMX document to generate. Supports the variables ${rootDir}, ${inputRootDir}, and locale variables such as ${srcLoc} and ${trgLoc}.",
+      "help": "Full path of the TMX file to generate. Supports pipeline variables for dynamic paths.",
+      "values": "Supports variables: `${rootDir}`, `${inputRootDir}`, and locale variables (`${srcLoc}`, `${trgLoc}`, etc.)",
+      "examples": [
+        "`${rootDir}/comparison.tmx`",
+        "`${inputRootDir}/reports/${srcLoc}_${trgLoc}_comparison.tmx`"
+      ],
       "dependsOn": [
         {
           "property": "generateTMX",
-          "condition": "must be true for TMX output to be generated"
+          "condition": "only meaningful when generateTMX is true"
         }
       ]
     },
     "target2Suffix": {
-      "description": "Suffix appended to the target language code for the second set of target entries in the TMX output. For example, enter '-mt' to indicate that the second target language is machine-translation generated text. If no suffix is entered, the language code for both target entries will be the same and the TMX document will include only the last one.",
+      "help": "Suffix appended to the target language code for document 2 entries in the TMX output. This differentiates translations from different documents.\n\nIf left empty, document 1 and 2 will share the same language code and the TMX will only contain the last entry.",
+      "examples": [
+        "`-mt` — to indicate machine-translated text",
+        "`-t2` — generic second translation marker"
+      ],
+      "notes": [
+        "If no suffix is provided, both target entries share the same language code and the TMX will include **only the last one**."
+      ],
       "dependsOn": [
         {
           "property": "generateTMX",
-          "condition": "must be true for TMX output to be generated"
+          "condition": "only meaningful when generateTMX is true"
         }
       ]
     },
     "target3Suffix": {
-      "description": "Suffix appended to the target language code for the third set of target entries in the TMX output. Functions the same as the document 2 suffix but applies to the optional third document.",
+      "help": "Suffix appended to the target language code for document 3 entries in the TMX output. Same behavior as the document 2 suffix.",
       "dependsOn": [
         {
           "property": "generateTMX",
-          "condition": "must be true for TMX output to be generated"
+          "condition": "only meaningful when generateTMX is true"
+        }
+      ]
+    },
+    "caseSensitive": {
+      "help": "When enabled, `\"Hello\"` and `\"hello\"` are treated as different, affecting both ED-Score and FM-Score calculations. Disable to ignore case variations in the comparison."
+    },
+    "whitespaceSensitive": {
+      "help": "When enabled, differences in whitespace (extra spaces, tabs, line breaks) affect the similarity scores. Disable to normalize whitespace before comparison."
+    },
+    "punctuationSensitive": {
+      "help": "When enabled, punctuation differences (e.g., period vs. comma, missing punctuation) affect the similarity scores. Disable to ignore punctuation variations."
+    },
+    "document1Label": {
+      "help": "Label used in HTML and TMX reports to identify the baseline translation. Useful for distinguishing sources when reviewing reports.",
+      "examples": [
+        "`Human` — for human translations",
+        "`MT-Google` — for machine translation output"
+      ]
+    },
+    "document2Label": {
+      "help": "Label used in reports to identify the second translation being compared against the baseline.",
+      "examples": [
+        "`PostEdit` — for post-edited machine translation",
+        "`MT-DeepL` — for a second MT engine"
+      ]
+    },
+    "document3Label": {
+      "help": "Label used in reports to identify the optional third translation."
+    },
+    "useDataLog": {
+      "help": "Appends average scores for each document to a persistent log file, allowing you to track comparison results over time across multiple runs."
+    },
+    "dataLogPath": {
+      "help": "Full path to the log file where average scores are appended.\n\nThe log is a **tab-delimited UTF-8 file** with fields: timestamp (UTC), base document path, second document path, edit-distance score, fuzzy score.",
+      "examples": [
+        "Log line: `2013-04-01 16:09:14+0000   /C:/myProject1/machine.tmx   /C:/myProject1/human.tmx   93.75   96.50`"
+      ],
+      "dependsOn": [
+        {
+          "property": "useDataLog",
+          "condition": "only meaningful when useDataLog is true"
         }
       ]
     },
     "useAltTrans": {
-      "description": "When enabled and document 1 is an XLIFF file, uses the target of a given <alt-trans> element as the base target instead of the main target. This allows comparing, for example, a human translation done by a linguist with an MT candidate provided in the same XLIFF file — you specify the same file for both document 1 and 2."
+      "help": "Uses the target from a specific XLIFF `<alt-trans>` element as the baseline translation for document 1 instead of the main `<target>`.\n\nThis enables comparing a linguist's human translation against an MT candidate within the **same XLIFF file** — specify the same file as both document 1 and document 2.",
+      "notes": [
+        "Only works when document 1 is an XLIFF file.",
+        "If no matching `<alt-trans>` is found for a given trans-unit, that trans-unit is **excluded** from the report."
+      ]
     },
     "altTransOrigin": {
-      "description": "The value of the 'origin' attribute of the <alt-trans> element to use as the base target. If no matching <alt-trans> element is found for a given trans-unit, that trans-unit will not be included in the report.",
+      "help": "The value of the `origin` attribute on the `<alt-trans>` element to use as the baseline translation.",
+      "examples": [
+        "`BING` — Bing Translator MT candidate",
+        "`Google` — Google Translate MT candidate"
+      ],
       "dependsOn": [
         {
           "property": "useAltTrans",
-          "condition": "must be true for alt-trans lookup to occur"
-        }
-      ],
-      "notes": [
-        "The wiki refers to this as the 'original' attribute but the schema names it 'altTransOrigin' with default 'BING', corresponding to the XLIFF alt-trans origin attribute."
-      ]
-    },
-    "document1Label": {
-      "description": "Optional label used in the report to identify the base translation (document 1)."
-    },
-    "document2Label": {
-      "description": "Optional label used in the report to identify the second translation (document 2)."
-    },
-    "document3Label": {
-      "description": "Optional label used in the report to identify the optional third translation (document 3)."
-    },
-    "caseSensitive": {
-      "description": "When enabled, case differences are taken into account when calculating the ED-Score and FM-Score. Disabling this option makes the comparison case-insensitive."
-    },
-    "whitespaceSensitive": {
-      "description": "When enabled, whitespace differences are taken into account when calculating the ED-Score and FM-Score. Disabling this option ignores whitespace variations between compared texts."
-    },
-    "punctuationSensitive": {
-      "description": "When enabled, punctuation differences are taken into account when calculating the ED-Score and FM-Score. Disabling this option ignores punctuation variations between compared texts."
-    },
-    "useDataLog": {
-      "description": "When enabled, appends the average scores for each document at the end of a log file. The log file is a tab-delimited file in UTF-8 with fields: time stamp in UTC, path of the base document, path of the second document, edit-distance score, fuzzy score."
-    },
-    "dataLogPath": {
-      "description": "Full path of the log file where average scores are appended. The log file is tab-delimited UTF-8 with fields: timestamp (UTC), base document path, second document path, edit-distance score, and fuzzy score.",
-      "dependsOn": [
-        {
-          "property": "useDataLog",
-          "condition": "must be true for logging to occur"
+          "condition": "only meaningful when useAltTrans is true"
         }
       ]
     }
   },
-  "limitations": [
-    "None known."
-  ],
   "processingNotes": [
-    "Input documents must have the same number of text units and the text units must be in the same order (but different events between text units are allowed).",
-    "Two scoring metrics are calculated: ED-Score (Edit Distance based on Levenshtein distance) and FM-Score (Fuzzy Match based on Sørensen-Dice's Coefficient with 3-grams), both ranging from 0 to 100.",
-    "Neither score is very accurate on short segments.",
-    "The HTML report includes average scores. If text units have word count annotations (e.g., from the Simple Word Count Step or Word Count Step placed before this step), the report will include word counts for each source segment.",
-    "The Edit Effort Score is calculated as: 100 - (Average ED-Score by word + Average FM-Score by word) / 2. A score of 0 means no change; 100 means the translation was entirely rewritten.",
-    "The summary section includes: Total Number of Segments, Total Number of Words, Average word count per segment, Average ED/FM-Score (by segment and by word), and Edit Effort Score."
+    "Input documents **must have the same number of text units** in the **same order** (different events between text units are allowed).",
+    "Two scoring metrics are used: **ED-Score** (Edit Distance based on Levenshtein distance) and **FM-Score** (Fuzzy Match based on Sørensen-Dice coefficient with 3-grams). Both range from 0 (completely different) to 100 (identical).",
+    "The **Edit Effort Score** (0–100) quantifies post-editing effort: 0 means no changes, 100 means fully rewritten. Calculated as `100 - (avg_ED_by_word + avg_FM_by_word) / 2`.",
+    "Neither score is very accurate on **short segments**. Adding a word count step (e.g., Simple Word Count Step) before this step enables word count annotations in the report.",
+    "By-word averages weight longer segments more heavily than by-segment averages, better reflecting actual editing effort."
   ],
   "examples": [
     {
-      "title": "Data log output format",
-      "description": "Example of the tab-delimited log file entry produced when 'Append the average results to a log' is enabled, showing timestamp, document paths, and scores.",
-      "input": "useDataLog: true, dataLogPath: /C:/myProject1/scores.log",
-      "output": "2013-04-01 16:09:14+0000\t/C:/myProject1/machine.tmx\t/C:/myProject1/human.tmx\t93.75\t96.50"
+      "title": "MT Post-Editing Effort Measurement",
+      "description": "Compare machine translation output against post-edited human translation to measure editing effort. Use the same XLIFF file as both document 1 and 2, with `useAltTrans` enabled to extract the MT candidate from `<alt-trans>`.",
+      "config": "```yaml\nuseAltTrans: true\naltTransOrigin: BING\ncaseSensitive: true\nwhitespaceSensitive: true\npunctuationSensitive: true\ngenerateHTML: true\nautoOpen: true\ndocument1Label: MT-Bing\ndocument2Label: PostEdit\n```"
     },
     {
-      "title": "Comparing MT output with human translation using alt-trans",
-      "description": "Use the same XLIFF file for both document 1 and 2, with useAltTrans enabled, to compare a human translation with an MT candidate provided as an alt-trans element in the XLIFF file.",
-      "input": "useAltTrans: true, altTransOrigin: \"BING\", document1: same-file.xlf, document2: same-file.xlf",
-      "output": "HTML report showing per-segment ED-Score and FM-Score comparing the main target (human translation) against the alt-trans target (MT candidate)."
+      "title": "Data Log Output Format",
+      "description": "When `useDataLog` is enabled, average scores are appended as tab-delimited lines to the log file, one per document comparison.",
+      "output": "```\n2013-04-01 16:09:14+0000\t/C:/myProject1/machine.tmx\t/C:/myProject1/human.tmx\t93.75\t96.50\n```"
     }
   ],
+  "limitations": [],
   "stepId": "translation-comparison",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/translation_comparison_step"
 }

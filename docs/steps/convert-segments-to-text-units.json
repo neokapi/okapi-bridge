@@ -1,20 +1,19 @@
 {
   "filterName": "Segments to Text Units Converter",
-  "overview": "Converts segmented text units (paragraphs) into multiple text units, one per aligned sentence pair, for each target locale. This step is useful for preparing input for steps such as the Diff Leverage Step which require un-segmented text units. It accepts filter events and outputs filter events. If a TextUnit resource refers to another IResource or is a referent, it is passed through unchanged even if it has segments.",
+  "overview": "Converts segmented text units (paragraphs) into multiple text units, one per aligned sentence pair, for each target locale. This is useful for steps like the Diff Leverage Step that require un-segmented text units. Text units that reference other `IResource` objects or serve as referents are passed through unchanged.",
   "parameters": {},
   "limitations": [
-    "Using this step may prevent merging, so it should only be used in pipelines that do not require translated translation kits to be merged.",
-    "TextUnit resources that refer to another IResource or are referents are passed through as-is even if they have segments — processing these would require considerable implementation effort."
+    "Using this step may prevent merging, so it should only be used in pipelines that do **not** require translated translation kits to be merged.",
+    "Text units that reference or are referents of other `IResource` objects are passed through as-is, even if they contain segments."
   ],
   "processingNotes": [
-    "The step has no configurable parameters — it operates automatically on all segmented text units.",
-    "Each aligned segment pair for all target locales is converted into its own complete text unit.",
-    "Referent and reference TextUnit resources are passed through unchanged to preserve resource linkage integrity."
+    "Each segmented text unit is split into multiple text units with single segments, one per aligned sentence pair.",
+    "The conversion is performed for **all target locales** present in the text unit."
   ],
   "examples": [
     {
-      "title": "Preparing input for Diff Leverage Step",
-      "description": "Use this step before the Diff Leverage Step to convert segmented paragraphs into individual text units with single segments, which is required by Diff Leverage Step."
+      "title": "Use with Diff Leverage Step",
+      "description": "The primary use case is to prepare segmented content for steps that require un-segmented text units. Place this step **before** the Diff Leverage Step in the pipeline to convert paragraph-level text units into sentence-level text units."
     }
   ],
   "stepId": "convert-segments-to-text-units",

@@ -1,14 +1,12 @@
 {
   "filterName": "Space Quality Check",
-  "overview": "This step fixes spaces around target in-line codes within the text units of a given document. Spaces are either inserted or removed from the target segments so that the spacing around each in-line code in the source is matched. If there is a mismatched number of in-line codes between the source and the target, the un-matched in-line codes are skipped and the remainder of the text unit is processed. Takes filter events and sends filter events.",
+  "overview": "Fixes spaces around target inline codes within text units so that spacing matches the source. Spaces are inserted or removed from target segments to match the spacing around each inline code in the source. When there is a mismatched number of inline codes between source and target, unmatched codes are skipped and the remainder of the text unit is still processed.",
   "parameters": {},
   "processingNotes": [
-    "Spaces are inserted or removed from target segments to match the spacing around each in-line code in the source.",
-    "When there is a mismatched number of in-line codes between source and target, un-matched in-line codes are skipped and the remainder of the text unit is still processed."
+    "When inline code counts differ between source and target, unmatched codes are skipped and processing continues on the remaining text.",
+    "Only spaces immediately adjacent to inline codes are affected — other whitespace in the segment is left unchanged."
   ],
-  "limitations": [
-    "None known."
-  ],
+  "limitations": [],
   "examples": [],
   "stepId": "space-check",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/space_check_step"

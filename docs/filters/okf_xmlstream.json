@@ -1,65 +1,51 @@
 {
   "filterName": "XML Stream Filter",
-  "overview": "The XML Stream Filter is an Okapi component that implements the IFilter interface for XML documents. It uses a stream parser, which allows processing of much larger documents than a DOM-based parser like the XML Filter. It uses the same YAML-based configuration syntax as the HTML Filter, with most of the same parameters available. If ITS (Internationalization Tag Set) support is needed, the XML Filter should be used instead.",
+  "overview": "The XML Stream Filter processes XML documents using a **stream parser**, allowing it to handle much larger documents than the DOM-based [XML Filter](XML_Filter). It uses the same YAML-based configuration syntax as the HTML Filter. If you need [ITS](https://www.w3.org/TR/its20/) support, use the XML Filter instead.",
   "parameters": {
-    "parser": {
-      "description": "Controls parser behavior including well-formedness assumptions and whitespace handling. Contains sub-properties for assumeWellformed and preserveWhitespace."
-    },
     "inlineCodes": {
-      "description": "Inline code detection and handling configuration. Enables pattern-based detection of inline codes (placeholders, tags, etc.) within translatable text. Supports regex patterns for code detection, merging adjacent codes, moving boundary codes to skeleton, and simplifier rules. Same behavior as described in the HTML Filter documentation."
+      "help": "Controls which XML elements are treated as inline codes (formatting tags) within translatable text units rather than as structural elements.\n\nUses the same inline code configuration as the HTML Filter.",
+      "seeAlso": "HTML_Filter#Inline_Codes"
+    },
+    "parser.assumeWellformed": {
+      "help": "Controls whether the parser assumes the input XML is well-formed.\n\nWhen enabled, the parser skips strict well-formedness checks, which can improve performance on large documents. Disable if you need strict XML validation during processing."
+    },
+    "parser.preserveWhitespace": {
+      "help": "Controls whether whitespace in the XML content is preserved as-is.\n\nWhen disabled, the filter may normalize whitespace according to standard XML processing rules. Enable this for documents where whitespace is significant (e.g., pre-formatted content)."
     },
     "attributes": {
-      "description": "Global attribute extraction rules that map attribute names (e.g. 'xml:lang', 'xml:id', 'xml:space') to their rule configuration. These rules apply across all elements in the document. Each attribute rule specifies a ruleType (ATTRIBUTE_TRANS, ATTRIBUTE_WRITABLE, ATTRIBUTE_READONLY, ATTRIBUTE_ID, ATTRIBUTE_PRESERVE_WHITESPACE) and can optionally be scoped to specific elements via allElementsExcept or onlyTheseElements, and can include conditions. The default configuration handles xml:lang as writable, xml:id and id as ID attributes, and xml:space for whitespace preservation control.",
-      "notes": [
-        "All parameters described in the HTML Filter's documentation are also available in the XML Stream Filter, with the exception of escapeCharacters."
-      ]
-    },
-    "editorTitle": {
-      "description": "The title displayed in the parameters editor UI. Defaults to 'Parameters Editor'."
-    },
-    "taggedConfig": {
-      "description": "Tagged configuration object for storing additional filter configuration metadata."
-    },
-    "path": {
-      "description": "Path to the YAML configuration file for this filter instance."
+      "help": "Defines which XML attributes should be extracted for translation.\n\nEach key is an attribute name, and the value configures the extraction rule for that attribute. Attributes listed here are extracted globally — across all elements in the document.\n\nUses the same attribute rule configuration as the HTML Filter.",
+      "seeAlso": "HTML_Filter#Attributes"
     }
   },
   "limitations": [
-    "There is no transparent support for namespace prefixes: element names must be declared with their prefix in the configuration.",
-    "The filter is not case-sensitive — elements like <elem> and <Elem> are treated as identical, which does not conform to the XML specification where element names are case-sensitive."
+    "No transparent support for namespace prefixes — element names must be declared with their prefix in the configuration.",
+    "The filter is **not case-sensitive**: elements like `<elem>` and `<Elem>` are treated as identical, which violates the XML specification."
   ],
   "processingNotes": [
-    "Input encoding: If the document has an encoding declaration it is used; otherwise UTF-8 is used as default (regardless of any default encoding specified when opening the document).",
-    "Output encoding (UTF-8): A BOM is written only if the input was also UTF-8 and a BOM was detected in the input. If the input was not UTF-8, no BOM is written.",
-    "If the original document had an XML encoding declaration it is updated in the output; if it did not have one, an encoding declaration is automatically added.",
-    "Line-breaks in the output preserve the same type as the original input.",
-    "Quote/apostrophe escaping can be configured via quoteModeDefined and quoteMode parameters: UNESCAPED=0 (no escaping), ALL=1 (named entities for both), NUMERIC_SINGLE_QUOTES=2 (named for double, numeric for single), DOUBLE_QUOTES_ONLY=3 (escape double quotes only)."
+    "**Encoding detection**: Uses the document's encoding declaration if present; otherwise defaults to UTF-8 regardless of any specified default encoding.",
+    "**BOM handling**: When outputting UTF-8, a BOM is written only if the input was also UTF-8 and had a BOM. If the input was a different encoding, no BOM is added.",
+    "**Encoding declaration**: If the original document had an XML encoding declaration, it is updated on output; if not, one is automatically added.",
+    "**Line breaks**: Output line-break style matches the original input document.",
+    "**CDATA subfiltering**: CDATA sections can be processed with an additional filter (e.g., `okf_html`) via the `global_cdata_subfilter` YAML parameter.",
+    "**PCDATA subfiltering**: Escaped markup in PCDATA (e.g., double-escaped HTML) can be processed with a subfilter via `global_pcdata_subfilter`. Only content matched by a `TEXTUNIT` tag rule is passed to the subfilter — `INCLUDE` rules are excluded.",
+    "All parameters from the HTML Filter are available except `escapeCharacters`."
   ],
   "examples": [
     {
-      "title": "CDATA subfilter for HTML content",
-      "description": "Configure the filter to process CDATA sections containing HTML through an additional HTML filter. The global_cdata_subfilter parameter specifies the filter configuration to apply to all CDATA content.",
-      "input": "global_cdata_subfilter: okf_html"
+      "title": "CDATA subfiltering with HTML",
+      "description": "Process CDATA sections containing HTML markup with the HTML filter as a subfilter.",
+      "config": "```yaml\nglobal_cdata_subfilter: okf_html\n```"
     },
     {
-      "title": "PCDATA subfilter for escaped HTML content",
-      "description": "Configure the filter to process double-escaped HTML content in PCDATA (element content). The element containing such content must match a TEXTUNIT rule — content matched by INCLUDE rules will not be passed to the subfilter.",
-      "input": "global_pcdata_subfilter: okf_html\nelements:\n  test:\n    ruleTypes: [TEXTUNIT]"
+      "title": "PCDATA subfiltering with escaped HTML",
+      "description": "Process double-escaped HTML content in PCDATA. The element containing the escaped HTML must be configured with a `TEXTUNIT` rule for the subfilter to apply.",
+      "config": "```yaml\nglobal_pcdata_subfilter: okf_html\nelements:\n  test:\n    ruleTypes: [TEXTUNIT]\n```",
+      "input": "```xml\n<test>\n  &lt;p&gt;This is embedded HTML content within a p tag.&lt;/p&gt;\n</test>\n```"
     },
     {
-      "title": "Double-escaped HTML in XML",
-      "description": "Example of XML content with double-escaped HTML that requires PCDATA subfiltering. The HTML entities are escaped an additional time within the XML element content.",
-      "input": "<test>\n  &amp;lt;p&amp;gt;This is embedded HTML content within a p tag.&amp;lt;/p&amp;gt;\n</test>"
-    },
-    {
-      "title": "Quote mode configuration",
-      "description": "Configure escaping behavior for quote and apostrophe characters in the output. Mode 3 escapes only double quotes.",
-      "input": "quoteModeDefined: true\nquoteMode: 3"
-    },
-    {
-      "title": "Default XML Stream configuration",
-      "description": "The default configuration assumes well-formed XML, does not preserve whitespace globally, and sets up standard XML attribute handling for xml:lang (writable), xml:id/id (ID), and xml:space (whitespace preservation).",
-      "input": "assumeWellformed: true\npreserve_whitespace: false\n\nattributes:\n  'xml:lang':\n    ruleTypes: [ATTRIBUTE_WRITABLE]\n  'xml:id':\n    ruleTypes: [ATTRIBUTE_ID]\n  'id':\n    ruleTypes: [ATTRIBUTE_ID]\n  'xml:space':\n    ruleTypes: [ATTRIBUTE_PRESERVE_WHITESPACE]\n    preserve: ['xml:space', EQUALS, preserve]\n    default: ['xml:space', EQUALS, default]"
+      "title": "Custom quote escaping mode",
+      "description": "Configure how quotes and apostrophes are escaped in the output. Mode 3 escapes only double quotes.",
+      "config": "```yaml\nquoteModeDefined: true\nquoteMode: 3\n```"
     }
   ],
   "filterId": "okf_xmlstream",

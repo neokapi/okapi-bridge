@@ -1,79 +1,45 @@
 {
   "filterName": "TMX Filter",
-  "overview": "The TMX Filter is an Okapi component that implements the IFilter interface for TMX (Translation Memory eXchange) documents. TMX is a standard that defines a file format for transporting translation memory data from one translation tool to another. The filter processes TMX 1.4b documents, supporting multiple target languages, segmentation control, and inline code detection.",
+  "overview": "The TMX Filter processes **TMX (Translation Memory eXchange)** documents conforming to the TMX 1.4b specification. It extracts translation units (`<tu>`) and their variants (`<tuv>`) for processing through the Okapi pipeline. The filter supports multiple target languages within a single TMX file and provides options for controlling segmentation behavior based on the `segtype` attribute.",
   "parameters": {
+    "extraction.segType": {
+      "help": "Controls whether a segment is created for each extracted `<tu>` entry, based on the `segtype` attribute in the TMX file.\n\n- **0** — Always creates the segment regardless of the `segtype` attribute value\n- **1** — Never creates the segment, even if `segtype` is \"sentence\"\n- **2** — Creates the segment if `segtype` is \"sentence\" or is undefined (default)\n- **3** — Creates the segment only if `segtype` is explicitly \"sentence\"",
+      "values": "Integer `0`–`3` mapping to segmentation strategies based on the TMX `segtype` attribute."
+    },
     "extraction.processAllTargets": {
-      "description": "Set this option to read all target <tuv> elements into the text unit. When disabled, only the selected target is read and all remaining ones become part of the skeleton. Any effect this setting has depends on the following pipeline steps and the ability they have to process multiple targets.",
+      "help": "Reads all target `<tuv>` elements into the text unit. When disabled, only the selected target language is read and all remaining `<tuv>` elements become part of the skeleton.\n\nThe effect of this setting depends on whether downstream pipeline steps can handle multiple targets."
+    },
+    "extraction.exitOnInvalid": {
+      "help": "By default, invalid `<tu>` elements are skipped with a warning message. This means the processed output file may not match the input file if invalid entries were silently dropped.\n\nEnable this to halt processing immediately on invalid content, allowing you to correct the TMX file before re-running.",
       "notes": [
-        "Any effect this setting has depends on the following pipeline steps and the ability they have to process multiple targets."
+        "Using the default (skip) behavior and ignoring warnings risks producing an output file that doesn't match the input file structure."
       ]
     },
     "extraction.consolidateDpSkeleton": {
-      "description": "Set this option to consolidate the skeleton parts and send fewer events through the pipeline. This is sufficient in most cases, but as a pipeline developer sometimes you might want to have access to more fine-grained resources in the pipeline."
-    },
-    "extraction.exitOnInvalid": {
-      "description": "By default invalid <tu>s are skipped along with warning message(s). By using the default setting or ignoring the warning messages you might run the risk of getting a processed file that doesn't match the input file. Enable this option if you want to be notified immediately of invalid content and want to correct the file before re-running it.",
-      "notes": [
-        "Warning: By using the default (false) setting or ignoring the warning messages you might run the risk of getting a processed file that doesn't match the input file."
-      ]
-    },
-    "extraction.segType": {
-      "description": "Controls whether a segment is created for each extracted <tu> entry, based on the segtype attribute. The following integer values are available: 'Always creates the segment' — Creates the segment regardless of what the value of the segtype attribute is. 'Never creates the segment' — Never creates the segment, even if the segtype attribute is set to 'sentence'. 'Creates the segment if segtype is sentence or is undefined' — Creates the segment when the segtype attribute is set to 'sentence' or if it is not defined. 'Creates the segment only if segtype is sentence' — Creates the segment only if the segtype attribute is set to 'sentence'."
-    },
-    "output.escapeGT": {
-      "description": "Set this option to have all greater-than characters ('>') escaped as '&gt;' in the output."
+      "help": "Groups all document-part skeleton into a single consolidated part, sending fewer events through the pipeline. This is sufficient for most use cases.\n\nDisable this if you need fine-grained access to individual skeleton resources within custom pipeline steps."
     },
     "extraction.propValueSep": {
-      "description": "This string will be used to separate duplicate property values when there are duplicate properties. Default is ', '."
+      "help": "Delimiter string used to join values when a `<tu>` contains duplicate properties (properties with the same name).",
+      "values": "Any string. Default is `\", \"` (comma followed by space)."
+    },
+    "output.escapeGT": {
+      "help": "Forces all `>` characters to be escaped as `&gt;` in the output. By default, greater-than characters are written unescaped since XML only requires escaping `<` and `&`."
     },
     "inlineCodes.enabled": {
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.) in translatable text segments."
+      "help": "Activates regex-based detection of inline codes within TMX segment content. When enabled, text matching the defined patterns is wrapped as inline codes rather than translatable text."
     },
     "inlineCodes.rules": {
-      "description": "Regex patterns to identify inline codes in translatable text. Each rule defines a pattern that matches inline code sequences.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
-      ]
-    },
-    "inlineCodes.mergeAdjacent": {
-      "description": "Merge consecutive inline codes into a single placeholder to simplify the translatable text.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
-      ]
-    },
-    "inlineCodes.moveBoundaryCodes": {
-      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable portion), keeping translatable text cleaner.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
-      ]
-    },
-    "inlineCodes.simplifierRules": {
-      "description": "Rules for simplifying inline code representation to reduce complexity for translators.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
-      ]
+      "help": "Regex patterns that identify inline codes within TMX segment text. Each pattern match is converted to an inline code placeholder, protecting it from translation."
     }
   },
   "limitations": [
-    "The <sub> element is not supported. When such element is found, a warning is issued, and the element content is put with the content of its parent element.",
-    "The filter is not able to reconstruct any DTD declaration."
+    "The `<sub>` element is not supported. When encountered, a warning is issued and the element content is merged into its parent element.",
+    "The filter cannot reconstruct DTD declarations in the output."
   ],
   "processingNotes": [
-    "If the document has an encoding declaration it is used; otherwise, UTF-8 is used as the default encoding regardless of the actual default encoding specified when opening the document.",
-    "If the output encoding is UTF-8 and the input encoding was also UTF-8, a Byte-Order-Mark is used for the output only if one was detected in the input. If the input encoding was not UTF-8, no BOM is used.",
-    "The type of line-breaks of the output is the same as the one of the original input."
+    "**Input encoding**: Uses the document's encoding declaration if present; otherwise defaults to UTF-8 regardless of any specified default encoding.",
+    "**BOM handling**: When output encoding is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. If converting from a non-UTF-8 input, no BOM is written.",
+    "**Line breaks**: Output preserves the same line-break style as the original input document."
   ],
   "examples": [],
   "filterId": "okf_tmx",

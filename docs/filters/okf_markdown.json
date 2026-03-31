@@ -1,102 +1,103 @@
 {
   "filterName": "Markdown Filter",
-  "overview": "The Markdown Filter extracts translatable text from Markdown files. It is designed to work with markdown based on the CommonMark specification, with additional features to support GitHub-flavored Markdown. The filter handles HTML inline elements and blocks via a configurable HTML sub-filter, and supports YAML front matter extraction, code block handling, and URL translation.",
+  "overview": "The Markdown Filter extracts translatable text from Markdown files based on the [CommonMark](http://commonmark.org) specification, with additional support for [GitHub-flavored Markdown](https://guides.github.com/features/mastering-markdown/). HTML inline elements and HTML blocks embedded in the Markdown are processed by a configurable HTML sub-filter. The filter also supports YAML front matter extraction via a configurable YAML sub-filter.",
   "parameters": {
-    "inlineCodes": {
-      "description": "Inline code detection and handling settings. The Inline Code Finder is supported by this filter and applies to translatable text within the proper Markdown document. It does not apply to HTML inline tags or HTML blocks — for those, you need to enable inline code patterns on the HTML filter separately.",
-      "notes": [
-        "The Inline Code Finder support was temporarily unavailable in some snapshot builds of version 0.36, but has been restored.",
-        "For HTML inline tags or HTML blocks, you must configure the inline code pattern on the HTML filter separately, name the configuration as okf_html@arbitrary-name.fprm, and specify that name for the htmlSubfilter parameter."
-      ]
-    },
-    "extraction": {
-      "description": "Controls which content types within the Markdown document are extracted for translation, including URLs, code blocks, image alt text, YAML front matter, and MDX syntax."
-    },
-    "extraction.translateImageAltText": {
-      "description": "Controls whether image alt text is extracted for translation. This applies to both Markdown image syntax (![alt text](url)) and HTML img tags (<img src=\"url\" alt=\"alt text\">). When true, the alt text will be extracted as translatable content.",
-      "notes": []
-    },
     "extraction.translateUrls": {
-      "description": "Controls whether URLs in link and image statements are exposed for translation. By default, URLs are not extracted. When enabled, matching URLs will be extracted as a subflow — meaning the URL text unit appears before the segment that contains it in the output."
+      "help": "URLs in link and image statements (e.g. `[text](url)`, `![alt](url)`) are extracted as a **subflow** — a separate translation unit that appears before the segment containing it.\n\nUse with `urlPattern` to restrict which URLs are exposed for translation.",
+      "seeAlso": "Markdown_Filter#Translation_of_URLs_as_Subflows"
     },
     "extraction.urlPattern": {
-      "description": "A regular expression pattern that controls which URLs are extracted for translation when translateUrls is enabled. Only URLs matching this pattern will be extracted. The default value '.+' matches all URLs.",
+      "help": "Only URLs matching this regex will be extracted for translation. Only effective when `translateUrls` is enabled.\n\nThe pattern is matched against the full URL string.",
+      "values": "Java regex pattern. Default `.+` matches all URLs.",
+      "examples": [
+        "`^images/.*` — only translate URLs under the `images/` path",
+        "`.*\\.(jpg|png)$` — only translate image file URLs"
+      ],
       "dependsOn": [
         {
           "property": "extraction.translateUrls",
-          "condition": "must be true"
+          "condition": "must be true for this pattern to take effect"
         }
       ]
     },
     "extraction.translateCodeBlocks": {
-      "description": "Controls whether the contents of fenced code blocks (delimited by triple backticks or tildes) are exposed for translation."
+      "help": "Controls whether content inside fenced code blocks (delimited by ``` or ~~~) is exposed for translation. Disable for source code that should remain untranslated."
     },
     "extraction.translateIndentedCodeBlocks": {
-      "description": "Controls whether the contents of indented code blocks (lines indented by 4 spaces or 1 tab) are exposed for translation."
+      "help": "Controls whether content in indented code blocks (lines indented by 4+ spaces or a tab) is exposed for translation."
     },
     "extraction.translateInlineCodeBlocks": {
-      "description": "Controls whether the contents of inline code blocks (text delimited by single backticks) are exposed for translation."
+      "help": "Controls whether text delimited by single backticks (`` `inline code` ``) is exposed for translation."
     },
     "extraction.translateHeaderMetadata": {
-      "description": "Controls whether the YAML metadata header is exposed for translation. Some markdown formats support a YAML Metadata Header (as defined by Pandoc's yaml_metadata_block extension) containing key/value data. When enabled, the header will be parsed and metadata values will be exposed for translation. A custom YAML sub-filter can be specified via the yamlSubfilter parameter to control which metadata fields are extracted."
+      "help": "Parses [YAML metadata headers](http://pandoc.org/MANUAL.html#extension-yaml_metadata_block) (front matter delimited by `---`) and exposes metadata values for translation.\n\nUse the `yamlSubfilter` parameter to customize which metadata fields are extracted."
+    },
+    "extraction.translateImageAltText": {
+      "help": "Extracts alt text from both Markdown image syntax (`![alt text](url)`) and HTML `<img>` tags (`<img alt=\"alt text\">`) for translation."
     },
     "extraction.nonTranslateBlocks": {
-      "description": "A comma-separated list of strings that prevents matching block quotes from being translated. Block quotes whose content starts with one of the specified strings will not be extracted. When empty (default), contents in all block quotes will be extracted."
+      "help": "Prevents specific block quotes from being extracted for translation. Block quotes whose content starts with one of the specified strings will be skipped.",
+      "values": "Comma-separated list of string prefixes. Empty means all block quotes are extracted."
     },
     "extraction.parseMdx": {
-      "description": "Experimental. When enabled, parses out certain MDX expressions using regex. Specifically, multi-line 'export' blocks are treated as skeleton (non-translatable content).",
+      "help": "**Experimental.** Parses out multi-line `export` blocks as skeleton (non-translatable structure), allowing MDX files to be processed without breaking on JSX-like syntax.",
       "notes": [
-        "This feature is marked as experimental."
+        "This feature is experimental and uses regex-based parsing of MDX expressions."
       ]
     },
-    "output": {
-      "description": "Controls output formatting options including header anchor generation, character escaping, and backslash escape handling."
-    },
     "output.generateHeaderAnchors": {
-      "description": "Controls whether anchors are automatically generated for headings in the source document. Some markdown parsers support explicit named anchors in header markup using the syntax {#my-anchor}. When enabled, this option generates stable anchors for the purpose of providing reliable hyperlink targets that reference translatable header values."
+      "help": "Automatically generates explicit named anchors for headings using `{#anchor-id}` syntax. This provides stable anchor targets for hyperlinks that reference translatable header values — without this, translated headers would break anchor links."
     },
     "output.charactersToEscape": {
-      "description": "A string of punctuation characters that will be backslash-escaped on export when unescapeBackslashCharacters is enabled. Each character in the string is treated as an individual character to escape.",
+      "help": "Characters listed here will be backslash-escaped on export. Only takes effect when `unescapeBackslashCharacters` is enabled.",
+      "values": "A string of individual punctuation characters (not separated by delimiters). Default: ``*_`{}[]<>()#+\\-.!|``",
       "dependsOn": [
         {
           "property": "output.unescapeBackslashCharacters",
-          "condition": "must be true"
+          "condition": "must be true for escaping to be applied on export"
         }
       ]
     },
     "output.htmlEntitiesToEscape": {
-      "description": "A string of characters that will be encoded as HTML entities on export. Each character in the string will be converted to its corresponding HTML entity representation. When empty (default), no additional HTML entity encoding is performed."
+      "help": "Encodes specific characters as HTML entities on export. Useful when the target system requires certain characters to be entity-encoded.",
+      "values": "A string of individual characters to encode as HTML entities."
     },
     "output.unescapeBackslashCharacters": {
-      "description": "Controls support for backslash escaping of punctuation characters. When enabled, the filter parses backslash-escaped punctuation in source documents and uses the charactersToEscape list to determine which characters to backslash-escape on export."
-    },
-    "subfilters": {
-      "description": "Configuration for sub-filters used to process HTML content and YAML front matter within Markdown documents."
+      "help": "Parses backslash-escaped punctuation in source documents (e.g., `\\*` is read as a literal `*`). On export, the characters listed in `charactersToEscape` are re-escaped with backslashes."
     },
     "subfilters.htmlSubfilter": {
-      "description": "The custom configuration ID of the HTML filter that will be called to process HTML contents within Markdown documents. The configuration file must be saved in a known location with a '.fprm' suffix. When left empty (default), a default HTML filter configuration tailored for the Markdown filter is used. To configure inline code patterns for HTML content, create a custom HTML filter configuration named okf_html@arbitrary-name.fprm and specify that name here."
+      "help": "Specifies a custom HTML filter configuration for processing HTML content within Markdown. The configuration file must be saved with a `.fprm` suffix in a known location.\n\nLeave empty to use the default HTML filter configuration tailored for Markdown.\n\nTo use inline code patterns for HTML content, configure them in the HTML filter separately and reference it here.",
+      "values": "A configuration ID in the form `okf_html@arbitrary-name` (without the `.fprm` suffix).",
+      "examples": [
+        "`okf_html@markdown-custom` — references a file named `okf_html@markdown-custom.fprm`"
+      ],
+      "notes": [
+        "The Inline Code Finder configured on the Markdown filter applies only to Markdown text, not to HTML inline tags or HTML blocks. For HTML content, configure inline codes in the HTML sub-filter separately."
+      ]
     },
     "subfilters.yamlSubfilter": {
-      "description": "The custom configuration ID of the YAML filter that will be called to process any YAML metadata header detected in the document. This allows customization of which metadata fields are extracted for translation. When left empty (default), the default YAML filter configuration is used.",
-      "dependsOn": [
-        {
-          "property": "extraction.translateHeaderMetadata",
-          "condition": "must be true for the YAML sub-filter to be invoked"
-        }
-      ]
+      "help": "Specifies a custom YAML filter configuration for processing YAML metadata headers (front matter). This allows customization of which metadata fields are extracted for translation.\n\nLeave empty to use the default YAML filter configuration.",
+      "values": "A YAML filter configuration ID (without the `.fprm` suffix)."
+    },
+    "inlineCodes": {
+      "help": "The [Inline Code Finder](HTML_Filter#Inline_Code_Finder) lets you define regex patterns that identify inline codes within translatable text. These codes are treated as placeholders during translation.\n\nThe inline code patterns apply only to Markdown text content — they do **not** apply to HTML inline tags or HTML blocks within the document.",
+      "notes": [
+        "Inline Code Finder support was temporarily unavailable in some snapshot builds of version 0.36, but has been restored."
+      ],
+      "seeAlso": "HTML_Filter#Inline_Code_Finder"
     }
   },
   "processingNotes": [
-    "If the file has a Unicode Byte-Order-Mark (BOM), the corresponding encoding (e.g., UTF-8, UTF-16) is used. Otherwise, the default encoding specified in the filter options is used.",
-    "HTML inline elements (tags) and HTML blocks (text between block-forming start/end tags) are processed by the HTML filter, which can be customized separately via the htmlSubfilter parameter.",
-    "The Inline Code Finder applies only to translatable text within the Markdown portion of the document — not to HTML inline tags or HTML blocks. Those require separate inline code configuration on the HTML sub-filter."
+    "If the file has a Unicode Byte-Order-Mark (BOM), the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically. Otherwise, the default encoding specified in the filter options is used.",
+    "HTML inline elements and HTML blocks embedded in Markdown are delegated to the HTML filter for processing. The HTML filter can be customized via the `htmlSubfilter` parameter.",
+    "URLs extracted for translation appear as **subflows** — separate translation units that are extracted before the segment containing them."
   ],
   "examples": [
     {
       "title": "URL translation as subflows",
-      "description": "When translateUrls is enabled, URLs are extracted as subflows that appear before the segment containing them. This example shows a Markdown image link and its XLIFF extraction, where the URL is extracted as a separate translation unit (tu2) referenced from the main text unit (tu1).",
-      "input": "Please click ![The Information desk logo](images/circled-i.jpg) for help.",
-      "output": "<trans-unit id=\"tu2\" restype=\"x-img-link\" xml:space=\"preserve\">\n<source xml:lang=\"en\">images/circled-i.jpg</source>\n</trans-unit>\n<trans-unit id=\"tu1\" xml:space=\"preserve\">\n<source xml:lang=\"en\">Please click <bpt id=\"1\">![</bpt>The Information desk logo<ept id=\"1\">]([#$tu2])</ept> for help.</source>\n</trans-unit>"
+      "description": "When `translateUrls` is enabled, URLs in image/link syntax are extracted as separate translation units (subflows) that appear before the containing segment in the output.",
+      "input": "```markdown\nPlease click ![The Information desk logo](images/circled-i.jpg) for help.\n```",
+      "output": "```xml\n<trans-unit id=\"tu2\" restype=\"x-img-link\" xml:space=\"preserve\">\n  <source xml:lang=\"en\">images/circled-i.jpg</source>\n</trans-unit>\n<trans-unit id=\"tu1\" xml:space=\"preserve\">\n  <source xml:lang=\"en\">Please click <bpt id=\"1\">![</bpt>The Information desk logo<ept id=\"1\">]([#$tu2])</ept> for help.</source>\n</trans-unit>\n```"
     }
   ],
   "limitations": [],

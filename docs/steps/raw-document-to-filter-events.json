@@ -1,21 +1,19 @@
 {
   "filterName": "Raw Document to Filter Events Step",
-  "overview": "This step extracts the content of a raw document into a set of filter events. It takes a raw document with an associated filter configuration and sends the filter events down the pipeline. This step is typically the first one of the pipeline, but it can be placed after any step that sends a raw document. To convert filter events back to a raw document, use the Filter Events to Raw Document Step.",
+  "overview": "Extracts the content of a raw document into a set of filter events using the document's associated filter configuration. This step is typically the first step in a pipeline, but can be placed after any step that sends a raw document. To convert back from filter events to a raw document, use the **Filter Events to Raw Document Step**.",
   "parameters": {},
-  "limitations": [
-    "None known."
-  ],
   "processingNotes": [
-    "The step requires an associated filter configuration on the raw document to produce filter events.",
-    "A simple extract-then-merge pipeline can be constructed by combining this step with the Filter Events to Raw Document Step."
+    "The raw document must have an associated filter configuration for extraction to work.",
+    "A minimal extract-then-merge pipeline can be built with just this step followed by the **Filter Events to Raw Document Step**."
   ],
+  "limitations": [],
   "examples": [
     {
-      "title": "Simple extract and merge pipeline",
-      "description": "A minimal pipeline that extracts a document into filter events and then merges them back into a raw document.",
-      "input": "Raw Document to Filter Events Step → Filter Events to Raw Document Step"
+      "title": "Minimal extract and merge pipeline",
+      "description": "The simplest pipeline that extracts filter events from a raw document and then merges them back. This is useful as a round-trip validation or as a starting template for more complex pipelines.",
+      "config": "```\nRaw Document to Filter Events Step\n  + Filter Events to Raw Document Step\n```"
     }
   ],
   "stepId": "raw-document-to-filter-events",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/raw_document_to_filter_events_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Raw_Document_to_Filter_Events_Step"
 }

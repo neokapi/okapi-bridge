@@ -1,14 +1,13 @@
 {
   "filterName": "Repetition Analysis",
-  "overview": "This step analyzes repetitions in input documents, performing either exact or configurable fuzzy matching. It creates RepetitiveSegmentAnnotation (attached to repetitive source segments) and AltTranslationsAnnotation (attached to corresponding target segments) for found repetitive segments. Takes filter events and sends filter events.",
+  "overview": "Analyzes repetitions across input documents, performing either exact or configurable fuzzy matching of segments. Creates `RepetitiveSegmentAnnotation` on repetitive source segments and `AltTranslationsAnnotation` on the corresponding target segments, enabling downstream steps to leverage repetition data for translation memory and consistency.",
   "parameters": {},
-  "limitations": [
-    "None known."
-  ],
   "processingNotes": [
-    "AltTranslationsAnnotation is not attached for the first repetitive segment in its group, to avoid it being double-counted by counting steps as repetitive with itself.",
-    "Two annotation types are created: RepetitiveSegmentAnnotation on the source segment, and AltTranslationsAnnotation on the target segment corresponding to a repetitive source."
+    "Two annotation types are created: `RepetitiveSegmentAnnotation` (attached to source) and `AltTranslationsAnnotation` (attached to target).",
+    "`AltTranslationsAnnotation` is **not** attached to the first segment in a repetition group — this prevents counting steps from double-counting a segment as repetitive with itself.",
+    "Fuzzy matching is controlled by a threshold value; set to 100 for exact repetitions only."
   ],
+  "limitations": [],
   "examples": [],
   "stepId": "repetition-analysis",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/repetition_analysis_step"

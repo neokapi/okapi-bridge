@@ -1,28 +1,36 @@
 {
   "filterName": "HTML5-ITS Filter",
-  "overview": "This filter processes HTML5 documents that may contain ITS 2.0 (Internationalization Tag Set) markup. Input documents are expected to be valid HTML5. The filter supports global and local ITS rules and most ITS 2.0 data categories, with default behavior based on ITS defaults for language information, id values, within-text elements, and translate attributes. Default behavior can be overridden via ITS markup in the document or by specifying an ITS parameters file.",
+  "overview": "Processes **HTML5 documents**, optionally containing **ITS 2.0** (Internationalization Tag Set) markup. Input documents are expected to be valid HTML5. The filter applies ITS defaults for language information, id values, inline elements, and the `translate` attribute, which can be overridden via ITS markup in the document or an external ITS parameters file.",
   "parameters": {
     "simplifierRules": {
-      "description": "Rules for simplifying inline code representation in the extracted content. These rules control how inline codes (tags) are represented in a simplified form during processing."
+      "help": "Defines rules for collapsing verbose inline HTML codes (e.g., `<b>`, `<i>`, `<span>`) into simpler placeholders for translators. See the Simplifier Rules documentation for syntax.",
+      "seeAlso": "Simplifier_Rules"
     },
-    "path": {
-      "description": "Path to an ITS rules file that overrides the default ITS behavior. The parameters file used by the filter is an ITS document. When specified, the rules in this file override the default ITS processing behavior (lang attribute for Language Information, id attribute for Id Value, phrasing content elements as withinText, and translate attribute handling)."
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "help": "Inline codes (e.g., `<b>`, `</a>`) that appear at the very start or end of a segment are moved out of the translatable content and into the non-translatable skeleton. This reduces clutter for translators when tags wrap entire segments rather than partial text."
+    },
+    "mergeAdjacentCodes": {
+      "help": "When multiple inline codes appear next to each other with no translatable text between them (e.g., `</b><i>`), they are combined into a single placeholder. This simplifies the segment for translators without affecting the output."
     }
   },
   "limitations": [
-    "This filter is BETA."
+    "This filter is **BETA**."
   ],
   "processingNotes": [
-    "The filter decides which input encoding to use via the detection mechanism defined by the HTML5 specification.",
-    "Output encoding matches input encoding unless overridden by the calling tool.",
-    "Line-break types in the output match those of the original input.",
-    "Escaping of quote and apostrophe characters can be configured via quoteMode: 0 = no escaping, 1 = escape both to named entities, 2 = double quotes to named entity and single quotes to numeric entity, 3 = escape double quotes only.",
-    "Most phrasing content elements are interpreted as withinText=\"yes\" by default.",
-    "The translate attribute behavior differs from standard XML — it follows the HTML5 specification definition.",
-    "The lang attribute is used by default for the Language Information data category.",
-    "The id attribute is used by default for the Id Value data category."
+    "**Input encoding** is detected using the mechanism defined by the HTML5 specification (meta charset, BOM, etc.).",
+    "**Output encoding** matches the input encoding unless overridden by the calling tool.",
+    "**Line-breaks** in the output preserve the same type as the original input.",
+    "By default, ITS defaults are applied: `lang` → Language Information, `id` → Id Value, phrasing content elements → `withinText=\"yes\"`, and the HTML5-specific `translate` attribute behavior.",
+    "Default ITS behavior can be overridden by ITS markup within the document or by specifying an external ITS parameters file.",
+    "The filter supports **ITS 2.0** global and local rules and most data categories."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "title": "Quote mode configuration",
+      "description": "Quote and apostrophe escaping can be configured in the `.fprm` config file. By default quotes are not escaped. Available modes:\n\n- `0` — **UNESCAPED**: no escaping of single or double quotes\n- `1` — **ALL**: escape both single and double quotes to named entities\n- `2` — **NUMERIC_SINGLE_QUOTES**: double quotes → named entity, single quotes → numeric entity\n- `3` — **DOUBLE_QUOTES_ONLY**: escape double quotes only",
+      "config": "```properties\nquoteModeDefined=true\nquoteMode=3\n```"
+    }
+  ],
   "filterId": "okf_html5",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/html5_its_filter"
 }

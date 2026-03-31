@@ -1,42 +1,48 @@
 {
   "filterName": "Id-Based Copy Step",
-  "overview": "This step copies text from a reference file (second input) into a destination file (first input) for text units that share the same id (based on TextUnit.getName()). It works with any filter that produces unique names for its text units, such as the Properties Filter. The reference file is read into an in-memory table indexed by text unit name, and for each text unit in the destination file, a matching entry is looked up and its content copied into the target. Takes filter events and sends filter events.",
+  "overview": "Copies text from a reference file (second input) into a destination file (first input) by matching text unit ids (`TextUnit.getName()`). Works with any filter that produces unique names for text units (e.g., Properties Filter). For monolingual reference files, the source text is copied into the target; for multilingual reference files (e.g., PO), the target text is used.",
   "parameters": {
     "markAsTranslateNo": {
-      "description": "When a text unit has a match in the reference file, setting this option marks the text unit as non-translatable in the destination file. Entries that do not have a match in the reference file have this property left unchanged. Only applies to matched text units.",
+      "help": "When a text unit in the destination file has a matching entry in the reference file, this flag marks the text unit as **non-translatable** after the copy. Text units without a match are left unchanged.\n\nUseful when the copied content represents finalized translations that should not be modified further downstream in the pipeline.",
       "notes": [
-        "Entries in the destination file that are already set to non-translatable are not modified regardless of this setting."
+        "Only applies to text units that have a match in the reference file. Unmatched entries retain their original translatable state.",
+        "Entries already marked as non-translatable in the destination file are skipped entirely — they are never modified by this step."
       ]
     },
     "markAsApproved": {
-      "description": "When a text unit has a match in the reference file, setting this option sets the target property 'approved' to 'yes' on the matched text unit in the destination file. Entries that do not have a match in the reference file have this property left as it was.",
-      "notes": []
+      "help": "When a text unit has a matching entry in the reference file, sets the `approved` target property to `yes` after copying. This signals to downstream steps and tools (e.g., XLIFF editors) that the translation has been reviewed.\n\nText units without a match retain their original `approved` state.",
+      "notes": [
+        "Only applies to matched text units. Unmatched entries keep their existing approval state."
+      ]
     }
   },
-  "limitations": [
-    "Uses an in-memory table for the reference file, so very large reference files may cause memory limitations.",
-    "No adjustment is made for inline codes when copying content from the reference file into the destination file — results may vary depending on file formats and whether inline codes are present.",
-    "The process copies complete text unit content with no adjustment for segmented entries. Use the Desegmentation Step beforehand if needed.",
-    "Both files must have text units with unique names (e.g., unique resname in XLIFF)."
-  ],
   "processingNotes": [
-    "The reference file (second input) is read entirely into an in-memory table indexed on text unit name before the destination file is processed.",
-    "If the reference file is monolingual (e.g., properties file), the source text of matched text units is copied into the target. If the reference file is multilingual (e.g., PO file), the target text is used instead.",
-    "Entries in the destination file that are set to non-translatable are never modified, regardless of parameter settings.",
-    "After processing each pair of input files, entries in the reference table that were not used are listed as warnings.",
-    "No warning is generated if an entry in the destination file is not found in the reference file.",
-    "If a destination file is not associated with a reference file, a warning is generated and the file is treated as having an empty reference file.",
-    "When working with lists of input files, they should be paired — the first file in Input List 1 must correspond to the first file in Input List 2, and so forth.",
-    "The entries in the reference and destination files do not have to be sorted."
+    "The reference file is read entirely into an in-memory table indexed by text unit name before processing the destination file.",
+    "For **monolingual** reference files (e.g., `.properties`), the **source** text of the reference is copied into the **target** of the destination. For **multilingual** files (e.g., PO), the **target** text is used.",
+    "The complete content of text units is copied — no adjustment is made for segmentation. Use the **Desegmentation Step** beforehand if needed.",
+    "No adjustment is made for inline codes when copying between different file formats — results depend on whether inline codes are present and the formats involved.",
+    "After processing each file pair, entries in the reference table that were **not matched** are listed as warnings (these may simply be obsolete entries).",
+    "No warning is generated when a destination entry has no match in the reference file.",
+    "Entries in the destination file marked as non-translatable are **never modified**, even if a match exists.",
+    "When working with input lists, files must be paired: the first file in Input List 1 corresponds to the first file in Input List 2, and so on."
+  ],
+  "limitations": [
+    "The reference file is loaded entirely into memory — very large reference files may cause memory issues.",
+    "No inline code adjustment is performed when reference and destination use different file formats.",
+    "Both files must have text units with **unique** names (e.g., unique `resname` in XLIFF). Duplicate names will cause unpredictable matching.",
+    "No segmentation adjustment is made — segmented entries are copied as-is."
   ],
   "examples": [
     {
-      "title": "Copying properties translations into a destination file",
-      "description": "Using two properties files where text units share the same key names. The reference file contains translated values and the destination file contains the original keys. The step matches entries by their property key (text unit name) and copies the reference source text into the destination target. markAsApproved is set to true (default) so matched entries are marked as approved, and markAsTranslateNo is false (default) so entries remain translatable.",
-      "input": "Destination file (Input List 1): app_en.properties\nReference file (Input List 2): app_fr.properties\nmarkAsApproved: true\nmarkAsTranslateNo: false",
-      "output": "Matched text units in the destination file receive the French text as their target, with the approved property set to yes."
+      "title": "Copy translations from properties to properties",
+      "description": "Use a translated `.properties` file as the reference to populate targets in a destination `.properties` file. Since properties files are monolingual, the source text from the reference is copied into the target of matching text units in the destination.",
+      "config": "```yaml\nstep: id-based-copy\nmarkAsTranslateNo: false\nmarkAsApproved: true\n```"
+    },
+    {
+      "title": "Copy from PO file reference",
+      "description": "When using a multilingual PO file as the reference, the **target** text (translated string) from the PO file is copied into matching text units in the destination file, and matched entries are marked as approved."
     }
   ],
   "stepId": "id-based-copy",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/id_uased_copy_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/id_based_copy_step"
 }

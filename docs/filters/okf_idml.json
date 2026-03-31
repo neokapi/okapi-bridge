@@ -1,193 +1,108 @@
 {
   "filterName": "IDML Filter",
-  "overview": "The IDML filter processes IDML (InDesign Markup Language) documents, an XML-based format introduced in Adobe InDesign CS4 for representing InDesign content. IDML is used in several InDesign and InCopy file types. The filter extracts translatable text from spreads, stories, notes, master spreads, hidden layers, and other IDML elements, with configurable options for handling inline codes, formatting tolerances, and content exclusion.",
+  "overview": "Processes **IDML** (InDesign Markup Language) documents, the XML-based format introduced in Adobe InDesign CS4 for representing InDesign content. IDML is used in several InDesign and InCopy file types. The filter extracts text by spread, processing stories from `<TextFrame>` and `<TextPath>` elements in spread order.",
   "parameters": {
-    "inlineCodes": {
-      "description": "Inline code detection and handling settings. When enabled, uses regex patterns to identify inline codes (placeholders, tags, etc.) within translatable text. Supports merging adjacent codes, moving boundary codes to skeleton, and simplifying inline code representation."
-    },
-    "extraction": {
-      "description": "Group of settings controlling what content is extracted from the IDML document, including notes, master spreads, hidden layers, hyperlinks, index topics, and other structural elements."
-    },
     "extraction.extractNotes": {
-      "description": "When enabled, extracts the content of notes (<Note> elements) in the IDML document as translator notes. By default, notes are not extracted."
+      "help": "Extracts the content of `<Note>` elements embedded in the IDML document, making them available as translator notes."
     },
     "extraction.extractMasterSpreads": {
-      "description": "When enabled, extracts the content of the master spreads if they exist. If this option is not set, only the normal spreads are extracted. Enabled by default."
+      "help": "Extracts content from master spreads in addition to normal spreads. Disable this if master spread content does not require translation (e.g., page numbers, decorative elements)."
     },
     "extraction.extractCustomTextVariables": {
-      "description": "When enabled, extracts custom text variables for translation. Disabled by default."
+      "help": "Extracts custom text variables defined in the InDesign document for translation."
     },
     "extraction.extractExternalHyperlinks": {
-      "description": "When enabled, the external hyperlinks are extracted for translation. Disabled by default."
+      "help": "Extracts external hyperlink URLs for translation. Useful when hyperlinks contain locale-specific URLs that need to be adapted per target language."
     },
     "extraction.extractHiddenLayers": {
-      "description": "When enabled, extracts content from hidden layers in addition to visible layers. By default, hidden layers are not extracted."
+      "help": "Includes content from hidden layers in extraction. By default, only visible layers are processed."
     },
     "extraction.extractHiddenPasteboardItems": {
-      "description": "When enabled, extracts content from hidden pasteboard items. Disabled by default."
+      "help": "Includes content from hidden pasteboard items in extraction."
     },
     "extraction.extractHyperlinkTextSourcesInline": {
-      "description": "When set to true, the hyperlink text sources are extracted inline. When set to false (default), they are represented as referencing groups of textual units."
+      "help": "Controls how hyperlink text sources are represented:\n- **Enabled**: hyperlink text sources are extracted inline within the surrounding text\n- **Disabled**: they are represented as separate referencing groups of textual units"
     },
     "extraction.extractIndexTopics": {
-      "description": "When enabled, extracts index topics for translation. Disabled by default."
+      "help": "Extracts index topic entries for translation."
     },
     "extraction.extractBreaksInline": {
-      "description": "When enabled, break elements are extracted as inline codes rather than causing text unit boundaries. Disabled by default."
+      "help": "Extracts break elements inline within the text flow rather than treating them as segment boundaries."
     },
     "extraction.untagXmlStructures": {
-      "description": "When enabled, skips embedded XML structural information when extracting translatable content. This removes XML structure tags that InDesign may embed in the IDML content. Enabled by default."
+      "help": "Skips embedded XML structural information when extracting translatable content. This prevents XML structure tags from appearing as inline codes in the extracted text."
     },
     "extraction.skipDiscretionaryHyphens": {
-      "description": "When enabled, discretionary hyphens (soft hyphens inserted by InDesign for line-break hints) are skipped during extraction. Disabled by default."
+      "help": "Skips discretionary (soft) hyphens during extraction. Discretionary hyphens are optional line-break hints inserted by InDesign."
     },
     "extraction.specialCharacterPattern": {
-      "description": "A pattern of special characters where matched content is treated as inline code. The default pattern includes various Unicode special characters used by InDesign (non-breaking spaces, zero-width joiners/non-joiners, soft hyphens, non-breaking hyphens, etc.)."
+      "help": "Matches special characters that should be treated as inline codes rather than translatable content. The default pattern covers various Unicode special characters including zero-width spaces, zero-width non-joiners, soft hyphens, non-breaking hyphens, and BOM characters.",
+      "values": "A pipe-delimited (`|`) pattern of Unicode characters. Default: `\" | | | | | | | | | |\\u200B|\\u200C|\\u00AD|\\u2011|\\uFEFF\"`"
     },
     "extraction.maxAttributeSize": {
-      "description": "Sets the size in bytes for the attribute buffer. The default is 4MB (4 * 1024 * 1024 = 4194304). This controls the maximum size of XML attributes the filter can process."
-    },
-    "formatting": {
-      "description": "Group of settings controlling formatting tolerance thresholds. These options allow the filter to ignore small differences in character formatting properties (kerning, tracking, leading, baseline shift) within specified min/max ranges, reducing unnecessary inline code segmentation caused by minor formatting variations."
+      "help": "Sets the size limit for the XML attribute buffer. Increase this if processing IDML files with very large embedded attributes (e.g., heavy graphics data in attributes).",
+      "values": "Size in bytes. Default is 4194304 (4 MB = 4 × 1024 × 1024)."
     },
     "formatting.ignoreCharacterKerning": {
-      "description": "When enabled, ignores kerning differences between characters when determining whether to create separate inline codes for differently-formatted text runs. Disabled by default.",
-      "dependsOn": [
-        {
-          "property": "formatting.kerningMin",
-          "condition": "should be set to define the minimum kerning threshold when ignoring is enabled"
-        },
-        {
-          "property": "formatting.kerningMax",
-          "condition": "should be set to define the maximum kerning threshold when ignoring is enabled"
-        }
-      ]
+      "help": "Ignores kerning differences between adjacent characters when determining formatting runs. This reduces the number of inline codes by merging runs that differ only in kerning values.\n\nWhen enabled, use the **min** and **max** threshold fields to define the range of kerning values to ignore."
     },
     "formatting.kerningMin": {
-      "description": "The minimum kerning value threshold below which kerning differences are ignored. Used in conjunction with ignoreCharacterKerning to define the tolerance range.",
-      "dependsOn": [
-        {
-          "property": "formatting.ignoreCharacterKerning",
-          "condition": "must be true for this threshold to take effect"
-        }
-      ]
+      "help": "Minimum kerning value threshold. Kerning differences below this value are ignored.",
+      "values": "Numeric string representing a kerning value."
     },
     "formatting.kerningMax": {
-      "description": "The maximum kerning value threshold above which kerning differences are no longer ignored. Used in conjunction with ignoreCharacterKerning to define the tolerance range.",
-      "dependsOn": [
-        {
-          "property": "formatting.ignoreCharacterKerning",
-          "condition": "must be true for this threshold to take effect"
-        }
-      ]
+      "help": "Maximum kerning value threshold. Kerning differences above this value are ignored.",
+      "values": "Numeric string representing a kerning value."
     },
     "formatting.ignoreCharacterTracking": {
-      "description": "When enabled, ignores tracking differences between characters when determining whether to create separate inline codes. Disabled by default.",
-      "dependsOn": [
-        {
-          "property": "formatting.trackingMin",
-          "condition": "should be set to define the minimum tracking threshold when ignoring is enabled"
-        },
-        {
-          "property": "formatting.trackingMax",
-          "condition": "should be set to define the maximum tracking threshold when ignoring is enabled"
-        }
-      ]
+      "help": "Ignores tracking (letter-spacing) differences when determining formatting runs. Reduces inline code clutter from minor tracking variations.\n\nWhen enabled, use the **min** and **max** threshold fields to define the range of tracking values to ignore."
     },
     "formatting.trackingMin": {
-      "description": "The minimum tracking value threshold below which tracking differences are ignored.",
-      "dependsOn": [
-        {
-          "property": "formatting.ignoreCharacterTracking",
-          "condition": "must be true for this threshold to take effect"
-        }
-      ]
+      "help": "Minimum tracking value threshold.",
+      "values": "Numeric string representing a tracking value."
     },
     "formatting.trackingMax": {
-      "description": "The maximum tracking value threshold above which tracking differences are no longer ignored.",
-      "dependsOn": [
-        {
-          "property": "formatting.ignoreCharacterTracking",
-          "condition": "must be true for this threshold to take effect"
-        }
-      ]
+      "help": "Maximum tracking value threshold.",
+      "values": "Numeric string representing a tracking value."
     },
     "formatting.ignoreCharacterLeading": {
-      "description": "When enabled, ignores leading (line spacing) differences between characters when determining whether to create separate inline codes. Disabled by default.",
-      "dependsOn": [
-        {
-          "property": "formatting.leadingMin",
-          "condition": "should be set to define the minimum leading threshold when ignoring is enabled"
-        },
-        {
-          "property": "formatting.leadingMax",
-          "condition": "should be set to define the maximum leading threshold when ignoring is enabled"
-        }
-      ]
+      "help": "Ignores leading (line-spacing) differences when determining formatting runs. Useful when InDesign applies per-character leading overrides that create unnecessary inline codes.\n\nWhen enabled, use the **min** and **max** threshold fields to define the range of leading values to ignore."
     },
     "formatting.leadingMin": {
-      "description": "The minimum leading value threshold below which leading differences are ignored.",
-      "dependsOn": [
-        {
-          "property": "formatting.ignoreCharacterLeading",
-          "condition": "must be true for this threshold to take effect"
-        }
-      ]
+      "help": "Minimum leading value threshold.",
+      "values": "Numeric string representing a leading value."
     },
     "formatting.leadingMax": {
-      "description": "The maximum leading value threshold above which leading differences are no longer ignored.",
-      "dependsOn": [
-        {
-          "property": "formatting.ignoreCharacterLeading",
-          "condition": "must be true for this threshold to take effect"
-        }
-      ]
+      "help": "Maximum leading value threshold.",
+      "values": "Numeric string representing a leading value."
     },
     "formatting.ignoreCharacterBaselineShift": {
-      "description": "When enabled, ignores baseline shift differences between characters when determining whether to create separate inline codes. Disabled by default.",
-      "dependsOn": [
-        {
-          "property": "formatting.baselineShiftMin",
-          "condition": "should be set to define the minimum baseline shift threshold when ignoring is enabled"
-        },
-        {
-          "property": "formatting.baselineShiftMax",
-          "condition": "should be set to define the maximum baseline shift threshold when ignoring is enabled"
-        }
-      ]
+      "help": "Ignores baseline shift differences when determining formatting runs. Baseline shift moves characters up or down relative to the baseline — minor shifts (e.g., for superscript/subscript fine-tuning) can create excessive inline codes.\n\nWhen enabled, use the **min** and **max** threshold fields to define the range of baseline shift values to ignore."
     },
     "formatting.baselineShiftMin": {
-      "description": "The minimum baseline shift value threshold below which baseline shift differences are ignored.",
-      "dependsOn": [
-        {
-          "property": "formatting.ignoreCharacterBaselineShift",
-          "condition": "must be true for this threshold to take effect"
-        }
-      ]
+      "help": "Minimum baseline shift value threshold.",
+      "values": "Numeric string representing a baseline shift value."
     },
     "formatting.baselineShiftMax": {
-      "description": "The maximum baseline shift value threshold above which baseline shift differences are no longer ignored.",
-      "dependsOn": [
-        {
-          "property": "formatting.ignoreCharacterBaselineShift",
-          "condition": "must be true for this threshold to take effect"
-        }
-      ]
+      "help": "Maximum baseline shift value threshold.",
+      "values": "Numeric string representing a baseline shift value."
     },
     "extractMathZones": {
-      "description": "When enabled (default is true), math zones in the IDML document are extracted for translation."
+      "help": "Extracts math zones (MathML or equation content) for translation."
     },
     "excludedStyleConfigurations": {
-      "description": "When enabled, content with the specified styles is excluded from extraction. This allows filtering out content based on InDesign paragraph or character styles."
+      "help": "Enables style-based exclusion. Content with the specified paragraph or character styles is excluded from extraction. Use this to skip non-translatable content such as code listings, product identifiers, or boilerplate styled with specific InDesign styles."
     }
   },
   "processingNotes": [
-    "The filter processes all spreads in the document, and for each spread gathers the list of stories used in <TextFrame> and <TextPath> elements.",
-    "Text is extracted by spread, and within each spread by story in the order they appear in the spread.",
-    "Stories embedded inside other stories and not declared at a spread level are extracted in a special group.",
-    "The default special character pattern includes various Unicode characters used by InDesign (non-breaking spaces, zero-width joiners/non-joiners, soft hyphens, non-breaking hyphens, BOM characters) which are treated as inline codes."
+    "The filter processes text **by spread** — for each spread, it gathers stories used in `<TextFrame>` and `<TextPath>` elements, extracting them in the order they appear in the spread.",
+    "Stories embedded inside other stories that are not declared at a spread level are extracted in a special group.",
+    "The formatting tolerance parameters (kerning, tracking, leading, baseline shift) reduce inline code clutter by merging adjacent formatting runs that differ only within the specified thresholds."
   ],
-  "limitations": [],
+  "limitations": [
+    "Requires Adobe InDesign CS4 or later IDML format — older `.indd` binary files are not supported.",
+    "The deprecated `Maximum spread size` parameter (removed in M34) previously allowed skipping large spread files that contained only graphics; current versions process all spreads."
+  ],
   "examples": [],
   "filterId": "okf_idml",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/IDML_Filter"

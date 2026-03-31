@@ -1,27 +1,34 @@
 {
-  "filterName": "Create Target Step",
-  "overview": "This step creates the target entry for text units, and optionally copies the source content and/or properties into the newly created target. It takes filter events as input and sends filter events as output. It is commonly used in pipelines where a target language container needs to be initialized before translation or other processing steps.",
+  "filterName": "Create Target",
+  "overview": "This step creates the target segment container for each text unit in the pipeline, optionally copying source content and/or properties into the new target. It is typically placed early in a pipeline before any translation or leveraging steps, ensuring that a target entry exists for downstream processing. Takes filter events and sends filter events.",
   "parameters": {
     "copyContent": {
-      "description": "When enabled, copies the source content into the created target. This is useful when you want the target to start as a copy of the source text, which can then be modified by subsequent translation or transformation steps."
+      "help": "Copies the source text into the newly created target segment. This is useful as a starting point before translation or leveraging steps modify the target content.\n\nWhen used together with **Copy the source properties to the target**, both content and metadata are duplicated."
     },
     "copyProperties": {
-      "description": "When enabled, copies the source properties into the created target. Properties include metadata attached to the text unit source that should also be present on the target side."
+      "help": "Copies source-level properties (metadata key-value pairs attached to the text unit) into the target. Properties may include annotations, notes, or custom attributes set by earlier pipeline steps or the filter."
     },
     "overwriteExisting": {
-      "description": "When enabled, copies the source content and/or the source properties to the target even if the target already exists. By default (false), existing target content is preserved and not overwritten."
+      "help": "Forces the source content and/or properties to be copied into the target **even if a target already exists**. Without this option, text units that already have a target entry (e.g., from a bilingual input format) are left unchanged.",
+      "notes": [
+        "**Warning:** Enabling this will discard any existing target content, including previously applied translations. Use with care in pipelines that process bilingual files."
+      ],
+      "dependsOn": [
+        {
+          "property": "copyContent",
+          "condition": "only meaningful when at least one of copyContent or copyProperties is true"
+        }
+      ]
     },
     "createOnNonTranslatable": {
-      "description": "When enabled, creates a target entry even if the text unit is marked as non-translatable. This ensures all text units have a target container regardless of their translatable status."
+      "help": "Controls whether a target entry is created for text units marked as non-translatable (`translate=\"no\"`). Disabling this skips target creation for non-translatable segments, which can reduce noise in downstream steps that only care about translatable content."
     }
   },
-  "limitations": [
-    "None known."
-  ],
   "processingNotes": [
-    "The step processes filter events and handles text units, creating target segments as they pass through the pipeline.",
-    "Requires both source and target locale to be set in the pipeline context."
+    "If neither **copyContent** nor **copyProperties** is enabled, the step still creates an empty target container — downstream steps can then populate it.",
+    "This step is commonly placed immediately after the Raw Document to Filter Events step and before any leveraging or translation steps."
   ],
+  "limitations": [],
   "examples": [],
   "stepId": "create-target",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/create_target_step"

@@ -1,43 +1,30 @@
 {
-  "filterName": "Line-Break Conversion Step",
-  "overview": "The Line-Break Conversion step converts all line-breaks in an input document to a specified type (DOS/Windows, Unix/Linux, or Macintosh). It takes a raw document as input and sends back a raw document. The type of line-break in the input file is detected automatically, and the file may contain a mix of different types of line-breaks.",
+  "filterName": "Line-Break Conversion",
+  "overview": "Converts all line-breaks in a text-based input document to a specified type (DOS/Windows, Unix/Linux, or Macintosh). The input line-break type is detected automatically and may contain a mix of different types. Operates on raw documents and preserves encoding and Byte-Order-Marks.",
   "parameters": {
     "lineBreak": {
-      "description": "Select the new type of line-break for the output files. The value is an encoded string representing the desired line-break characters. Valid choices are: DOS/Windows (Carriage Return + Line-Feed, \\r\\n, 0x0D+0x0A) represented as '$0d$$0a$'; Unix/Linux (Line-Feed, \\n, 0x0A) represented as '$0a$'; Macintosh (Carriage-Return, \\r, 0x0D) represented as '$0d$'. The default is '$0a$' (Unix/Linux).",
+      "help": "Controls which line-break sequence is written to the output file. The input file's line-break types are detected automatically and may be mixed — all are converted to the selected type regardless of their original form.\n\nAvailable values:\n- **DOS/Windows** — `\\r\\n` (CR+LF, `0x0D 0x0A`)\n- **Unix/Linux** — `\\n` (LF, `0x0A`)\n- **Macintosh** — `\\r` (CR, `0x0D`)",
+      "values": "Encoded line-break strings: `$0d$$0a$` for DOS/Windows (CR+LF), `$0a$` for Unix/Linux (LF), `$0d$` for Macintosh (CR).",
       "notes": [
-        "The input line-break type is detected automatically and the file may contain a mix of different types"
+        "The input encoding must be specified explicitly, even for formats that usually auto-detect encoding (XML, HTML, etc.). The only exception is files with a Byte-Order-Mark (BOM).",
+        "Output encoding matches the input encoding. BOMs are preserved if present."
       ]
     }
   },
-  "limitations": [
-    "None known."
-  ],
   "processingNotes": [
-    "You must specify the input encoding of the document, even for formats where it is usually automatically detected (like XML, HTML, etc). The only exception is files with a Byte-Order-Mark.",
-    "The output is produced in the same encoding as the input document.",
-    "Byte-Order-Marks are preserved if they are present in the input.",
-    "The type of line-break in the input file is detected automatically. The file may contain a mix of different types of line-breaks."
+    "Input encoding must be specified explicitly even for self-describing formats (XML, HTML). Only BOM-prefixed files are exempt from this requirement.",
+    "Output is written in the same encoding as the input document.",
+    "Byte-Order-Marks are preserved if present in the input.",
+    "The step auto-detects the input line-break type and handles mixed line-break styles within a single file."
   ],
+  "limitations": [],
   "examples": [
     {
-      "title": "Convert to Unix line endings",
-      "description": "Convert a file with mixed or Windows line-breaks to Unix/Linux line-feed (\\n) format. Set lineBreak to '$0a$' (the default value).",
-      "input": "lineBreak: \"$0a$\"",
-      "output": "All line-breaks in the output file will be \\n (0x0A)"
-    },
-    {
-      "title": "Convert to Windows line endings",
-      "description": "Convert a file to DOS/Windows CR+LF line-break format. Set lineBreak to '$0d$$0a$'.",
-      "input": "lineBreak: \"$0d$$0a$\"",
-      "output": "All line-breaks in the output file will be \\r\\n (0x0D+0x0A)"
-    },
-    {
-      "title": "Convert to classic Mac line endings",
-      "description": "Convert a file to Macintosh carriage-return format. Set lineBreak to '$0d$'.",
-      "input": "lineBreak: \"$0d$\"",
-      "output": "All line-breaks in the output file will be \\r (0x0D)"
+      "title": "Convert a Windows file to Unix line endings",
+      "description": "Convert a DOS/Windows text file (`\\r\\n`) to Unix/Linux line endings (`\\n`) for use in Linux environments.",
+      "config": "```yaml\nlineBreak: \"$0a$\"\n```"
     }
   ],
   "stepId": "line-break-conversion",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/line_ureak_conversion_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/line_break_conversion_step"
 }

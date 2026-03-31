@@ -1,54 +1,71 @@
 {
   "filterName": "Id-Based Aligner",
-  "overview": "This step aligns the text units of two input files based on matching ids. The ids are taken from the name (TextUnit.getName()) of each text unit. Any filter that produces unique names for its text units will work with this aligner, for example the Properties Filter. Takes filter events and sends filter events. When TMX generation is disabled, each returned text unit is a new aligned bilingual text unit; when enabled, events are returned unchanged and a TMX file is produced.",
+  "overview": "Aligns text units from two input files by matching their ids (taken from `TextUnit.getName()`). Works with any filter that produces unique names for its text units, such as the Properties Filter. Can either produce bilingual text units in the pipeline or generate a TMX file output. Both inputs must be non-segmented.",
   "parameters": {
     "generateTMX": {
-      "description": "When set to true, the step produces a TMX file and the events returned by the step are unchanged. When set to false, each text unit in the returned events is a new text unit with the aligned source and target content.",
+      "help": "Controls the step's output mode:\n\n- **Checked**: Produces a TMX file at the configured path. The filter events passed downstream are **unchanged** (the alignment results go only to the TMX file).\n- **Unchecked**: Each text unit in the returned events is replaced with a new bilingual text unit containing aligned source and target content.\n\nText units present in the source but missing from the target generate a warning. Text units in the target but not in the source are ignored.",
       "notes": [
-        "Note: for target <tuv> data to be generated in the TMX, the 'Copy to/over the target' option (copyToTarget) must also be checked."
-      ]
-    },
-    "tmxOutputPath": {
-      "description": "Full path of the output TMX file to be generated.",
+        "For target `<tuv>` data to be generated in the TMX, the **Copy to/over the target** option must also be checked."
+      ],
       "dependsOn": [
         {
-          "property": "generateTMX",
-          "condition": "must be true for this parameter to take effect"
+          "property": "copyToTarget",
+          "condition": "must also be enabled for TMX target <tuv> data to be generated"
         }
       ]
     },
+    "tmxOutputPath": {
+      "help": "Full path for the generated TMX file. Only used when **Generate a TMX file** is enabled.",
+      "values": "A file system path (absolute or relative) ending in `.tmx`.",
+      "examples": [
+        "`aligned.tmx` — default, writes to working directory",
+        "`/output/translations/project-aligned.tmx` — absolute path"
+      ]
+    },
     "replaceWithSource": {
-      "description": "If no target text is available for a given text unit, use the source text as fallback."
+      "help": "When the target file has no corresponding entry for a source text unit, the source text is used as the target instead of leaving it empty. Useful as a fallback to ensure every text unit has target content."
     },
     "copyToTarget": {
-      "description": "Copy the aligned target content to/over the target of the text unit. Existing target will be lost, and the copied target will not be segmented. If the entry from the 'target' file is set to approved, the approved property is passed along too. An annotation will still be created if requested via storeAsAltTranslation.",
+      "help": "Copies the aligned target content directly onto the text unit's target. If the entry from the target file is marked as *approved*, that property is preserved and passed along.\n\n**Use with caution** — this overwrites any existing target content and the result will not be segmented.",
       "notes": [
-        "WARNING: Copied target will not be segmented and any existing target will be lost.",
-        "Note: This option must also be checked for target <tuv> data to be generated when generateTMX is true."
+        "**WARNING**: Any existing target content will be lost, and the copied target will not be segmented.",
+        "Required in combination with **Generate a TMX file** for target `<tuv>` elements to appear in the TMX output."
       ]
     },
     "storeAsAltTranslation": {
-      "description": "Store the matched target as an alternate translation annotation attached to the processed entry, so that subsequent steps in the pipeline can see and use it."
+      "help": "Attaches the matched target as an `AltTranslation` annotation on the text unit. This makes the alignment result visible to subsequent pipeline steps (e.g., leveraging steps) without overwriting the existing target."
     },
     "suppressTusWithNoTarget": {
-      "description": "When enabled, prevents the step from passing on any text units for which no target content could be found during alignment."
+      "help": "Filters out text units for which no matching target was found, preventing them from being passed to downstream steps. Useful when you only want to process fully aligned entries."
     },
     "useTextUnitIds": {
-      "description": "Align based on TextUnit IDs rather than resource names (TextUnit.getName()). When false, alignment uses the name property of each text unit."
+      "help": "Switches alignment matching from `TextUnit.getName()` (resource name) to `TextUnit.getId()`. Use this when your filter produces meaningful text unit IDs rather than resource names for matching."
     }
   },
   "limitations": [
-    "Assumes that each text unit has a unique name value. The filter being used must produce unique names (TextUnit.getName()) for all text units in the documents.",
-    "This step aligns text units only, not the possible segments inside the text units."
+    "Assumes each text unit has a **unique** name value (`TextUnit.getName()`). The filter used must produce unique names for all text units in the documents.",
+    "Aligns at the **text unit** level only — does not align segments within text units.",
+    "Both inputs must be **non-segmented**.",
+    "For multilingual target files (e.g., XLIFF), alignment requires both matching id **and** matching source text between the two text units; if source texts differ, no alignment is made."
   ],
   "processingNotes": [
-    "The process expects both inputs to be non-segmented.",
-    "The 'source' file is the first input and provides source content. The 'target' file is the second input and provides target content.",
-    "If the 'target' file is in a monolingual format (like Java properties), the source extracted from that file is used as target content. If the 'target' file is multilingual (like XLIFF), the target extracted from that file is used as target content.",
-    "If the 'target' file is multilingual, in addition to matching on id, the step verifies that the source content of both text units with the same name have the same source text. If they do not match, no alignment is made.",
-    "Text units in the source but not in the target generate a warning. Text units in the target but not in the source are ignored."
+    "The **first** input file provides the source content; the **second** input file provides the target content.",
+    "If the target file is **monolingual** (e.g., Java properties), the source extracted from that file is used as target content.",
+    "If the target file is **multilingual** (e.g., XLIFF), the actual target extracted from that file is used as target content, and an additional source-text equality check is performed.",
+    "Text units present in source but missing from target generate a **warning**. Text units in target but not in source are silently **ignored**."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "title": "Aligning two properties files into bilingual text units",
+      "description": "Aligns a source and target Java properties file by matching property names, producing bilingual text units for downstream processing.",
+      "config": "```yaml\ngenerateTMX: false\nstoreAsAltTranslation: true\nreplaceWithSource: false\nsuppressTusWithNoTarget: false\n```"
+    },
+    {
+      "title": "Generating a TMX file from aligned properties",
+      "description": "Produces a TMX file from two aligned properties files. Both `generateTMX` and `copyToTarget` must be enabled for target `<tuv>` elements to appear in the TMX.",
+      "config": "```yaml\ngenerateTMX: true\ntmxOutputPath: /output/aligned.tmx\ncopyToTarget: true\n```"
+    }
+  ],
   "stepId": "id-based-aligner",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/id_uased_aligner_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/id_based_aligner_step"
 }

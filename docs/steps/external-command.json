@@ -1,32 +1,36 @@
 {
-  "filterName": "External Command Step",
-  "overview": "The External Command step runs a given external command on a raw document. It takes a raw document as input and sends a raw document as output. The command line supports variable substitution for input/output paths, source/target locale information, and the project root directory.",
+  "filterName": "External Command",
+  "overview": "Runs an external command-line program on a raw document during pipeline processing. The step provides the input document path and expects the command to produce an output document at a specified path. Variable substitution is available for paths, source/target language information, and the project root directory.",
   "parameters": {
     "command": {
-      "description": "The command-line to execute. The command line must use the input and output paths provided through the variables ${inputPath} and ${outputPath}. Supports the following case-sensitive variables: ${inputPath} (full path of the input document), ${outputPath} (full path of the output document), ${srcLangName} (English name of the language part of the source locale, e.g. 'German' for 'de-ch'), ${trgLangName} (English name of the language part of the target locale, e.g. 'Japanese' for 'ja-jp'), ${srcLang} (language code of the source locale, e.g. 'de' for 'de-ch'), ${trgLang} (language code of the target locale, e.g. 'ja' for 'ja-jp'), ${srcBCP47} (BCP-47 language tag of the source locale, e.g. 'de-CH'), ${trgBCP47} (BCP-47 language tag of the target locale, e.g. 'ja-JP'), ${rootDir} (the root directory for the project/batch; in Rainbow this is the parameters folder).",
+      "help": "The command line to execute. Must use `${inputPath}` and `${outputPath}` variables to read the input document and write the output document.\n\nAvailable variables (case-sensitive):\n\n| Variable | Description | Example |\n|---|---|---|\n| `${inputPath}` | Full path of the input document | |\n| `${outputPath}` | Full path of the output document | |\n| `${srcLangName}` | English name of source language | `\"German\"` for `de-ch` |\n| `${trgLangName}` | English name of target language | `\"Japanese\"` for `ja-jp` |\n| `${srcLang}` | Source language code | `\"de\"` for `de-ch` |\n| `${trgLang}` | Target language code | `\"ja\"` for `ja-jp` |\n| `${srcBCP47}` | Source BCP-47 tag | `\"de-CH\"` for `de-CH` |\n| `${trgBCP47}` | Target BCP-47 tag | `\"ja-JP\"` for `ja-JP` |\n| `${rootDir}` | Project/batch root directory | In Rainbow: the parameters folder |",
+      "values": "A shell command string with `${variable}` placeholders. Variable names are **case-sensitive**.",
       "notes": [
-        "Variable names are case-sensitive.",
-        "${srcBCP47} and ${trgBCP47} are available from M37 onwards.",
-        "In Rainbow, ${rootDir} resolves to the parameters folder."
+        "`${srcBCP47}` and `${trgBCP47}` are available from **M37** onwards.",
+        "Variable names are case-sensitive — `${inputpath}` will **not** work."
+      ],
+      "examples": [
+        "Windows sort: `cmd /C \"sort ${inputPath} /O ${outputPath}\"`",
+        "Unix example: `cat ${inputPath} | sed 's/foo/bar/g' > ${outputPath}`"
       ]
     },
     "timeout": {
-      "description": "The number of seconds after which the command will be timed out and cancelled. Enter -1 for no timeout.",
-      "notes": []
+      "help": "Maximum number of seconds the external command is allowed to run before being forcibly cancelled. Use `-1` to allow the command to run indefinitely.\n\nSet an appropriate timeout to prevent the pipeline from hanging on commands that may stall or run longer than expected.",
+      "values": "Integer seconds, or `-1` for no timeout."
     }
   },
   "limitations": [
-    "None known."
+    "None known per the Okapi wiki."
   ],
   "processingNotes": [
-    "Takes raw document as input and sends raw document as output.",
-    "The step executes the command as an external process and supports timeout-based cancellation."
+    "Takes a **raw document** as input and sends a **raw document** as output — the step operates on the file-level, not on extracted text units.",
+    "The step requires both source and target languages to be set in the pipeline for the language variables to resolve."
   ],
   "examples": [
     {
-      "title": "Windows sort command",
-      "description": "Sorts the input file and creates the corresponding output file using the Windows sort command.",
-      "input": "cmd /C \"sort ${inputPath} /O ${outputPath}\""
+      "title": "Sort file contents (Windows)",
+      "description": "Uses the Windows `sort` command to sort lines in the input file and write the result to the output path.",
+      "config": "```yaml\ncommand: 'cmd /C \"sort ${inputPath} /O ${outputPath}\"'\ntimeout: 30\n```"
     }
   ],
   "stepId": "external-command",

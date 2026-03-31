@@ -1,54 +1,35 @@
 {
   "filterName": "PDF Filter",
-  "overview": "The PDF Filter is an Okapi component that implements the IFilter interface for PDF files. It extracts text from PDF documents but does not handle complex formatting like tables or multi-level lists. The typical use case is to scrape text from PDFs for quick word counts and leverage analysis. Importantly, this filter does not merge back into PDF format — it produces plain text file output upon merging.",
+  "overview": "The PDF Filter extracts text from PDF files for processing. It does not handle complex formatting like tables or multi-level lists. The typical use case is scraping text from PDFs for quick word counts and leverage analysis. **This filter does not merge back into PDF format** — it produces plain text output upon merging.",
   "parameters": {
-    "inlineCodes": {
-      "description": "Inline code detection and handling settings. When enabled, regex patterns are used to identify inline codes (placeholders, tags, etc.) within the extracted PDF text. Sub-properties control whether adjacent codes are merged, whether boundary codes are moved to the skeleton, and define the regex rules for detection.",
-      "notes": [
-        "The wiki states 'This filter has no parameters', suggesting inline code support was added after the wiki was last updated."
-      ]
-    },
-    "whitespace": {
-      "description": "Whitespace handling settings for extracted PDF text. Controls whether original whitespace is preserved, whether multiple whitespace characters are collapsed into single spaces, and whether leading/trailing whitespace is trimmed from text segments.",
-      "notes": [
-        "PDF files often contain irregular whitespace due to the way text is positioned on the page. These settings help normalize the extracted text."
-      ]
-    },
     "parser.preserveWhitespace": {
-      "description": "When enabled, preserves the original whitespace in extracted text from the PDF. When disabled (the default), whitespace may be normalized during extraction.",
-      "notes": []
+      "help": "Keeps the original whitespace from the PDF content instead of normalizing it. Useful when spatial layout of the PDF carries meaning (e.g., code listings, preformatted tables)."
     },
     "parser.indentThreshold": {
-      "description": "Defines the amount of indent (in PDF coordinate units) needed to define a new paragraph. The default value is 2.0. When text is indented by more than this threshold relative to the previous line, it is treated as the start of a new paragraph and a new TextUnit is created.",
-      "notes": [
-        "Value is a string representation of a floating-point number."
-      ]
+      "help": "Controls how much horizontal indent (in PDF coordinate units) is required before the parser treats indented text as the start of a new paragraph. A higher value means text must be indented further before it triggers a paragraph break.\n\nThe default of `2.0` works for typical documents. Lower the value to detect subtler indentation; raise it if normal text is being incorrectly split into separate paragraphs.",
+      "values": "A decimal number representing PDF coordinate units. Default: `2.0`."
     },
     "parser.spacingTolerance": {
-      "description": "Defines the amount of spacing (in PDF coordinate units) needed to define a whitespace character between glyphs. The default value is 0.5. This controls how the filter determines word boundaries when extracting text from PDF content streams where characters are individually positioned.",
-      "notes": [
-        "Value is a string representation of a floating-point number."
-      ]
+      "help": "Controls how much horizontal space between characters is needed before the parser inserts a whitespace character. Adjusting this affects how tightly- or loosely-spaced text is parsed.\n\nLower values make the parser more sensitive to small gaps (potentially inserting spaces within words). Higher values require wider gaps before inserting a space.",
+      "values": "A decimal number representing PDF coordinate units. Default: `0.5`."
     },
     "output.lineSeparator": {
-      "description": "The character or character sequence to use as a line separator in the extracted output. Defaults to a single newline character (\\n).",
-      "notes": []
+      "help": "The character sequence inserted between lines within a paragraph in the extracted output. Since the filter merges to **plain text** (not PDF), this controls the line break style in the output file.",
+      "values": "A string literal. Common values: `\\n` (Unix), `\\r\\n` (Windows)."
     },
     "output.paragraphSeparator": {
-      "description": "The character or character sequence to use as a paragraph separator in the extracted output. Defaults to a single newline character (\\n). Paragraphs are determined by the indent threshold setting.",
-      "notes": []
-    },
-    "sortByPosition": {
-      "description": "When enabled, sorts the extracted text by its position within the PDF document. This can help produce more readable output when the PDF's internal content stream order does not match the visual reading order. When disabled (the default), text is extracted in the order it appears in the PDF content stream.",
-      "notes": []
+      "help": "The character sequence inserted between paragraphs in the extracted output. Use a double newline (`\\n\\n`) to create visible paragraph breaks in the plain-text output, or a single newline if you want compact output.",
+      "values": "A string literal. Common values: `\\n` (single), `\\n\\n` (double/blank line between paragraphs)."
     }
   },
   "limitations": [
-    "This filter merges back in plain text format, not PDF. The output upon merging is a plain text file, not a reconstructed PDF document."
+    "The filter **does not merge back into PDF format**. Output upon merging is always plain text.",
+    "Complex formatting such as tables and multi-level lists is not preserved.",
+    "This is a \"quick and dirty\" text extraction — not suitable for round-trip PDF translation."
   ],
   "processingNotes": [
-    "PDF files are binary files and do not have a specific encoding. Okapi extracts all text from the PDF as a Java string and forces the encoding to be UTF-16. Any encoding selected in tools like Rainbow will be ignored.",
-    "TextUnits are created following the default rules of the Plain Text filter — any text followed by a newline will create a new TextUnit or paragraph."
+    "PDF files are binary and have no specific encoding. The filter extracts all text as Java strings and forces the encoding to **UTF-16**. Any encoding selected in tools like Rainbow will be ignored.",
+    "TextUnits are created following the default rules of the Plain Text filter — any text followed by a newline creates a new TextUnit (paragraph)."
   ],
   "examples": [],
   "filterId": "okf_pdf",

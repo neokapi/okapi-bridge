@@ -1,30 +1,40 @@
 {
-  "filterName": "TM Import Step",
-  "overview": "The TM Import step imports text units from an input document into a Pensieve TM. Each text unit is imported into the specified TM, and if the text unit is segmented, each segment is imported individually. The step takes filter events as input and sends filter events as output.",
+  "filterName": "TM Import",
+  "overview": "Imports text units from an input document into a [Pensieve TM](https://okapiframework.org/wiki/index.php/Pensieve_TM). Each text unit is imported into the specified TM; if the text unit is segmented, each segment is imported individually. Text units without text for the specified target locale are skipped.",
   "parameters": {
     "tmDirectory": {
-      "description": "Full path of the directory of the TM where to import the text units. If the TM does not exist, it is created automatically. If the TM already exists, the new entries are added to the existing ones. The variable `${rootDir}` can be used in the path to reference the root directory.",
-      "notes": [
-        "Supports the ${rootDir} variable in the path",
-        "Creates the TM if it does not already exist",
-        "Adds entries to existing TM if it already exists"
+      "help": "Full path to the directory containing the Pensieve TM. If the TM does not exist at this path, a **new TM is created**. If the TM already exists, entries are **added** to the existing ones.\n\nSupports the `${rootDir}` variable for constructing relative paths.",
+      "values": "Absolute directory path. Supports the `${rootDir}` variable.",
+      "examples": [
+        "`${rootDir}/my-tm` — TM directory relative to the project root",
+        "`/data/shared-tm` — absolute path to a shared TM"
       ]
     },
     "overwriteSameSource": {
-      "description": "When enabled, if an entry to import has the same source text as one or more entries in the existing TM, all matching existing entries will be replaced by the new one. When disabled, different translations for the same source text are allowed to coexist in the TM.",
+      "help": "Controls how duplicate source texts are handled during import. When enabled, if an entry being imported has the same source text as one or more existing TM entries, **all matching existing entries are replaced** by the new one.\n\nLeave disabled if you want to allow **multiple different translations** for the same source text in the TM.",
       "notes": [
-        "When set, ALL matching existing entries with the same source text are replaced by the new one, not just the first match",
-        "Do not set this option if you want to allow different translations for the same source"
+        "**Warning:** When enabled, this replaces *all* matching entries — if the TM contains multiple translations for the same source, they will all be removed and replaced by the single new entry."
       ]
     }
   },
   "processingNotes": [
-    "If a text unit is segmented and the number of segments differs between the source and the target, the whole text unit is imported instead of individual segments.",
-    "If a text unit does not have text for the specified target locale, that text unit is skipped and not imported.",
-    "Each text unit is imported individually; segmented text units have each segment imported separately (unless segment counts differ between source and target)."
+    "If a text unit is segmented and the number of segments differs between source and target, the **whole text unit** is imported instead of individual segments.",
+    "Text units that do not have text for the specified target locale are **skipped** (not imported).",
+    "If the target TM directory does not exist, it is automatically created."
   ],
   "limitations": [],
-  "examples": [],
+  "examples": [
+    {
+      "title": "Import into a new or existing TM",
+      "description": "Configure the step to import text units into a Pensieve TM located relative to the project root, adding to any existing entries without overwriting duplicates.",
+      "config": "```yaml\ntmDirectory: ${rootDir}/my-project-tm\noverwriteSameSource: false\n```"
+    },
+    {
+      "title": "Import with duplicate overwrite",
+      "description": "Replace existing TM entries when the source text matches, ensuring only the latest translation is kept for each source.",
+      "config": "```yaml\ntmDirectory: ${rootDir}/my-project-tm\noverwriteSameSource: true\n```"
+    }
+  ],
   "stepId": "t-m-import",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/tm_import_step"
 }

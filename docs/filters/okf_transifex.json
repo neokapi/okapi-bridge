@@ -1,72 +1,32 @@
 {
   "filterName": "Transifex Filter",
-  "overview": "The Transifex Filter is an Okapi component that implements the IFilter interface to process online Transifex projects. Transifex is an open-source translation collaborative platform where one party can upload files for translation, and another party can access these files to translate them online or locally. The filter takes a local Transifex project file (.txp) as input, connects to the Transifex host to retrieve PO resources, and processes them as standard filter events. When used with a filter-writer, modified PO files are pushed back to the Transifex project.",
+  "overview": "The Transifex Filter processes online [Transifex](http://www.transifex.org) projects via local `.txp` project files. It connects to a Transifex host, downloads PO resources for translation, processes them as standard filter events, and can push modified translations back. The filter handles credential-based authentication and selective resource processing.",
   "parameters": {
     "general.openProject": {
-      "description": "Set this option to open the project file (.txp), and possibly modify it, before processing it. This allows you to select which resource you want to process. When enabled, a dialog box is presented where you can configure the project ID, host, credentials, and select which resources to include in processing. When disabled, the filter processes the .txp file directly without prompting.",
+      "help": "Opens a dialog to view and edit the `.txp` project file before processing begins. This lets you select which resources to include, update credentials, or refresh the resource list from the Transifex server.\n\nIf disabled, the filter processes the `.txp` file as-is without prompting.",
       "notes": [
-        "The default configuration (okf_transifex) has this set to true, while the alternate configuration (okf_transifex-noPrompt) sets it to false for non-interactive processing."
-      ]
-    },
-    "inlineCodes.enabled": {
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.) within the translatable text extracted from the PO resources downloaded from Transifex."
-    },
-    "inlineCodes.rules": {
-      "description": "Regex patterns to identify inline codes in translatable text extracted from Transifex PO resources.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
-      ]
-    },
-    "inlineCodes.mergeAdjacent": {
-      "description": "Merge consecutive inline codes into a single placeholder.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
-      ]
-    },
-    "inlineCodes.moveBoundaryCodes": {
-      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable).",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
-      ]
-    },
-    "inlineCodes.simplifierRules": {
-      "description": "Rules for simplifying inline code representation.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
+        "The project file editor shows read-only source and target locale fields — these are driven by the calling application, not the file itself."
       ]
     }
   },
-  "limitations": [
-    "This filter is BETA.",
-    "Transifex loses fuzzy flags and the corresponding translations when downloading a PO file that was uploaded with fuzzy entries. The filter avoids labelling as fuzzy to prevent losing target text during round-trips, which may result in resources marked as 100% translated in Transifex even when translations are not final.",
-    "Only PO-based files in Transifex are handled, not TS files.",
-    "Due to limitations in the pipeline mechanism, this filter cannot be used with steps that re-write different output corresponding to the resource, other than the Filter Events to Raw Document Step. For example, it will not work properly with the Rainbow Translation Kit Creation Step."
-  ],
   "processingNotes": [
-    "The filter takes a local .txp project file as input. If the file contains no resources, the filter connects to the Transifex host using the credentials specified in the file and fetches the list of all resources. If the file already contains resources, the list is not refreshed.",
-    "For each PO resource in the project whose source language matches the specified source locale, the filter downloads the translation file for the given target language. If no translation file exists, an empty one is created.",
-    "Downloaded PO files are opened and processed, sending standard filter events as received from a PO file. When one resource is done, it moves to the next.",
-    "If the filter-writer is used (e.g., in the Filter Events to Raw Document Step), modified PO files are recreated and pushed back into the Transifex project using the same credentials.",
-    "The .txp project file must be UTF-8 encoded. Lines with only spaces/tabs and lines starting with # are ignored.",
-    "Source and target locale values in the .txp file are used only as fall-back values; in most situations the locales are driven by the application calling the filter."
+    "The filter reads a local `.txp` project file containing Transifex host URL, credentials, and resource list.",
+    "If the `.txp` file contains no resources, the filter connects to the Transifex host and fetches the full resource list. If resources are already listed, it uses them as-is without refreshing.",
+    "For each selected PO resource matching the source locale, the filter downloads the target-language translation file. If no translation exists yet, an empty PO file is created.",
+    "Downloaded PO files are processed sequentially, emitting standard filter events identical to those from a PO file.",
+    "When using the filter-writer (e.g., in the Filter Events to Raw Document Step), modified PO files are pushed back to Transifex using the same credentials."
+  ],
+  "limitations": [
+    "**BETA** — this filter is considered beta quality.",
+    "Transifex loses fuzzy flags and their translations when downloading a PO file uploaded with fuzzy entries. To avoid losing target text during round-trips, entries are not labeled as fuzzy — which may cause Transifex to report 100% translated even when translations are not final.",
+    "Only PO-based resources in Transifex are supported — TS files are not handled.",
+    "Due to pipeline limitations, this filter only works with the **Filter Events to Raw Document Step** for output. It will not work correctly with steps like the Rainbow Translation Kit Creation Step that rewrite output per-resource."
   ],
   "examples": [
     {
-      "title": "Transifex project file format",
-      "description": "Example .txp project file showing the format for configuring a Transifex project connection, including host, credentials, locale settings, and resource selection. Each resource can optionally have a tab-separated yes/no flag to indicate whether it should be processed (defaults to yes if omitted).",
-      "input": "host=http://www.transifex.net\nuser=johndoe\npassword=xrt34@asf\nprojectId=myproject\nprotectApproved=yes\n# Fall-back values for the source and target locales:\nsourceLocale=en\nsourceLocale=fr\n# Resources\nmyfile1xmlpo\tyes\nmyfile2odtpo\tno"
+      "title": "Transifex project file (.txp) format",
+      "description": "The `.txp` input file is a UTF-8 text file describing the Transifex project connection and resource selection. Lines starting with `#` are comments. Each entry can be omitted for defaults. Resource entries without a `yes/no` flag default to selected.",
+      "input": "```\nhost=http://www.transifex.net\nuser=johndoe\npassword=xrt34@asf\nprojectId=myproject\nprotectApproved=yes\n# Fall-back values for the source and target locales:\nsourceLocale=en\ntargetLocale=fr\n# Resources\nmyfile1xmlpo\tyes\nmyfile2odtpo\tno\n```"
     }
   ],
   "filterId": "okf_transifex",

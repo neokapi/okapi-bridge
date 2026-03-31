@@ -1,30 +1,61 @@
 {
-  "filterName": "Microsoft Batch Translation Step",
-  "overview": "This step annotates text units of input documents with Microsoft Translator candidates or/and creates a TM from them. It takes filter events as input and sends back filter events (possibly annotated) or a raw document. Unlike using the Leveraging Step with the Microsoft Translator Connector, this step can process several text units at once and is therefore much faster. Text units flagged as non-translatable are not sent for translation.",
+  "filterName": "Microsoft Batch Translation",
+  "overview": "Annotates text units from input documents with [Microsoft Translator](http://www.microsofttranslator.com) candidates and/or creates a TMX translation memory from them. Processes multiple text units in batches for significantly faster throughput compared to using the Leveraging Step with the Microsoft Translator Connector individually. Text units flagged as non-translatable are skipped. Requires a Microsoft Azure subscription key (v3 API).",
   "parameters": {
     "azureKey": {
-      "description": "Microsoft Azure subscription key used to authenticate with the Microsoft Translator v3 API. If you already have a key for version 2, the same key should work. For information on how to obtain an azure key, see the Azure Cognitive Services pricing page.",
+      "help": "Azure subscription key for the Microsoft Translator v3 API. If you previously had a key for the v2 API, the same key should work with v3.\n\nObtain a key from [Azure Cognitive Services pricing](https://azure.microsoft.com/en-us/pricing/details/cognitive-services/).",
       "notes": [
-        "The v2 API was retired on 2019-04-30. You must use the v3 API with an Azure key from M38 onwards.",
-        "If you already have a key for version 2, the same key should work for version 3."
-      ],
-      "introducedIn": "M38"
-    },
-    "category": {
-      "description": "An optional category to use when working with trained engines. You can either enter directly the engine identifier (called 'category' in Microsoft Translator Hub), or you can use a keyword in the form @@@keyword@@@. If you specify a keyword you must specify a properties file in the Engine Mapping (configPath) field. The keyword can be a literal string or the ${domain} variable. When ${domain} is used, the variable is replaced by the first occurrence of the value for the ITS Domain annotation found on a text unit. Ideally this Domain annotation should be set on the first text unit of the first document processed. All batches of events translated before a domain annotation is found are translated with the empty category.",
-      "notes": [
-        "Only the first occurrence of the Domain annotation has an effect on the selection of the engine.",
-        "Because this step works on batches, segments before the first occurrence of the Domain annotation but within the same batch will be translated with the engine specified by the domain. For example: If you have 100 events and the Events buffer is set to 50 and the first occurrence of the Domain annotation is in the 60th event: The first 50 events will be translated with the empty category and all the other events with the engine corresponding to the specified domain, including the events 51 to 59."
-      ],
-      "dependsOn": [
-        {
-          "property": "configPath",
-          "condition": "must be set when using @@@keyword@@@ syntax in category"
-        }
+        "The v2 API was retired on 2019-04-30. You must use the v3 API (supported from M38+).",
+        "You must respect Microsoft's Terms of Service. Commercial or high-volume usage requires a separate commercial license agreement."
       ]
     },
+    "category": {
+      "help": "Optional identifier for a trained custom engine from Microsoft Translator Hub. Can be specified in three ways:\n\n- **Direct ID**: Enter the engine identifier (called 'category' in Microsoft Translator Hub) directly\n- **Keyword**: Use `@@@keyword@@@` format — requires a properties file in **Engine mapping**\n- **Domain variable**: Use `@@@${domain}@@@` — replaced by the first ITS Domain annotation found on a text unit",
+      "values": "Either a direct engine ID string, or a keyword in `@@@keyword@@@` format (e.g., `@@@travel@@@`, `@@@client1.tech@@@`). The keyword `${domain}` is replaced by the first ITS Domain annotation value.",
+      "notes": [
+        "Only the **first** occurrence of the ITS Domain annotation affects engine selection. All batches translated before a domain annotation is found use the empty (default) category.",
+        "Because this step works in batches, segments *before* the first Domain annotation but within the same batch as the annotation will be translated with the engine specified by that domain. For example, with a buffer of 50 and domain first appearing at event 60: events 1–50 use the default engine, events 51–100 (including 51–59) use the domain engine."
+      ],
+      "examples": [
+        "`@@@travel@@@` — looks up `travel.<LANG>` in the engine mapping file",
+        "`@@@client1.tech@@@` — looks up `client1.tech.<LANG>` with fallback to `client1.<LANG>`",
+        "`@@@${domain}@@@` — dynamically uses the ITS Domain annotation value as the keyword"
+      ],
+      "seeAlso": "Microsoft_Batch_Translation_Step#Parameters"
+    },
+    "configPath": {
+      "help": "Path to a Java properties file mapping category keywords to Microsoft Translator Hub engine IDs. Each line has the format:\n\n```\n<keyword>.<LANGUAGE>=<engineID>\n```\n\nWhere `<keyword>` is a case-sensitive string (no spaces, `=`, or `.`) matching the keyword in `@@@keyword@@@`, and `<LANGUAGE>` is the uppercase language code of the target locale.\n\nA **fallback mechanism** applies: if `client2.law.DE` is not found, the step looks for `client2.DE`. If no custom engine is found, the generic Microsoft engine is used.",
+      "values": "File path supporting variables `${rootDir}`, `${inputRootDir}`, and locale variables (`${srcLoc}`, `${trgLoc}`, etc.).",
+      "examples": [
+        "```properties\ntravel.FR=11111111-2222-3333-4444-e42f530c98b8_tra\nclient1.DE=11111111-2222-3333-4444-90dd26cc9dsd3_gen\nclient1.tech.DE=11111111-2222-3333-4444-90dd26cc9d48_tech\nclient2.DE=11111111-2222-3333-4444-90dd26cc9ds34_gen\n```"
+      ]
+    },
+    "maxEvents": {
+      "help": "Number of text unit events to accumulate before sending a single batch query to the Microsoft Translator API. Larger buffers mean fewer API calls and faster processing, but the API imposes limits on the volume of text per request.",
+      "notes": [
+        "The batch boundary affects which engine is used when ITS Domain annotations are present — segments before and after the first domain annotation within the same batch share the same engine."
+      ]
+    },
+    "maxMatches": {
+      "help": "Maximum number of translation candidates to retain per source text unit. Each match is stored as an annotation on the text unit."
+    },
+    "threshold": {
+      "help": "Minimum score a translation match must have to be retained. Matches below this score are discarded.",
+      "values": "Integer score (0–100). See the Microsoft Translator Connector documentation for how scores are computed from match degree and rating values.",
+      "seeAlso": "Microsoft_Translator_Connector"
+    },
+    "onlyWhenWithoutCandidate": {
+      "help": "Only sends text units to Microsoft Translator if they do not already have a translation candidate from a previous step or the original document. Useful for avoiding redundant API calls when earlier steps (e.g., TM leveraging) have already provided matches."
+    },
+    "annotate": {
+      "help": "Adds translation matches as annotations on the text units. These annotations can be consumed by downstream pipeline steps (e.g., leveraging or quality check steps). Existing annotations from previous steps are preserved."
+    },
+    "makeTmx": {
+      "help": "Creates a TMX translation memory file from the Microsoft Translator results. If a file already exists at the specified path, it will be **overwritten**."
+    },
     "tmxPath": {
-      "description": "Full path of the new TMX document to create. If another document exists already it will be overwritten. You can use the variables ${rootDir} and ${inputRootDir}, as well as any of the source or target locale variables (${srcLoc}, ${trgLoc}, etc).",
+      "help": "Output path for the generated TMX file. Only used when **Generate a TMX document** is enabled.",
+      "values": "File path supporting variables `${rootDir}`, `${inputRootDir}`, and locale variables (`${srcLoc}`, `${trgLoc}`, etc.).",
       "dependsOn": [
         {
           "property": "makeTmx",
@@ -32,104 +63,72 @@
         }
       ]
     },
-    "configPath": {
-      "description": "Full path of the properties file that contains the mapping between category keywords and Microsoft Translator Hub engine identifiers. You can use the variables ${rootDir} and ${inputRootDir}, as well as any of the source or target locale variables (${srcLoc}, ${trgLoc}, etc). Leave the path empty to not use a mapping. The properties file is a list of lines in the form: <keyword>.<language>=<engineID>, where <keyword> is a case-sensitive string (without spaces, equal signs, or periods) corresponding to the keyword part in @@@keyword@@@, and <language> is the uppercase language code of the target locale. There is a fallback mechanism: if specifying @@@client2.law@@@ it would first look for client2.law.DE, and if not found would look for client2.DE. If no custom engine is found, the generic Microsoft-provided engine is used.",
+    "sendTmx": {
+      "help": "When enabled, the generated TMX document replaces the filter events as the input passed to the next pipeline step. If disabled, the original filter events continue through the pipeline.",
       "dependsOn": [
         {
-          "property": "category",
-          "condition": "must use @@@keyword@@@ syntax for this mapping to take effect"
+          "property": "makeTmx",
+          "condition": "must be true for TMX to exist"
         }
       ]
     },
     "markAsMT": {
-      "description": "Set this option to mark the TM entries generated as the result of machine translation. For example, when this option is set, the creationId attribute of the TMX <Tu> element is set to \"MT!\"."
-    },
-    "maxEvents": {
-      "description": "The number of events to buffer for a single query to the engine. The larger the buffer, the faster the processing. However, there are limitations related to the volume of text you can process at once as well."
-    },
-    "maxMatches": {
-      "description": "The maximum number of matches allowed per source text."
-    },
-    "threshold": {
-      "description": "The score below which a match is not kept as a result. See the Microsoft Translator Connector documentation to understand how scores are computed based on their match degree and rating values."
-    },
-    "makeTmx": {
-      "description": "Set this option to create a TMX output. When enabled, specify the full path of the TMX document to generate in the tmxPath parameter."
-    },
-    "annotate": {
-      "description": "Set this option to add annotations to the text units that hold the matches found. Those annotations may be used later by other steps. Existing annotations are preserved."
+      "help": "Marks generated TM entries as machine translation output. When enabled, the `creationId` attribute of TMX `<tu>` elements is set to `\"MT!\"`."
     },
     "fillTarget": {
-      "description": "Set this option to copy the translation with the best score (and a score above or equal to the Fill threshold) into the target if it is empty. Only the matches returned by the Microsoft Translator engine are taken into account.",
-      "dependsOn": [
-        {
-          "property": "fillTargetThreshold",
-          "condition": "used to determine the minimum score for filling the target"
-        }
-      ]
+      "help": "Copies the highest-scoring translation candidate into the target segment (if the target is currently empty). Only matches returned by Microsoft Translator are considered — candidates from other sources are ignored. The candidate must score at or above the **Fill threshold**."
     },
     "fillTargetThreshold": {
-      "description": "If the score of the best match is below this value, no translation is copied into the target. Only applies when fillTarget is enabled.",
+      "help": "Minimum score required for the best translation candidate to be copied into the target. If the best match scores below this value, the target is left empty.",
       "dependsOn": [
         {
           "property": "fillTarget",
-          "condition": "must be true for this threshold to take effect"
-        }
-      ]
-    },
-    "onlyWhenWithoutCandidate": {
-      "description": "Set this option to send to Microsoft Translator only the text for which there is currently no candidate (i.e., annotations added by previous steps or coming from the original document)."
-    },
-    "sendTmx": {
-      "description": "Set this option to have the generated TMX document as the only input raw document passed on to the next step of the pipeline. If this option is not set, the filter events are passed on to the next step instead.",
-      "dependsOn": [
-        {
-          "property": "makeTmx",
-          "condition": "must be true for a TMX document to exist to send"
+          "condition": "must be true for this threshold to apply"
         }
       ]
     },
     "useTargetPrefix": {
-      "description": "Set this option to add a prefix to the translation candidate copied in the target. The prefix text is specified by the targetPrefix parameter.",
-      "dependsOn": [
-        {
-          "property": "fillTarget",
-          "condition": "must be true for the prefix to be applied"
-        }
-      ]
+      "help": "Prepends a text prefix to any translation candidate copied into the target. Useful for visually flagging MT output during review."
     },
     "targetPrefix": {
-      "description": "Text to use as the prefix added to translation candidates copied into the target.",
+      "help": "Text string prepended to translations copied into the target segment. Only applied when **Add a prefix** is enabled.",
       "dependsOn": [
         {
           "property": "useTargetPrefix",
-          "condition": "must be true for this prefix to be used"
+          "condition": "must be true for the prefix to be applied"
         }
+      ],
+      "examples": [
+        "`!MT__` — default prefix to flag machine-translated content"
       ]
     }
   },
   "limitations": [
-    "The Microsoft Translator API has some restrictions for high volume usage. Contact Microsoft for details.",
-    "Only the first ITS Domain annotation in a batch is taken into account.",
-    "The v3 API no longer supports translation memory functionality, so that aspect of the step is not available.",
-    "The M38 implementation of v3 API support is minimal and does not support new features such as profanity filtering.",
-    "See also the limitations on the Microsoft Translator Connector."
+    "The Microsoft Translator API has restrictions for high-volume usage — contact Microsoft for details.",
+    "Only the **first** ITS Domain annotation encountered in a batch affects engine selection; subsequent domain annotations are ignored.",
+    "The v3 API no longer supports the translation memory feature that was available in v2.",
+    "The v3 implementation (M38+) is minimal and does not support newer features such as profanity filtering.",
+    "See also the limitations documented on the Microsoft Translator Connector page."
   ],
   "processingNotes": [
-    "Text units flagged as non-translatable are not sent for translation.",
-    "Events are buffered according to maxEvents before being sent as a batch query to the engine. Larger buffers result in faster processing but are subject to API volume limitations.",
-    "When using ${domain} variable in the category field, the domain is resolved from the first ITS Domain annotation encountered. All events in batches before that annotation use the empty category.",
-    "The v2 API (Client ID / Client Secret authentication) was retired on 2019-04-30. From M38 onward, use the Azure subscription key with the v3 API.",
-    "Improving MT output can be done with post-processing steps such as the Space Check Step to fix extra or missing spaces around inline codes."
+    "Text units flagged as non-translatable are **not** sent for translation.",
+    "This step batches multiple text units per API call, making it significantly faster than using the Leveraging Step with the Microsoft Translator Connector.",
+    "Improving MT output can be done with post-processing steps — e.g., the Space Check Step can fix extra or missing spaces around inline codes.",
+    "The v2 API (Client ID / Client Secret) was retired on 2019-04-30. M38+ uses the v3 API with Azure subscription keys.",
+    "Batch boundaries interact with ITS Domain annotations — segments before the first domain annotation in a batch share the engine of that batch."
   ],
   "examples": [
     {
       "title": "Engine mapping properties file",
-      "description": "Example properties file for mapping category keywords to Microsoft Translator Hub engine identifiers. Keywords are case-sensitive and language codes are uppercase. A fallback mechanism tries progressively shorter keyword prefixes.",
-      "input": "travel.FR=11111111-2222-3333-4444-e42f530c98b8_tra\nclient1.DE=11111111-2222-3333-4444-90dd26cc9dsd3_gen\nclient1.tech.DE=11111111-2222-3333-4444-90dd26cc9d48_tech\nclient2.DE=11111111-2222-3333-4444-90dd26cc9ds34_gen",
-      "output": "Use @@@travel@@@ in Category to select the first engine (for French target). Use @@@client1.tech@@@ to select the third engine. @@@client2.law@@@ would first look for client2.law.DE, fall back to client2.DE, or use the generic engine if neither is found."
+      "description": "A properties file that maps category keywords and target languages to trained Microsoft Translator Hub engine IDs. The step uses a fallback mechanism: `client2.law.DE` falls back to `client2.DE` if the specific entry is not found.",
+      "config": "```properties\ntravel.FR=11111111-2222-3333-4444-e42f530c98b8_tra\nclient1.DE=11111111-2222-3333-4444-90dd26cc9dsd3_gen\nclient1.tech.DE=11111111-2222-3333-4444-90dd26cc9d48_tech\nclient2.DE=11111111-2222-3333-4444-90dd26cc9ds34_gen\n```"
+    },
+    {
+      "title": "Using ITS Domain for dynamic engine selection",
+      "description": "Set the **Category** to `@@@${domain}@@@` to dynamically select a trained engine based on the ITS Domain annotation found in the content. The domain value is used as the keyword to look up in the engine mapping file. Only the first domain annotation encountered is used.",
+      "config": "```yaml\ncategory: \"@@@${domain}@@@\"\nconfigPath: \"${rootDir}/engine-mapping.properties\"\nmaxEvents: 50\n```"
     }
   ],
   "stepId": "m-s-batch-translation",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/microsoft_uatch_translation_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/microsoft_batch_translation_step"
 }

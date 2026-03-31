@@ -1,28 +1,34 @@
 {
-  "filterName": "Desegmentation Step",
-  "overview": "This step joins all the segments of each source and/or target text of each text unit into a single content. It takes filter events and sends filter events. Non-segmented entries and text units flagged as non-translatable are left untouched.",
+  "filterName": "Desegmentation",
+  "overview": "This step joins all segments of each source and/or target text unit into a single content, effectively reversing prior segmentation. Non-segmented entries and text units flagged as non-translatable are left untouched. It takes filter events and sends filter events.",
   "parameters": {
     "desegmentSource": {
-      "description": "Set this option to desegment the source text of the text units. When enabled, all segments of the source content in each text unit are joined into a single content."
+      "help": "Joins all segments within each text unit's source content back into a single unsegmented content. Non-segmented entries and non-translatable text units are left untouched."
     },
     "desegmentTarget": {
-      "description": "Set this option to desegment the target of the text units. Only applies if there is a target text present in the text unit."
+      "help": "Joins all segments within each text unit's target content back into a single unsegmented content. Only applies when a target text exists; entries without a target are left untouched."
     },
     "renumberCodes": {
-      "description": "Set this option to renumber the IDs of each joined entry to match an original set of IDs that is a single sequence of numbers starting at '1'. This option can be used to restore the original IDs in content that was segmented with the 'Renumber code IDs' option in the Segmentation step.",
+      "help": "Restores inline code IDs to their original values after desegmentation. Use this when the content was previously segmented with the **Renumber code IDs** option in the Segmentation step, which renumbers code IDs to a sequential `1, 2, 3…` within each segment. This option reverses that renumbering so the merged content has the original ID sequence.",
       "notes": [
-        "This is designed to work in conjunction with the 'Renumber code IDs' option in the Segmentation step to restore original code IDs after desegmentation."
-      ]
+        "Only meaningful when the content was previously segmented using the **Renumber code IDs** option in the Segmentation step. If codes were not renumbered during segmentation, this option has no effect."
+      ],
+      "seeAlso": "Segmentation_Step"
     }
   },
-  "limitations": [
-    "None known."
-  ],
   "processingNotes": [
-    "Non-segmented entries are left untouched.",
-    "Text units flagged as non-translatable are left untouched."
+    "Non-segmented entries pass through untouched — no error is raised.",
+    "Text units flagged as **non-translatable** are skipped entirely.",
+    "Both source and target languages are required in the pipeline context."
   ],
-  "examples": [],
+  "limitations": [],
+  "examples": [
+    {
+      "title": "Reverse segmentation in a round-trip pipeline",
+      "description": "Typically used after translation to rejoin segments that were split by the Segmentation step earlier in the pipeline. When the Segmentation step used **Renumber code IDs**, enable **Restore original IDs to renumbered codes** in this step to recover the original code ID sequence.",
+      "config": "```yaml\ndesegmentSource: true\ndesegmentTarget: true\nrenumberCodes: true\n```"
+    }
+  ],
   "stepId": "desegmentation",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/desegmentation_step"
 }

@@ -1,27 +1,26 @@
 {
-  "filterName": "Enrycher Step",
-  "overview": "The Enrycher step invokes the Enrycher Web service to provide disambiguation annotations in the content of the source text. It sends groups of source entries to the Enrycher service, gets back ITS annotated results, and maps those results back to Okapi inline annotations that can be used by any other steps. It implements the ITS 2.0 Text Analysis data category for disambiguation.",
+  "filterName": "Enrycher",
+  "overview": "Invokes the [Enrycher Web service](http://enrycher.ijs.si/) to provide ITS disambiguation annotations in the source text content. The step sends groups of source entries to the Enrycher service, receives ITS-annotated results, and maps them back to Okapi inline annotations usable by downstream steps. For more information on the ITS Text Analysis data category, see the [ITS Version 2.0 Disambiguation specification](http://www.w3.org/TR/its20/#Disambiguation).",
   "parameters": {
     "baseUrl": {
-      "description": "The URL of the Enrycher Web service to use for disambiguation annotations. The default value points to the demo service at http://aidemo.ijs.si/mlw/."
+      "help": "The URL of the Enrycher Web service endpoint to use for disambiguation annotation."
     },
     "maxEvents": {
-      "description": "The number of events to process at once before sending a query to the Web service. The greater the number, the more segments are sent at the same time to the Web service. This generally improves speed, but the more events are buffered the more memory is required.",
+      "help": "Controls how many events are buffered before sending a batch query to the Web service. Higher values send more segments at once, which generally **improves speed**, but requires **more memory**.",
       "notes": [
-        "Higher values improve speed but increase memory usage."
+        "The greater the buffer size, the more memory is consumed. Adjust based on available resources and document size."
       ]
     }
   },
   "limitations": [
-    "This step is BETA.",
-    "The Enrycher Web service (as of Aug-18-2013) supports only English and Slovenian."
+    "This step is **BETA**.",
+    "The Enrycher Web service (as of Aug 2013) supports only **English** and **Slovenian**.",
+    "The amount of annotations added to the content can be very high depending on the type of text."
   ],
   "processingNotes": [
-    "The amount of annotations added to the content can be very high depending on the type of text.",
-    "Events are buffered and sent in batches to the Web service for improved performance.",
-    "Results are mapped back to Okapi inline annotations compatible with downstream steps."
+    "Events are buffered and sent in batches to the Web service rather than individually, controlled by the `maxEvents` parameter.",
+    "Results from the Enrycher service are mapped back to Okapi inline annotations compatible with other pipeline steps."
   ],
-  "examples": [],
   "stepId": "enrycher",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/enrycher_step"
 }

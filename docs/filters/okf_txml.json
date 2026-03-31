@@ -1,64 +1,26 @@
 {
   "filterName": "TXML Filter",
-  "overview": "The TXML Filter is an Okapi component that implements the IFilter interface for Wordfast Pro TXML documents. TXML is a proprietary XML-based bilingual format used by Wordfast Pro and supported by several other tools. There are no official public specifications available for the format.",
+  "overview": "The TXML Filter processes **Wordfast Pro TXML documents**, a proprietary XML-based bilingual format used by Wordfast Pro and supported by several other tools. It extracts source and target content from segmented bilingual entries, preserving existing translations and handling revisions. There are no official public specifications for the TXML format.",
   "parameters": {
     "output.allowEmptyOutputTarget": {
-      "description": "Controls whether empty translations are written out as-is in the output document. When enabled (true), empty target segments remain empty in the output. When disabled (false), a copy of the source text is used in place of any empty translation, effectively filling in untranslated segments with their source content.",
+      "help": "Controls what happens when a segment has no translation at merge time.\n\n- **Enabled**: empty target segments are written as-is (empty) in the output.\n- **Disabled**: the source text is copied into the target when no translation exists, ensuring every segment has target content.\n\nThe pre-configured variant **\"TXML (Fill empty targets in output)\"** has this option disabled.",
       "notes": [
-        "The default configuration 'okf_txml' has this set to true (empty targets allowed). The alternate configuration 'okf_txml-fillEmptyTargets' sets this to false so that empty targets are filled with source text on output."
-      ]
-    },
-    "inlineCodes.enabled": {
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.) within translatable text segments."
-    },
-    "inlineCodes.rules": {
-      "description": "Regex patterns used to identify inline codes in translatable text. Each rule contains a regex pattern that matches inline code sequences within segment content.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
-      ]
-    },
-    "inlineCodes.mergeAdjacent": {
-      "description": "When enabled, consecutive inline codes that appear next to each other are merged into a single placeholder, reducing clutter in the translatable text.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
-      ]
-    },
-    "inlineCodes.moveBoundaryCodes": {
-      "description": "When enabled, inline codes that appear at the beginning or end of a segment are moved to the skeleton (non-translatable portion), keeping the translatable text cleaner.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
-      ]
-    },
-    "inlineCodes.simplifierRules": {
-      "description": "Rules for simplifying inline code representation in translatable text.",
-      "dependsOn": [
-        {
-          "property": "inlineCodes.enabled",
-          "condition": "must be true"
-        }
+        "The `okf_txml-fillEmptyTargets` configuration sets this to `false`, copying source text into empty targets on output."
       ]
     }
   },
-  "limitations": [
-    "The TXML format does not allow different source and target content for the part between segments. If any of those inter-segment parts change after extraction, the difference cannot be represented when merging — only the source representation is preserved."
-  ],
   "processingNotes": [
-    "Input encoding is determined from the document's encoding declaration if present; otherwise UTF-8 is used as default regardless of any specified default encoding.",
-    "For UTF-8 output: a BOM is included only if the input was UTF-8 and had a BOM. If the input was not UTF-8, no BOM is added.",
-    "If the original document had an XML encoding declaration it is updated on output; if it did not have one, a declaration is automatically added.",
-    "Line-break type in the output matches the original input document.",
-    "TXML files are organized into blocks of one or more segments. Each block is extracted as a single text unit with as many segments as the block contains.",
-    "Existing translations are extracted along with the source. Segments labeled with gtmt=\"true\" and not modified=\"true\" are also set as AltTranslationsAnnotation annotations.",
-    "Only the latest translation revision is extracted; translations in <revisions> elements are ignored. The filter does not create revision entries — updated translations overwrite previous ones without creating a revision record."
+    "**Encoding detection**: Uses the XML encoding declaration if present; otherwise defaults to UTF-8 regardless of any externally specified default encoding.",
+    "**BOM handling**: A UTF-8 BOM is preserved in output only if the input was also UTF-8 and contained a BOM. Transcoding from non-UTF-8 to UTF-8 never adds a BOM.",
+    "**XML encoding declaration**: Automatically updated on output if present, or added if missing.",
+    "**Line breaks**: Output preserves the same line-break style as the input document.",
+    "**Segmentation**: TXML blocks contain one or more segments. Each block is extracted as a single text unit with all its segments.",
+    "**Existing translations**: Target text is extracted alongside source. Segments marked `gtmt=\"true\"` without `modified=\"true\"` are also stored as `AltTranslationsAnnotation`.",
+    "**Revisions**: Only the latest translation is extracted; `<revisions>` elements are ignored. Merging overwrites the previous translation without creating revision entries."
+  ],
+  "limitations": [
+    "The TXML format does not allow different source and target content for inter-segment parts. If these parts change after extraction, the difference cannot be represented at merge time — only the source representation is preserved.",
+    "No official public specification exists for the TXML format."
   ],
   "examples": [],
   "filterId": "okf_txml",
