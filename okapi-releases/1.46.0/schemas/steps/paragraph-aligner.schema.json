@@ -50,14 +50,16 @@
       "default": true,
       "title": "Output 1-1 Matches Only?",
       "description": "Ouput only 1-1 aligned paragraphs?",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "useSkeletonAlignment": {
       "type": "boolean",
       "default": false,
       "title": "Use Skeleton Alignment? (Experimental)",
       "description": "Use Skeleton alignment? (Experimental)",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

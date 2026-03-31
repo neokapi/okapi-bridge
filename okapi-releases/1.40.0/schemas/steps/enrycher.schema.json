@@ -27,7 +27,8 @@
       "type": "string",
       "default": "http://aidemo.ijs.si/mlw/",
       "title": "URL of the Enrycher Web service",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-vertical": true
     },
     "maxEvents": {
       "type": "integer",
@@ -36,7 +37,8 @@
       "description": "Number of events to store before sending a query",
       "minimum": 1,
       "maximum": 999,
-      "x-widget": "spin"
+      "x-widget": "spin",
+      "x-vertical": true
     }
   }
 }

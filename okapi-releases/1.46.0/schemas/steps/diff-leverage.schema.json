@@ -62,21 +62,24 @@
       "default": true,
       "title": "Include inline codes in the comparison",
       "description": "Use codes to compare contents",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "diffOnly": {
       "type": "boolean",
       "default": false,
       "title": "Diff only and mark the TextUnit as matched",
       "description": "Diff only and do not copy the match or create a leverage annotation",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "copyToTarget": {
       "type": "boolean",
       "default": false,
       "title": "Copy to/over the target? (WARNING: Copied target will not be segmented!)",
       "description": "Copy to/over the target (a leverage annotation will still be created). WARNING: Copied target will not be segmented and any exisiting target will be lost.",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

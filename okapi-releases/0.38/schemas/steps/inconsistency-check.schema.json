@@ -43,7 +43,8 @@
       "type": "boolean",
       "default": true,
       "title": "Check inconsistencies",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "checkPerFile": {
       "type": "boolean",
@@ -53,7 +54,8 @@
       "x-enabledBy": {
         "parameter": "checkInconststencies",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "outputPath": {
       "type": "string",
@@ -63,7 +65,12 @@
       "x-enabledBy": {
         "parameter": "checkInconststencies",
         "enabledWhenSelected": true
-      }
+      },
+      "x-forSaveAs": true,
+      "x-browseTitle": "Inconsistency Report File",
+      "x-fileFilterNames": "All Files (*.*)",
+      "x-fileFilterExtensions": "*.*",
+      "x-vertical": true
     },
     "displayOption": {
       "type": "string",
@@ -83,7 +90,8 @@
       "x-enabledBy": {
         "parameter": "checkInconststencies",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "autoOpen": {
       "type": "boolean",
@@ -93,7 +101,8 @@
       "x-enabledBy": {
         "parameter": "checkInconststencies",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "original": {
       "type": "boolean",

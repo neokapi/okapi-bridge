@@ -43,33 +43,41 @@
       "default": "",
       "title": "Azure Key",
       "description": "Microsoft Azure subscription key",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-password": true
     },
     "category": {
       "type": "string",
       "default": "",
       "title": "Category",
       "description": "Category code if accessing a trained system",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-allowEmpty": true
     },
     "configPath": {
       "type": "string",
       "default": "",
       "title": "Engine mapping",
       "description": "Full path of the properties file listing the engines",
-      "x-widget": "path"
+      "x-widget": "path",
+      "x-browseTitle": "Config Path",
+      "x-fileFilterNames": "MS HUB Config (*.properties)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.properties\t*.*",
+      "x-allowEmpty": true
     },
     "annotate": {
       "type": "boolean",
       "default": true,
       "title": "Annotate the text units with the translations",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "makeTmx": {
       "type": "boolean",
       "default": false,
       "title": "Generate a TMX document",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "tmxPath": {
       "type": "string",
@@ -79,7 +87,13 @@
       "x-enabledBy": {
         "parameter": "makeTmx",
         "enabledWhenSelected": true
-      }
+      },
+      "x-forSaveAs": true,
+      "x-browseTitle": "TMX Path",
+      "x-fileFilterNames": "TMX Documents (*.tmx)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.tmx\t*.*",
+      "x-withLabel": false,
+      "x-vertical": true
     },
     "markAsMT": {
       "type": "boolean",
@@ -89,7 +103,8 @@
       "x-enabledBy": {
         "parameter": "makeTmx",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "maxEvents": {
       "type": "integer",
@@ -122,7 +137,8 @@
       "type": "boolean",
       "default": true,
       "title": "Fill the target with the best translation candidate",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "fillTargetThreshold": {
       "type": "integer",
@@ -141,7 +157,8 @@
       "type": "boolean",
       "default": true,
       "title": "Query only entries without existing candidate",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "sendTmx": {
       "type": "boolean",
@@ -151,7 +168,8 @@
       "x-enabledBy": {
         "parameter": "makeTmx",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "useTargetPrefix": {
       "type": "boolean",
@@ -161,7 +179,8 @@
       "x-enabledBy": {
         "parameter": "fillTarget",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "targetPrefix": {
       "type": "string",

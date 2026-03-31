@@ -48,43 +48,50 @@
       "type": "boolean",
       "default": true,
       "title": "Text units",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "countInBatch": {
       "type": "boolean",
       "default": true,
       "title": "Batches",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "countInBatchItems": {
       "type": "boolean",
       "default": true,
       "title": "Batch items",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "countInDocuments": {
       "type": "boolean",
       "default": false,
       "title": "Documents",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "countInSubDocuments": {
       "type": "boolean",
       "default": false,
       "title": "Sub-documents",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "countInGroups": {
       "type": "boolean",
       "default": false,
       "title": "Groups",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "bufferSize": {
       "type": "integer",
       "default": 0,
       "title": "Size of text buffer:",
-      "x-widget": "spin"
+      "x-widget": "spin",
+      "x-vertical": true
     },
     "simplifierRules": {
       "type": "string",

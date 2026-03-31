@@ -51,6 +51,7 @@
           "default": true,
           "title": "Open the project file before processing",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "openProject",
           "description": "Transifex project to open"
         }

@@ -31,7 +31,8 @@
       "title": "Number of output files",
       "minimum": 2,
       "maximum": 999,
-      "x-widget": "spin"
+      "x-widget": "spin",
+      "x-vertical": true
     }
   }
 }

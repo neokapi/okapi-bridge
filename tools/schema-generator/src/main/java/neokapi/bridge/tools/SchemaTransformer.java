@@ -118,7 +118,7 @@ public class SchemaTransformer {
         if (paramInfo.widget != null) {
             prop.addProperty("x-widget", paramInfo.widget);
         }
-        
+
         // Add master/slave relationship
         if (paramInfo.masterParam != null) {
             JsonObject dependency = new JsonObject();
@@ -126,7 +126,60 @@ public class SchemaTransformer {
             dependency.addProperty("enabledWhenSelected", paramInfo.enabledOnMasterSelected);
             prop.add("x-enabledBy", dependency);
         }
-        
+
+        // TextInputPart metadata
+        if (paramInfo.password) {
+            prop.addProperty("x-password", true);
+        }
+        if (paramInfo.allowEmpty) {
+            prop.addProperty("x-allowEmpty", true);
+        }
+        if (paramInfo.textHeight != null) {
+            prop.addProperty("x-textHeight", paramInfo.textHeight);
+        }
+
+        // PathInputPart / FolderInputPart metadata
+        if (paramInfo.forSaveAs) {
+            prop.addProperty("x-forSaveAs", true);
+        }
+        if (paramInfo.browseTitle != null) {
+            prop.addProperty("x-browseTitle", paramInfo.browseTitle);
+        }
+        if (paramInfo.filterNames != null) {
+            prop.addProperty("x-fileFilterNames", paramInfo.filterNames);
+        }
+        if (paramInfo.filterExtensions != null) {
+            prop.addProperty("x-fileFilterExtensions", paramInfo.filterExtensions);
+        }
+        if (paramInfo.pathAllowEmpty) {
+            prop.addProperty("x-allowEmpty", true);
+        }
+
+        // CheckListPart entries
+        if (paramInfo.checkListEntries != null && !paramInfo.checkListEntries.isEmpty()) {
+            JsonArray entries = new JsonArray();
+            for (ParameterIntrospector.ParamInfo entry : paramInfo.checkListEntries) {
+                JsonObject entryObj = new JsonObject();
+                entryObj.addProperty("name", entry.name);
+                if (entry.displayName != null) {
+                    entryObj.addProperty("title", entry.displayName);
+                }
+                if (entry.description != null) {
+                    entryObj.addProperty("description", entry.description);
+                }
+                entries.add(entryObj);
+            }
+            prop.add("x-checkListEntries", entries);
+        }
+
+        // Layout flags (only emit non-defaults)
+        if (paramInfo.withLabel != null && !paramInfo.withLabel) {
+            prop.addProperty("x-withLabel", false);
+        }
+        if (paramInfo.vertical != null && paramInfo.vertical) {
+            prop.addProperty("x-vertical", true);
+        }
+
         return prop;
     }
 

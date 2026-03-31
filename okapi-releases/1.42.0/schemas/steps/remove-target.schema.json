@@ -38,25 +38,31 @@
       "type": "string",
       "default": "",
       "title": "Comma-delimited list of ids of the text units where targets are to be removed (empty - remove all targets)",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-allowEmpty": true,
+      "x-vertical": true
     },
     "targetLocalesToKeep": {
       "type": "string",
       "default": "",
       "title": "Comma-delimited list of locales of the text units of targets that should be kept (empty - keep all targets)",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-allowEmpty": true,
+      "x-vertical": true
     },
     "filterBasedOnIds": {
       "type": "boolean",
       "default": true,
       "title": "If true filter on ID's, if false filter on locales (you cannot filter on both)",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "removeTUIfNoTarget": {
       "type": "boolean",
       "default": false,
       "title": "If true remove the Text Unit if it has no remaining targets, if false do nothing",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

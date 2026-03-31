@@ -48,6 +48,7 @@
             "Extract all (existing segments and un-segmented text parts)"
           ],
           "x-widget": "select",
+          "x-vertical": true,
           "x-flattenPath": "segmentMode",
           "description": "Segmentation mode"
         }
@@ -62,6 +63,7 @@
           "default": false,
           "title": "Escape the greater-than characters in output",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "escapeGT",
           "description": "Escape greater-than in output"
         }

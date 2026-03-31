@@ -37,13 +37,19 @@
       "default": "${rootDir}/terms.txt",
       "title": "Output path",
       "description": "Full path of the output file",
-      "x-widget": "path"
+      "x-widget": "path",
+      "x-forSaveAs": true,
+      "x-browseTitle": "Output File to Generate",
+      "x-fileFilterNames": "Text Files (*.txt)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.txt\t*.*",
+      "x-vertical": true
     },
     "autoOpen": {
       "type": "boolean",
       "default": false,
       "title": "Open the result file after completion",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "minWordsPerTerm": {
       "type": "integer",
@@ -93,7 +99,12 @@
       "x-enabledBy": {
         "parameter": "useStatistics",
         "enabledWhenSelected": true
-      }
+      },
+      "x-browseTitle": "Stop Words File",
+      "x-fileFilterNames": "Text Files (*.txt)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.txt\t*.*",
+      "x-allowEmpty": true,
+      "x-vertical": true
     },
     "notStartWordsPath": {
       "type": "string",
@@ -104,7 +115,12 @@
       "x-enabledBy": {
         "parameter": "useStatistics",
         "enabledWhenSelected": true
-      }
+      },
+      "x-browseTitle": "Not-Start Words File",
+      "x-fileFilterNames": "Text Files (*.txt)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.txt\t*.*",
+      "x-allowEmpty": true,
+      "x-vertical": true
     },
     "notEndWordsPath": {
       "type": "string",
@@ -115,7 +131,12 @@
       "x-enabledBy": {
         "parameter": "useStatistics",
         "enabledWhenSelected": true
-      }
+      },
+      "x-browseTitle": "Not-End Words File",
+      "x-fileFilterNames": "Text Files (*.txt)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.txt\t*.*",
+      "x-allowEmpty": true,
+      "x-vertical": true
     },
     "keepCase": {
       "type": "boolean",
@@ -125,7 +146,8 @@
       "x-enabledBy": {
         "parameter": "useStatistics",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "removeSubTerms": {
       "type": "boolean",
@@ -135,31 +157,36 @@
       "x-enabledBy": {
         "parameter": "useStatistics",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "sortByOccurrence": {
       "type": "boolean",
       "default": false,
       "title": "Sort the results by the number of occurrences",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "useTerminologyAnnotations": {
       "type": "boolean",
       "default": true,
       "title": "Use Terminology annotations",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "useTextAnalysisAnnotations": {
       "type": "boolean",
       "default": true,
       "title": "Use Text Analysis annotations",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "useStatistics": {
       "type": "boolean",
       "default": true,
       "title": "Use tokens-grouping statistics",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

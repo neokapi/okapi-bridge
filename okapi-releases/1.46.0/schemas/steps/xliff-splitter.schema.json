@@ -45,7 +45,8 @@
       "type": "boolean",
       "default": false,
       "title": "Process big file",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "fileMarker": {
       "type": "string",
@@ -61,7 +62,8 @@
       "type": "boolean",
       "default": false,
       "title": "Update the <iws:status> translation status (WorldServer-specific)",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "translationTypeValue": {
       "type": "string",
@@ -89,7 +91,8 @@
       "type": "boolean",
       "default": false,
       "title": "Restore original file names",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

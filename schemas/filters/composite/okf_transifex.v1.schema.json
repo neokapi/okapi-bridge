@@ -53,6 +53,7 @@
           "default": true,
           "title": "Open the project file before processing",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "openProject",
           "description": "Transifex project to open"
         }
@@ -134,8 +135,8 @@
   },
   "x-kind": "OkfTransifexFilterConfig",
   "x-apiVersion": "v1",
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "350a0c5cc8d8",
-  "x-compositeHash": "0856d92a0708"
+  "x-baseHash": "a6b33c56d623",
+  "x-compositeHash": "0324d5f8629e"
 }

@@ -48,48 +48,65 @@
       "type": "boolean",
       "default": true,
       "title": "Text units",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "countInBatch": {
       "type": "boolean",
       "default": true,
       "title": "Batches",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "countInBatchItems": {
       "type": "boolean",
       "default": true,
       "title": "Batch items",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "countInDocuments": {
       "type": "boolean",
       "default": false,
       "title": "Documents",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "countInSubDocuments": {
       "type": "boolean",
       "default": false,
       "title": "Sub-documents",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "countInGroups": {
       "type": "boolean",
       "default": false,
       "title": "Groups",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "bufferSize": {
       "type": "integer",
       "default": 0,
       "title": "Size of text buffer:",
-      "x-widget": "spin"
+      "x-widget": "spin",
+      "x-vertical": true
     },
     "simplifierRules": {
       "type": "string",
       "description": "Simplifier rules for code type normalization",
       "x-widget": "simplifierRulesEditor"
+    },
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "type": "boolean",
+      "title": "Move Boundary Codes to Skeleton",
+      "description": "Move leading and trailing inline codes from segments to the skeleton"
+    },
+    "mergeAdjacentCodes": {
+      "type": "boolean",
+      "title": "Merge Adjacent Codes",
+      "description": "Merge consecutive inline codes into a single code"
     }
   }
 }

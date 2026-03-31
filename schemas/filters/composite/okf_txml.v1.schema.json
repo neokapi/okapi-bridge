@@ -54,6 +54,7 @@
           "default": true,
           "title": "Allow empty target segments in output",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "allowEmptyOutputTarget",
           "description": "Allow empty target in output when no translation."
         }
@@ -135,8 +136,8 @@
   },
   "x-kind": "OkfTxmlFilterConfig",
   "x-apiVersion": "v1",
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "229da124b281",
-  "x-compositeHash": "99b94e5a28c8"
+  "x-baseHash": "bfa8d90dd6c0",
+  "x-compositeHash": "697adf4c9e0f"
 }

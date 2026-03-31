@@ -35,48 +35,60 @@
         "extractNotes": {
           "type": "boolean",
           "default": false,
-          "title": "Extract notes",
-          "x-widget": "checkbox",
           "x-flattenPath": "extractNotes",
           "description": "Extract notes/comments as translator notes"
         },
         "extractMasterSpreads": {
           "type": "boolean",
           "default": true,
-          "title": "Extract master spreads",
-          "x-widget": "checkbox",
           "x-flattenPath": "extractMasterSpreads",
           "description": "Extract master spreads"
+        },
+        "extractCustomTextVariables": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractCustomTextVariables",
+          "description": "Extract custom text variables"
         },
         "extractHiddenLayers": {
           "type": "boolean",
           "default": false,
-          "title": "Extract hidden layers",
-          "x-widget": "checkbox",
           "x-flattenPath": "extractHiddenLayers",
           "description": "Extract hidden layers"
+        },
+        "extractHiddenPasteboardItems": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHiddenPasteboardItems",
+          "description": "Extract hidden pasteboard items"
+        },
+        "extractHyperlinkTextSourcesInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHyperlinkTextSourcesInline",
+          "description": "Extract hyperlink text inline"
+        },
+        "extractIndexTopics": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractIndexTopics",
+          "description": "Extract index topics"
         },
         "extractBreaksInline": {
           "type": "boolean",
           "default": false,
-          "title": "Extract breaks inline",
-          "x-widget": "checkbox",
           "x-flattenPath": "extractBreaksInline",
           "description": "Extract breaks inline"
         },
         "untagXmlStructures": {
           "type": "boolean",
           "default": true,
-          "title": "Untag XML structures",
-          "x-widget": "checkbox",
           "x-flattenPath": "untagXmlStructures",
           "description": "Untag XML structures"
         },
         "skipDiscretionaryHyphens": {
           "type": "boolean",
           "default": false,
-          "title": "Skip discretionary hyphens",
-          "x-widget": "checkbox",
           "x-flattenPath": "skipDiscretionaryHyphens",
           "description": "Skip discretionary hyphens"
         },
@@ -95,96 +107,72 @@
         "ignoreCharacterKerning": {
           "type": "boolean",
           "default": false,
-          "title": "Ignore character kerning",
-          "x-widget": "checkbox",
           "x-flattenPath": "ignoreCharacterKerning",
           "description": "Ignore kerning differences"
         },
         "kerningMin": {
           "type": "string",
           "default": "",
-          "title": "Character kerning minimum ignorance threshold",
-          "x-widget": "text",
           "x-flattenPath": "characterKerningMinIgnoranceThreshold",
           "description": "Kerning min threshold"
         },
         "kerningMax": {
           "type": "string",
           "default": "",
-          "title": "Character kerning maximum ignorance threshold",
-          "x-widget": "text",
           "x-flattenPath": "characterKerningMaxIgnoranceThreshold",
           "description": "Kerning max threshold"
         },
         "ignoreCharacterTracking": {
           "type": "boolean",
           "default": false,
-          "title": "Ignore character tracking",
-          "x-widget": "checkbox",
           "x-flattenPath": "ignoreCharacterTracking",
           "description": "Ignore tracking differences"
         },
         "trackingMin": {
           "type": "string",
           "default": "",
-          "title": "Character tracking minimum ignorance threshold",
-          "x-widget": "text",
           "x-flattenPath": "characterTrackingMinIgnoranceThreshold",
           "description": "Tracking min threshold"
         },
         "trackingMax": {
           "type": "string",
           "default": "",
-          "title": "Character tracking maximum ignorance threshold",
-          "x-widget": "text",
           "x-flattenPath": "characterTrackingMaxIgnoranceThreshold",
           "description": "Tracking max threshold"
         },
         "ignoreCharacterLeading": {
           "type": "boolean",
           "default": false,
-          "title": "Ignore character leading",
-          "x-widget": "checkbox",
           "x-flattenPath": "ignoreCharacterLeading",
           "description": "Ignore leading differences"
         },
         "leadingMin": {
           "type": "string",
           "default": "",
-          "title": "Character leading minimum ignorance threshold",
-          "x-widget": "text",
           "x-flattenPath": "characterLeadingMinIgnoranceThreshold",
           "description": "Leading min threshold"
         },
         "leadingMax": {
           "type": "string",
           "default": "",
-          "title": "Character leading maximum ignorance threshold",
-          "x-widget": "text",
           "x-flattenPath": "characterLeadingMaxIgnoranceThreshold",
           "description": "Leading max threshold"
         },
         "ignoreCharacterBaselineShift": {
           "type": "boolean",
           "default": false,
-          "title": "Ignore character baseline shift",
-          "x-widget": "checkbox",
           "x-flattenPath": "ignoreCharacterBaselineShift",
           "description": "Ignore baseline shift"
         },
         "baselineShiftMin": {
           "type": "string",
           "default": "",
-          "title": "Character baseline shift minimum ignorance threshold",
-          "x-widget": "text",
           "x-flattenPath": "characterBaselineShiftMinIgnoranceThreshold",
           "description": "Baseline shift min"
         },
         "baselineShiftMax": {
           "type": "string",
           "default": "",
-          "title": "Character baseline shift maximum ignorance threshold",
-          "x-widget": "text",
           "x-flattenPath": "characterBaselineShiftMaxIgnoranceThreshold",
           "description": "Baseline shift max"
         }
@@ -194,8 +182,8 @@
   "additionalProperties": false,
   "x-kind": "OkfIdmlFilterConfig",
   "x-apiVersion": "v2",
-  "x-baseVersion": 2,
-  "x-introducedInOkapi": "1.39.0",
-  "x-baseHash": "4881bc00ae92",
-  "x-compositeHash": "18ede200b4dd"
+  "x-baseVersion": 5,
+  "x-introducedInOkapi": "1.45.0",
+  "x-baseHash": "a8b06f8eeba2",
+  "x-compositeHash": "f8ac6d98a5c2"
 }

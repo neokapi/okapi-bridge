@@ -37,7 +37,8 @@
       "type": "string",
       "default": "_CONCAT",
       "title": "Output file marker",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-allowEmpty": true
     }
   }
 }

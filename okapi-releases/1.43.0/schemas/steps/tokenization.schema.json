@@ -39,21 +39,24 @@
       "default": true,
       "title": "Tokenize Source",
       "description": "Create selected tokens for source locale",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "tokenizeTargets": {
       "type": "boolean",
       "default": false,
       "title": "Tokenize Targets",
       "description": "Create selected tokens for target locales",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "filteredLocales": {
       "type": "string",
       "default": "",
       "title": "Locales to Filter",
       "description": "Locale names or patterns used that are excluded from tokenization",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-vertical": true
     },
     "filterLocales": {
       "type": "string"

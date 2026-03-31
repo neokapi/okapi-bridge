@@ -34,13 +34,15 @@
       "x-enabledBy": {
         "parameter": "stepEnabled",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "stepEnabled": {
       "type": "boolean",
       "default": true,
       "title": "Perform the extraction verification",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "allEvents": {
       "type": "boolean",
@@ -50,7 +52,8 @@
       "x-enabledBy": {
         "parameter": "stepEnabled",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "limit": {
       "type": "integer",
@@ -60,7 +63,8 @@
       "x-enabledBy": {
         "parameter": "stepEnabled",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "interrupt": {
       "type": "boolean",
@@ -70,7 +74,8 @@
       "x-enabledBy": {
         "parameter": "stepEnabled",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "monolingual": {
       "type": "boolean",

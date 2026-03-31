@@ -52,14 +52,20 @@
       "default": "My Project",
       "title": "Name of the project",
       "description": "Name of the project to be displayed in the report",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-vertical": true
     },
     "customTemplateURI": {
       "type": "string",
       "default": "",
       "title": "Custom template URI:",
       "description": "URI of the report template",
-      "x-widget": "path"
+      "x-widget": "path",
+      "x-browseTitle": "Custon Template",
+      "x-fileFilterNames": "HTML Files (*.htm;*.html)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.htm;*.html\t*.*",
+      "x-allowEmpty": true,
+      "x-vertical": true
     },
     "customTemplateString": {
       "type": "string",
@@ -72,7 +78,12 @@
       "default": "${rootDir}/scoping_report.html",
       "title": "Output path:",
       "description": "Full path of the report to generate",
-      "x-widget": "path"
+      "x-widget": "path",
+      "x-forSaveAs": true,
+      "x-browseTitle": "Report to Generate",
+      "x-fileFilterNames": "HTML Files (*.htm;*.html)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.htm;*.html\t*.*",
+      "x-vertical": true
     },
     "countAsNonTranslatable_GMXProtected": {
       "type": "boolean",

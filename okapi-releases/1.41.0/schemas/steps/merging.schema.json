@@ -36,31 +36,37 @@
       "type": "boolean",
       "default": false,
       "title": "Preserve the segmentation for the next steps",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "returnRawDocument": {
       "type": "boolean",
       "default": false,
       "title": "Return raw documents instead of filter events",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "forceTargetLocale": {
       "type": "boolean",
       "default": false,
       "title": "Specify the target locale from the tool instead of the manifest",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "addMissingCodes": {
       "type": "boolean",
       "default": true,
       "title": "Add missing codes in targets from sources",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "overrideOutputPath": {
       "type": "string",
       "default": "",
       "title": "Override the output path (leave empty to use the path from the manifest)",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-allowEmpty": true,
+      "x-vertical": true
     }
   }
 }

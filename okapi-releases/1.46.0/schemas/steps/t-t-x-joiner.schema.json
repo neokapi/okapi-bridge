@@ -33,7 +33,9 @@
       "type": "string",
       "default": "_joined",
       "title": "Optional suffix to place at the end of the result files",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-allowEmpty": true,
+      "x-vertical": true
     }
   }
 }

@@ -32,7 +32,9 @@
       "default": "_#x%X;",
       "title": "Replacement string",
       "description": "Enter a Java-formatted replacement string.",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-allowEmpty": true,
+      "x-vertical": true
     }
   }
 }

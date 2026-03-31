@@ -1,0 +1,135 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_xml.v4.schema.json",
+  "version": 4,
+  "title": "XML Filter Filter",
+  "description": "Configuration for the Okapi XML Filter Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_xml",
+    "class": "net.sf.okapi.filters.xml.XMLFilter",
+    "extensions": [
+      ".xml",
+      ".resx",
+      ".rdf",
+      ".wxl",
+      ".stringsdict"
+    ],
+    "mimeTypes": [
+      "text/xml"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_xml",
+        "name": "Generic XML",
+        "description": "Configuration for generic XML documents (default ITS rules).",
+        "mimeType": "text/xml",
+        "extensions": ".xml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
+      },
+      {
+        "configId": "okf_xml-resx",
+        "name": "RESX",
+        "description": "Configuration for Microsoft RESX documents (without binary data).",
+        "mimeType": "text/xml",
+        "extensions": ".resx;",
+        "parametersLocation": "resx.fprm",
+        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<its:rules xmlns:its=\"http://www.w3.org/2005/11/its\"\n xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\"\n xmlns:okp=\"okapi-framework:xmlfilter-options\"\n its:translate=\"no\" version=\"1.0\">\n\n<!-- This is a set of rules to process .ResX files. Be aware that any text in Base64 entries\nlike text items declared in a list box, will not be processed using this method.\nThese rules can also be used on simple .resx files that have just string entries.  -->\n  \n <its:translateRule selector=\"/root\" translate=\"no\"/>\n <its:translateRule selector=\"//data[not(@type) and not(starts-with(@name, '&gt;'))]/value\" translate=\"yes\" itsx:idValue=\"../@name\"/>\n <its:translateRule selector=\"//data[@mimetype]/value\" translate=\"no\"/>\n <its:translateRule selector=\"//data[substring(@name, string-length(@name) - string-length('.Name')+1)='.Name']/value\" translate=\"no\"/>\n <its:translateRule selector=\"//data[@name='$this.Text']/value\" translate=\"yes\" itsx:idValue=\"../@name\"/>\n \n <!-- Localization notes -->\n <its:locNoteRule locNoteType=\"description\"\n  locNotePointer=\"../comment\" selector=\"//data[not(@type) and not(starts-with(@name, '&gt;') or starts-with(@name, '$'))]/value\"/>\n<okp:codeFinder useCodeFinder=\"yes\">#v1\ncount.i=2\nrule0=(\\{[^}]+?\\})\nrule1=\\&lt;(/?)\\w+[^>]*?&gt;\n</okp:codeFinder>\n</its:rules>\n",
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
+      },
+      {
+        "configId": "okf_xml-MozillaRDF",
+        "name": "Mozilla RDF",
+        "description": "Configuration for Mozilla RDF documents.",
+        "mimeType": "text/xml",
+        "extensions": ".rdf;",
+        "parametersLocation": "MozillaRDF.fprm",
+        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<its:rules xmlns:its=\"http://www.w3.org/2005/11/its\" version=\"1.0\"\n xmlns:nc=\"http://home.netscape.com/NC-rdf#\">\n <its:translateRule selector=\"/\" translate=\"no\"/>\n <its:translateRule selector=\"//*/@nc:name\" translate=\"yes\"/>\n</its:rules>\n",
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
+      },
+      {
+        "configId": "okf_xml-JavaProperties",
+        "name": "Java Properties XML",
+        "description": "Configuration for Java Properties files in XML.",
+        "mimeType": "text/xml",
+        "parametersLocation": "JavaProperties.fprm",
+        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<its:rules xmlns:its=\"http://www.w3.org/2005/11/its\" version=\"1.0\"\n xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\">\n<!-- See ITS specification at: http://www.w3.org/TR/its/ -->\n <its:translateRule selector=\"/properties\" translate=\"no\"/>\n <its:translateRule selector=\"//entry\" itsx:idValue=\"@key\" translate=\"yes\"/>\n</its:rules>\n",
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
+      },
+      {
+        "configId": "okf_xml-AndroidStrings",
+        "name": "Android Strings",
+        "description": "Configuration for Android Strings XML documents.",
+        "mimeType": "text/xml",
+        "parametersLocation": "AndroidStrings.fprm",
+        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<its:rules xmlns:its=\"http://www.w3.org/2005/11/its\"\n\t   xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\"\n\t   xmlns:a=\"http://schemas.android.com/apk/res/android\"\n\t   xmlns:okp=\"okapi-framework:xmlfilter-options\"\n\t   version=\"1.0\">\n  <its:translateRule selector=\"/*\" translate=\"no\"/>\n  <its:translateRule selector=\"//*/@a:text[not(starts-with(.,'@'))]\" translate=\"yes\" itsx:whiteSpaces=\"preserve\" />\n  <its:translateRule selector=\"//string[not(@product)]\" translate=\"yes\" itsx:idValue=\"./@name\" itsx:whiteSpaces=\"preserve\" />\n  <its:translateRule selector=\"//string[@product]\" translate=\"yes\" itsx:idValue=\"concat(@name, '_', @product)\" itsx:whiteSpaces=\"preserve\" />\n  <its:translateRule selector=\"//item[@quantity]\" translate=\"yes\" itsx:idValue=\"concat(../@name, '_', @quantity)\" itsx:whiteSpaces=\"preserve\" />\n  <its:translateRule selector=\"//item[not(@quantity)]\" translate=\"yes\" itsx:idValue=\"concat(../@name, '_', count(preceding-sibling::item))\" itsx:whiteSpaces=\"preserve\" />\n  <its:withinTextRule selector=\"//string/descendant::*|//item/descendant::*\" withinText=\"yes\"/>\n  <its:translateRule selector=\"//*[@translatable = 'false']\" translate=\"no\"/>\n  <okp:codeFinder useCodeFinder=\"yes\">#v1\ncount.i=2\nrule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\nrule1=\\{\\d.*?\\}\n  </okp:codeFinder>\n</its:rules>\n",
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
+      },
+      {
+        "configId": "okf_xml-WixLocalization",
+        "name": "WiX Localization",
+        "description": "Configuration for WiX (Windows Installer XML) Localization files.",
+        "mimeType": "text/xml",
+        "extensions": ".wxl;",
+        "parametersLocation": "WixLocalization.fprm",
+        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<its:rules xmlns:its=\"http://www.w3.org/2005/11/its\"\n\t       xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\"\n           xmlns:w=\"http://schemas.microsoft.com/wix/2006/localization\"\n           its:translate=\"no\" version=\"1.0\">\n\n  <its:translateRule selector=\"/w:WixLocalization\" translate=\"no\"/>\n  <its:translateRule selector=\"//w:String[@Overridable!='no']\" translate=\"yes\" itsx:idValue=\"./@Id\"/>\n\n</its:rules>\n",
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
+      },
+      {
+        "configId": "okf_xml-AppleStringsdict",
+        "name": "Apple Stringsdict",
+        "description": "Configuration for Apple Stringsdict files",
+        "mimeType": "text/xml",
+        "extensions": ".stringsdict;",
+        "parametersLocation": "AppleStringsdict.fprm",
+        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<its:rules\n    xmlns:its=\"http://www.w3.org/2005/11/its\"\n    xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\"\n    xmlns:okp=\"okapi-framework:xmlfilter-options\"\n    version=\"1.0\">\n  \n  <its:translateRule selector=\"/plist/dict/dict/string\"\n                     translate=\"yes\"\n                     itsx:idValue=\"concat(\n                                   ../preceding-sibling::key[position()=1],\n                                   '_',\n                                   preceding-sibling::key[position()=1])\"/>\n\n  <its:translateRule selector=\"/plist/dict/dict/dict/string\"\n                     translate=\"yes\"\n                     itsx:idValue=\"concat(\n                                   ../../preceding-sibling::key[position()=1],\n                                   '_',\n                                   ../preceding-sibling::key[position()=1],\n                                   '_',\n                                   preceding-sibling::key[position()=1])\"/>\n  \n  <!-- Do not translate strings for keys NSStringFormatSpecTypeKey, NSStringFormatValueTypeKey -->\n  <its:translateRule selector=\"//dict/dict/key[. = 'NSStringFormatSpecTypeKey' or . = 'NSStringFormatValueTypeKey']/following-sibling::string[position()=1]\"\n                     translate=\"no\"/>\n  <its:translateRule selector=\"//key\" translate=\"no\"/>\n\n  <okp:codeFinder useCodeFinder=\"yes\">#v1\ncount.i=4\nrule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule2=\\&lt;(/?)\\w+[^>]*?>\nrule3=%\\d?\\$?#@[^@]+@\n  </okp:codeFinder>\n</its:rules>\n",
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
+      },
+      {
+        "configId": "okf_xml-docbook",
+        "name": "DocBook",
+        "description": "Configuration for DocBook v5 files",
+        "mimeType": "text/xml",
+        "parametersLocation": "okf_xml-docbook.fprm",
+        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?>\n<its:rules version=\"1.0\" xmlns:its=\"http://www.w3.org/2005/11/its\"\n    xmlns:itsx=\"http://www.w3.org/2008/12/its-extensions\"\n    xmlns:db=\"http://docbook.org/ns/docbook\">\n    <!-- Inline elements -->\n    <its:withinTextRule selector=\"\n        //db:abbrev|//db:acronym|//db:emphasis|//db:phrase|//db:quote|//db:trademark|\n        //db:anchor|//db:citation|//db:citerefentry|//db:citetitle|//db:firstterm|//db:glossterm|//db:link|//db:olink|//db:xref|\n        //db:foreignphrase|//db:wordasword|//db:computeroutput|//db:literal|//db:markup|//db:prompt|//db:replaceable|//db:tag|//db:userinput|\n        //db:inlineequation|//db:mathphrase|//db:subscript|//db:superscript|\n        //db:accel|//db:guibutton|//db:guiicon|//db:guilabel|//db:guimenu|//db:guimenuitem|//db:guisubmenu|\n        //db:keycap|//db:keycode|//db:keycombo|//db:keysym|//db:menuchoice|//db:mousebutton|//db:shortcut|\n        //db:classname|//db:constant|//db:errorcode|//db:errorname|//db:errortype|//db:function|\n        //db:msgtext|//db:parameter|//db:property|//db:replaceable|//db:returnvalue|//db:symbol|//db:token|//db:type|//db:varname|\n        //db:application|//db:command|//db:envar|//db:filename|//db:msgtext|//db:option|//db:parameter|//db:prompt|//db:systemitem|\n        //db:database|//db:email|//db:hardware|//db:optional|//db:cover|//db:comment\"\n        withinText=\"yes\"/>\n\n    <!-- Elements that should not be translated. -->\n    <its:translateRule selector=\"\n        //db:computeroutput|//db:programlisting|//db:screen|//db:screenshot|//db:synopsis|\n        //db:literallayout|\n        //db:mathphrase/*|//db:inlineequation/*\" translate=\"no\"/>\n\n    <!-- These should be translated and the spaces have to be preserved. -->\n    <!-- Currently, literallayout would be the only one where the spaces should be preserved\n         but it is set not to be translated, as it is listed in translateRule/@selector above.\n         To make literallayout translatable, remove it from the selector and uncomment the line below. -->\n    <!-- its:preserveSpaceRule selector=\"//db:literallayout\" space=\"preserve\"/ -->\n\n    <!-- These elements should generate a separate flow of text.\n         Based on https://www.w3.org/TR/xml-i18n-bp/#docbook\n         ITSFilter DOES NOT HANDLE withinText=\"nested\" as of March 2021, however,\n         and this has no real effect. -->\n    <its:withinTextRule withinText=\"nested\" selector=\"\n        //db:alt|\n        //db:footnote|\n        //db:remark|\n        //db:indexterm|\n        //db:primary|\n        //db:secondary|\n        //db:tertiary\"/>\n</its:rules>\n",
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xml.XMLFilter"
+      }
+    ],
+    "serializationFormat": "xml-its"
+  },
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    },
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "type": "boolean",
+      "title": "Move Boundary Codes to Skeleton",
+      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
+    },
+    "mergeAdjacentCodes": {
+      "type": "boolean",
+      "title": "Merge Adjacent Codes",
+      "description": "Merge consecutive inline codes into a single placeholder"
+    }
+  },
+  "additionalProperties": false,
+  "x-kind": "OkfXmlFilterConfig",
+  "x-apiVersion": "v4",
+  "x-baseVersion": 7,
+  "x-introducedInOkapi": "1.48.0",
+  "x-baseHash": "e014ddace4c2",
+  "x-compositeHash": "e3d18003f985"
+}

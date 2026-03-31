@@ -42,6 +42,7 @@
           "title": "File names",
           "description": "File name patterns",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "fileNames"
         },
         "mimeType": {
@@ -49,6 +50,7 @@
           "default": "application/x-archive",
           "title": "MIME type of the filter's container format",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "mimeType",
           "description": "MIME type for content"
         },
@@ -58,6 +60,7 @@
           "title": "Filter configuration ids",
           "description": "Filter configuration IDs",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "configIds"
         }
       }
@@ -138,8 +141,8 @@
   },
   "x-kind": "OkfSdlpackageFilterConfig",
   "x-apiVersion": "v1",
-  "x-baseVersion": 1,
+  "x-baseVersion": 3,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "9fbd9c432d03",
-  "x-compositeHash": "5992a02372ec"
+  "x-baseHash": "bd55cfdf63be",
+  "x-compositeHash": "e9fa680210ec"
 }

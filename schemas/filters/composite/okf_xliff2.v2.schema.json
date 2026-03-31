@@ -58,6 +58,7 @@
           "default": true,
           "title": "Perform maximum validation when parsing",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "maxValidation",
           "description": "Maximum validation level"
         }
@@ -140,8 +141,8 @@
   },
   "x-kind": "OkfXliff2FilterConfig",
   "x-apiVersion": "v2",
-  "x-baseVersion": 2,
+  "x-baseVersion": 9,
   "x-introducedInOkapi": "1.41.0",
-  "x-baseHash": "c805120b5307",
-  "x-compositeHash": "c805120b5307"
+  "x-baseHash": "9059ec67cd8c",
+  "x-compositeHash": "9059ec67cd8c"
 }

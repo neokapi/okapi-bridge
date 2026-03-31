@@ -52,6 +52,7 @@
           "default": true,
           "title": "Allow empty target segments in output",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "allowEmptyOutputTarget",
           "description": "Allow empty target in output"
         }

@@ -1,0 +1,60 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_html5.v2.schema.json",
+  "version": 2,
+  "title": "HTML5-ITS Filter Filter",
+  "description": "Configuration for the Okapi HTML5-ITS Filter Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_html5",
+    "class": "net.sf.okapi.filters.its.html5.HTML5Filter",
+    "extensions": [
+      ".html",
+      ".htm"
+    ],
+    "mimeTypes": [
+      "text/html"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_itshtml5",
+        "name": "Standard HTML5",
+        "description": "Configuration for standard HTML5 documents.",
+        "mimeType": "text/html",
+        "extensions": ".html;.htm;",
+        "parametersLocation": "default.fprm",
+        "parametersRaw": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!-- Default rules for HTML5 -->\n<!-- All configurations to use with the HTML5+ITS filter MUST map 'h' to the HTML namespace. -->\n<its:rules xmlns:its=\"http://www.w3.org/2005/11/its\" version=\"2.0\"\n xmlns:h=\"http://www.w3.org/1999/xhtml\">\n \n <!-- Inline elements\n <its:withinTextRule withinText=\"yes\"\n  selector=\"//h:abbr | //h:acronym | //h:br | //h:cite | //h:code | //h:dfn\n  | //h:kbd | //h:q | //h:samp | //h:span | //h:strong | //h:var | //h:b | //h:em\n  | //h:big | //h:hr | //h:i | //h:small | //h:sub | //h:sup | //h:tt | //h:del\n  | //h:ins | //h:bdo | //h:img | //h:a | //h:font | //h:center | //h:s | //h:strike\n  | //h:u | //h:isindex\" />\n  -->\n  \n <!-- Non-translatable elements -->\n <its:translateRule selector=\"//h:script|//h:style\" translate=\"no\"/>\n \n <its:translateRule selector=\"//h:del\" translate=\"no\"/>\n <its:translateRule selector=\"//h:del/descendant-or-self::*/@*\" translate=\"no\"/>\n \n <!-- Translatable attribute -->\n <its:translateRule selector=\"//h:*/@abbr|//h:*/@alt|//h:*/@prompt|//h:*/@standby|//h:*/@summary|//h:*/@title\" translate=\"yes\"/>\n \n <its:translateRule selector=\"//h:meta[@name='keywords']/@content\" translate=\"yes\"/>\n <its:translateRule selector=\"//h:meta[@name='description']/@content\" translate=\"yes\"/>\n\t\t     \n <!-- Attributes for the input element -->\n <its:translateRule selector=\"//h:input/@value\" translate=\"yes\"/>\n <its:translateRule selector=\"//h:input[@type='hidden']/@value\" translate=\"no\"/>\n \n <!-- Bidirectional information. Note: No direct support for 'auto' value -->\n <its:dirRule selector=\"//h:*[@dir='ltr']\" dir=\"ltr\"/>\n <its:dirRule selector=\"//h:*[@dir='rtl']\" dir=\"rtl\"/>\n <its:dirRule selector=\"//h:bdo[@dir='ltr']\" dir=\"lro\"/>\n <its:dirRule selector=\"//h:bdo[@dir='rtl']\" dir=\"rlo\"/>\n\n <!-- Note: dfn and dt don't match exactly the Terminology data category -->\n  \n <!-- Id Value -->\n <its:idValueRule selector=\"//h:*[@id]\" idValue=\"@id\"/>\n \n <!-- Preserve space -->\n <its:preserveSpaceRule selector=\"//h:pre|//h:textarea\" space=\"preserve\"/>\n \n <!-- Domain -->\n <its:domainRule selector=\"/h:html\"\n \tdomainPointer=\"/h:html/h:head/h:meta[@name='dcterms.subject' or @name='keywords']/@content\"/>\n\n</its:rules>\n",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.its.html5.HTML5Filter"
+      }
+    ],
+    "serializationFormat": "xml-its"
+  },
+  "properties": {
+    "path": {
+      "type": "string"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    },
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "type": "boolean",
+      "title": "Move Boundary Codes to Skeleton",
+      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
+    },
+    "mergeAdjacentCodes": {
+      "type": "boolean",
+      "title": "Merge Adjacent Codes",
+      "description": "Merge consecutive inline codes into a single placeholder"
+    }
+  },
+  "additionalProperties": false,
+  "x-kind": "OkfHtml5FilterConfig",
+  "x-apiVersion": "v2",
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.48.0",
+  "x-baseHash": "aecbab3f9b5f",
+  "x-compositeHash": "0a1b1e2cda6c"
+}

@@ -33,13 +33,19 @@
       "default": "charlist.txt",
       "title": "Path of the result file",
       "description": "Full path of the result file.",
-      "x-widget": "path"
+      "x-widget": "path",
+      "x-forSaveAs": true,
+      "x-browseTitle": "Result File",
+      "x-fileFilterNames": "Text Files (*.txt)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.txt\t*.*",
+      "x-vertical": true
     },
     "autoOpen": {
       "type": "boolean",
       "default": true,
       "title": "Open the result file after completion",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

@@ -57,6 +57,7 @@
           "default": false,
           "title": "Discard existing cue settings",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "discardCues",
           "description": "Discard cue settings"
         },
@@ -69,6 +70,8 @@
             "parameter": "discardCues",
             "enabledWhenSelected": false
           },
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "cueSettings",
           "description": "Cue settings configuration"
         }
@@ -83,6 +86,7 @@
           "default": false,
           "title": "Keep timecodes",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "keepTimecodes",
           "description": "Preserve timing information"
         },
@@ -91,6 +95,7 @@
           "default": "HH:mm:ss.SSS",
           "title": "Time format",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "timeFormat",
           "description": "Time code format"
         },
@@ -101,6 +106,7 @@
           "minimum": 1,
           "maximum": 9999999,
           "x-widget": "spin",
+          "x-vertical": true,
           "x-flattenPath": "maxCharsPerLine",
           "description": "Maximum characters per line"
         },
@@ -111,6 +117,7 @@
           "minimum": 1,
           "maximum": 9999999,
           "x-widget": "spin",
+          "x-vertical": true,
           "x-flattenPath": "maxLinesPerCaption",
           "description": "Maximum lines per caption"
         },
@@ -121,6 +128,7 @@
           "minimum": 1,
           "maximum": 9999999,
           "x-widget": "spin",
+          "x-vertical": true,
           "x-flattenPath": "cjkCharsPerLine",
           "description": "CJK characters per line"
         },
@@ -129,6 +137,7 @@
           "default": true,
           "title": "Split words so that they don't go over the char limit",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "splitWords",
           "description": "Split words at line boundaries"
         }
@@ -138,13 +147,15 @@
       "type": "boolean",
       "default": false,
       "title": "Write character limit info as annotations to xliff",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "mergeCaptions": {
       "type": "boolean",
       "default": true,
       "title": "Merge captions by sentence",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   },
   "additionalProperties": false,
@@ -222,8 +233,8 @@
   },
   "x-kind": "OkfVttFilterConfig",
   "x-apiVersion": "v2",
-  "x-baseVersion": 2,
+  "x-baseVersion": 4,
   "x-introducedInOkapi": "1.48.0",
-  "x-baseHash": "b3cc7d7fbfd6",
-  "x-compositeHash": "bf0c1b68fda1"
+  "x-baseHash": "1f19e782d70c",
+  "x-compositeHash": "5d6cbe7a892e"
 }

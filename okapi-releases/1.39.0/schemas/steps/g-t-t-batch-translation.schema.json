@@ -53,14 +53,20 @@
       "default": "",
       "title": "Password",
       "description": "Password of the account",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-password": true
     },
     "tmxPath": {
       "type": "string",
       "default": "${rootDir}/tmFromGTT.tmx",
       "title": "TMX document to create",
       "description": "Full path of the new TMX document to create",
-      "x-widget": "path"
+      "x-widget": "path",
+      "x-forSaveAs": true,
+      "x-browseTitle": "TMX Path",
+      "x-fileFilterNames": "TMX Documents (*.tmx)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.tmx\t*.*",
+      "x-vertical": true
     },
     "waitClass": {
       "type": "string",
@@ -70,13 +76,15 @@
       "type": "boolean",
       "default": true,
       "title": "Mark the generated translation as machine translation results",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "openGttPages": {
       "type": "boolean",
       "default": true,
       "title": "Open the GTT edit pages automatically after upload",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

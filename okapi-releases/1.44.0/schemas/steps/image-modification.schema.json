@@ -69,13 +69,15 @@
         "BMP Bitmap",
         "GIF (Graphics Interchange Format)"
       ],
-      "x-widget": "select"
+      "x-widget": "select",
+      "x-vertical": true
     },
     "makeGray": {
       "type": "boolean",
       "default": false,
       "title": "Convert to gray scale",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

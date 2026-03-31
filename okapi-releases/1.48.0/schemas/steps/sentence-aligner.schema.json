@@ -45,7 +45,8 @@
       "default": true,
       "title": "Generate the following TMX document:",
       "description": "If generateTMX is false generate bilingual TextUnits, otherwise (true) output a TMX file",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "tmxOutputPath": {
       "type": "string",
@@ -56,27 +57,36 @@
       "x-enabledBy": {
         "parameter": "generateTMX",
         "enabledWhenSelected": true
-      }
+      },
+      "x-forSaveAs": true,
+      "x-browseTitle": "TMX Document to Generate",
+      "x-fileFilterNames": "TMX Documents (*.tmx)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.tmx\t*.*",
+      "x-withLabel": false,
+      "x-vertical": true
     },
     "collapseWhitespace": {
       "type": "boolean",
       "default": false,
       "title": "Collapse whitspace",
       "description": "Collapse whitespace (space, newline etc.) to a single space before segmentation and alignment",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "outputOneTOneMatchesOnly": {
       "type": "boolean",
       "default": false,
       "title": "Output 1-1 matches only",
       "description": "Ouput only 1-1 sentence aligned matches",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "segmentSource": {
       "type": "boolean",
       "default": true,
       "title": "Segment the source content (overriding possible existing segmentation)",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "useCustomSourceRules": {
       "type": "boolean",
@@ -86,7 +96,8 @@
       "x-enabledBy": {
         "parameter": "segmentSource",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "customSourceRulesPath": {
       "type": "string",
@@ -97,13 +108,19 @@
       "x-enabledBy": {
         "parameter": "useCustomSourceRules",
         "enabledWhenSelected": true
-      }
+      },
+      "x-browseTitle": "Segmentation Rules for Source",
+      "x-fileFilterNames": "SRX Documents (*.srx)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.srx\t*.*",
+      "x-withLabel": false,
+      "x-vertical": true
     },
     "segmentTarget": {
       "type": "boolean",
       "default": true,
       "title": "Segment the target content (overriding possible existing segmentation)",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "useCustomTargetRules": {
       "type": "boolean",
@@ -113,7 +130,8 @@
       "x-enabledBy": {
         "parameter": "segmentTarget",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "customTargetRulesPath": {
       "type": "string",
@@ -124,14 +142,20 @@
       "x-enabledBy": {
         "parameter": "useCustomTargetRules",
         "enabledWhenSelected": true
-      }
+      },
+      "x-browseTitle": "Segmentation Rules for Target",
+      "x-fileFilterNames": "SRX Documents (*.srx)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.srx\t*.*",
+      "x-withLabel": false,
+      "x-vertical": true
     },
     "forceSimpleOneToOneAlignment": {
       "type": "boolean",
       "default": false,
       "title": "Force Simple One to One Alignment",
       "description": "If the number of sentences are the same then align one to one. Otherwise collapse the sentences and align",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

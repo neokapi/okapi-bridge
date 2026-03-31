@@ -49,6 +49,7 @@
           "default": false,
           "title": "Ensure tag IDs are unique within units",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "forceUniqueIds",
           "description": "Force unique text unit IDs"
         },
@@ -63,6 +64,7 @@
           "default": false,
           "title": "Ignore tag type mismatch between source and target",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "ignoreTagTypeMatch",
           "description": "Ignore tag type matching"
         }
@@ -77,6 +79,7 @@
           "default": true,
           "title": "Perform maximum validation when parsing",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "maxValidation",
           "description": "Maximum validation level"
         }
@@ -155,8 +158,8 @@
   },
   "x-kind": "OkfXliff2FilterConfig",
   "x-apiVersion": "v6",
-  "x-baseVersion": 6,
+  "x-baseVersion": 13,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "c1f0aeca6e98",
-  "x-compositeHash": "c1f0aeca6e98"
+  "x-baseHash": "51326768d935",
+  "x-compositeHash": "51326768d935"
 }

@@ -45,14 +45,33 @@ public class ParameterIntrospector {
         public String okapiFormat;   // For complex types like codeFinderRules
         public List<String> enumValues;  // For enum parameters
         public String[] enumLabels;      // Display labels for enum values
-        
+
         // UI metadata from EditorDescription
-        public String widget;           // "checkbox", "text", "select", "spin", "codeFinder", "path", "folder"
+        public String widget;           // "checkbox", "text", "select", "spin", "codeFinder", "path", "folder", "checkList"
         public String masterParam;      // Parameter that enables/disables this one
         public boolean enabledOnMasterSelected;  // True if enabled when master is selected
         public Integer minimum;         // For spin/integer inputs
         public Integer maximum;         // For spin/integer inputs
-        
+
+        // TextInputPart-specific
+        public boolean allowEmpty;      // Text field can be empty
+        public boolean password;        // Mask input as password
+        public Integer textHeight;      // Multiline text area height (null = single line)
+
+        // PathInputPart-specific
+        public boolean forSaveAs;       // Save-as dialog (vs Open dialog)
+        public String browseTitle;      // File/folder dialog title
+        public String filterNames;      // File filter display names (e.g. "Documents")
+        public String filterExtensions; // File filter extensions (e.g. "*.txt;*.odt")
+        public boolean pathAllowEmpty;  // Path can be empty
+
+        // CheckListPart-specific
+        public List<ParamInfo> checkListEntries;  // Nested checkbox entries
+
+        // Layout flags from AbstractPart
+        public Boolean withLabel;       // Show label (null = default)
+        public Boolean vertical;        // Vertical layout (null = default)
+
         public ParamInfo(String name, String type) {
             this.name = name;
             this.type = type;
@@ -161,6 +180,10 @@ public class ParameterIntrospector {
     
     /**
      * Enrich parameter info with UI metadata from createEditorDescription().
+     *
+     * Extracts widget types, master/slave relationships, enum values,
+     * numeric constraints, layout flags, and part-specific metadata
+     * (password, multiline, file browse filters, checklist entries, etc.).
      */
     private void enrichWithEditorDescription(Class<?> paramsClass, IEditorDescriptionProvider provider,
                                              Map<String, ParamInfo> result) {
@@ -168,22 +191,22 @@ public class ParameterIntrospector {
             // First get ParametersDescription (required for createEditorDescription)
             Method descMethod = paramsClass.getMethod("getParametersDescription");
             ParametersDescription paramDesc = (ParametersDescription) descMethod.invoke(provider);
-            
+
             if (paramDesc == null) {
                 return;
             }
-            
+
             // Now get EditorDescription
             EditorDescription editorDesc = provider.createEditorDescription(paramDesc);
             if (editorDesc == null) {
                 return;
             }
-            
+
             // Process each UI part
             for (Map.Entry<String, AbstractPart> entry : editorDesc.getDescriptors().entrySet()) {
                 String paramName = entry.getKey();
                 AbstractPart part = entry.getValue();
-                
+
                 ParamInfo info = result.get(paramName);
                 if (info == null) {
                     // Parameter discovered via editor but not in our result set - try to add it
@@ -194,28 +217,36 @@ public class ParameterIntrospector {
                         continue;
                     }
                 }
-                
+
                 // Extract widget type
                 info.widget = mapPartToWidget(part);
-                
+
                 // Extract master/slave relationship
                 AbstractPart masterPart = part.getMasterPart();
                 if (masterPart != null) {
                     info.masterParam = masterPart.getName();
                     info.enabledOnMasterSelected = part.isEnabledOnSelection();
                 }
-                
+
                 // Extract display name if not already set
                 if (info.displayName == null && part.getDisplayName() != null) {
                     info.displayName = part.getDisplayName();
                 }
-                
+
                 // Extract description if not already set
                 if (info.description == null && part.getShortDescription() != null) {
                     info.description = part.getShortDescription();
                 }
-                
-                // Extract type-specific metadata
+
+                // Layout flags from AbstractPart
+                if (!part.isWithLabel()) {
+                    info.withLabel = false;
+                }
+                if (part.isVertical()) {
+                    info.vertical = true;
+                }
+
+                // Part-specific metadata
                 if (part instanceof ListSelectionPart) {
                     ListSelectionPart listPart = (ListSelectionPart) part;
                     String[] choices = listPart.getChoicesValues();
@@ -232,6 +263,59 @@ public class ParameterIntrospector {
                     }
                     if (max != Integer.MAX_VALUE) {
                         info.maximum = max;
+                    }
+                } else if (part instanceof TextInputPart) {
+                    TextInputPart textPart = (TextInputPart) part;
+                    if (textPart.isPassword()) {
+                        info.password = true;
+                    }
+                    if (textPart.isAllowEmpty()) {
+                        info.allowEmpty = true;
+                    }
+                    int height = textPart.getHeight();
+                    if (height > 1) {
+                        info.textHeight = height;
+                    }
+                } else if (part instanceof PathInputPart) {
+                    PathInputPart pathPart = (PathInputPart) part;
+                    if (pathPart.isForSaveAs()) {
+                        info.forSaveAs = true;
+                    }
+                    if (pathPart.getBrowseTitle() != null && !pathPart.getBrowseTitle().isEmpty()) {
+                        info.browseTitle = pathPart.getBrowseTitle();
+                    }
+                    String filterNames = pathPart.getFilterNames();
+                    String filterExts = pathPart.getFilterExtensions();
+                    if (filterNames != null && !filterNames.isEmpty()) {
+                        info.filterNames = filterNames;
+                    }
+                    if (filterExts != null && !filterExts.isEmpty()) {
+                        info.filterExtensions = filterExts;
+                    }
+                    if (pathPart.isAllowEmpty()) {
+                        info.pathAllowEmpty = true;
+                    }
+                } else if (part instanceof FolderInputPart) {
+                    FolderInputPart folderPart = (FolderInputPart) part;
+                    if (folderPart.getBrowseTitle() != null && !folderPart.getBrowseTitle().isEmpty()) {
+                        info.browseTitle = folderPart.getBrowseTitle();
+                    }
+                } else if (part instanceof CheckListPart) {
+                    CheckListPart checkListPart = (CheckListPart) part;
+                    Map<String, net.sf.okapi.common.ParameterDescriptor> entries = checkListPart.getEntries();
+                    if (entries != null && !entries.isEmpty()) {
+                        info.checkListEntries = new ArrayList<>();
+                        for (Map.Entry<String, net.sf.okapi.common.ParameterDescriptor> clEntry : entries.entrySet()) {
+                            ParamInfo entryInfo = new ParamInfo(clEntry.getKey(), "boolean");
+                            net.sf.okapi.common.ParameterDescriptor pd = clEntry.getValue();
+                            if (pd.getDisplayName() != null) {
+                                entryInfo.displayName = pd.getDisplayName();
+                            }
+                            if (pd.getShortDescription() != null) {
+                                entryInfo.description = pd.getShortDescription();
+                            }
+                            info.checkListEntries.add(entryInfo);
+                        }
                     }
                 }
             }
@@ -334,6 +418,43 @@ public class ParameterIntrospector {
                 // Ignore
             }
             result.put(simplifierRulesKey, info);
+        }
+
+        // Extract Optional<Boolean> properties via reflection (added in newer Okapi versions)
+        extractOptionalBooleanParam(params, "getMoveLeadingAndTrailingCodesToSkeleton",
+                "moveLeadingAndTrailingCodesToSkeleton",
+                "Move Boundary Codes to Skeleton",
+                "Move leading and trailing inline codes from segments to the skeleton",
+                result);
+        extractOptionalBooleanParam(params, "getMergeAdjacentCodes",
+                "mergeAdjacentCodes",
+                "Merge Adjacent Codes",
+                "Merge consecutive inline codes into a single code",
+                result);
+    }
+
+    /**
+     * Extract an Optional&lt;Boolean&gt; parameter via reflection (for cross-version compatibility).
+     */
+    @SuppressWarnings("unchecked")
+    private void extractOptionalBooleanParam(Object params, String methodName,
+                                              String paramKey, String displayName, String description,
+                                              Map<String, ParamInfo> result) {
+        if (result.containsKey(paramKey)) return;
+        try {
+            Method m = params.getClass().getMethod(methodName);
+            Object opt = m.invoke(params);
+            if (opt instanceof Optional) {
+                ParamInfo info = new ParamInfo(paramKey, "boolean");
+                info.displayName = displayName;
+                info.description = description;
+                ((Optional<Boolean>) opt).ifPresent(v -> info.defaultValue = v);
+                result.put(paramKey, info);
+            }
+        } catch (NoSuchMethodException e) {
+            // Method not available in this Okapi version
+        } catch (Exception e) {
+            // Ignore
         }
     }
 

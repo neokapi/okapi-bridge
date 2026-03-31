@@ -38,43 +38,51 @@
       "type": "boolean",
       "default": false,
       "title": "Preserve the whitespace",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "preserveSegmentation": {
       "type": "boolean",
       "default": false,
       "title": "Preserve the segmentation for the next steps",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "returnRawDocument": {
       "type": "boolean",
       "default": false,
       "title": "Return raw documents instead of filter events",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "forceTargetLocale": {
       "type": "boolean",
       "default": false,
       "title": "Specify the target locale from the tool instead of the manifest",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "overrideOutputPath": {
       "type": "string",
       "default": "",
       "title": "Override the output path (leave empty to use the path from the manifest)",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-allowEmpty": true,
+      "x-vertical": true
     },
     "copyCodeMetadata": {
       "type": "boolean",
       "default": true,
       "title": "Copy the code metadata from the original file",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "skipOriginalTargetCodeMetadata": {
       "type": "boolean",
       "default": false,
       "title": "Skip the original target when copying code metadata",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

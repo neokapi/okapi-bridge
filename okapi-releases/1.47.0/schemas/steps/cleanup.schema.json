@@ -34,49 +34,58 @@
       "type": "boolean",
       "default": true,
       "title": "Normalize quotation marks",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "checkCharacters": {
       "type": "boolean",
       "default": true,
       "title": "Check for corrupt or unexpected characters",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "matchRegexExpressions": {
       "type": "boolean",
       "default": true,
       "title": "Mark segments matching default regular expressions for removal",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "matchUserRegex": {
       "type": "boolean",
       "default": true,
       "title": "Mark segments matching user defined regular expressions for removal",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "userRegex": {
       "type": "string",
       "default": "",
       "title": "User defined regex string",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-allowEmpty": true,
+      "x-vertical": true
     },
     "pruneTextUnit": {
       "type": "boolean",
       "default": true,
       "title": "Remove unnecessary segments from text unit",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "normalizePunctuations": {
       "type": "boolean",
       "default": false,
       "title": "Standardize spaces before and after certain punctuation marks to English writing style.",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "keepCrNlIntact": {
       "type": "boolean",
       "default": false,
       "title": "Keep CR and NL characters intact. They are not normalized to an ASCII space with spaces and tabs.",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

@@ -39,6 +39,7 @@
           "default": false,
           "title": "Extract notes",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "extractNotes",
           "description": "Extract editorial notes"
         },
@@ -47,6 +48,7 @@
           "default": true,
           "title": "Extract master spreads",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "extractMasterSpreads",
           "description": "Extract master spreads"
         },
@@ -62,6 +64,7 @@
           "default": true,
           "title": "Simplify inline codes when possible",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "simplifyCodes",
           "description": "Simplify inline codes"
         },
@@ -73,6 +76,7 @@
           "minimum": 1,
           "maximum": 32000,
           "x-widget": "spin",
+          "x-vertical": true,
           "x-flattenPath": "skipThreshold"
         }
       }

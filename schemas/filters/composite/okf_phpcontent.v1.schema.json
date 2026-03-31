@@ -40,6 +40,7 @@
           "default": true,
           "title": "Use localization directives",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "useDirectives",
           "description": "Use extraction directives"
         },
@@ -52,6 +53,7 @@
             "parameter": "useDirectives",
             "enabledWhenSelected": true
           },
+          "x-vertical": true,
           "x-flattenPath": "extractOutsideDirectives",
           "description": "Extract outside directive blocks"
         }
@@ -133,8 +135,8 @@
   },
   "x-kind": "OkfPhpcontentFilterConfig",
   "x-apiVersion": "v1",
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "4723a37f1103",
-  "x-compositeHash": "37996ec3ed54"
+  "x-baseHash": "0f4038ca4189",
+  "x-compositeHash": "187568ca07a7"
 }

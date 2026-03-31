@@ -45,7 +45,8 @@
       "default": false,
       "title": "Generate a TMX file:",
       "description": "If generateTMX is false generate bilingual TextUnits, otherwise (true) output a TMX file",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "tmxOutputPath": {
       "type": "string",
@@ -56,42 +57,53 @@
       "x-enabledBy": {
         "parameter": "generateTMX",
         "enabledWhenSelected": true
-      }
+      },
+      "x-forSaveAs": true,
+      "x-browseTitle": "TMX Document to Generate",
+      "x-fileFilterNames": "TMX Documents (*.tmx)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.tmx\t*.*",
+      "x-withLabel": false,
+      "x-vertical": true
     },
     "replaceWithSource": {
       "type": "boolean",
       "default": false,
       "title": "Fall back to source text",
       "description": "If no target text is available, use the source text",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "copyToTarget": {
       "type": "boolean",
       "default": false,
       "title": "Copy to/over the target (WARNING: Copied target will not be segmented)",
       "description": "Copy to/over the target (an annotation will still be created if requested). WARNING: Copied target will not be segmented and any exisiting target will be lost.",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "storeAsAltTranslation": {
       "type": "boolean",
       "default": true,
       "title": "Create an alternate translation annotation",
       "description": "Store the matched target as an alternate translation so that subsequent steps can see it.",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "suppressTusWithNoTarget": {
       "type": "boolean",
       "default": false,
       "title": "Suppress TUs with no target",
       "description": "Do not pass on any TUs for which no targets could be found.",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "useTextUnitIds": {
       "type": "boolean",
       "default": false,
       "title": "Align based on TextUnit IDs",
       "description": "Align based on TextUnit IDs, rather than resource names.",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

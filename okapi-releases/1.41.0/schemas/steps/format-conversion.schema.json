@@ -65,7 +65,8 @@
       "type": "boolean",
       "default": true,
       "title": "Create a single output document",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "autoExtensions": {
       "type": "boolean",
@@ -75,7 +76,8 @@
       "x-enabledBy": {
         "parameter": "singleOutput",
         "enabledWhenSelected": false
-      }
+      },
+      "x-vertical": true
     },
     "outputPath": {
       "type": "string",
@@ -86,7 +88,12 @@
       "x-enabledBy": {
         "parameter": "singleOutput",
         "enabledWhenSelected": true
-      }
+      },
+      "x-forSaveAs": true,
+      "x-browseTitle": "Output File",
+      "x-fileFilterNames": "All Files (*.*)",
+      "x-fileFilterExtensions": "*.*",
+      "x-vertical": true
     },
     "targetStyle": {
       "type": "integer",
@@ -117,7 +124,8 @@
         "Word Table",
         "XLIFF"
       ],
-      "x-widget": "select"
+      "x-widget": "select",
+      "x-vertical": true
     },
     "formatOptions": {
       "type": "string",
@@ -128,25 +136,29 @@
       "type": "boolean",
       "default": false,
       "title": "Output generic inline codes",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "skipEntriesWithoutText": {
       "type": "boolean",
       "default": true,
       "title": "Do not output entries without text",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "approvedEntriesOnly": {
       "type": "boolean",
       "default": false,
       "title": "Output only approved entries",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "overwriteSameSource": {
       "type": "boolean",
       "default": false,
       "title": "Overwrite if source is the same (for Pensieve TM)",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

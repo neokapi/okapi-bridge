@@ -41,6 +41,7 @@
           "default": false,
           "title": "Extract notes",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "extractNotes",
           "description": "Extract notes/comments as translator notes"
         },
@@ -49,6 +50,7 @@
           "default": true,
           "title": "Extract master spreads",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "extractMasterSpreads",
           "description": "Extract master spreads"
         },
@@ -64,6 +66,7 @@
           "default": true,
           "title": "Simplify inline codes when possible",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "simplifyCodes",
           "description": "Simplify inline codes"
         },
@@ -75,6 +78,7 @@
           "minimum": 1,
           "maximum": 32000,
           "x-widget": "spin",
+          "x-vertical": true,
           "x-flattenPath": "skipThreshold"
         }
       }
@@ -155,8 +159,8 @@
   },
   "x-kind": "OkfIcmlFilterConfig",
   "x-apiVersion": "v2",
-  "x-baseVersion": 2,
+  "x-baseVersion": 5,
   "x-introducedInOkapi": "1.42.0",
-  "x-baseHash": "1aa05ec33f70",
-  "x-compositeHash": "da70426b54b4"
+  "x-baseHash": "8615478b4012",
+  "x-compositeHash": "c0be12ff4ddc"
 }

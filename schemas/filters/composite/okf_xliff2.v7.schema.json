@@ -49,6 +49,7 @@
           "default": false,
           "title": "Ensure tag IDs are unique within units",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "forceUniqueIds",
           "description": "Force unique text unit IDs"
         },
@@ -63,6 +64,7 @@
           "default": false,
           "title": "Ignore tag type mismatch between source and target",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "ignoreTagTypeMatch",
           "description": "Ignore tag type matching"
         }
@@ -77,6 +79,7 @@
           "default": false,
           "title": "Discard invalid targets rather than rejecting the file",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "discardInvalidTargets",
           "description": "Discard invalid target elements"
         },
@@ -86,6 +89,7 @@
           "title": "Subfilter: Always Overwrite Target?",
           "description": "Sub-filter overwrites target",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "subfilterOverwriteTarget"
         }
       }
@@ -99,6 +103,7 @@
           "default": true,
           "title": "Output includes original data when available",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "writeOriginalData",
           "description": "Write original data to output"
         },
@@ -107,6 +112,7 @@
           "default": true,
           "title": "Perform maximum validation when parsing",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "maxValidation",
           "description": "Maximum validation level"
         }
@@ -185,8 +191,8 @@
   },
   "x-kind": "OkfXliff2FilterConfig",
   "x-apiVersion": "v7",
-  "x-baseVersion": 7,
+  "x-baseVersion": 14,
   "x-introducedInOkapi": "1.47.0",
-  "x-baseHash": "5e5f09e45155",
-  "x-compositeHash": "5e5f09e45155"
+  "x-baseHash": "eaa5f33a47eb",
+  "x-compositeHash": "eaa5f33a47eb"
 }

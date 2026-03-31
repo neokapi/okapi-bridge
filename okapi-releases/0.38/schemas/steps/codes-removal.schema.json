@@ -36,13 +36,15 @@
       "type": "boolean",
       "default": true,
       "title": "Strip codes in the source text",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "stripTarget": {
       "type": "boolean",
       "default": true,
       "title": "Strip codes in the target text",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "mode": {
       "type": "integer",
@@ -59,19 +61,22 @@
         "Remove code content, but keep code marker  (\"<ph x='1'>[X]</ph>\" ==> \"<ph x='1'/>\")",
         "Remove code marker and code content  (\"<ph x='1'>[X]</ph>\" ==> \"\")"
       ],
-      "x-widget": "select"
+      "x-widget": "select",
+      "x-vertical": true
     },
     "includeNonTranslatable": {
       "type": "boolean",
       "default": true,
       "title": "Apply to non-translatable text units",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "replaceWithSpace": {
       "type": "boolean",
       "default": false,
       "title": "Replace line break codes with spaces (When removing content AND marker)",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

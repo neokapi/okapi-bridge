@@ -38,7 +38,8 @@
       "default": "",
       "title": "Command line",
       "description": "Command path to execute",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-vertical": true
     },
     "timeout": {
       "type": "integer",

@@ -57,6 +57,7 @@
           "default": false,
           "title": "Monolingual mode",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "monolingual",
           "description": "Monolingual mode"
         },
@@ -78,6 +79,7 @@
           "title": "Use CDATA",
           "description": "Use CDATA sections",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "useCDATA"
         }
       }
@@ -116,6 +118,8 @@
           "title": "Names of the <attribute> elements to extract",
           "description": "Part names",
           "x-widget": "text",
+          "x-textHeight": 60,
+          "x-vertical": true,
           "x-flattenPath": "partsNames"
         },
         "partsConfigurations": {
@@ -124,6 +128,8 @@
           "title": "Corresponding filter configurations (or 'default')",
           "description": "Part configurations",
           "x-widget": "text",
+          "x-textHeight": 60,
+          "x-vertical": true,
           "x-flattenPath": "partsConfigurations"
         }
       }
@@ -204,8 +210,8 @@
   },
   "x-kind": "OkfVignetteFilterConfig",
   "x-apiVersion": "v1",
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "29757a72cc9e",
-  "x-compositeHash": "c612ae263351"
+  "x-baseHash": "930a67fc5e86",
+  "x-compositeHash": "f4be49ed3e3a"
 }

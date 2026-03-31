@@ -51,19 +51,22 @@
         "Unix/Linux (Line-Feed, \\n, 0x0A)",
         "Macintosh (Carriage-Return, \\r, 0x0D)"
       ],
-      "x-widget": "select"
+      "x-widget": "select",
+      "x-vertical": true
     },
     "bomOnUTF8": {
       "type": "boolean",
       "default": true,
       "title": "Use Byte-Order-Mark for UTF-8 output",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "updateEncoding": {
       "type": "boolean",
       "default": true,
       "title": "Try to update the encoding declarations (when detected)",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

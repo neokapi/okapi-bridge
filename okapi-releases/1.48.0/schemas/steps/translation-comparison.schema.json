@@ -49,7 +49,8 @@
       "default": false,
       "title": "Generate a TMX output document",
       "description": "Generates an output document in TMX",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "tmxPath": {
       "type": "string",
@@ -60,14 +61,21 @@
       "x-enabledBy": {
         "parameter": "generateTMX",
         "enabledWhenSelected": true
-      }
+      },
+      "x-forSaveAs": true,
+      "x-browseTitle": "TMX Document",
+      "x-fileFilterNames": "TMX Documents (*.tmx)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.tmx\t*.*",
+      "x-withLabel": false,
+      "x-vertical": true
     },
     "generateHTML": {
       "type": "boolean",
       "default": true,
       "title": "Generate output tables in HTML",
       "description": "Generates output tables in HTML",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "genericCodes": {
       "type": "boolean",
@@ -77,7 +85,8 @@
       "x-enabledBy": {
         "parameter": "generateHTML",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "autoOpen": {
       "type": "boolean",
@@ -87,7 +96,8 @@
       "x-enabledBy": {
         "parameter": "generateHTML",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "target2Suffix": {
       "type": "string",
@@ -97,7 +107,8 @@
       "x-enabledBy": {
         "parameter": "generateTMX",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "target3Suffix": {
       "type": "string",
@@ -107,7 +118,8 @@
       "x-enabledBy": {
         "parameter": "generateTMX",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "document1Label": {
       "type": "string",
@@ -144,27 +156,31 @@
       "default": true,
       "title": "Take into account case differences",
       "description": "Takes into account case differences",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "whitespaceSensitive": {
       "type": "boolean",
       "default": true,
       "title": "Take into account whitespace differences",
       "description": "Takes into account whitespace differences",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "punctuationSensitive": {
       "type": "boolean",
       "default": true,
       "title": "Take into account punctuation differences",
       "description": "Takes into account punctuation differences",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "useDataLog": {
       "type": "boolean",
       "default": false,
       "title": "Append the average results to a log",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "dataLogPath": {
       "type": "string",
@@ -175,7 +191,13 @@
       "x-enabledBy": {
         "parameter": "useDataLog",
         "enabledWhenSelected": true
-      }
+      },
+      "x-forSaveAs": true,
+      "x-browseTitle": "Data Log File",
+      "x-fileFilterNames": "Tab-Delimited Files (*.txt;*.log)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.txt|*.log\t*.*",
+      "x-withLabel": false,
+      "x-vertical": true
     },
     "altTransOrigin": {
       "type": "string",
@@ -193,7 +215,8 @@
       "default": false,
       "title": "Use alt-trans for document 1",
       "description": "Use the XLIFF alt-trans of the trans-unit",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

@@ -43,6 +43,7 @@
           "default": false,
           "title": "Preserve whitespace",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "preserveWhitespace",
           "description": "Preserve original whitespace in extracted text"
         },
@@ -51,6 +52,7 @@
           "default": "2.0",
           "title": "Amount of indent needed to define a new paragraph (Default=2.0)",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "indentThreshold",
           "description": "Indent detection threshold"
         },
@@ -59,6 +61,7 @@
           "default": "0.5",
           "title": "Amount of spacing needed to define a white space character (Default=0.5)",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "spacingTolerance",
           "description": "Spacing tolerance"
         }
@@ -73,6 +76,7 @@
           "default": "\n",
           "title": "Character to use as line separator",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "lineSeparator",
           "description": "Line separator character"
         },
@@ -81,6 +85,7 @@
           "default": "\n",
           "title": "Character to use as paragraph separator",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "paragraphSeparator",
           "description": "Paragraph separator"
         }
@@ -90,7 +95,8 @@
       "type": "boolean",
       "default": false,
       "title": "Sort the text by position within the document",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   },
   "additionalProperties": false,
@@ -194,8 +200,8 @@
   },
   "x-kind": "OkfPdfFilterConfig",
   "x-apiVersion": "v2",
-  "x-baseVersion": 2,
+  "x-baseVersion": 4,
   "x-introducedInOkapi": "1.48.0",
-  "x-baseHash": "a081711ab411",
-  "x-compositeHash": "224b07bb5a07"
+  "x-baseHash": "1f25a0780567",
+  "x-compositeHash": "944d44d615bf"
 }

@@ -43,26 +43,30 @@
       "default": "",
       "title": "Command line",
       "description": "Command line to execute the batch translation",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-vertical": true
     },
     "origin": {
       "type": "string",
       "default": "",
       "title": "Origin identifier",
       "description": "String that identifies the origin of the translation",
-      "x-widget": "text"
+      "x-widget": "text",
+      "x-allowEmpty": true
     },
     "markAsMT": {
       "type": "boolean",
       "default": true,
       "title": "Mark the generated translation as machine translation results",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "makeTM": {
       "type": "boolean",
       "default": false,
       "title": "Import into the following Pensieve TM:",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "tmDirectory": {
       "type": "string",
@@ -72,13 +76,17 @@
       "x-enabledBy": {
         "parameter": "makeTM",
         "enabledWhenSelected": true
-      }
+      },
+      "x-browseTitle": "TM Directory",
+      "x-withLabel": false,
+      "x-vertical": true
     },
     "makeTMX": {
       "type": "boolean",
       "default": false,
       "title": "Create the following TMX document:",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "tmxPath": {
       "type": "string",
@@ -88,7 +96,13 @@
       "x-enabledBy": {
         "parameter": "makeTMX",
         "enabledWhenSelected": true
-      }
+      },
+      "x-forSaveAs": true,
+      "x-browseTitle": "TMX Path",
+      "x-fileFilterNames": "TMX Documents (*.tmx)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.tmx\t*.*",
+      "x-withLabel": false,
+      "x-vertical": true
     },
     "sendTMX": {
       "type": "boolean",
@@ -98,7 +112,8 @@
       "x-enabledBy": {
         "parameter": "makeTMX",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "blockSize": {
       "type": "integer",
@@ -112,7 +127,8 @@
       "type": "boolean",
       "default": false,
       "title": "Check for existing entries in an existing Pensieve TM:",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "existingTm": {
       "type": "string",
@@ -122,13 +138,17 @@
       "x-enabledBy": {
         "parameter": "checkExistingTm",
         "enabledWhenSelected": true
-      }
+      },
+      "x-browseTitle": "TM Directory",
+      "x-withLabel": false,
+      "x-vertical": true
     },
     "segment": {
       "type": "boolean",
       "default": false,
       "title": "Segment the text units, using the following SRX rules:",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "srxPath": {
       "type": "string",
@@ -138,7 +158,12 @@
       "x-enabledBy": {
         "parameter": "segment",
         "enabledWhenSelected": true
-      }
+      },
+      "x-browseTitle": "SRX Path",
+      "x-fileFilterNames": "SRX Documents (*.srx)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.srx\t*.*",
+      "x-withLabel": false,
+      "x-vertical": true
     }
   }
 }

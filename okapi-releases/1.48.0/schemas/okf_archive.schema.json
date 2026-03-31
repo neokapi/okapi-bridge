@@ -40,6 +40,7 @@
           "title": "File names",
           "description": "File name patterns",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "fileNames"
         },
         "mimeType": {
@@ -47,6 +48,7 @@
           "default": "application/x-archive",
           "title": "MIME type of the filter's container format",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "mimeType",
           "description": "MIME type for content"
         },
@@ -56,6 +58,7 @@
           "title": "Filter configuration ids",
           "description": "Filter configuration IDs",
           "x-widget": "text",
+          "x-vertical": true,
           "x-flattenPath": "configIds"
         }
       }

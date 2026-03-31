@@ -46,55 +46,64 @@
       "type": "boolean",
       "default": true,
       "title": "Full Stop",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "comma": {
       "type": "boolean",
       "default": true,
       "title": "Comma",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "exclamationPoint": {
       "type": "boolean",
       "default": true,
       "title": "Exclamation Point",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "questionMark": {
       "type": "boolean",
       "default": true,
       "title": "Question Mark",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "verticalWhitespace": {
       "type": "boolean",
       "default": true,
       "title": "Vertical White Space",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "nonbreakingWhitespace": {
       "type": "boolean",
       "default": true,
       "title": "Nonbreaking Whitespace",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "horizontalTabs": {
       "type": "boolean",
       "default": true,
       "title": "Horizontal Tabs",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "space": {
       "type": "boolean",
       "default": true,
       "title": "Standard White Space",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "other": {
       "type": "boolean",
       "default": true,
       "title": "All Other Whitespace",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

@@ -40,19 +40,22 @@
       "x-enabledBy": {
         "parameter": "validate",
         "enabledWhenSelected": true
-      }
+      },
+      "x-vertical": true
     },
     "useFoundDTD": {
       "type": "boolean",
       "default": true,
       "title": "Use DTD declarations found in the input documents",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "validate": {
       "type": "boolean",
       "default": false,
       "title": "Validate the documents structure [Well-formedness is always checked]",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     },
     "schemaPath": {
       "type": "string",
@@ -63,7 +66,12 @@
       "x-enabledBy": {
         "parameter": "validate",
         "enabledWhenSelected": true
-      }
+      },
+      "x-browseTitle": "Schema",
+      "x-fileFilterNames": "Schema Files (*.xsd)\tAll Files (*.*)",
+      "x-fileFilterExtensions": "*.xsd\t*.*",
+      "x-allowEmpty": true,
+      "x-vertical": true
     }
   }
 }

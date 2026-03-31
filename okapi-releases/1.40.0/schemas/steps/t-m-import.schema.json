@@ -36,13 +36,16 @@
       "default": "",
       "title": "Directory of the TM where to import",
       "description": "Full path of directory of the TM where to import",
-      "x-widget": "folder"
+      "x-widget": "folder",
+      "x-browseTitle": "TM Directory",
+      "x-vertical": true
     },
     "overwriteSameSource": {
       "type": "boolean",
       "default": false,
       "title": "Overwrite if source is the same",
-      "x-widget": "checkbox"
+      "x-widget": "checkbox",
+      "x-vertical": true
     }
   }
 }

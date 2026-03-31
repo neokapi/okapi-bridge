@@ -35,6 +35,7 @@
           "default": false,
           "title": "Extract notes",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "extractNotes",
           "description": "Extract editorial notes"
         },
@@ -43,6 +44,7 @@
           "default": true,
           "title": "Extract master spreads",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "extractMasterSpreads",
           "description": "Extract master spreads"
         },
@@ -51,6 +53,7 @@
           "default": false,
           "title": "Extract hidden layers",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "extractHiddenLayers",
           "description": "Extract hidden layers"
         },
@@ -59,6 +62,7 @@
           "default": false,
           "title": "Extract hidden pasteboard items",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "extractHiddenPasteboardItems",
           "description": "Extract hidden pasteboard items"
         },
@@ -67,6 +71,7 @@
           "default": false,
           "title": "Extract breaks inline",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "extractBreaksInline",
           "description": "Extract breaks inline"
         },
@@ -75,6 +80,7 @@
           "default": true,
           "title": "Untag XML structures",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "untagXmlStructures",
           "description": "Untag XML structures"
         },
@@ -83,6 +89,7 @@
           "default": false,
           "title": "Skip discretionary hyphens",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "skipDiscretionaryHyphens",
           "description": "Skip discretionary hyphens"
         },
@@ -103,6 +110,7 @@
           "default": false,
           "title": "Ignore character kerning",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "ignoreCharacterKerning",
           "description": "Ignore kerning differences"
         },
@@ -111,6 +119,8 @@
           "default": "",
           "title": "Character kerning minimum ignorance threshold",
           "x-widget": "text",
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "characterKerningMinIgnoranceThreshold",
           "description": "Kerning min threshold"
         },
@@ -119,6 +129,8 @@
           "default": "",
           "title": "Character kerning maximum ignorance threshold",
           "x-widget": "text",
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "characterKerningMaxIgnoranceThreshold",
           "description": "Kerning max threshold"
         },
@@ -127,6 +139,7 @@
           "default": false,
           "title": "Ignore character tracking",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "ignoreCharacterTracking",
           "description": "Ignore tracking differences"
         },
@@ -135,6 +148,8 @@
           "default": "",
           "title": "Character tracking minimum ignorance threshold",
           "x-widget": "text",
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "characterTrackingMinIgnoranceThreshold",
           "description": "Tracking min threshold"
         },
@@ -143,6 +158,8 @@
           "default": "",
           "title": "Character tracking maximum ignorance threshold",
           "x-widget": "text",
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "characterTrackingMaxIgnoranceThreshold",
           "description": "Tracking max threshold"
         },
@@ -151,6 +168,7 @@
           "default": false,
           "title": "Ignore character leading",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "ignoreCharacterLeading",
           "description": "Ignore leading differences"
         },
@@ -159,6 +177,8 @@
           "default": "",
           "title": "Character leading minimum ignorance threshold",
           "x-widget": "text",
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "characterLeadingMinIgnoranceThreshold",
           "description": "Leading min threshold"
         },
@@ -167,6 +187,8 @@
           "default": "",
           "title": "Character leading maximum ignorance threshold",
           "x-widget": "text",
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "characterLeadingMaxIgnoranceThreshold",
           "description": "Leading max threshold"
         },
@@ -175,6 +197,7 @@
           "default": false,
           "title": "Ignore character baseline shift",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "ignoreCharacterBaselineShift",
           "description": "Ignore baseline shift"
         },
@@ -183,6 +206,8 @@
           "default": "",
           "title": "Character baseline shift minimum ignorance threshold",
           "x-widget": "text",
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "characterBaselineShiftMinIgnoranceThreshold",
           "description": "Baseline shift min"
         },
@@ -191,6 +216,8 @@
           "default": "",
           "title": "Character baseline shift maximum ignorance threshold",
           "x-widget": "text",
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "characterBaselineShiftMaxIgnoranceThreshold",
           "description": "Baseline shift max"
         }

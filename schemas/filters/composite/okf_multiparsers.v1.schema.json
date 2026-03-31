@@ -37,6 +37,7 @@
           "default": false,
           "title": "Use auto-detection (a special row in each input file)",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "csvAutoDetectColumnTypes",
           "description": "Auto-detect column types"
         },
@@ -51,6 +52,7 @@
             "parameter": "csvAutoDetectColumnTypes",
             "enabledWhenSelected": true
           },
+          "x-vertical": true,
           "x-flattenPath": "csvAutoDetectColumnTypesRow",
           "description": "Row for type detection"
         },
@@ -63,6 +65,8 @@
             "parameter": "csvAutoDetectColumnTypes",
             "enabledWhenSelected": false
           },
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "csvFormatCols",
           "description": "Format column specifications"
         },
@@ -75,6 +79,8 @@
             "parameter": "csvAutoDetectColumnTypes",
             "enabledWhenSelected": false
           },
+          "x-allowEmpty": true,
+          "x-vertical": true,
           "x-flattenPath": "csvNoExtractCols",
           "description": "Columns to skip"
         },
@@ -89,6 +95,7 @@
             "parameter": "csvAutoDetectColumnTypes",
             "enabledWhenSelected": false
           },
+          "x-vertical": true,
           "x-flattenPath": "csvStartingRow",
           "description": "Starting data row"
         }
@@ -98,8 +105,8 @@
   "additionalProperties": false,
   "x-kind": "OkfMultiparsersFilterConfig",
   "x-apiVersion": "v1",
-  "x-baseVersion": 1,
+  "x-baseVersion": 2,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "01158e1f7140",
-  "x-compositeHash": "01158e1f7140"
+  "x-baseHash": "3cbe7e4e06fd",
+  "x-compositeHash": "3cbe7e4e06fd"
 }

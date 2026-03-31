@@ -38,6 +38,7 @@
           "default": true,
           "title": "Use localization directives",
           "x-widget": "checkbox",
+          "x-vertical": true,
           "x-flattenPath": "useDirectives",
           "description": "Use extraction directives"
         },
@@ -50,6 +51,7 @@
             "parameter": "useDirectives",
             "enabledWhenSelected": true
           },
+          "x-vertical": true,
           "x-flattenPath": "extractOutsideDirectives",
           "description": "Extract outside directive blocks"
         }
