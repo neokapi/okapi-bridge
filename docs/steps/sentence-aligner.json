@@ -1,0 +1,120 @@
+{
+  "filterName": "Sentence Alignment Step",
+  "overview": "This step aligns sentences within text units from two synchronized documents (source and target). It uses a character-length-based algorithm that accounts for language-specific expansion/contraction ratios, producing various match types (1-1, 2-1, 1-2, 0-1, 1-0, 2-0, 2-3, 3-2, etc.). Results can be output as a TMX file or as bilingual text units.",
+  "parameters": {
+    "generateTMX": {
+      "help": "Controls the output mode of the step:\n\n- **Enabled (default):** The step generates a TMX file with aligned entries and returns the original events (possibly re-segmented) unchanged.\n- **Disabled:** The step returns bilingual text units corresponding to the alignment (also segmented) instead of the original events.",
+      "notes": [
+        "Currently, when TMX generation is enabled, the events sent by this step are the same as the events received — aligned text units are written only to the TMX file, not passed downstream. Returning aligned events inline is planned for a future version."
+      ]
+    },
+    "tmxOutputPath": {
+      "help": "Full path for the TMX output file. If the file already exists it will be **overwritten** without warning.",
+      "values": "A file system path ending in `.tmx`.",
+      "dependsOn": [
+        {
+          "property": "generateTMX",
+          "condition": "must be true for this path to be used"
+        }
+      ]
+    },
+    "segmentSource": {
+      "help": "Segments the source content before alignment. If the content is already segmented, existing segmentation is **replaced** with the new one.\n\nIf disabled, the source content is expected to be pre-segmented (e.g., by a prior Segmentation step)."
+    },
+    "useCustomSourceRules": {
+      "help": "Uses a specified SRX file for source segmentation instead of the built-in default rules.",
+      "notes": [
+        "The default segmentation rules for this step are **hard-coded** within the step itself. They are **not** the rules from the `config` sub-directory of the Okapi installation."
+      ],
+      "dependsOn": [
+        {
+          "property": "segmentSource",
+          "condition": "must be true for custom rules to take effect"
+        }
+      ]
+    },
+    "customSourceRulesPath": {
+      "help": "Full path to an SRX document defining source segmentation rules.",
+      "values": "A file system path to a valid `.srx` file.",
+      "dependsOn": [
+        {
+          "property": "useCustomSourceRules",
+          "condition": "must be true for this path to be used"
+        }
+      ]
+    },
+    "segmentTarget": {
+      "help": "Segments the target content before alignment. If the content is already segmented, existing segmentation is **replaced** with the new one.\n\nIf disabled, the target content is expected to be pre-segmented (e.g., by a prior Segmentation step)."
+    },
+    "useCustomTargetRules": {
+      "help": "Uses a specified SRX file for target segmentation instead of the built-in default rules.",
+      "notes": [
+        "The default segmentation rules for this step are **hard-coded** within the step itself. They are **not** the rules from the `config` sub-directory of the Okapi installation."
+      ],
+      "dependsOn": [
+        {
+          "property": "segmentTarget",
+          "condition": "must be true for custom rules to take effect"
+        }
+      ]
+    },
+    "customTargetRulesPath": {
+      "help": "Full path to an SRX document defining target segmentation rules.",
+      "values": "A file system path to a valid `.srx` file.",
+      "dependsOn": [
+        {
+          "property": "useCustomTargetRules",
+          "condition": "must be true for this path to be used"
+        }
+      ]
+    },
+    "collapseWhitespace": {
+      "help": "Normalizes all whitespace characters (spaces, newlines, tabs, etc.) to a single space **before** segmentation and alignment are performed. Useful when source or target documents have inconsistent line breaks or extra spacing that would interfere with sentence boundary detection."
+    },
+    "outputOneTOneMatchesOnly": {
+      "help": "Filters alignment output to include only 1-to-1 sentence matches, discarding any 2-1, 1-2, 0-1, 1-0, or other complex alignment types. Useful when you need high-confidence aligned pairs (e.g., for TM building).",
+      "dependsOn": [
+        {
+          "property": "forceSimpleOneToOneAlignment",
+          "condition": "overrides this option when enabled"
+        }
+      ]
+    },
+    "forceSimpleOneToOneAlignment": {
+      "help": "For each paragraph: if source and target have the **same number of sentences**, aligns them 1-to-1. If sentence counts differ, **joins all sentences** back into a single paragraph-level alignment.\n\nThis is a simpler, more conservative alignment strategy that avoids complex multi-sentence match types.",
+      "notes": [
+        "When enabled, this **overrides** the *Output 1-1 matches only* option."
+      ],
+      "dependsOn": [
+        {
+          "property": "outputOneTOneMatchesOnly",
+          "condition": "overrides this when forceSimpleOneToOneAlignment is enabled"
+        }
+      ]
+    }
+  },
+  "processingNotes": [
+    "Source and target document text units **must be perfectly synchronized** (aligned at the paragraph level). If the source document has more text units than the target, an error is generated.",
+    "The alignment algorithm finds the best match based on character lengths, with internal parameters accounting for language-specific expansion/contraction ratios.",
+    "Possible match types: 1-1, 2-1, 1-2, 0-1, 1-0, 2-0, 2-3, 3-2, etc.",
+    "Entries marked as non-translatable are skipped and not processed.",
+    "When processing bilingual documents (e.g., TMX, PO), use only a **single input list**."
+  ],
+  "limitations": [],
+  "examples": [
+    {
+      "title": "TMX generation from parallel documents",
+      "description": "Align two parallel documents and produce a TMX file. Source and target are segmented using built-in default SRX rules."
+    },
+    {
+      "title": "High-confidence TM building",
+      "description": "Use `outputOneTOneMatchesOnly` to extract only 1-to-1 sentence alignments for building a clean translation memory, discarding any ambiguous multi-sentence matches."
+    },
+    {
+      "title": "Simple paragraph fallback alignment",
+      "description": "Use `forceSimpleOneToOneAlignment` for a conservative strategy: sentences align 1-to-1 when counts match, otherwise the entire paragraph is aligned as a single unit."
+    }
+  ],
+  "stepId": "sentence-aligner",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/sentence_alignment_step"
+}
