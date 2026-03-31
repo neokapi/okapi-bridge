@@ -56,7 +56,7 @@ FILTER_CAPS=$(echo "$CAP_JSON" | jq '[.filters[] | {
 
 STEP_CAPS=$(echo "$CAP_JSON" | jq '[(.steps // [])[] | {
     type: "tool",
-    id: ("okapi:" + .stepId),
+    id: .stepId,
     name: .name,
     display_name: .name,
     description: .description,
