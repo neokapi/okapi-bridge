@@ -140,7 +140,7 @@ Only filters with multiple versions are shown (`-` = filter not available).
 | `okf_idml` | **v1** | **v2** | v2 | **v3** | v3 | v3 | **v4** | **v5** | **v6** | v6 | **v7** |
 | `okf_json` | **v1** | v1 | v1 | v1 | **v2** | v2 | v2 | v2 | **v3** | v3 | **v4** |
 | `okf_markdown` | **v1** | v1 | v1 | v1 | **v2** | **v3** | v3 | **v4** | v4 | v4 | v4 |
-| `okf_messageformat` | - | - | - | - | - | - | - | - | **v1** | **v2** | v2 |
+| `okf_messageformat` | - | - | - | - | - | - | - | - | **v1** | **v2** | - |
 | `okf_mif` | **v1** | **v2** | **v3** | **v4** | v4 | v4 | v4 | v4 | **v5** | v5 | v5 |
 | `okf_mosestext` | **v1** | v1 | v1 | v1 | v1 | v1 | v1 | v1 | **v2** | v2 | v2 |
 | `okf_odf` | **v1** | v1 | v1 | v1 | v1 | v1 | v1 | v1 | **v2** | v2 | v2 |
@@ -162,7 +162,7 @@ Only filters with multiple versions are shown (`-` = filter not available).
 | `okf_transtable` | **v1** | v1 | v1 | v1 | v1 | v1 | v1 | v1 | **v2** | v2 | v2 |
 | `okf_ttml` | - | - | - | - | - | - | - | - | **v1** | v1 | **v2** |
 | `okf_vtt` | - | - | - | - | - | - | - | - | **v1** | v1 | **v2** |
-| `okf_wsxzpackage` | - | - | - | - | - | - | - | **v1** | **v2** | v2 | v2 |
+| `okf_wsxzpackage` | - | - | - | - | - | - | - | **v1** | **v2** | v2 | - |
 | `okf_xliff` | **v1** | **v2** | v2 | **v3** | **v4** | **v5** | v5 | v5 | **v6** | **v7** | **v8** |
 | `okf_xliff2` | **v1** | v1 | v1 | **v2** | **v3** | **v4** | v4 | **v5** | **v6** | **v7** | v7 |
 | `okf_xml` | **v1** | v1 | v1 | v1 | **v2** | v2 | v2 | v2 | v2 | **v3** | v3 |
