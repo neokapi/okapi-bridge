@@ -2259,15 +2259,28 @@
               "PRESERVE_WHITESPACE",
               "SCRIPT",
               "SERVER"
-            ]
+            ],
+            "x-enumDescriptions": {
+              "INLINE": "Inline element — content flows within surrounding text (e.g. <b>, <span>, <a>)",
+              "INLINE_EXCLUDED": "Inline element excluded by a conditional rule",
+              "INLINE_INCLUDED": "Inline element included by a conditional rule (exception to EXCLUDE)",
+              "TEXTUNIT": "Text unit — extracted as a translatable segment with skeleton before/after",
+              "EXCLUDE": "Excluded — element and all children are skipped during extraction",
+              "INCLUDE": "Included — exception to an EXCLUDE rule, re-enables extraction inside excluded block",
+              "GROUP": "Group element — structural container (e.g. <table>, <ul>, <div>)",
+              "ATTRIBUTES_ONLY": "Only attributes are translatable/localizable, not the element's text content",
+              "PRESERVE_WHITESPACE": "Preserve whitespace inside this element (e.g. <pre>, <code>)",
+              "SCRIPT": "Script element — embedded client-side code (e.g. <script>)",
+              "SERVER": "Server element — embedded server-side content (e.g. JSP, PHP, Mason tags)"
+            }
           }
         },
         "elementType": {
           "type": "string",
-          "description": "Element type hint (e.g. bold, italic, link, image, paragraph)"
+          "description": "Semantic type hint for UI display (e.g. bold, italic, link, image, paragraph, underlined)"
         },
         "translatableAttributes": {
-          "description": "Attributes to extract as translatable",
+          "description": "Attributes to extract as translatable content (e.g. alt, title, placeholder)",
           "oneOf": [
             {
               "type": "array",
@@ -2284,7 +2297,7 @@
           ]
         },
         "writableLocalizableAttributes": {
-          "description": "Attributes to extract as writableLocalizable",
+          "description": "Attributes to extract as writable localizable content (e.g. href, src — locale-specific, editable)",
           "oneOf": [
             {
               "type": "array",
@@ -2301,7 +2314,7 @@
           ]
         },
         "readOnlyLocalizableAttributes": {
-          "description": "Attributes to extract as readOnlyLocalizable",
+          "description": "Attributes to extract as read-only localizable content (locale-specific but not user-editable)",
           "oneOf": [
             {
               "type": "array",
@@ -2327,8 +2340,7 @@
           "x-placeholder": "id,name"
         },
         "conditions": {
-          "type": "array",
-          "description": "Conditions for this rule: [attributeName, operator, value]"
+          "$ref": "#/$defs/conditionTuple"
         }
       },
       "required": [
@@ -2349,23 +2361,42 @@
               "ATTRIBUTE_TRANS",
               "ATTRIBUTE_WRITABLE",
               "ATTRIBUTE_READONLY",
-              "ATTRIBUTE_ID"
-            ]
+              "ATTRIBUTE_ID",
+              "ATTRIBUTE_PRESERVE_WHITESPACE"
+            ],
+            "x-enumDescriptions": {
+              "ATTRIBUTE_TRANS": "Translatable — attribute content is extracted for translation",
+              "ATTRIBUTE_WRITABLE": "Writable localizable — attribute is locale-specific and editable (e.g. URLs, paths)",
+              "ATTRIBUTE_READONLY": "Read-only localizable — attribute is locale-specific but not user-editable",
+              "ATTRIBUTE_ID": "ID — attribute value is used as the segment identifier",
+              "ATTRIBUTE_PRESERVE_WHITESPACE": "Preserve whitespace — attribute controls whitespace preservation state"
+            }
           }
         },
         "allElementsExcept": {
           "type": "array",
-          "description": "Apply to all elements except these",
+          "description": "Apply this rule to all elements except the listed ones",
           "items": {
             "type": "string"
           }
         },
         "onlyTheseElements": {
           "type": "array",
-          "description": "Apply only to these elements",
+          "description": "Apply this rule only to the listed elements",
           "items": {
             "type": "string"
           }
+        },
+        "conditions": {
+          "$ref": "#/$defs/conditionTuple"
+        },
+        "preserve": {
+          "$ref": "#/$defs/conditionTuple",
+          "description": "Condition that activates whitespace preservation (e.g. [xml:space, EQUALS, preserve])"
+        },
+        "default": {
+          "$ref": "#/$defs/conditionTuple",
+          "description": "Condition that restores default whitespace handling (e.g. [xml:space, EQUALS, default])"
         }
       },
       "required": [
@@ -2373,15 +2404,61 @@
       ],
       "additionalProperties": false
     },
+    "conditionTuple": {
+      "type": "array",
+      "description": "Condition: [attributeName, operator, value or values]",
+      "minItems": 3,
+      "maxItems": 3,
+      "prefixItems": [
+        {
+          "type": "string",
+          "description": "Attribute name to test"
+        },
+        {
+          "type": "string",
+          "enum": [
+            "EQUALS",
+            "NOT_EQUALS",
+            "MATCHES"
+          ],
+          "x-enumDescriptions": {
+            "EQUALS": "Case-insensitive string equality",
+            "NOT_EQUALS": "Case-insensitive string inequality",
+            "MATCHES": "Java regex match (must match entire attribute value)"
+          }
+        },
+        {
+          "description": "Value to compare — a single string or array of strings (OR logic for EQUALS/MATCHES, AND logic for NOT_EQUALS)",
+          "oneOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          ]
+        }
+      ]
+    },
     "conditionalAttributeValue": {
-      "description": "Conditional attribute value — null (unconditional) or array of condition triples [attrName, operator, value/values]",
+      "description": "Conditional attribute extraction — null (unconditional) or condition tuple(s)",
       "oneOf": [
         {
-          "type": "null"
+          "type": "null",
+          "description": "Extract unconditionally"
+        },
+        {
+          "$ref": "#/$defs/conditionTuple"
         },
         {
           "type": "array",
-          "description": "Condition triples: [attributeName, EQUALS|NOT_EQUALS|MATCHES, value(s)]"
+          "description": "Multiple conditions (OR logic — extract if any condition matches)",
+          "items": {
+            "$ref": "#/$defs/conditionTuple"
+          }
         }
       ]
     },
@@ -2475,8 +2552,8 @@
   },
   "x-kind": "OkfHtmlFilterConfig",
   "x-apiVersion": "v6",
-  "x-baseVersion": 6,
+  "x-baseVersion": 12,
   "x-introducedInOkapi": "1.48.0",
-  "x-baseHash": "a4517ab2eb75",
-  "x-compositeHash": "677e3d5b915b"
+  "x-baseHash": "7065a4f671fc",
+  "x-compositeHash": "0de809d8e5e8"
 }

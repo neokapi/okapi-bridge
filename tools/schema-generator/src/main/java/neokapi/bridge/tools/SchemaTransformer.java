@@ -239,8 +239,62 @@ public class SchemaTransformer {
         JsonObject defs = new JsonObject();
         defs.add("elementRule", generateElementRuleDef());
         defs.add("attributeRule", generateAttributeRuleDef());
+        defs.add("conditionTuple", generateConditionTupleDef());
         defs.add("conditionalAttributeValue", generateConditionalAttributeValueDef());
         return defs;
+    }
+
+    /**
+     * Generate a typed condition tuple schema: [attributeName, operator, value(s)].
+     */
+    private JsonObject generateConditionTupleDef() {
+        JsonObject def = new JsonObject();
+        def.addProperty("type", "array");
+        def.addProperty("description", "Condition: [attributeName, operator, value or values]");
+        def.addProperty("minItems", 3);
+        def.addProperty("maxItems", 3);
+
+        JsonArray prefixItems = new JsonArray();
+
+        // [0] attribute name
+        JsonObject attrName = new JsonObject();
+        attrName.addProperty("type", "string");
+        attrName.addProperty("description", "Attribute name to test");
+        prefixItems.add(attrName);
+
+        // [1] operator
+        JsonObject operator = new JsonObject();
+        operator.addProperty("type", "string");
+        JsonArray opEnum = new JsonArray();
+        opEnum.add("EQUALS");
+        opEnum.add("NOT_EQUALS");
+        opEnum.add("MATCHES");
+        operator.add("enum", opEnum);
+        JsonObject opDescriptions = new JsonObject();
+        opDescriptions.addProperty("EQUALS", "Case-insensitive string equality");
+        opDescriptions.addProperty("NOT_EQUALS", "Case-insensitive string inequality");
+        opDescriptions.addProperty("MATCHES", "Java regex match (must match entire attribute value)");
+        operator.add("x-enumDescriptions", opDescriptions);
+        prefixItems.add(operator);
+
+        // [2] value - string or array of strings (OR logic)
+        JsonObject value = new JsonObject();
+        value.addProperty("description", "Value to compare — a single string or array of strings (OR logic for EQUALS/MATCHES, AND logic for NOT_EQUALS)");
+        JsonArray valueOneOf = new JsonArray();
+        JsonObject singleStr = new JsonObject();
+        singleStr.addProperty("type", "string");
+        valueOneOf.add(singleStr);
+        JsonObject strArray = new JsonObject();
+        strArray.addProperty("type", "array");
+        JsonObject strArrItem = new JsonObject();
+        strArrItem.addProperty("type", "string");
+        strArray.add("items", strArrItem);
+        valueOneOf.add(strArray);
+        value.add("oneOf", valueOneOf);
+        prefixItems.add(value);
+
+        def.add("prefixItems", prefixItems);
+        return def;
     }
 
     private JsonObject generateElementRuleDef() {
@@ -250,7 +304,7 @@ public class SchemaTransformer {
 
         JsonObject properties = new JsonObject();
 
-        // ruleTypes - array of RULE_TYPE enum values
+        // ruleTypes - array of RULE_TYPE enum values with descriptions
         JsonObject ruleTypes = new JsonObject();
         ruleTypes.addProperty("type", "array");
         ruleTypes.addProperty("description", "Extraction rule types for this element");
@@ -263,19 +317,37 @@ public class SchemaTransformer {
             ruleTypeEnum.add(rt);
         }
         ruleTypeItems.add("enum", ruleTypeEnum);
+        JsonObject ruleTypeDescs = new JsonObject();
+        ruleTypeDescs.addProperty("INLINE", "Inline element — content flows within surrounding text (e.g. <b>, <span>, <a>)");
+        ruleTypeDescs.addProperty("INLINE_EXCLUDED", "Inline element excluded by a conditional rule");
+        ruleTypeDescs.addProperty("INLINE_INCLUDED", "Inline element included by a conditional rule (exception to EXCLUDE)");
+        ruleTypeDescs.addProperty("TEXTUNIT", "Text unit — extracted as a translatable segment with skeleton before/after");
+        ruleTypeDescs.addProperty("EXCLUDE", "Excluded — element and all children are skipped during extraction");
+        ruleTypeDescs.addProperty("INCLUDE", "Included — exception to an EXCLUDE rule, re-enables extraction inside excluded block");
+        ruleTypeDescs.addProperty("GROUP", "Group element — structural container (e.g. <table>, <ul>, <div>)");
+        ruleTypeDescs.addProperty("ATTRIBUTES_ONLY", "Only attributes are translatable/localizable, not the element's text content");
+        ruleTypeDescs.addProperty("PRESERVE_WHITESPACE", "Preserve whitespace inside this element (e.g. <pre>, <code>)");
+        ruleTypeDescs.addProperty("SCRIPT", "Script element — embedded client-side code (e.g. <script>)");
+        ruleTypeDescs.addProperty("SERVER", "Server element — embedded server-side content (e.g. JSP, PHP, Mason tags)");
+        ruleTypeItems.add("x-enumDescriptions", ruleTypeDescs);
         ruleTypes.add("items", ruleTypeItems);
         properties.add("ruleTypes", ruleTypes);
 
         // elementType - optional element type hint
         JsonObject elementType = new JsonObject();
         elementType.addProperty("type", "string");
-        elementType.addProperty("description", "Element type hint (e.g. bold, italic, link, image, paragraph)");
+        elementType.addProperty("description", "Semantic type hint for UI display (e.g. bold, italic, link, image, paragraph, underlined)");
         properties.add("elementType", elementType);
 
         // translatableAttributes, writableLocalizableAttributes, readOnlyLocalizableAttributes
-        for (String attrProp : new String[]{"translatableAttributes", "writableLocalizableAttributes", "readOnlyLocalizableAttributes"}) {
+        String[][] attrPropDescs = {
+            {"translatableAttributes", "Attributes to extract as translatable content (e.g. alt, title, placeholder)"},
+            {"writableLocalizableAttributes", "Attributes to extract as writable localizable content (e.g. href, src — locale-specific, editable)"},
+            {"readOnlyLocalizableAttributes", "Attributes to extract as read-only localizable content (locale-specific but not user-editable)"}
+        };
+        for (String[] pair : attrPropDescs) {
             JsonObject attr = new JsonObject();
-            attr.addProperty("description", "Attributes to extract as " + attrProp.replace("Attributes", ""));
+            attr.addProperty("description", pair[1]);
             // Can be a simple string array OR a conditional map
             JsonArray oneOf = new JsonArray();
             // Simple array: ["alt", "title"]
@@ -291,23 +363,20 @@ public class SchemaTransformer {
             condMap.add("additionalProperties", createRef("#/$defs/conditionalAttributeValue"));
             oneOf.add(condMap);
             attr.add("oneOf", oneOf);
-            properties.add(attrProp, attr);
+            properties.add(pair[0], attr);
         }
 
         // idAttributes - always a simple string array
         JsonObject idAttrs = new JsonObject();
         idAttrs.addProperty("type", "array");
-        idAttrs.addProperty("description", "Attributes that contain segment IDs");
+        idAttrs.addProperty("description", "Attributes that contain segment IDs (sets the TextUnit name)");
         JsonObject idStrItem = new JsonObject();
         idStrItem.addProperty("type", "string");
         idAttrs.add("items", idStrItem);
         properties.add("idAttributes", idAttrs);
 
-        // conditions - element-level conditions
-        JsonObject conditions = new JsonObject();
-        conditions.addProperty("type", "array");
-        conditions.addProperty("description", "Conditions for this rule: [attributeName, operator, value]");
-        properties.add("conditions", conditions);
+        // conditions - element-level conditions (typed tuple)
+        properties.add("conditions", createRef("#/$defs/conditionTuple"));
 
         def.add("properties", properties);
         // ruleTypes is required
@@ -325,7 +394,7 @@ public class SchemaTransformer {
 
         JsonObject properties = new JsonObject();
 
-        // ruleTypes
+        // ruleTypes with descriptions
         JsonObject ruleTypes = new JsonObject();
         ruleTypes.addProperty("type", "array");
         ruleTypes.addProperty("description", "Attribute rule types");
@@ -333,17 +402,24 @@ public class SchemaTransformer {
         ruleTypeItems.addProperty("type", "string");
         JsonArray ruleTypeEnum = new JsonArray();
         for (String rt : new String[]{"ATTRIBUTE_TRANS", "ATTRIBUTE_WRITABLE",
-                "ATTRIBUTE_READONLY", "ATTRIBUTE_ID"}) {
+                "ATTRIBUTE_READONLY", "ATTRIBUTE_ID", "ATTRIBUTE_PRESERVE_WHITESPACE"}) {
             ruleTypeEnum.add(rt);
         }
         ruleTypeItems.add("enum", ruleTypeEnum);
+        JsonObject attrRuleTypeDescs = new JsonObject();
+        attrRuleTypeDescs.addProperty("ATTRIBUTE_TRANS", "Translatable — attribute content is extracted for translation");
+        attrRuleTypeDescs.addProperty("ATTRIBUTE_WRITABLE", "Writable localizable — attribute is locale-specific and editable (e.g. URLs, paths)");
+        attrRuleTypeDescs.addProperty("ATTRIBUTE_READONLY", "Read-only localizable — attribute is locale-specific but not user-editable");
+        attrRuleTypeDescs.addProperty("ATTRIBUTE_ID", "ID — attribute value is used as the segment identifier");
+        attrRuleTypeDescs.addProperty("ATTRIBUTE_PRESERVE_WHITESPACE", "Preserve whitespace — attribute controls whitespace preservation state");
+        ruleTypeItems.add("x-enumDescriptions", attrRuleTypeDescs);
         ruleTypes.add("items", ruleTypeItems);
         properties.add("ruleTypes", ruleTypes);
 
         // allElementsExcept
         JsonObject allExcept = new JsonObject();
         allExcept.addProperty("type", "array");
-        allExcept.addProperty("description", "Apply to all elements except these");
+        allExcept.addProperty("description", "Apply this rule to all elements except the listed ones");
         JsonObject strItem = new JsonObject();
         strItem.addProperty("type", "string");
         allExcept.add("items", strItem);
@@ -352,11 +428,23 @@ public class SchemaTransformer {
         // onlyTheseElements
         JsonObject onlyThese = new JsonObject();
         onlyThese.addProperty("type", "array");
-        onlyThese.addProperty("description", "Apply only to these elements");
+        onlyThese.addProperty("description", "Apply this rule only to the listed elements");
         JsonObject strItem2 = new JsonObject();
         strItem2.addProperty("type", "string");
         onlyThese.add("items", strItem2);
         properties.add("onlyTheseElements", onlyThese);
+
+        // conditions - attribute-level conditions (typed tuple)
+        properties.add("conditions", createRef("#/$defs/conditionTuple"));
+
+        // preserve / default - for ATTRIBUTE_PRESERVE_WHITESPACE
+        JsonObject preserveCond = createRef("#/$defs/conditionTuple");
+        preserveCond.addProperty("description", "Condition that activates whitespace preservation (e.g. [xml:space, EQUALS, preserve])");
+        properties.add("preserve", preserveCond);
+
+        JsonObject defaultCond = createRef("#/$defs/conditionTuple");
+        defaultCond.addProperty("description", "Condition that restores default whitespace handling (e.g. [xml:space, EQUALS, default])");
+        properties.add("default", defaultCond);
 
         def.add("properties", properties);
         JsonArray required = new JsonArray();
@@ -368,16 +456,26 @@ public class SchemaTransformer {
 
     private JsonObject generateConditionalAttributeValueDef() {
         JsonObject def = new JsonObject();
-        def.addProperty("description", "Conditional attribute value — null (unconditional) or array of condition triples [attrName, operator, value/values]");
-        // Can be null (unconditional) or an array of conditions
+        def.addProperty("description", "Conditional attribute extraction — null (unconditional) or condition tuple(s)");
+        // Can be null (unconditional), a single condition tuple, or array of condition tuples (OR logic)
         JsonArray oneOf = new JsonArray();
+
+        // null — unconditional extraction
         JsonObject nullType = new JsonObject();
         nullType.addProperty("type", "null");
+        nullType.addProperty("description", "Extract unconditionally");
         oneOf.add(nullType);
-        JsonObject condArray = new JsonObject();
-        condArray.addProperty("type", "array");
-        condArray.addProperty("description", "Condition triples: [attributeName, EQUALS|NOT_EQUALS|MATCHES, value(s)]");
-        oneOf.add(condArray);
+
+        // Single condition tuple
+        oneOf.add(createRef("#/$defs/conditionTuple"));
+
+        // Array of condition tuples (OR logic — extract if any condition matches)
+        JsonObject condArrayOfTuples = new JsonObject();
+        condArrayOfTuples.addProperty("type", "array");
+        condArrayOfTuples.addProperty("description", "Multiple conditions (OR logic — extract if any condition matches)");
+        condArrayOfTuples.add("items", createRef("#/$defs/conditionTuple"));
+        oneOf.add(condArrayOfTuples);
+
         def.add("oneOf", oneOf);
         return def;
     }
