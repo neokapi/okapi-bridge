@@ -38,9 +38,10 @@ help:
 	@echo "  make clean                Clean build artifacts"
 	@echo ""
 	@echo "Documentation:"
-	@echo "  make download-filter-docs  Download filter docs from Okapi wiki"
+	@echo "  make download-filter-docs  Download filter and step docs from Okapi wiki"
 	@echo "  make parse-filter-docs     Parse docs into structured JSON (uses Claude CLI)"
-	@echo "  make bundle-filter-docs    Bundle parsed docs into filter-docs-bundle.json"
+	@echo "  make bundle-docs           Bundle parsed docs into docs.json for plugin release"
+	@echo "  make bundle-filter-docs    Bundle parsed docs into filter-docs-bundle.json (legacy)"
 	@echo "  make clean-filter-docs     Remove downloaded docs"
 	@echo ""
 	@echo "Dependencies:"
@@ -264,7 +265,11 @@ parse-filter-docs:
 parse-filter-docs-force:
 	@FORCE=1 ./scripts/parse-filter-docs.sh $(FILTER_DOCS_DIR)
 
-# Bundle parsed docs into a single JSON file for UI consumption
+# Bundle parsed docs into docs.json for plugin release
+bundle-docs:
+	@./scripts/bundle-docs.sh $(FILTER_DOCS_DIR)
+
+# Bundle parsed docs into a single JSON file for UI consumption (legacy)
 bundle-filter-docs:
 	@./scripts/bundle-filter-docs.sh $(FILTER_DOCS_DIR)
 

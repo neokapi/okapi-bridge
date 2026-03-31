@@ -1,5 +1,5 @@
 #!/bin/bash
-# Parse Okapi filter documentation using Claude CLI
+# Parse Okapi filter and step documentation using Claude CLI
 # Usage: ./scripts/parse-filter-docs.sh [filter-docs-dir]
 #
 # Extracts structured documentation from wiki docs, keyed to composite schema
@@ -14,6 +14,7 @@ RAW_DIR="$DOCS_DIR/raw"
 PARSED_DIR="$DOCS_DIR/parsed"
 JSON_SCHEMA="$SCRIPT_DIR/filter-doc-schema.json"
 COMPOSITE_DIR="$REPO_ROOT/schemas/filters/composite"
+STEP_BASE_DIR="$REPO_ROOT/schemas/steps/base"
 VERSIONS_FILE="$REPO_ROOT/schemas/versions.json"
 
 # Check prerequisites
@@ -88,6 +89,74 @@ get_filter_ids() {
     esac
 }
 
+# Mapping from step wiki filename to step schema IDs
+get_step_id() {
+    local basename="$1"
+    case "$basename" in
+        "batch-translation-step") echo "batch-translation" ;;
+        "bom-conversion-step") echo "b-o-m-conversion" ;;
+        "character-count-step") echo "character-count" ;;
+        "cleanup-step") echo "cleanup" ;;
+        "copy-or-move-step") echo "copy-or-move" ;;
+        "create-target-step") echo "create-target" ;;
+        "desegmentation-step") echo "desegmentation" ;;
+        "diff-leverage-step") echo "diff-leverage" ;;
+        "encoding-conversion-step") echo "encoding-conversion" ;;
+        "enrycher-step") echo "enrycher" ;;
+        "external-command-step") echo "external-command" ;;
+        "extraction-verification-step") echo "extraction-verification" ;;
+        "filter-events-to-raw-document-step") echo "filter-events-to-raw-document" ;;
+        "format-conversion-step") echo "format-conversion" ;;
+        "full-width-conversion-step") echo "full-width-conversion" ;;
+        "id-based-copy-step") echo "id-based-copy" ;;
+        "id-based-aligner-step") echo "id-based-aligner" ;;
+        "image-modification-step") echo "image-modification" ;;
+        "inconsistency-check-step") echo "inconsistency-check" ;;
+        "inline-codes-removal-step") echo "codes-removal" ;;
+        "inline-codes-simplifier-step") echo "code-simplifier" ;;
+        "leveraging-step") echo "leveraging" ;;
+        "line-break-conversion-step") echo "line-break-conversion" ;;
+        "localizables-check-step") echo "localizable-checker" ;;
+        "microsoft-batch-translation-step") echo "m-s-batch-translation" ;;
+        "paragraph-alignment-step") echo "paragraph-aligner" ;;
+        "post-segmentation-inline-codes-removal-step") echo "post-segmentation-code-simplifier" ;;
+        "quality-check-step") echo "quality-check" ;;
+        "raw-document-to-filter-events-step") echo "raw-document-to-filter-events" ;;
+        "rainbow-translation-kit-creation-step") echo "extraction" ;;
+        "rainbow-translation-kit-merging-step") echo "merging" ;;
+        "rtf-conversion-step") echo "r-t-f-conversion" ;;
+        "remove-target-step") echo "remove-target" ;;
+        "repetition-analysis-step") echo "repetition-analysis" ;;
+        "resource-simplifier-step") echo "resource-simplifier" ;;
+        "scoping-report-step") echo "scoping-report" ;;
+        "search-and-replace-step") echo "search-and-replace" ;;
+        "segmentation-step") echo "segmentation" ;;
+        "segments-to-text-units-converter-step") echo "convert-segments-to-text-units" ;;
+        "sentence-alignment-step") echo "sentence-aligner" ;;
+        "simple-word-count-step") echo "simple-word-count" ;;
+        "space-check-step") echo "space-check" ;;
+        "term-extraction-step") echo "term-extraction" ;;
+        "terminology-leveraging-step") echo "terminology-leveraging" ;;
+        "text-modification-step") echo "text-modification" ;;
+        "tm-import-step") echo "t-m-import" ;;
+        "tokenization-step") echo "tokenization" ;;
+        "translation-comparison-step") echo "translation-comparison" ;;
+        "uri-conversion-step") echo "uri-conversion" ;;
+        "used-characters-listing-step") echo "char-listing" ;;
+        "word-count-step") echo "word-count" ;;
+        "whitespace-correction-step") echo "whitespace-correction" ;;
+        "ttx-joiner-step") echo "t-t-x-joiner" ;;
+        "ttx-splitter-step") echo "t-t-x-splitter" ;;
+        "xliff-joiner-step") echo "xliff-joiner" ;;
+        "xliff-splitter-step") echo "xliff-splitter" ;;
+        "xml-analysis-step") echo "x-m-l-analysis" ;;
+        "xml-characters-fixing-step") echo "x-m-l-char-fixing" ;;
+        "xml-validation-step") echo "x-m-l-validation" ;;
+        "xsl-transformation-step") echo "x-s-l-transform" ;;
+        *) echo "" ;;
+    esac
+}
+
 # Resolve the latest composite schema file for a filter ID
 get_composite_schema() {
     local filter_id="$1"
@@ -98,6 +167,22 @@ get_composite_schema() {
     latest_version=$(jq -r --arg id "$filter_id" '.filters[$id].versions[-1].version // empty' "$VERSIONS_FILE" 2>/dev/null)
     if [ -n "$latest_version" ]; then
         local schema_file="$COMPOSITE_DIR/${filter_id}.v${latest_version}.schema.json"
+        if [ -f "$schema_file" ]; then
+            echo "$schema_file"
+        fi
+    fi
+}
+
+# Resolve the latest step schema file for a step ID
+get_step_schema() {
+    local step_id="$1"
+    if [ ! -f "$VERSIONS_FILE" ]; then
+        return
+    fi
+    local latest_version
+    latest_version=$(jq -r --arg id "$step_id" '.steps[$id].versions[-1].version // empty' "$VERSIONS_FILE" 2>/dev/null)
+    if [ -n "$latest_version" ]; then
+        local schema_file="$STEP_BASE_DIR/${step_id}.v${latest_version}.schema.json"
         if [ -f "$schema_file" ]; then
             echo "$schema_file"
         fi
@@ -234,41 +319,171 @@ $wiki_content"
     sleep 1
 done
 
+filter_success=$success
+filter_failed=$failed
+filter_skipped=$skipped
+
+# ============================================================================
+# Step parsing
+# ============================================================================
+
+STEP_EXTRACTION_PROMPT='Extract structured documentation from this Okapi Framework step wiki page.
+
+You are given:
+1. The wiki page content (MediaWiki format) with the full step documentation
+2. The JSON Schema for this step (if available) — use its property names as keys in the output
+
+Rules for the "parameters" object:
+- Key each entry by the EXACT property name from the step schema (e.g., "regEx", "dotAll", "segmentSource")
+- Only include parameters that exist in the provided schema
+- The "description" should be richer than the schema description — include behavioral details, valid value ranges, and formatting rules from the wiki
+- Extract "notes" for any Note:/Warning:/Important: text attached to the parameter
+- Extract "dependsOn" when the wiki says a parameter requires another to be set or only takes effect when another is enabled
+- Extract "introducedIn" for version-specific parameters
+
+Rules for step-level fields:
+- "filterName": Use the step name (e.g., "Search and Replace Step")
+- "overview": 2-4 sentences describing the step purpose, input/output types, and typical use
+- "limitations": concise statements about limitations
+- "processingNotes": important behavioral details (encoding handling, performance characteristics, etc.)
+- "examples": worked examples showing configuration patterns
+
+If no schema is provided, do your best to identify the camelCase Java property names from context.'
+
+echo ""
+echo "Parsing step documentation with Claude CLI..."
+echo ""
+
+step_success=0
+step_failed=0
+step_skipped=0
+
+mkdir -p "$PARSED_DIR/steps"
+
+STEP_RAW_DIR="$RAW_DIR/steps"
+if [ ! -d "$STEP_RAW_DIR" ]; then
+    echo "No step docs found at $STEP_RAW_DIR — skipping step parsing."
+else
+    for wiki_file in "$STEP_RAW_DIR"/*.wiki; do
+        [ ! -f "$wiki_file" ] && continue
+        basename=$(basename "$wiki_file" .wiki)
+
+        # Get step ID for this wiki page
+        step_id=$(get_step_id "$basename")
+        if [ -z "$step_id" ]; then
+            echo "⚠ No step ID mapping for: $basename"
+            ((step_skipped++))
+            continue
+        fi
+
+        output_file="$PARSED_DIR/steps/${step_id}.json"
+
+        # Skip if already parsed (for incremental runs)
+        if [ -f "$output_file" ] && [ "$FORCE" != "1" ]; then
+            echo "⏭ Skipping $step_id (already parsed, use FORCE=1 to reparse)"
+            ((step_skipped++))
+            continue
+        fi
+
+        echo -n "Parsing $basename -> $step_id... "
+
+        # Read wiki content
+        wiki_content=$(cat "$wiki_file")
+
+        # Construct wiki URL
+        wiki_page=$(echo "$basename" | sed 's/-/_/g' | sed 's/\b\(.\)/\u\1/g')
+        wiki_url="https://okapiframework.org/wiki/index.php/${wiki_page}"
+
+        # Resolve the step schema for context
+        schema_context=""
+        schema_file=$(get_step_schema "$step_id")
+        if [ -n "$schema_file" ]; then
+            schema_context="
+
+STEP JSON SCHEMA (use these property names as keys):
+$(cat "$schema_file")"
+        else
+            schema_context="
+
+No schema available for this step. Infer camelCase Java property names from the wiki content."
+        fi
+
+        # Call Claude CLI
+        full_prompt="$STEP_EXTRACTION_PROMPT
+$schema_context
+
+WIKI CONTENT:
+$wiki_content"
+
+        if raw_result=$(echo "$full_prompt" | claude --print --dangerously-skip-permissions \
+            --output-format json \
+            --json-schema "$SCHEMA_JSON" \
+            2>/dev/null); then
+
+            result=$(echo "$raw_result" | jq -c '.structured_output // empty')
+
+            if echo "$result" | jq -e '. | type == "object"' > /dev/null 2>&1; then
+                echo "$result" | jq --arg url "$wiki_url" --arg id "$step_id" \
+                    '. + {stepId: $id, wikiUrl: $url}' > "$output_file"
+                echo "✓"
+                ((step_success++))
+            else
+                echo "✗ (invalid JSON)"
+                echo "$result" > "$PARSED_DIR/steps/${step_id}.error.txt"
+                ((step_failed++))
+            fi
+        else
+            echo "✗ (Claude error)"
+            ((step_failed++))
+        fi
+
+        sleep 1
+    done
+fi
+
 echo ""
 echo "Parsing complete!"
-echo "  Successful: $success"
-echo "  Failed: $failed"
-echo "  Skipped: $skipped"
-echo "  Output: $PARSED_DIR/"
+echo "  Filters:  $filter_success parsed, $filter_failed failed, $filter_skipped skipped"
+echo "  Steps:    $step_success parsed, $step_failed failed, $step_skipped skipped"
+echo "  Output:   $PARSED_DIR/"
 echo ""
 
 # Create summary index
-if [ $success -gt 0 ]; then
+total_success=$((filter_success + step_success))
+if [ $total_success -gt 0 ]; then
     echo "Creating index..."
-    echo "{" > "$PARSED_DIR/index.json"
-    echo '  "generatedAt": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'",' >> "$PARSED_DIR/index.json"
-    echo '  "filterCount": '$success',' >> "$PARSED_DIR/index.json"
-    echo '  "filters": {' >> "$PARSED_DIR/index.json"
-    
-    first=true
-    for json_file in "$PARSED_DIR"/okf_*.json; do
-        [ -L "$json_file" ] && continue  # Skip symlinks
-        [ ! -f "$json_file" ] && continue
-        
-        filter_id=$(basename "$json_file" .json)
-        filter_name=$(jq -r '.filterName // "Unknown"' "$json_file")
-        
-        if [ "$first" = true ]; then
-            first=false
-        else
-            echo "," >> "$PARSED_DIR/index.json"
-        fi
-        printf '    "%s": "%s"' "$filter_id" "$filter_name" >> "$PARSED_DIR/index.json"
-    done
-    
-    echo "" >> "$PARSED_DIR/index.json"
-    echo "  }" >> "$PARSED_DIR/index.json"
-    echo "}" >> "$PARSED_DIR/index.json"
-    
+    {
+        echo "{"
+        echo '  "generatedAt": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'",'
+        echo '  "filterCount": '$filter_success','
+        echo '  "stepCount": '$step_success','
+
+        echo '  "filters": {'
+        first=true
+        for json_file in "$PARSED_DIR"/okf_*.json; do
+            [ -L "$json_file" ] && continue
+            [ ! -f "$json_file" ] && continue
+            filter_id=$(basename "$json_file" .json)
+            filter_name=$(jq -r '.filterName // "Unknown"' "$json_file")
+            if [ "$first" = true ]; then first=false; else echo ","; fi
+            printf '    "%s": "%s"' "$filter_id" "$filter_name"
+        done
+        echo ""
+        echo "  },"
+
+        echo '  "steps": {'
+        first=true
+        for json_file in "$PARSED_DIR/steps"/*.json; do
+            [ ! -f "$json_file" ] && continue
+            step_id=$(basename "$json_file" .json)
+            step_name=$(jq -r '.filterName // "Unknown"' "$json_file")
+            if [ "$first" = true ]; then first=false; else echo ","; fi
+            printf '    "%s": "%s"' "$step_id" "$step_name"
+        done
+        echo ""
+        echo "  }"
+
+        echo "}"
+    } > "$PARSED_DIR/index.json"
     echo "Created $PARSED_DIR/index.json"
 fi
