@@ -1,26 +1,26 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "FilterDocumentation",
-  "description": "Structured documentation extracted from Okapi filter wiki pages, keyed to composite schema property names for UI consumption",
+  "title": "FilterOrStepDocumentation",
+  "description": "Structured documentation extracted from Okapi wiki pages. Complements the JSON Schema (which provides type, default, title, x-editor) with contextual help, behavioral details, and examples that cannot be introspected from code.",
   "type": "object",
   "properties": {
     "filterName": {
       "type": "string",
-      "description": "Human-readable filter name"
+      "description": "Human-readable name (e.g. 'HTML Filter', 'Search and Replace Step')"
     },
     "overview": {
       "type": "string",
-      "description": "2-4 sentence overview of what this filter does, what formats it handles, and its primary use case. Derived from the wiki Overview section."
+      "description": "2-4 sentence markdown overview. What this filter/step does, what formats it handles, and its primary use case."
     },
     "limitations": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "Known limitations from the wiki Limitations section. Each item is a concise statement."
+      "description": "Known limitations. Each item is a concise markdown statement."
     },
     "processingNotes": {
       "type": "array",
       "items": { "type": "string" },
-      "description": "Important processing behavior users should know (encoding detection, BOM handling, line-break preservation, memory usage). From the Processing Details section."
+      "description": "Important processing behaviors (encoding detection, BOM handling, memory usage, performance). Each item is a concise markdown statement."
     },
     "examples": {
       "type": "array",
@@ -28,48 +28,62 @@
         "type": "object",
         "properties": {
           "title": { "type": "string", "description": "Short title for this example" },
-          "description": { "type": "string", "description": "Explanation of what this example demonstrates" },
-          "input": { "type": "string", "description": "Input content or configuration" },
-          "output": { "type": "string", "description": "Resulting output or extracted content. Null if not applicable." }
+          "description": { "type": "string", "description": "Markdown explanation of what this example demonstrates" },
+          "config": { "type": "string", "description": "Configuration snippet as a markdown code block (```yaml or ```json). Null if not applicable." },
+          "input": { "type": "string", "description": "Input content as a markdown code block. Null if not applicable." },
+          "output": { "type": "string", "description": "Expected output as a markdown code block. Null if not applicable." }
         },
         "required": ["title", "description"]
       },
-      "description": "Worked examples from the wiki showing input/output or configuration patterns"
+      "description": "Worked examples from the wiki showing configuration, input/output patterns"
     },
     "parameters": {
       "type": "object",
       "additionalProperties": {
         "type": "object",
         "properties": {
-          "description": {
+          "help": {
             "type": "string",
-            "description": "Rich description from the wiki. Include behavioral nuances, valid value ranges, and formatting rules. More detailed than the schema description."
+            "description": "Contextual help text in markdown. Rendered beside the parameter editor in the UI. Should explain BEHAVIOR and USAGE — not repeat the title or type (those come from the schema). Use markdown formatting: `code`, **bold**, lists, code blocks."
+          },
+          "values": {
+            "type": "string",
+            "description": "Markdown description of valid values, ranges, or format requirements. For regex fields: syntax and examples. For paths: what file types are expected. For enums: what each choice means (only if not already in x-enumDescriptions). Null if the schema type and constraints are self-explanatory."
           },
           "notes": {
             "type": "array",
             "items": { "type": "string" },
-            "description": "Important notes and warnings from the wiki attached to this parameter (e.g., 'Note: directives have precedence over key condition')"
+            "description": "Important warnings, caveats, or tips as markdown strings. Extracted from Note:/Warning:/Important: blocks in the wiki."
           },
           "dependsOn": {
             "type": "array",
             "items": {
               "type": "object",
               "properties": {
-                "property": { "type": "string", "description": "The schema property name this depends on" },
-                "condition": { "type": "string", "description": "Human-readable condition (e.g., 'must be true', 'must be set to extract')" }
+                "property": { "type": "string", "description": "Schema property name this depends on" },
+                "condition": { "type": "string", "description": "Human-readable condition (e.g. 'must be true', 'overrides this when set')" }
               },
               "required": ["property", "condition"]
             },
-            "description": "Dependencies on other parameters (e.g., 'requires useKeyAsName to be true')"
+            "description": "Dependencies not captured by x-editor.enabledBy (which only handles simple enable/disable). Use for semantic dependencies: 'overrides', 'conflicts with', 'only meaningful when'."
+          },
+          "examples": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Short inline examples as markdown strings. For regex parameters: example patterns with explanations. For path parameters: example paths. Rendered as a compact list below the help text."
           },
           "introducedIn": {
             "type": "string",
-            "description": "Okapi version where this parameter was introduced (e.g., 'M39', '1.48.0')"
+            "description": "Okapi version where this parameter was introduced (e.g. 'M39', '1.48.0')"
+          },
+          "seeAlso": {
+            "type": "string",
+            "description": "Wiki page fragment for deep-link (e.g. 'JSON_Filter#Extraction_Rules'). UI constructs full URL from wikiBaseUrl."
           }
         },
-        "required": ["description"]
+        "required": ["help"]
       },
-      "description": "Per-parameter documentation keyed by the JSON Schema property name from the composite schema. Only include parameters that exist in the provided schema."
+      "description": "Per-parameter documentation keyed by the JSON Schema property name. For grouped properties, use dot-path (e.g. 'extraction.extractAll')."
     }
   },
   "required": ["filterName", "overview", "parameters"]

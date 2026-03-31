@@ -190,27 +190,56 @@ get_step_schema() {
 }
 
 # The prompt for Claude to extract structured information
-EXTRACTION_PROMPT='Extract structured documentation from this Okapi Framework filter wiki page.
+EXTRACTION_PROMPT='Extract contextual documentation from this Okapi Framework filter wiki page.
 
 You are given:
-1. The wiki page content (MediaWiki format) with the full filter documentation
-2. The composite JSON Schema for this filter (if available) — use its property names as keys in the output
+1. The wiki page content (MediaWiki format)
+2. The composite JSON Schema for this filter (if available)
+
+IMPORTANT — The schema ALREADY provides these fields for each parameter. DO NOT repeat them:
+- `title` (display name from Okapi ParametersDescription)
+- `description` (short description from Okapi ParametersDescription)
+- `type`, `default`, `enum`, `minimum`, `maximum` (JSON Schema)
+- `x-editor` with `widget`, `enabledBy`, `layout`, file filters, etc.
+- `x-enumDescriptions` for enum values
+
+Your job is to provide the COMPLEMENTARY information the schema cannot capture:
+behavioral details, usage guidance, gotchas, valid value formats, and examples.
 
 Rules for the "parameters" object:
-- Key each entry by the EXACT property name from the composite schema (e.g., "extractIsolatedStrings", not "Extract strings without associated key")
-- Only include parameters that exist in the provided composite schema
-- The "description" should be richer than the schema description — include behavioral details, valid value ranges, and formatting rules from the wiki
-- Extract "notes" for any Note:/Warning:/Important: text attached to the parameter
-- Extract "dependsOn" when the wiki says a parameter requires another to be set, cannot be used with another, or only takes effect when another is enabled
-- Extract "introducedIn" for version-specific parameters (e.g., "M39", "1.48.0")
+- Key each entry by the EXACT property name from the schema (e.g., "extractIsolatedStrings")
+- For grouped properties use dot-path (e.g., "extraction.extractAll", "inlineCodes.enabled")
+- Only include parameters that exist in the provided schema
+
+For each parameter, provide:
+- "help": Markdown contextual help. Explain BEHAVIOR and USAGE, not what the field is called or its type.
+  Use markdown: `code`, **bold**, bullet lists, fenced code blocks (```).
+  This is rendered beside the parameter editor — keep it focused and scannable.
+  DO NOT start with "When enabled..." or repeat the title — the user can see the checkbox/field.
+
+- "values": Markdown description of valid values or format. Only include if non-obvious from the schema type.
+  For regex fields: syntax with examples. For paths: expected file types. For strings with specific formats: the format.
+  Null/omit if the type and constraints are self-explanatory (e.g., a simple boolean).
+
+- "notes": Array of markdown strings for warnings/caveats from the wiki (Note:/Warning:/Important: blocks).
+
+- "dependsOn": Only for SEMANTIC dependencies not captured by x-editor.enabledBy.
+  Use for: "overrides X when set", "conflicts with Y", "only meaningful when Z is configured".
+  DO NOT duplicate x-editor.enabledBy relationships (simple enable/disable is already in the schema).
+
+- "examples": Array of short inline markdown examples. For regex params: example patterns with what they match.
+  For command params: example command lines. Keep compact — one per line.
+
+- "introducedIn": Okapi version string if mentioned in the wiki (e.g., "M39", "1.48.0").
+
+- "seeAlso": Wiki page fragment for deep-link (e.g., "JSON_Filter#Extraction_Rules"). Omit if not applicable.
 
 Rules for filter-level fields:
-- "overview": 2-4 sentences from the Overview section describing the filter purpose and key capabilities
-- "limitations": concise statements from the Limitations section
-- "processingNotes": important behavioral details from Processing Details (encoding, BOM, line-breaks, memory usage)
-- "examples": worked examples showing input→output or configuration patterns; include both input and output when available
-
-If no composite schema is provided, do your best to identify the camelCase Java property names from context.'
+- "overview": 2-4 sentence markdown overview from the Overview section
+- "limitations": Array of concise markdown statements from the Limitations section
+- "processingNotes": Array of concise markdown statements about processing behavior
+- "examples": Worked examples. Use "config" for configuration snippets (as fenced code blocks with language),
+  "input" for input content, "output" for expected output. Use fenced code blocks with appropriate language tags.'
 
 echo "Parsing filter documentation with Claude CLI..."
 echo ""
@@ -262,18 +291,27 @@ for wiki_file in "$RAW_DIR"/*.wiki; do
     fi
     wiki_url="https://okapiframework.org/wiki/index.php/${wiki_page}"
 
-    # Resolve the composite schema for context
+    # Resolve the composite schema for context (stripped to reduce token count).
+    # Remove large embedded data: parametersRaw, parameters, element/attribute defaults,
+    # and $defs details. Keep property names, types, titles, descriptions, x-editor.
     schema_context=""
     composite_file=$(get_composite_schema "$primary_id")
     if [ -n "$composite_file" ]; then
+        stripped_schema=$(jq '
+          del(.["x-filter"].configurations[]?.parametersRaw) |
+          del(.["x-filter"].configurations[]?.parameters) |
+          walk(if type == "object" and .type == "object" and (.default | type) == "object" and (.default | length) > 3
+               then del(.default) else . end) |
+          del(.["$defs"])
+        ' "$composite_file" 2>/dev/null || cat "$composite_file")
         schema_context="
 
-COMPOSITE JSON SCHEMA (use these property names as keys):
-$(cat "$composite_file")"
+JSON SCHEMA (use these property names as keys — types, titles, and x-editor are already in the schema, DO NOT repeat them):
+$stripped_schema"
     else
         schema_context="
 
-No composite schema available for this filter. Infer camelCase Java property names from the wiki content."
+No schema available. Infer camelCase Java property names from the wiki content."
     fi
     
     # Call Claude CLI with --json-schema for guaranteed well-formed output
@@ -327,28 +365,51 @@ filter_skipped=$skipped
 # Step parsing
 # ============================================================================
 
-STEP_EXTRACTION_PROMPT='Extract structured documentation from this Okapi Framework step wiki page.
+STEP_EXTRACTION_PROMPT='Extract contextual documentation from this Okapi Framework step wiki page.
 
 You are given:
-1. The wiki page content (MediaWiki format) with the full step documentation
-2. The JSON Schema for this step (if available) — use its property names as keys in the output
+1. The wiki page content (MediaWiki format)
+2. The step JSON Schema (if available)
+
+IMPORTANT — The schema ALREADY provides these fields for each parameter. DO NOT repeat them:
+- `title` (display name), `description` (short description)
+- `type`, `default`, `enum`, `minimum`, `maximum`
+- `x-editor` with `widget`, `enabledBy`, `layout`, file filters, etc.
+- `x-component` with `category`, `tags`, `requires`, `inputs`, `outputs`
+
+Your job is to provide COMPLEMENTARY information: behavioral details, usage guidance, gotchas, and examples.
 
 Rules for the "parameters" object:
-- Key each entry by the EXACT property name from the step schema (e.g., "regEx", "dotAll", "segmentSource")
+- Key each entry by the EXACT property name from the schema (e.g., "regEx", "dotAll")
 - Only include parameters that exist in the provided schema
-- The "description" should be richer than the schema description — include behavioral details, valid value ranges, and formatting rules from the wiki
-- Extract "notes" for any Note:/Warning:/Important: text attached to the parameter
-- Extract "dependsOn" when the wiki says a parameter requires another to be set or only takes effect when another is enabled
-- Extract "introducedIn" for version-specific parameters
+
+For each parameter, provide:
+- "help": Markdown contextual help rendered beside the parameter editor.
+  Explain BEHAVIOR and USAGE, not the field name or type.
+  Use markdown: `code`, **bold**, bullet lists, fenced code blocks (```).
+  DO NOT start with "When enabled..." or repeat the title.
+
+- "values": Markdown description of valid values or format. Only if non-obvious from schema type.
+  For command strings: available variables. For regex: syntax. For paths: expected file types.
+  Null/omit for simple booleans or integers.
+
+- "notes": Array of markdown strings for warnings/caveats (Note:/Warning:/Important: blocks).
+
+- "dependsOn": Only for SEMANTIC dependencies not in x-editor.enabledBy.
+  Use for: "overrides X", "conflicts with Y", "only meaningful when Z".
+
+- "examples": Array of compact inline markdown examples.
+  For command params: example command lines. For regex: patterns with explanations.
+
+- "introducedIn": Okapi version string if mentioned (e.g., "M39", "1.48.0").
+- "seeAlso": Wiki page fragment for deep-link. Omit if not applicable.
 
 Rules for step-level fields:
-- "filterName": Use the step name (e.g., "Search and Replace Step")
-- "overview": 2-4 sentences describing the step purpose, input/output types, and typical use
-- "limitations": concise statements about limitations
-- "processingNotes": important behavioral details (encoding handling, performance characteristics, etc.)
-- "examples": worked examples showing configuration patterns
-
-If no schema is provided, do your best to identify the camelCase Java property names from context.'
+- "filterName": Step name (e.g., "Search and Replace Step")
+- "overview": 2-4 sentence markdown overview
+- "limitations": Array of concise markdown statements
+- "processingNotes": Array of concise markdown statements
+- "examples": Worked examples with "config", "input", "output" as fenced code blocks'
 
 echo ""
 echo "Parsing step documentation with Claude CLI..."
@@ -400,14 +461,15 @@ else
         fi
         wiki_url="https://okapiframework.org/wiki/index.php/${wiki_page}"
 
-        # Resolve the step schema for context
+        # Resolve the step schema for context (stripped to reduce token count)
         schema_context=""
         schema_file=$(get_step_schema "$step_id")
         if [ -n "$schema_file" ]; then
+            stripped_schema=$(jq 'del(.["x-step"])' "$schema_file" 2>/dev/null || cat "$schema_file")
             schema_context="
 
-STEP JSON SCHEMA (use these property names as keys):
-$(cat "$schema_file")"
+STEP SCHEMA (use these property names — types, titles, and x-editor are already in the schema, DO NOT repeat them):
+$stripped_schema"
         else
             schema_context="
 
