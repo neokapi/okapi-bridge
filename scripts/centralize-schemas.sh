@@ -15,10 +15,10 @@ cd "$ROOT_DIR"
 SCHEMAS_DIR="schemas"
 BASE_DIR="$SCHEMAS_DIR/filters/base"
 COMPOSITE_DIR="$SCHEMAS_DIR/filters/composite"
-OVERRIDES_DIR="schemagen/overrides"
+OVERRIDES_DIR="overrides/filters"
 STEPS_BASE_DIR="$SCHEMAS_DIR/steps/base"
 STEPS_COMPOSITE_DIR="$SCHEMAS_DIR/steps/composite"
-STEPS_OVERRIDES_DIR="schemagen/overrides/steps"
+STEPS_OVERRIDES_DIR="overrides/steps"
 VERSIONS_FILE="schemas/versions.json"
 
 # Get all Okapi versions sorted

@@ -15,18 +15,24 @@ okapi-bridge/                      (parent pom — shared deps, plugin config)
 │   └── src/main/proto/            (gRPC protobuf definitions)
 │   └── src/test/java/             (unit tests)
 ├── tools/schema-generator/        (schema gen tool, depends on bridge-core)
-├── schemagen/                     (all schema authoring inputs)
+├── schemagen/                     (schema authoring inputs)
 │   ├── groupings.json             (per-filter param→group mappings)
 │   ├── common.defs.json           (shared $defs: inlineCodes, whitespace, etc.)
-│   └── overrides/                 (human-curated UI hints per filter)
-│       └── _fragments/            (shared override fragments via $include)
+│   ├── res-metadata.json          (UI labels from Okapi SWT Res.properties)
+│   └── help-metadata.json         (descriptions from Okapi help HTML docs)
+├── overrides/                     (human-curated UI hints, titles, descriptions)
+│   ├── filters/                   (per-filter overrides: okf_*.overrides.json)
+│   │   └── _fragments/            (shared override fragments via $include)
+│   └── steps/                     (per-step overrides: *.overrides.json)
 ├── okapi-releases/{version}/      (per-version build, inherits parent config)
 │   ├── pom.xml                    (auto-generated: parent ref + filter deps)
 │   ├── meta.json                  (version metadata)
 │   └── schemas/                   (generated hierarchical JSON schemas)
 └── schemas/                       (all generated output)
-    ├── base/                      (versioned base schemas)
-    ├── composite/                 (merged base + overrides, served to consumers)
+    ├── filters/base/              (versioned filter base schemas)
+    ├── filters/composite/         (merged base + overrides, served to consumers)
+    ├── steps/base/                (versioned step base schemas)
+    ├── steps/composite/           (merged base + overrides, served to consumers)
     └── versions.json              (version tracking with content hashes)
 ```
 
@@ -107,11 +113,15 @@ The CI release workflow generates this manifest at build time by querying the br
 
 ### Three-Layer Schema Architecture
 
-1. **Base schemas** (`schemas/base/okf_*.vN.schema.json`) — Auto-generated from Okapi filter introspection. Hierarchical with nested property groups. Versioned per-filter.
-2. **Overrides** (`schemagen/overrides/okf_*.overrides.json`) — Human-curated UI hints (widgets, presets, descriptions). Single file per filter. Field names auto-resolve into nested groups, or use dot-paths (`"extraction.extractAll"`).
-3. **Composite schemas** (`schemas/composite/okf_*.vN.schema.json`) — Merged base + override, served to consumers. Version increments when either base or override content changes.
+Both filters and steps follow the same three-layer pipeline:
 
-`schemas/versions.json` tracks all versions with content hashes (first 12 chars of SHA1 of canonical JSON).
+1. **Base schemas** (`schemas/{filters,steps}/base/*.vN.schema.json`) — Auto-generated from Okapi introspection. For filters: hierarchical with nested property groups. For steps: flat properties from `#v1` serialization + `ParametersDescription`.
+2. **Overrides** (`overrides/{filters,steps}/*.overrides.json`) — Human-curated UI hints (titles, descriptions, widgets, presets). Field names auto-resolve into nested groups, or use dot-paths (`"extraction.extractAll"`). Top-level `title` and `description` override schema metadata.
+3. **Composite schemas** (`schemas/{filters,steps}/composite/*.vN.schema.json`) — Merged base + override, served to consumers via the assemble/transform pipeline.
+
+`schemas/versions.json` tracks all versions with content hashes (first 12 chars of SHA1 of canonical JSON). Both filter and step entries include `baseHash`, `compositeHash`, and `overrideHash`.
+
+Schema generators also load supplementary metadata (`schemagen/res-metadata.json` from Okapi UI labels, `schemagen/help-metadata.json` from Okapi help docs) as fallback for properties missing title/description.
 
 ### Hierarchical Schema Model
 
