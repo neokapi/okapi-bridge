@@ -2,30 +2,26 @@
 # Transform okapi-data/ to neokapi plugin format.
 #
 # Converts okapi-native extraction output into the neokapi plugin directory
-# structure using neokapi vocabulary throughout:
-#   - filters -> formats
-#   - steps -> tools
-#   - x-filter -> x-format
-#   - x-step removed, x-tool added from tool-metadata.json
-#   - configurations extracted as presets
+# structure using the neokapi schema language:
 #
-# Reads from:
-#   okapi-data/{version}/         (assembled okapi-native output)
-#   schemagen/step-metadata.json  (neokapi tool classifications)
+#   Extension namespaces:
+#     ui:*         — UI rendering hints (widget, visible, enabled, layout, etc.)
+#     (no prefix)  — neokapi data (formatMeta, toolMeta, presets)
+#     x-okapi-*    — Okapi bridge internals (flatten-path, format, kind)
 #
-# Produces:
-#   dist/plugin/
-#   ├── manifest.json
-#   ├── formats/{filterId}/
-#   │   ├── schema.json
-#   │   ├── doc.json
-#   │   └── presets/
-#   ├── tools/{stepId}/
-#   │   ├── schema.json
-#   │   └── doc.json
-#   └── docs/
-#       ├── metadata.json
-#       └── concepts.json
+#   Key transforms:
+#     x-filter           → formatMeta + presets (top-level)
+#     x-step             → toolMeta (from step-metadata.json)
+#     x-editor           → ui:widget + ui:widget-options + ui:enabled + ui:layout
+#     x-showIf           → ui:visible
+#     x-enumLabels       → ui:enum-labels
+#     x-enumDescriptions → ui:enum-descriptions
+#     x-flattenPath      → x-okapi-flatten-path
+#     x-okapiFormat      → x-okapi-format
+#     x-kind             → x-okapi-kind
+#     x-placeholder      → ui:placeholder
+#     x-widget           → ui:widget
+#     x-presets           → ui:presets
 #
 # Usage: ./scripts/transform-to-plugin.sh <okapi-version> <bridge-version>
 
@@ -47,7 +43,6 @@ INPUT_DIR="okapi-data/${OKAPI_VERSION}"
 OUTPUT_DIR="dist/plugin"
 STEP_METADATA="schemagen/step-metadata.json"
 
-# Verify prerequisites
 if [ ! -d "$INPUT_DIR" ]; then
     echo "Error: $INPUT_DIR not found. Run 'make assemble V=${OKAPI_VERSION}' first." >&2
     exit 1
@@ -58,11 +53,78 @@ if [ ! -f "$STEP_METADATA" ]; then
     exit 1
 fi
 
-# Clean output
 rm -rf "$OUTPUT_DIR"
 mkdir -p "$OUTPUT_DIR/formats" "$OUTPUT_DIR/tools" "$OUTPUT_DIR/docs"
 
 echo "Transforming okapi-data to neokapi plugin format..."
+
+# ── jq function: rename property-level extensions recursively ─────────────
+# Applied to all properties in both format and tool schemas.
+RENAME_PROPS='
+def rename_ui_extensions:
+  if type == "object" then
+    # Rename known extensions
+    (if has("x-widget") then .["ui:widget"] = .["x-widget"] | del(.["x-widget"]) else . end) |
+    (if has("x-placeholder") then .["ui:placeholder"] = .["x-placeholder"] | del(.["x-placeholder"]) else . end) |
+    (if has("x-presets") then .["ui:presets"] = .["x-presets"] | del(.["x-presets"]) else . end) |
+    (if has("x-enumLabels") then .["ui:enum-labels"] = .["x-enumLabels"] | del(.["x-enumLabels"]) else . end) |
+    (if has("x-enumDescriptions") then .["ui:enum-descriptions"] = .["x-enumDescriptions"] | del(.["x-enumDescriptions"]) else . end) |
+    (if has("x-flattenPath") then .["x-okapi-flatten-path"] = .["x-flattenPath"] | del(.["x-flattenPath"]) else . end) |
+    (if has("x-okapiFormat") then .["x-okapi-format"] = .["x-okapiFormat"] | del(.["x-okapiFormat"]) else . end) |
+    (if has("x-order") then .["ui:order"] = .["x-order"] | del(.["x-order"]) else . end) |
+    (if has("x-introducedInOkapi") then .["ui:introduced-in"] = .["x-introducedInOkapi"] | del(.["x-introducedInOkapi"]) else . end) |
+    # Transform x-showIf → ui:visible
+    (if has("x-showIf") then
+      .["ui:visible"] = (
+        .["x-showIf"] |
+        if has("empty") then {field: .field, empty: .empty}
+        elif has("value") then {field: .field, eq: .value}
+        else .
+        end
+      ) | del(.["x-showIf"])
+    else . end) |
+    # Transform x-editor → ui:widget + ui:widget-options + ui:enabled + ui:layout
+    (if has("x-editor") then
+      (.["x-editor"]) as $ed |
+      # Widget mapping
+      (if $ed.widget == "text" and ($ed.text.password // false) then .["ui:widget"] = "password"
+       elif $ed.widget == "text" and ($ed.text.height // 0) > 1 then .["ui:widget"] = "textarea" | .["ui:widget-options"] = {rows: $ed.text.height}
+       elif $ed.widget == "codeFinder" then .["ui:widget"] = "code-finder"
+       elif $ed.widget == "path" then .["ui:widget"] = "file-picker" | .["ui:widget-options"] = ($ed.path // {} | with_entries(select(.value != null)))
+       elif $ed.widget == "folder" then .["ui:widget"] = "folder-picker" | .["ui:widget-options"] = ($ed.folder // {} | with_entries(select(.value != null)))
+       elif $ed.widget == "checkList" then .["ui:widget"] = "checklist" | .["ui:widget-options"] = ($ed.checkList // {} | with_entries(select(.value != null)))
+       elif $ed.widget == "select" then .["ui:widget"] = "select"
+       else . end) |
+      # enabledBy → ui:enabled
+      (if $ed.enabledBy then
+        .["ui:enabled"] = (
+          if $ed.enabledBy.enabledWhenSelected then
+            {field: $ed.enabledBy.parameter, eq: true}
+          else
+            {not: {field: $ed.enabledBy.parameter, eq: true}}
+          end
+        )
+      else . end) |
+      # layout → ui:layout
+      (if $ed.layout then
+        .["ui:layout"] = (
+          {} |
+          (if $ed.layout.withLabel == false then .hideLabel = true else . end) |
+          (if $ed.layout.vertical then .vertical = true else . end) |
+          if . == {} then null else . end
+        ) | if .["ui:layout"] == null then del(.["ui:layout"]) else . end
+      else . end) |
+      del(.["x-editor"])
+    else . end) |
+    # Recurse into nested properties
+    (if has("properties") then .properties |= map_values(rename_ui_extensions) else . end) |
+    (if has("items") and (.items | type) == "object" then .items |= rename_ui_extensions else . end) |
+    (if has("$defs") then .["$defs"] |= map_values(rename_ui_extensions) else . end) |
+    (if has("prefixItems") then .prefixItems |= map(rename_ui_extensions) else . end) |
+    (if has("oneOf") then .oneOf |= map(rename_ui_extensions) else . end)
+  else .
+  end;
+'
 
 # ============================================================================
 # Format schemas (filter -> format)
@@ -78,55 +140,52 @@ for filter_dir in "$INPUT_DIR"/filters/*/; do
 
     mkdir -p "$OUTPUT_DIR/formats/${filter_id}"
 
-    # Transform filter schema -> format schema
-    # - Rename x-filter to x-format
-    # - Strip Java class names, parametersRaw, parametersLocation, serializationFormat
-    # - Extract configurations as presets
-    jq '
-        # Rename x-filter -> x-format, strip okapi internals
+    # Transform filter schema → neokapi format schema
+    jq "${RENAME_PROPS}"'
+        # x-filter → formatMeta (strip Java internals)
         (if .["x-filter"] then
-            .["x-format"] = (
+            .formatMeta = (
                 .["x-filter"] |
-                del(.class) |
-                del(.serializationFormat) |
-                if .configurations then
-                    .presets = [.configurations[] | {
-                        id: .configId,
-                        name: .name,
-                        description: .description,
-                        extensions: .extensions,
-                        mimeType: .mimeType,
-                        isDefault: .isDefault,
-                        parameters: .parameters
-                    } | del(.[] | select(. == null))]
-                    | del(.configurations)
-                else .
-                end
-            ) |
-            del(.["x-filter"])
+                del(.class, .serializationFormat, .parametersRaw, .parametersLocation)
+            )
         else .
         end) |
-        # Rewrite $id to neokapi namespace
-        if .["$id"] then
-            .["$id"] = (.["$id"] | gsub("okapiframework\\.org"; "neokapi.dev"))
+        # Extract configurations → top-level presets map
+        (if .formatMeta.configurations then
+            .presets = (
+                [.formatMeta.configurations[] | {key: .configId, value: .parameters}]
+                | from_entries
+            ) |
+            .formatMeta |= del(.configurations)
         else .
-        end
+        end) |
+        del(.["x-filter"]) |
+        # Okapi metadata → x-okapi-* namespace
+        (if has("x-kind") then .["x-okapi-kind"] = .["x-kind"] | del(.["x-kind"]) else . end) |
+        (if has("x-apiVersion") then .["x-okapi-api-version"] = .["x-apiVersion"] | del(.["x-apiVersion"]) else . end) |
+        (if has("x-baseVersion") then .["x-okapi-base-version"] = .["x-baseVersion"] | del(.["x-baseVersion"]) else . end) |
+        (if has("x-baseHash") then .["x-okapi-base-hash"] = .["x-baseHash"] | del(.["x-baseHash"]) else . end) |
+        (if has("x-compositeHash") then .["x-okapi-composite-hash"] = .["x-compositeHash"] | del(.["x-compositeHash"]) else . end) |
+        (if has("x-introducedInOkapi") then .["ui:introduced-in"] = .["x-introducedInOkapi"] | del(.["x-introducedInOkapi"]) else . end) |
+        # Rename x-groups → ui:groups
+        (if has("x-groups") then .["ui:groups"] = .["x-groups"] | del(.["x-groups"]) else . end) |
+        # Rewrite $id namespace
+        (if has("$id") then .["$id"] = (.["$id"] | gsub("okapiframework\\.org"; "neokapi.dev")) else . end) |
+        # Rename property extensions recursively
+        (if has("properties") then .properties |= map_values(rename_ui_extensions) else . end) |
+        (if has("$defs") then .["$defs"] |= map_values(rename_ui_extensions) else . end)
     ' "$schema_file" > "$OUTPUT_DIR/formats/${filter_id}/schema.json"
 
     # Extract presets into separate files
-    if jq -e '.["x-format"].presets' "$OUTPUT_DIR/formats/${filter_id}/schema.json" > /dev/null 2>&1; then
+    if jq -e '.presets // empty | keys | length > 0' "$OUTPUT_DIR/formats/${filter_id}/schema.json" > /dev/null 2>&1; then
         mkdir -p "$OUTPUT_DIR/formats/${filter_id}/presets"
-        jq -c '.["x-format"].presets[]' "$OUTPUT_DIR/formats/${filter_id}/schema.json" | while read -r preset; do
-            preset_id=$(echo "$preset" | jq -r '.id')
-            echo "$preset" | jq '.' > "$OUTPUT_DIR/formats/${filter_id}/presets/${preset_id}.json"
+        jq -r '.presets | to_entries[] | @base64' "$OUTPUT_DIR/formats/${filter_id}/schema.json" | while read -r entry; do
+            preset_id=$(echo "$entry" | base64 -d | jq -r '.key')
+            echo "$entry" | base64 -d | jq '.value' > "$OUTPUT_DIR/formats/${filter_id}/presets/${preset_id}.json"
         done
-        # Remove inline presets from schema (they're in separate files now)
-        jq '.["x-format"] |= del(.presets)' \
-            "$OUTPUT_DIR/formats/${filter_id}/schema.json" > "$OUTPUT_DIR/formats/${filter_id}/schema.json.tmp"
-        mv "$OUTPUT_DIR/formats/${filter_id}/schema.json.tmp" "$OUTPUT_DIR/formats/${filter_id}/schema.json"
     fi
 
-    # Transform filter doc -> format doc
+    # Transform filter doc → format doc
     if [ -f "$filter_dir/doc.json" ]; then
         jq '
             if .filterId then .formatId = .filterId | del(.filterId) else . end |
@@ -143,26 +202,20 @@ for filter_dir in "$INPUT_DIR"/filters/*/; do
         {
             type: "format",
             id: $id,
-            name: ($format_schema["x-format"].id // $id),
+            name: ($format_schema.formatMeta.id // $id),
             display_name: ($format_schema.title // $id),
             capabilities: ["read", "write"],
-            mime_types: ($format_schema["x-format"].mimeTypes // []),
-            extensions: ($format_schema["x-format"].extensions // []),
-            schema: $schema,
-            doc: (if input_filename then $doc else null end)
-        } | if ($format_schema["x-format"].presets // [] | length) > 0
-            then . + {presets_dir: $presets_dir}
-            else .
-          end
+            mime_types: ($format_schema.formatMeta.mimeTypes // []),
+            extensions: ($format_schema.formatMeta.extensions // []),
+            schema: $schema
+        }
         | with_entries(select(.value != null and .value != []))
     ')
-    # Fix: check if doc file actually exists
-    if [ ! -f "$filter_dir/doc.json" ]; then
-        cap=$(echo "$cap" | jq 'del(.doc)')
+    if [ -f "$filter_dir/doc.json" ]; then
+        cap=$(echo "$cap" | jq --arg doc "formats/${filter_id}/doc.json" '. + {doc: $doc}')
     fi
-    # Fix: check if presets directory was created
-    if [ ! -d "$OUTPUT_DIR/formats/${filter_id}/presets" ]; then
-        cap=$(echo "$cap" | jq 'del(.presets_dir)')
+    if [ -d "$OUTPUT_DIR/formats/${filter_id}/presets" ]; then
+        cap=$(echo "$cap" | jq --arg pd "formats/${filter_id}/presets/" '. + {presets_dir: $pd}')
     fi
 
     FORMAT_CAPS=$(echo "$FORMAT_CAPS" | jq --argjson c "$cap" '. + [$c]')
@@ -185,34 +238,38 @@ for step_dir in "$INPUT_DIR"/steps/*/; do
 
     mkdir -p "$OUTPUT_DIR/tools/${step_id}"
 
-    # Transform step schema -> tool schema
-    # - Remove x-step (Java internals)
-    # - Add x-tool from tool-metadata.json
-    jq --arg sid "$step_id" --slurpfile meta "$STEP_METADATA" '
+    # Transform step schema → neokapi tool schema
+    jq "${RENAME_PROPS}"'
+        # Remove x-step, add toolMeta from step-metadata.json
         del(.["x-step"]) |
+        # Rename x-groups → ui:groups
+        (if has("x-groups") then .["ui:groups"] = .["x-groups"] | del(.["x-groups"]) else . end) |
+        # Rename property extensions recursively
+        (if has("properties") then .properties |= map_values(rename_ui_extensions) else . end) |
+        (if has("$defs") then .["$defs"] |= map_values(rename_ui_extensions) else . end)
+    ' "$schema_file" | jq --arg sid "$step_id" --slurpfile meta "$STEP_METADATA" '
         if $meta[0][$sid] then
-            .["x-tool"] = $meta[0][$sid]
+            .toolMeta = $meta[0][$sid]
         else
-            .["x-tool"] = {
+            .toolMeta = {
                 displayName: .title,
                 category: "pipeline",
                 inputs: ["block"]
             }
         end
-    ' "$schema_file" > "$OUTPUT_DIR/tools/${step_id}/schema.json"
+    ' > "$OUTPUT_DIR/tools/${step_id}/schema.json"
 
-    # Transform step doc -> tool doc
+    # Transform step doc → tool doc
     if [ -f "$step_dir/doc.json" ]; then
         jq '
             if .stepId then .toolId = .stepId | del(.stepId) else . end
         ' "$step_dir/doc.json" > "$OUTPUT_DIR/tools/${step_id}/doc.json"
     fi
 
-    # Build capability entry for manifest using tool-metadata.json
+    # Build capability entry
     step_meta=$(jq --arg sid "$step_id" '.[$sid] // {}' "$STEP_METADATA")
     cap=$(jq -n --arg id "$step_id" \
         --arg schema "tools/${step_id}/schema.json" \
-        --arg doc "tools/${step_id}/doc.json" \
         --argjson meta "$step_meta" \
         --argjson tool_schema "$(cat "$OUTPUT_DIR/tools/${step_id}/schema.json")" '
         {
@@ -230,7 +287,6 @@ for step_dir in "$INPUT_DIR"/steps/*/; do
         }
         | with_entries(select(.value != null and .value != []))
     ')
-    # Add doc path only if doc file exists
     if [ -f "$step_dir/doc.json" ]; then
         cap=$(echo "$cap" | jq --arg doc "tools/${step_id}/doc.json" '. + {doc: $doc}')
     fi
@@ -250,16 +306,7 @@ if [ -f "$INPUT_DIR/concepts.json" ]; then
 fi
 
 if [ -f "docs/metadata.json" ]; then
-    # Vocabulary-map the metadata
-    jq '
-        if .aliases then
-            .aliases = (.aliases | to_entries | map({
-                key: .key,
-                value: .value
-            }) | from_entries)
-        else .
-        end
-    ' docs/metadata.json > "$OUTPUT_DIR/docs/metadata.json"
+    cp docs/metadata.json "$OUTPUT_DIR/docs/metadata.json"
 fi
 
 # ============================================================================
