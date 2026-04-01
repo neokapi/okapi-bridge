@@ -13,6 +13,8 @@ dependency-reduced-pom.xml
 .compile-generator
 *.tmp
 
-# Downloaded wiki documentation
+# Generated artifacts
 filter-docs/
+okapi-data/
+dist/
 *.versionsBackup

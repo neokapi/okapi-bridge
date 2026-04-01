@@ -4,23 +4,63 @@ This document describes the complete data model for schemas, documentation, and 
 
 ## Overview
 
-The bridge produces three categories of data, all shipped as JSON files in the plugin archive:
+The bridge uses a two-stage pipeline to produce artifacts:
+
+1. **Okapi-native extraction** (`okapi-data/{version}/`) — All data in pure Okapi vocabulary (filters, steps, configurations). This is the community reference artifact.
+2. **neokapi plugin transformation** (`dist/plugin/`) — Data transformed to neokapi vocabulary (formats, tools, presets). This is what neokapi consumes.
+
+### Okapi-Native Output (Community Reference)
 
 ```
-plugin-dir/
-├── manifest.json                    # Plugin capabilities and runtime config
-├── schemas/
-│   ├── okf_html.schema.json         # Filter parameter schemas (one per filter)
-│   └── steps/
-│       └── search-and-replace.schema.json  # Step parameter schemas (one per step)
-└── docs/
-    ├── metadata.json                # Generation info, wiki URL, aliases
-    ├── concepts.json                # Cross-cutting concept documentation
-    ├── filters/
-    │   └── okf_html.json            # Per-filter curated documentation
-    └── steps/
-        └── search-and-replace.json  # Per-step curated documentation
+okapi-data/{version}/
+├── meta.json                        # Version metadata
+├── filters/
+│   └── okf_html/
+│       ├── schema.json              # Filter parameter schema (x-filter, x-editor)
+│       └── doc.json                 # Curated documentation from wiki
+├── steps/
+│   └── search-and-replace/
+│       ├── schema.json              # Step parameter schema (x-step only)
+│       └── doc.json                 # Curated documentation
+├── concepts.json                    # Cross-cutting concept documentation
+└── versions.json                    # Version tracking with hashes
 ```
+
+### neokapi Plugin Output (What Gets Shipped)
+
+```
+dist/plugin/
+├── manifest.json                    # Plugin capabilities with resource paths
+├── neokapi-bridge-jar-with-dependencies.jar
+├── formats/
+│   └── okf_html/
+│       ├── schema.json              # Format schema (x-format, no x-filter)
+│       ├── doc.json                 # Documentation (neokapi vocabulary)
+│       └── presets/                 # Extracted preset configurations
+│           ├── okf_html.json
+│           └── okf_html-wellFormed.json
+├── tools/
+│   └── search-and-replace/
+│       ├── schema.json              # Tool schema (x-tool, no x-step)
+│       └── doc.json                 # Documentation (neokapi vocabulary)
+└── docs/
+    ├── metadata.json
+    └── concepts.json
+```
+
+### Vocabulary Mapping
+
+| Okapi (extraction) | neokapi (plugin) |
+|---------------------|------------------|
+| filter              | format           |
+| step                | tool             |
+| configuration       | preset           |
+| x-filter            | x-format         |
+| x-step              | x-tool           |
+| filterId            | formatId         |
+| stepId              | toolId           |
+
+The sections below describe the **okapi-native** data model. The plugin output uses the same structure with vocabulary mapped per the table above, plus presets extracted to separate files.
 
 ---
 

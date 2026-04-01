@@ -8,6 +8,7 @@ SHELL := /bin/bash
         download-filter-docs parse-filter-docs parse-filter-docs-force \
         bundle-filter-docs clean-filter-docs snapshot \
         verify-schemas update-readme-matrix \
+        assemble transform plugin \
         release release-prepare release-perform
 
 # Configuration - derived from okapi-releases directory
@@ -29,6 +30,11 @@ help:
 	@echo "  make verify-schemas       Verify schemas and README are up to date (same as CI)"
 	@echo "  make update-readme-matrix Update README schema matrix"
 	@echo "  make add-release V=1.48.0 Add new Okapi version"
+	@echo ""
+	@echo "Plugin Pipeline:"
+	@echo "  make assemble V=1.47.0    Assemble okapi-data/ (pure Okapi vocabulary)"
+	@echo "  make transform V=1.47.0   Transform to neokapi plugin format (dist/plugin/)"
+	@echo "  make plugin V=1.47.0      Full pipeline: assemble + transform"
 	@echo ""
 	@echo "Build:"
 	@echo "  make build V=1.47.0       Build JAR for specific Okapi version"
@@ -301,6 +307,32 @@ endif
 	@echo "Filters in $(V2) but not in $(V1):"
 	@comm -13 <(ls okapi-releases/$(V1)/schemas/*.schema.json 2>/dev/null | xargs -n1 basename | sort) \
 	          <(ls okapi-releases/$(V2)/schemas/*.schema.json 2>/dev/null | xargs -n1 basename | sort) || true
+
+# ============================================================================
+# Plugin Pipeline
+# ============================================================================
+
+# Assemble okapi-data/ for a specific Okapi version (pure Okapi vocabulary)
+assemble:
+ifndef V
+	$(error V is required. Usage: make assemble V=1.47.0)
+endif
+	@./scripts/assemble-okapi-data.sh $(V)
+
+# Transform okapi-data/ to neokapi plugin format (dist/plugin/)
+transform:
+ifndef V
+	$(error V is required. Usage: make transform V=1.47.0)
+endif
+	@./scripts/transform-to-plugin.sh $(V) $(CURRENT_VERSION)
+
+# Full pipeline: assemble + transform
+plugin:
+ifndef V
+	$(error V is required. Usage: make plugin V=1.47.0)
+endif
+	@$(MAKE) assemble V=$(V)
+	@$(MAKE) transform V=$(V)
 
 # ============================================================================
 # Release

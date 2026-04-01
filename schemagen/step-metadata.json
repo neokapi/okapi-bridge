@@ -1,0 +1,1897 @@
+{
+  "b-o-m-conversion": {
+    "displayName": "BOM Conversion",
+    "category": "transform",
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Add or remove Unicode Byte-Order-Mark (BOM) in a text-based file. Expects: raw document. Sends back: raw document.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "batch-tm-leveraging": {
+    "displayName": "Simple Batch Leveraging Step",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "batch",
+      "translation"
+    ],
+    "description": "Simple and fast batch leveraging step that delegates to connectors",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "batch-translation": {
+    "displayName": "Batch Translation",
+    "category": "translate",
+    "tags": [
+      "batch",
+      "translation"
+    ],
+    "description": "Creates translations from an external program for a given input document. Expects: raw document. Sends back: raw document.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "char-listing": {
+    "displayName": "Used Characters Listing",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis"
+    ],
+    "description": "Generate a list of all the characters in the source content of a set of documents. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "character-count": {
+    "displayName": "Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Count the number of characters in the text units of a set of documents or/and in its parts. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "characters-checker": {
+    "displayName": "Characters Quality Check",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "quality"
+    ],
+    "description": "Compare source and target for character inconsistencies. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "cleanup": {
+    "displayName": "Cleanup",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "description": "Cleans strings by normalizing quotes, punctuation, etc. ready for further processing. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "code-simplifier": {
+    "displayName": "Inline Codes Simplifier",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Merges adjacent inline codes in the source part of a text unit. Also where possible, moves leading and trailing codes of the source to the skeleton (Only for GenericSkeleton!). Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "codes-removal": {
+    "displayName": "Inline Codes Removal",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Removes inline codes from the text units content of a document. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "concordance-character-count": {
+    "displayName": "Concordance Character Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis"
+    ],
+    "description": "TM concordance or phrase match (usually a word or term only) Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "concordance-word-count": {
+    "displayName": "Concordance Word Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis"
+    ],
+    "description": "TM concordance or phrase match (usually a word or term only) Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "convert-segments-to-text-units": {
+    "displayName": "Segments to Text Units Converter",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Convert each aligned segment pair (for all target locales) to its own complete text unit Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "copy-or-move": {
+    "displayName": "Copy Or Move",
+    "category": "pipeline",
+    "description": "Copies or moves the listed files to the specified location. Expects: raw documents. Sends back: raw documents.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "copy-source-on-empty-target": {
+    "displayName": "copy-source-on-empty-target",
+    "category": "pipeline",
+    "inputs": [
+      "block"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "create-target": {
+    "displayName": "Create Target",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Create target segment container. Optionally copy source content to the target. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "desegmentation": {
+    "displayName": "Desegmentation",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Joins all segments into a single content. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "diff-leverage": {
+    "displayName": "Diff Leverage",
+    "category": "translate",
+    "inputs": [
+      "block",
+      "data"
+    ],
+    "tags": [
+      "translation",
+      "text-processing"
+    ],
+    "description": "Compare two source documents (i.e., different versions) and copy the old target content when we find a match. Can be a monolingual and bi-lingual input or three monolingual inputs. Paragraphs (TextUnits) must align in all cases",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "encoding-conversion": {
+    "displayName": "Encoding Conversion",
+    "category": "convert",
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Convert the character set encoding of a text-based file. Expects: raw document. Sends back: raw document.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "enrycher": {
+    "displayName": "Enrycher",
+    "category": "pipeline",
+    "inputs": [
+      "block"
+    ],
+    "description": "Applies Enrycher ITS annotations to the source content. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-document-context-match-character-count": {
+    "displayName": "Exact Document Context Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches EXACT and comes from a repeated segment in the same document or a different version of the same document. See also EXACT_PREVIOUS_VERSION Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-document-context-match-word-count": {
+    "displayName": "Exact Document Context Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches EXACT and comes from a repeated segment in the same document or a different version of the same document. See also EXACT_PREVIOUS_VERSION Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-local-context-match-character-count": {
+    "displayName": "Exact Local Context Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches EXACT and a small number of segments before and/or after. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-local-context-match-word-count": {
+    "displayName": "Exact Local Context Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches EXACT and a small number of segments before and/or after. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-match-character-count": {
+    "displayName": "Exact Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches text and codes exactly. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-match-word-count": {
+    "displayName": "Exact Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches text and codes exactly. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-previous-version-match-character-count": {
+    "displayName": "Exact Previous Version Match Character Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis"
+    ],
+    "description": "Matches EXACT and comes from the preceding version of the same document (i.e., if v4 is leveraged this match must come from v3, not v2 or v1!!). Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-previous-version-match-word-count": {
+    "displayName": "Exact Previous Version Match Word Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis"
+    ],
+    "description": "Matches EXACT and comes from the preceding version of the same document (i.e., if v4 is leveraged this match must come from v3, not v2 or v1!!). Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-repaired-character-count": {
+    "displayName": "Exact Repaired Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches text and codes exactly, but only after the result of some automated repair (e.g. number replacement, code repair, capitalization, punctuation etc.) Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-repaired-word-count": {
+    "displayName": "Exact Repaired Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches text and codes exactly, but only after the result of some automated repair (e.g. number replacement, code repair, capitalization, punctuation etc.) Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-structural-match-character-count": {
+    "displayName": "Exact Structural Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches EXACT and the structural type of the segment (title, paragraph, list element etc.) Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-structural-match-word-count": {
+    "displayName": "Exact Structural Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches EXACT and the structural type of the segment (title, paragraph, list element etc.) Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-text-only-character-count": {
+    "displayName": "Exact Text Only Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches text exactly, but there is a difference in one or more codes. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-text-only-previous-version-match-character-count": {
+    "displayName": "Exact Text Only Previous Version Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches EXACT_TEXT_ONLY and comes from a previous version of the same document. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-text-only-previous-version-match-word-count": {
+    "displayName": "Exact Text Only Previous Version Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches EXACT_TEXT_ONLY and comes from a previous version of the same document. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-text-only-unique-id-match-character-count": {
+    "displayName": "Exact Text Only Unique Id Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches EXACT_TEXT_ONLY and matches a unique id. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-text-only-unique-id-match-word-count": {
+    "displayName": "Exact Text Only Unique Id Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches EXACT_TEXT_ONLY and matches a unique id. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-text-only-word-count": {
+    "displayName": "Exact Text Only Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches text exactly, but there is a difference in one or more codes. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-unique-id-match-character-count": {
+    "displayName": "Exact Unique Id Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis"
+    ],
+    "description": "Matches EXACT and matches a unique id. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "exact-unique-id-match-word-count": {
+    "displayName": "Exact Unique Id Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis"
+    ],
+    "description": "Matches EXACT and matches a unique id. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "external-command": {
+    "displayName": "External Command",
+    "category": "pipeline",
+    "description": "Execute an external command line.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "extraction": {
+    "displayName": "Rainbow Translation Kit Creation",
+    "category": "translate",
+    "tags": [
+      "batch",
+      "translation"
+    ],
+    "description": "Generates a Rainbow translation kit for a batch of input documents. Expects: filter events. Sends back: filter events or raw document",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "extraction-verification": {
+    "displayName": "Extraction Verification",
+    "category": "validate",
+    "tags": [
+      "quality"
+    ],
+    "description": "Verifies a raw document can be extracted, merged, then extracted again and produces the same set of events during both extractions. Expects: raw document. Sends back: unmodified raw document.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "filter-events-to-raw-document": {
+    "displayName": "Filter Events to Raw Document",
+    "category": "pipeline",
+    "inputs": [
+      "block"
+    ],
+    "description": "Combine filter events into a full document and pass it along as a raw document. Expects: filter events. Sends back: raw document or NO_OP if writing to a stream.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "filter-events-writer": {
+    "displayName": "Filter Events Writer",
+    "category": "pipeline",
+    "inputs": [
+      "block"
+    ],
+    "description": "Write out filter events into a document or stream.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "format-conversion": {
+    "displayName": "Format Conversion",
+    "category": "convert",
+    "inputs": [
+      "block"
+    ],
+    "description": "Converts the output of a filter into a specified file format. Expects: filter events. Sends back: filter events.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "full-width-conversion": {
+    "displayName": "Full-Width Conversion",
+    "category": "convert",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Convert the text units content of a document to or from full-width characters (zenkaku). Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "fuzzy-match-character-count": {
+    "displayName": "Fuzzy Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches both text and/or codes partially. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "fuzzy-match-word-count": {
+    "displayName": "Fuzzy Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches both text and/or codes partially. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "fuzzy-previous-version-match-character-count": {
+    "displayName": "Fuzzy Previous Version Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis"
+    ],
+    "description": "Matches FUZZY and comes from a previous version of the same document. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "fuzzy-previous-version-match-word-count": {
+    "displayName": "Fuzzy Previous Version Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis"
+    ],
+    "description": "Matches FUZZY and comes from a previous version of the same document. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "fuzzy-repaired-character-count": {
+    "displayName": "Fuzzy Repaired Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches both text and/or codes partially and some automated repair (e.g. number replacement, code repair, capitalization, punctuation etc..) was applied to the target. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "fuzzy-repaired-word-count": {
+    "displayName": "Fuzzy Repaired Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Matches both text and/or codes partially and some automated repair (e.g. number replacement, code repair, capitalization, punctuation etc..) was applied to the target. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "fuzzy-unique-id-match-character-count": {
+    "displayName": "Fuzzy Unique Id Match Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis"
+    ],
+    "description": "Matches FUZZY and matches a unique id. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "fuzzy-unique-id-match-word-count": {
+    "displayName": "Fuzzy Unique Id Match Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis"
+    ],
+    "description": "Matches FUZZY and matches a unique id. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-alphanumeric-only-text-unit-character-count": {
+    "displayName": "GMX Alphanumeric Only Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the character count for text units that have been identified as containing only alphanumeric words. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-alphanumeric-only-text-unit-word-count": {
+    "displayName": "GMX Alphanumeric Only Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the word count for text units that have been identified as containing only alphanumeric words. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-exact-matched-character-count": {
+    "displayName": "GMX Exact Matched Character Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the character count for text units that have been matched unambiguously with a prior translation and thus require no translator input. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-exact-matched-word-count": {
+    "displayName": "GMX Exact Matched Word Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the word count for text units that have been matched unambiguously with a prior translation and thus require no translator input. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-fuzzy-match-character-count": {
+    "displayName": "Fuzzy Match Character Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the character count for text units that have been fuzzy matched against a leveraged translation memory database. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-fuzzy-match-word-count": {
+    "displayName": "Fuzzy Match Word Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the word count for text units that have been fuzzy matched against a leveraged translation memory database. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-leveraged-matched-character-count": {
+    "displayName": "GMX Leveraged Character Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the character count for text units that have been matched against a leveraged translation memory database. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-leveraged-matched-word-count": {
+    "displayName": "GMX Leveraged Word Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the word count for text units that have been matched against a leveraged translation memory database. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-measurement-only-text-unit-character-count": {
+    "displayName": "GMX Measurement Only Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the character count from measurement-only text units. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-measurement-only-text-unit-word-count": {
+    "displayName": "GMX Measurement Only Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the word count from measurement-only text units. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-numeric-only-text-unit-character-count": {
+    "displayName": "GMX Numeric Only Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the character count for text units that have been identified as containing only numeric words. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-numeric-only-text-unit-word-count": {
+    "displayName": "GMX Numeric Only Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the word count for text units that have been identified as containing only numeric words. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-protected-character-count": {
+    "displayName": "GMX Protected Character Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the character count for text that has been marked as 'protected', or otherwise not translatable (XLIFF text enclosed in <mrk mtype=\"protected\"> elements). Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-protected-word-count": {
+    "displayName": "GMX Protected Word Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the word count for text that has been marked as 'protected', or otherwise not translatable (XLIFF text enclosed in <mrk mtype=\"protected\"> elements). Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-repetition-matched-character-count": {
+    "displayName": "GMX Repetition Matched Character Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the character count for repeating text units that have not been matched in any other form. Repetition matching is deemed to take precedence over fuzzy matching. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "g-m-x-repetition-matched-word-count": {
+    "displayName": "GMX Repetition Matched Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "An accumulation of the word count for repeating text units that have not been matched in any other form. Repetition matching is deemed to take precedence over fuzzy matching. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "general-checker": {
+    "displayName": "General Quality Check",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "quality"
+    ],
+    "description": "Compare source and target for general quality. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "id-based-aligner": {
+    "displayName": "Id-Based Aligner",
+    "category": "pipeline",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Align text units in two id-based files (e.g. Java properties). Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "id-based-copy": {
+    "displayName": "Id-Based Copy",
+    "category": "pipeline",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Copies the source text of the second input into the target of the first input based on matching id.\nExpects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "image-modification": {
+    "displayName": "Image Modification",
+    "category": "pipeline",
+    "description": "Create a modified copy of image files. Expects: image raw document. Sends back: image raw document.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "inconsistency-check": {
+    "displayName": "Inconsistency Check",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "quality"
+    ],
+    "description": "Checks for source entries that are the same but have different translations or target entries that are the same but have different sources. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "inline-codes-checker": {
+    "displayName": "Inline Codes Quality Check",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "quality"
+    ],
+    "description": "Compare source and target for inline code differences. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "length-checker": {
+    "displayName": "Length Quality Check",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "quality"
+    ],
+    "description": "Compare source and target lengths and annotate those that seem mismatched. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "leveraging": {
+    "displayName": "Leveraging",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "text-processing"
+    ],
+    "description": "Leverage existing translation into the text units content of a document. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "line-break-conversion": {
+    "displayName": "Line-Break Conversion",
+    "category": "convert",
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Convert the type of line-breaks in a text-based file. Expects: raw document. Sends back: raw document.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "localizable-checker": {
+    "displayName": "Localizable Quality Check",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "regex",
+      "quality"
+    ],
+    "description": "Compare source and target number, date and time patterns to assure they are localized. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "m-s-batch-translation": {
+    "displayName": "Microsoft Batch Translation",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "batch",
+      "translation",
+      "text-processing"
+    ],
+    "description": "Annotates text units with Microsoft Translator matches or/and creates a TM from them. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "m-t-character-count": {
+    "displayName": "MT Character Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis"
+    ],
+    "description": "Indicates a translation coming from an MT engine. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "m-t-word-count": {
+    "displayName": "MT Word Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis"
+    ],
+    "description": "Indicates a translation coming from an MT engine. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "merging": {
+    "displayName": "Rainbow Translation Kit Merging",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation"
+    ],
+    "description": "Post-process a Rainbow translation kit. Expects: filter events. Sends back: filter events or raw documents.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "paragraph-aligner": {
+    "displayName": "Paragraph Alignment",
+    "category": "pipeline",
+    "inputs": [
+      "block",
+      "data"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Align paragraphs (text units) between a source and a target document. Only TextUnit events are passed along - all other events are lost",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "patterns-checker": {
+    "displayName": "Pattern (regex) Quality Check",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "regex",
+      "quality"
+    ],
+    "description": "Compare source and target for pattern differences. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "phrase-assembled-character-count": {
+    "displayName": "Phrase Assembled Character Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis"
+    ],
+    "description": "Matches assembled from phrases in the TM or other resources (different algorithms could be used). Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "phrase-assembled-word-count": {
+    "displayName": "Phrase Assembled Word Count",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis"
+    ],
+    "description": "Matches assembled from phrases in the TM or other resources (different algorithms could be used). Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "post-segmentation-code-simplifier": {
+    "displayName": "Post-segmentation Inline Codes Simplifier",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Merges adjacent inline codes in the source and target part of a text unit. Also where possible, moves leading and trailing codes of the source to inter-segment TextParts. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "quality-check": {
+    "displayName": "Quality Check",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "quality"
+    ],
+    "description": "Compare source and target for quality. Expects: filter events or raw documents. Sends back: filter events or raw document.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "r-t-f-conversion": {
+    "displayName": "RTF Conversion",
+    "category": "transform",
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Remove the RTF layer from a text-based file. Expects: raw document. Sends back: raw document.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "raw-document-to-filter-events": {
+    "displayName": "Raw Document to Filter Events",
+    "category": "convert",
+    "inputs": [
+      "block"
+    ],
+    "description": "Convert a raw document into filter events. Expects: raw document. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "raw-document-to-output-stream": {
+    "displayName": "RawDocument To OutputStream",
+    "category": "pipeline",
+    "description": "Write a RawDocument to an output stream.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "raw-document-writer": {
+    "displayName": "RawDocument Writer",
+    "category": "pipeline",
+    "description": "Write a RawDocument to an output file.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "remove-target": {
+    "displayName": "Remove Target",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Remove targets in all or a given set of text units. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "repetition-analysis": {
+    "displayName": "Repetition Analysis",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "text-processing"
+    ],
+    "description": "Analyzes repetitions in input documents. Adds AltTranslationsAnnotation and RepetitiveSegmentAnnotation to a repetitive segment. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "resource-simplifier": {
+    "displayName": "Resource Simplifier",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "description": "Simplify resources. Simplification algorythm is format-specific. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "scoping-report": {
+    "displayName": "Scoping Report",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "analysis"
+    ],
+    "description": "Create a template-based scoping report based on word count and leverage annotations. Expects: filter events. Sends back: filter events.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "search-and-replace": {
+    "displayName": "Search and Replace",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Performs search and replace on the entire file or the text units. Expects raw document or filter events. Sends back: raw document or filter events.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "segmentation": {
+    "displayName": "Segmentation",
+    "category": "transform",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Apply SRX segmentation to the text units content of a document. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "sentence-aligner": {
+    "displayName": "Sentence Alignment",
+    "category": "pipeline",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Aligns sentences within text units (paragraphs). Produces sentence alignments as bilingual text units or a TMX file.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "simple-word-count": {
+    "displayName": "Simple Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "batch",
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Annotates each text unit source with a total word count and gives total source word counts for batches Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "space-check": {
+    "displayName": "Space Quality Check",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "quality"
+    ],
+    "description": "Compare and fix spaces around inline codes in target based on the source. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "t-m-import": {
+    "displayName": "TM Import",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "text-processing"
+    ],
+    "description": "Import text into a new or existing Pensieve TM. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "t-t-x-joiner": {
+    "displayName": "TTX Joiner",
+    "category": "pipeline",
+    "description": "Rebuilds previously split TTX documents into their original documents. Expects: raw document. Sends back: raw document.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "t-t-x-splitter": {
+    "displayName": "TTX Splitter",
+    "category": "validate",
+    "tags": [
+      "analysis"
+    ],
+    "description": "Splits a TTX document into several ones of roughly equal word count. Expects: raw document. Sends back: raw document.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "term-extraction": {
+    "displayName": "Term Extraction",
+    "category": "pipeline",
+    "inputs": [
+      "block"
+    ],
+    "description": "Extract a list of possible terms found in the source content. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "terminology-leveraging": {
+    "displayName": "Terminology Leveraging",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "text-processing"
+    ],
+    "description": "Leverage terminology into the text units content of a document. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "text-modification": {
+    "displayName": "Text Modification",
+    "category": "pipeline",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Apply various modifications to the text units content of a document. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "tokenization": {
+    "displayName": "Tokenization Step",
+    "category": "pipeline",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "text-processing"
+    ],
+    "description": "Extracts tokens from the text units content of a document. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "translation-comparison": {
+    "displayName": "Translation Comparison",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "text-processing"
+    ],
+    "description": "Compare the translated text units between several documents. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "tu-filtering": {
+    "displayName": "Text Unit Filtering",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "text-processing"
+    ],
+    "description": "Set the non-translatable flag to the text units accepted by the text unit filter specified in step's parameters. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "uri-conversion": {
+    "displayName": "URI Conversion",
+    "category": "convert",
+    "inputs": [
+      "block"
+    ],
+    "description": "Encodes or Decodes URI escape sequences. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "whitespace-correction": {
+    "displayName": "Whitespace Correction",
+    "category": "translate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "translation",
+      "text-processing"
+    ],
+    "description": "Correct whitespace following segment-ending punctuation when translating from  a space-delimited language (such as English) to a non-space-delimited language (Chinese or Japanese), or vice-versa. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "word-count": {
+    "displayName": "Word Count",
+    "category": "validate",
+    "inputs": [
+      "block"
+    ],
+    "tags": [
+      "analysis",
+      "text-processing"
+    ],
+    "description": "Count the number of words in the text units of a set of documents or/and in its parts. Expects: filter events. Sends back: filter events.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ]
+  },
+  "x-m-l-analysis": {
+    "displayName": "XML Analysis",
+    "category": "pipeline",
+    "tags": [
+      "analysis"
+    ],
+    "description": "Generate an analysis report of a set of XML documents. Expects: raw document. Sends back: raw document.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "x-m-l-char-fixing": {
+    "displayName": "XML Characters Fixing",
+    "category": "pipeline",
+    "description": "Fixes invalid characters in XML documents. Expects: raw document. Sends back: raw document.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "x-m-l-validation": {
+    "displayName": "XML Validation",
+    "category": "pipeline",
+    "description": "Validate XML documents. Expects: raw XML document. Sends back: raw XML document.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "x-s-l-transform": {
+    "displayName": "XSL Transformation",
+    "category": "convert",
+    "description": "Apply an XSLT template to an XML document. Expects: raw XML document. Sends back: raw document.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "xliff-joiner": {
+    "displayName": "XLIFF Joiner",
+    "category": "pipeline",
+    "description": "Join multiple XLIFF documents into one. Expects: raw document. Sends back: raw document.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "xliff-splitter": {
+    "displayName": "XLIFF Splitter",
+    "category": "pipeline",
+    "description": "Split an XLIFF document into separate files for each <file> element. Expects: raw document. Sends back: raw document.",
+    "outputs": [
+      "data"
+    ],
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  },
+  "xliff-w-c-splitter": {
+    "displayName": "XLIFF Word-Count Splitter",
+    "category": "validate",
+    "tags": [
+      "analysis"
+    ],
+    "description": "Split an XLIFF document into separate documents based on word count.Expects: raw document. Sends back: raw document.",
+    "requires": [
+      "target-language",
+      "source-language"
+    ],
+    "inputs": [
+      "block"
+    ]
+  }
+}
