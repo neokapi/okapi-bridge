@@ -82,7 +82,7 @@ jq -r --arg ov "${OKAPI_VERSION}" '
     FILTER_COUNT=$((FILTER_COUNT + 1))
   done
   true
-}
+} || true
 FILTER_COUNT=$(ls -1d "$OUTPUT_DIR/filters"/*/ 2>/dev/null | wc -l | tr -d ' ')
 echo "  Filters: $FILTER_COUNT"
 
@@ -115,7 +115,7 @@ jq -r --arg ov "${OKAPI_VERSION}" '
     STEP_COUNT=$((STEP_COUNT + 1))
   done
   true
-}
+} || true
 STEP_COUNT=$(ls -1d "$OUTPUT_DIR/steps"/*/ 2>/dev/null | wc -l | tr -d ' ')
 echo "  Steps: $STEP_COUNT"
 
