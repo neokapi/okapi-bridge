@@ -60,7 +60,8 @@ jq -r --arg ov "${OKAPI_VERSION}" '
   [.value.versions[] | select(.okapiVersions | index($ov))] |
   max_by(.version) | select(.) |
   "\($f) \(.version)"
-' schemas/versions.json | while read -r filter version; do
+' schemas/versions.json | {
+  while read -r filter version; do
     src="schemas/filters/composite/${filter}.v${version}.schema.json"
     if [ ! -f "$src" ]; then
         echo "  Warning: $src not found, skipping" >&2
@@ -79,7 +80,9 @@ jq -r --arg ov "${OKAPI_VERSION}" '
     fi
 
     FILTER_COUNT=$((FILTER_COUNT + 1))
-done
+  done
+  true
+}
 FILTER_COUNT=$(ls -1d "$OUTPUT_DIR/filters"/*/ 2>/dev/null | wc -l | tr -d ' ')
 echo "  Filters: $FILTER_COUNT"
 
@@ -92,7 +95,8 @@ jq -r --arg ov "${OKAPI_VERSION}" '
   [.value.versions[] | select(.okapiVersions | index($ov))] |
   max_by(.version) | select(.) |
   "\($s) \(.version)"
-' schemas/versions.json | while read -r step_id version; do
+' schemas/versions.json | {
+  while read -r step_id version; do
     src="schemas/steps/base/${step_id}.v${version}.schema.json"
     if [ ! -f "$src" ]; then
         echo "  Warning: $src not found, skipping" >&2
@@ -109,7 +113,9 @@ jq -r --arg ov "${OKAPI_VERSION}" '
     fi
 
     STEP_COUNT=$((STEP_COUNT + 1))
-done
+  done
+  true
+}
 STEP_COUNT=$(ls -1d "$OUTPUT_DIR/steps"/*/ 2>/dev/null | wc -l | tr -d ' ')
 echo "  Steps: $STEP_COUNT"
 
