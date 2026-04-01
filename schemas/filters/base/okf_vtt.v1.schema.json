@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "VTT Filter Filter",
-  "description": "Configuration for the Okapi VTT Filter Filter",
+  "title": "VTT Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_vtt",

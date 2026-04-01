@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
   "title": "TEX Filter (BETA) Filter",
-  "description": "Configuration for the Okapi TEX Filter (BETA) Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_tex",

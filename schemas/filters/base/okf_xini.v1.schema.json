@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "XINI Filter Filter",
-  "description": "Configuration for the Okapi XINI Filter Filter",
+  "title": "XINI Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_xini",

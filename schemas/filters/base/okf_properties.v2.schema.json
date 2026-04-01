@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Properties Filter Filter",
-  "description": "Configuration for the Okapi Properties Filter Filter",
+  "title": "Properties Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_properties",

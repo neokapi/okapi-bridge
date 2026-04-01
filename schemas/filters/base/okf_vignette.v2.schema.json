@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Vignette Filter Filter",
-  "description": "Configuration for the Okapi Vignette Filter Filter",
+  "title": "Vignette Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_vignette",

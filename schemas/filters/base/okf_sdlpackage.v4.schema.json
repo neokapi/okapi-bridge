@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "SDLPPX and SDLRPX Filter Filter",
-  "description": "Configuration for the Okapi SDLPPX and SDLRPX Filter Filter",
+  "title": "SDLPPX and SDLRPX Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_sdlpackage",

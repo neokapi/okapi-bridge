@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "OpenXML Filter Filter",
-  "description": "Configuration for the Okapi OpenXML Filter Filter",
+  "title": "OpenXML Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_openxml",

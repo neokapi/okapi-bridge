@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Json Filter Filter",
-  "description": "Configuration for the Okapi Json Filter Filter",
+  "title": "Json Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_json",

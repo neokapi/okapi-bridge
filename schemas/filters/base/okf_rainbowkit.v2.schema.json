@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "Rainbow Translation Kit Filter Filter",
-  "description": "Configuration for the Okapi Rainbow Translation Kit Filter Filter",
+  "title": "Rainbow Translation Kit Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_rainbowkit",

@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "TS Filter Filter",
-  "description": "Configuration for the Okapi TS Filter Filter",
+  "title": "TS Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_ts",

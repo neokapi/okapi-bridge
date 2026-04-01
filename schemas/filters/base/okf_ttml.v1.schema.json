@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "TTML Filter Filter",
-  "description": "Configuration for the Okapi TTML Filter Filter",
+  "title": "TTML Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_ttml",

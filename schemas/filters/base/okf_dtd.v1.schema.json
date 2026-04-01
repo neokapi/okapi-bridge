@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "DTD Filter Filter",
-  "description": "Configuration for the Okapi DTD Filter Filter",
+  "title": "DTD Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_dtd",

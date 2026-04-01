@@ -1,7 +1,6 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
-  "title": "TMX Filter Filter",
-  "description": "Configuration for the Okapi TMX Filter Filter",
+  "title": "TMX Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_tmx",
