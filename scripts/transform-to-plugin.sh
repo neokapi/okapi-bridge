@@ -156,8 +156,8 @@ def rename_ui_extensions:
       .["ui:enabled"] = {field: .["x-enabledBy"], eq: true} | del(.["x-enabledBy"])
     elif has("x-enabledBy") then del(.["x-enabledBy"])
     else . end) |
-    # Remove x-enables (consumed by the schema-level enables resolution)
-    del(.["x-enables"]) |
+    # Rename x-enables → enables (consumed by the schema-level enables resolution)
+    (if has("x-enables") then .enables = .["x-enables"] | del(.["x-enables"]) else . end) |
     # Merge path browse metadata into x-path (if both exist)
     (if has("path") and has("x-path") then
       .["x-path"] = .["x-path"] + .path | del(.path)
@@ -225,21 +225,54 @@ for filter_dir in "$INPUT_DIR"/filters/*/; do
         (if has("properties") then .properties |= map_values(rename_ui_extensions) else . end) |
         (if has("$defs") then .["$defs"] |= map_values(rename_ui_extensions) else . end) |
         # Resolve enables → ui:enabled on target properties
-        (if has("properties") then
-          (.properties | to_entries | map(select(.value | type == "object" and .enables != null)) |
+        # Helper: resolve enables within a properties object
+        def resolve_enables:
+          (to_entries | map(select(.value | type == "object" and .enables != null)) |
            map({master: .key, targets: .value.enables})) as $enables_list |
           if ($enables_list | length) > 0 then
-            .properties |= (
-              reduce ($enables_list[]) as $e (.;
-                reduce ($e.targets[]) as $t (.;
-                  if has($t) and (.[$t] | type == "object") and (.[$t]["ui:enabled"] == null) then
-                    .[$t]["ui:enabled"] = {field: $e.master, eq: true}
-                  else . end
-                )
-              ) |
-              with_entries(if (.value | type == "object") then .value |= del(.enables) else . end)
-            )
-          else . end
+            reduce ($enables_list[]) as $e (.;
+              reduce ($e.targets[]) as $t (.;
+                if has($t) and (.[$t] | type == "object") and (.[$t]["ui:enabled"] == null) then
+                  .[$t]["ui:enabled"] = {field: $e.master, eq: true}
+                else . end
+              )
+            ) |
+            with_entries(if (.value | type == "object") then .value |= del(.enables) else . end)
+          else . end;
+        # Resolve in root properties
+        (if has("properties") then .properties |= resolve_enables else . end) |
+        # Resolve in nested objects within properties (e.g., grouped objects)
+        (if has("properties") then
+          .properties |= with_entries(
+            if (.value | type == "object" and has("properties")) then
+              .value.properties |= resolve_enables
+            else . end
+          )
+        else . end) |
+        # Resolve in $defs (e.g., inlineCodes, codeFinderRules)
+        (if has("$defs") then
+          .["$defs"] |= with_entries(
+            if (.value | type == "object" and has("properties")) then
+              .value.properties |= resolve_enables
+            else . end
+          )
+        else . end) |
+        # Flatten $defs: inline all $ref references, then remove $defs.
+        # This makes plugin schemas self-contained with no indirection.
+        def inline_refs($defs):
+          if type == "object" then
+            if has("$ref") then
+              (.["$ref"] | ltrimstr("#/$defs/")) as $rname |
+              ($defs[$rname] // {}) as $resolved |
+              ($resolved + (. | del(.["$ref"]))) | inline_refs($defs)
+            else map_values(inline_refs($defs))
+            end
+          elif type == "array" then map(inline_refs($defs))
+          else . end;
+        (if has("$defs") then
+          .["$defs"] as $d |
+          (if has("properties") then .properties |= inline_refs($d) else . end) |
+          del(.["$defs"])
         else . end)
     ' "$schema_file" > "$OUTPUT_DIR/formats/${filter_id}/schema.json"
 
@@ -315,21 +348,54 @@ for step_dir in "$INPUT_DIR"/steps/*/; do
         (if has("properties") then .properties |= map_values(rename_ui_extensions) else . end) |
         (if has("$defs") then .["$defs"] |= map_values(rename_ui_extensions) else . end) |
         # Resolve enables → ui:enabled on target properties
-        (if has("properties") then
-          (.properties | to_entries | map(select(.value | type == "object" and .enables != null)) |
+        # Helper: resolve enables within a properties object
+        def resolve_enables:
+          (to_entries | map(select(.value | type == "object" and .enables != null)) |
            map({master: .key, targets: .value.enables})) as $enables_list |
           if ($enables_list | length) > 0 then
-            .properties |= (
-              reduce ($enables_list[]) as $e (.;
-                reduce ($e.targets[]) as $t (.;
-                  if has($t) and (.[$t] | type == "object") and (.[$t]["ui:enabled"] == null) then
-                    .[$t]["ui:enabled"] = {field: $e.master, eq: true}
-                  else . end
-                )
-              ) |
-              with_entries(if (.value | type == "object") then .value |= del(.enables) else . end)
-            )
-          else . end
+            reduce ($enables_list[]) as $e (.;
+              reduce ($e.targets[]) as $t (.;
+                if has($t) and (.[$t] | type == "object") and (.[$t]["ui:enabled"] == null) then
+                  .[$t]["ui:enabled"] = {field: $e.master, eq: true}
+                else . end
+              )
+            ) |
+            with_entries(if (.value | type == "object") then .value |= del(.enables) else . end)
+          else . end;
+        # Resolve in root properties
+        (if has("properties") then .properties |= resolve_enables else . end) |
+        # Resolve in nested objects within properties (e.g., grouped objects)
+        (if has("properties") then
+          .properties |= with_entries(
+            if (.value | type == "object" and has("properties")) then
+              .value.properties |= resolve_enables
+            else . end
+          )
+        else . end) |
+        # Resolve in $defs (e.g., inlineCodes, codeFinderRules)
+        (if has("$defs") then
+          .["$defs"] |= with_entries(
+            if (.value | type == "object" and has("properties")) then
+              .value.properties |= resolve_enables
+            else . end
+          )
+        else . end) |
+        # Flatten $defs: inline all $ref references, then remove $defs.
+        # This makes plugin schemas self-contained with no indirection.
+        def inline_refs($defs):
+          if type == "object" then
+            if has("$ref") then
+              (.["$ref"] | ltrimstr("#/$defs/")) as $rname |
+              ($defs[$rname] // {}) as $resolved |
+              ($resolved + (. | del(.["$ref"]))) | inline_refs($defs)
+            else map_values(inline_refs($defs))
+            end
+          elif type == "array" then map(inline_refs($defs))
+          else . end;
+        (if has("$defs") then
+          .["$defs"] as $d |
+          (if has("properties") then .properties |= inline_refs($d) else . end) |
+          del(.["$defs"])
         else . end)
     ' "$schema_file" | jq --arg sid "$step_id" --slurpfile meta "$STEP_METADATA" '
         if $meta[0][$sid] then

@@ -64,8 +64,8 @@ resolve_override() {
     echo "$merged" | jq --slurpfile ov "$override_file" '
         # Merge fields (override wins)
         .fields = (.fields + (($ov[0].fields // {}) | del(.["$include"]))) |
-        # Copy through any other top-level keys from override (except groups, $include, $schema)
-        . + ($ov[0] | del(.fields, .groups, .["$include"], .["$schema"]))
+        # Copy through any other top-level keys from override (except $include, $schema)
+        . + ($ov[0] | del(.fields, .["$include"], .["$schema"]))
     '
 }
 
@@ -165,9 +165,10 @@ jq -s '
   .[0] as $base | .[1] as $override |
   $base |
 
-  # Apply top-level metadata overrides (title, description)
+  # Apply top-level metadata overrides (title, description, groups)
   if $override.title then .title = $override.title else . end |
   if $override.description then .description = $override.description else . end |
+  if $override.groups then .groups = $override.groups else . end |
 
   # Apply field hints into properties (walks nested hierarchy)
   if $override.fields and .properties then

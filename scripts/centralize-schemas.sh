@@ -741,10 +741,17 @@ regenerate_step_composites() {
             override_hash=$("$SCRIPT_DIR/compute-hash.sh" "$override_file")
         fi
 
-        # Generate composite (merge base + override)
+        # Generate composite (merge base + override, then restructure groups)
         local composite_file="$STEPS_COMPOSITE_DIR/${step_id}.v${base_version}.schema.json"
         "$SCRIPT_DIR/merge-schema.sh" "$latest_base" "$override_file" "$composite_file" 2>/dev/null || \
             cp "$latest_base" "$composite_file"
+
+        # Restructure flat properties into nested groups (no-op if no groups)
+        local tmp_restructured
+        tmp_restructured=$(mktemp)
+        "$SCRIPT_DIR/restructure-step-groups.sh" "$composite_file" "$tmp_restructured" && \
+            mv "$tmp_restructured" "$composite_file" || \
+            rm -f "$tmp_restructured"
 
         local composite_hash
         composite_hash=$("$SCRIPT_DIR/compute-hash.sh" "$composite_file")

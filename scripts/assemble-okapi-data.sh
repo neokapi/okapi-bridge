@@ -54,11 +54,12 @@ echo "Assembling okapi-data for Okapi ${OKAPI_VERSION}..."
 # --- Filters ---
 
 FILTER_COUNT=0
-jq -r --arg ov "${OKAPI_VERSION}" '
+jq -r '
   .filters | to_entries[] |
   .key as $f |
-  [.value.versions[] | select(.okapiVersions | index($ov))] |
-  max_by(.version) | select(.) |
+  # Always use the latest composite version (richest metadata)
+  .value.versions | max_by(.version) |
+  select(.) |
   "\($f) \(.version)"
 ' schemas/versions.json | {
   while read -r filter version; do
