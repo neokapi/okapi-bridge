@@ -1,6 +1,6 @@
 {
   "$schema": "https://neokapi.dev/schemas/schema-versions.json",
-  "generatedAt": "2026-04-02T14:07:02Z",
+  "generatedAt": "2026-04-02T14:13:34Z",
   "filters": {
     "okf_archive": {
       "versions": [
@@ -747,6 +747,32 @@
           "compositeHash": "11b6e2613ec5",
           "kind": "OkfHtmlFilterConfig",
           "apiVersion": "v10",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        },
+        {
+          "version": 11,
+          "baseVersion": 17,
+          "baseHash": "68399f80e130",
+          "overrideHash": "1e4f96561bfe",
+          "compositeHash": "85afff67a034",
+          "kind": "OkfHtmlFilterConfig",
+          "apiVersion": "v11",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        },
+        {
+          "version": 12,
+          "baseVersion": 18,
+          "baseHash": "4e0b1aaf907f",
+          "overrideHash": "1e4f96561bfe",
+          "compositeHash": "f644f60760ba",
+          "kind": "OkfHtmlFilterConfig",
+          "apiVersion": "v12",
           "introducedInOkapi": "1.47.0",
           "okapiVersions": [
             "1.47.0"
@@ -3796,6 +3822,32 @@
           "compositeHash": "be716adda1c4",
           "kind": "OkfXmlstreamFilterConfig",
           "apiVersion": "v5",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        },
+        {
+          "version": 6,
+          "baseVersion": 8,
+          "baseHash": "0ec1e6495a77",
+          "overrideHash": "0eb301de48d2",
+          "compositeHash": "9d13ca99e7a3",
+          "kind": "OkfXmlstreamFilterConfig",
+          "apiVersion": "v6",
+          "introducedInOkapi": "1.47.0",
+          "okapiVersions": [
+            "1.47.0"
+          ]
+        },
+        {
+          "version": 7,
+          "baseVersion": 9,
+          "baseHash": "7412863356ad",
+          "overrideHash": "0eb301de48d2",
+          "compositeHash": "3d0f76d80360",
+          "kind": "OkfXmlstreamFilterConfig",
+          "apiVersion": "v7",
           "introducedInOkapi": "1.47.0",
           "okapiVersions": [
             "1.47.0"

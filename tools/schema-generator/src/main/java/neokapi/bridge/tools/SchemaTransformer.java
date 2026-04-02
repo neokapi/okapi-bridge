@@ -331,6 +331,7 @@ public class SchemaTransformer {
     private JsonObject transformElementRules(ParameterIntrospector.ParamInfo paramInfo) {
         JsonObject prop = new JsonObject();
         prop.addProperty("type", "object");
+        prop.addProperty("title", "Element Rules");
         prop.addProperty("description", "Element extraction rules — maps element names to their rule configuration");
         prop.addProperty("x-widget", "elementRulesEditor");
         prop.add("additionalProperties", createRef("#/$defs/elementRule"));
@@ -346,6 +347,7 @@ public class SchemaTransformer {
     private JsonObject transformAttributeRules(ParameterIntrospector.ParamInfo paramInfo) {
         JsonObject prop = new JsonObject();
         prop.addProperty("type", "object");
+        prop.addProperty("title", "Attribute Rules");
         prop.addProperty("description", "Global attribute extraction rules — maps attribute names to their rule configuration");
         prop.addProperty("x-widget", "attributeRulesEditor");
         prop.add("additionalProperties", createRef("#/$defs/attributeRule"));
@@ -437,6 +439,7 @@ public class SchemaTransformer {
         // ruleTypes - array of RULE_TYPE enum values with descriptions
         JsonObject ruleTypes = new JsonObject();
         ruleTypes.addProperty("type", "array");
+        ruleTypes.addProperty("title", "Rule Types");
         ruleTypes.addProperty("description", "Extraction rule types for this element");
         JsonObject ruleTypeItems = new JsonObject();
         ruleTypeItems.addProperty("type", "string");
@@ -466,18 +469,20 @@ public class SchemaTransformer {
         // elementType - optional element type hint
         JsonObject elementType = new JsonObject();
         elementType.addProperty("type", "string");
+        elementType.addProperty("title", "Element Type");
         elementType.addProperty("description", "Semantic type hint for UI display (e.g. bold, italic, link, image, paragraph, underlined)");
         properties.add("elementType", elementType);
 
         // translatableAttributes, writableLocalizableAttributes, readOnlyLocalizableAttributes
         String[][] attrPropDescs = {
-            {"translatableAttributes", "Attributes to extract as translatable content (e.g. alt, title, placeholder)"},
-            {"writableLocalizableAttributes", "Attributes to extract as writable localizable content (e.g. href, src — locale-specific, editable)"},
-            {"readOnlyLocalizableAttributes", "Attributes to extract as read-only localizable content (locale-specific but not user-editable)"}
+            {"translatableAttributes", "Translatable Attributes", "Attributes to extract as translatable content (e.g. alt, title, placeholder)"},
+            {"writableLocalizableAttributes", "Writable Localizable Attributes", "Attributes to extract as writable localizable content (e.g. href, src — locale-specific, editable)"},
+            {"readOnlyLocalizableAttributes", "Read-Only Localizable Attributes", "Attributes to extract as read-only localizable content (locale-specific but not user-editable)"}
         };
         for (String[] pair : attrPropDescs) {
             JsonObject attr = new JsonObject();
-            attr.addProperty("description", pair[1]);
+            attr.addProperty("title", pair[1]);
+            attr.addProperty("description", pair[2]);
             // Can be a simple string array OR a conditional map
             JsonArray oneOf = new JsonArray();
             // Simple array: ["alt", "title"]
@@ -499,6 +504,7 @@ public class SchemaTransformer {
         // idAttributes - always a simple string array
         JsonObject idAttrs = new JsonObject();
         idAttrs.addProperty("type", "array");
+        idAttrs.addProperty("title", "ID Attributes");
         idAttrs.addProperty("description", "Attributes that contain segment IDs (sets the TextUnit name)");
         JsonObject idStrItem = new JsonObject();
         idStrItem.addProperty("type", "string");
@@ -506,7 +512,9 @@ public class SchemaTransformer {
         properties.add("idAttributes", idAttrs);
 
         // conditions - element-level conditions (typed tuple)
-        properties.add("conditions", createRef("#/$defs/conditionTuple"));
+        JsonObject elemConds = createRef("#/$defs/conditionTuple");
+        elemConds.addProperty("title", "Conditions");
+        properties.add("conditions", elemConds);
 
         def.add("properties", properties);
         // ruleTypes is required
@@ -527,6 +535,7 @@ public class SchemaTransformer {
         // ruleTypes with descriptions
         JsonObject ruleTypes = new JsonObject();
         ruleTypes.addProperty("type", "array");
+        ruleTypes.addProperty("title", "Rule Types");
         ruleTypes.addProperty("description", "Attribute rule types");
         JsonObject ruleTypeItems = new JsonObject();
         ruleTypeItems.addProperty("type", "string");
@@ -549,6 +558,7 @@ public class SchemaTransformer {
         // allElementsExcept
         JsonObject allExcept = new JsonObject();
         allExcept.addProperty("type", "array");
+        allExcept.addProperty("title", "All Elements Except");
         allExcept.addProperty("description", "Apply this rule to all elements except the listed ones");
         JsonObject strItem = new JsonObject();
         strItem.addProperty("type", "string");
@@ -558,6 +568,7 @@ public class SchemaTransformer {
         // onlyTheseElements
         JsonObject onlyThese = new JsonObject();
         onlyThese.addProperty("type", "array");
+        onlyThese.addProperty("title", "Only These Elements");
         onlyThese.addProperty("description", "Apply this rule only to the listed elements");
         JsonObject strItem2 = new JsonObject();
         strItem2.addProperty("type", "string");
@@ -565,14 +576,18 @@ public class SchemaTransformer {
         properties.add("onlyTheseElements", onlyThese);
 
         // conditions - attribute-level conditions (typed tuple)
-        properties.add("conditions", createRef("#/$defs/conditionTuple"));
+        JsonObject attrConds = createRef("#/$defs/conditionTuple");
+        attrConds.addProperty("title", "Conditions");
+        properties.add("conditions", attrConds);
 
         // preserve / default - for ATTRIBUTE_PRESERVE_WHITESPACE
         JsonObject preserveCond = createRef("#/$defs/conditionTuple");
+        preserveCond.addProperty("title", "Preserve Whitespace Condition");
         preserveCond.addProperty("description", "Condition that activates whitespace preservation (e.g. [xml:space, EQUALS, preserve])");
         properties.add("preserve", preserveCond);
 
         JsonObject defaultCond = createRef("#/$defs/conditionTuple");
+        defaultCond.addProperty("title", "Default Whitespace Condition");
         defaultCond.addProperty("description", "Condition that restores default whitespace handling (e.g. [xml:space, EQUALS, default])");
         properties.add("default", defaultCond);
 

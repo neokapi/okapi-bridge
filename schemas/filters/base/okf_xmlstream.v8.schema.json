@@ -690,8 +690,7 @@
           }
         },
         "conditions": {
-          "$ref": "#/$defs/conditionTuple",
-          "title": "Conditions"
+          "$ref": "#/$defs/conditionTuple"
         }
       },
       "required": [
@@ -742,8 +741,7 @@
           }
         },
         "conditions": {
-          "$ref": "#/$defs/conditionTuple",
-          "title": "Conditions"
+          "$ref": "#/$defs/conditionTuple"
         },
         "preserve": {
           "$ref": "#/$defs/conditionTuple",
