@@ -1,0 +1,21 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "title": "Inline Codes Checker",
+  "fields": {
+    "codeDifference": {
+      "title": "Warn if there is a code difference between source and target segments"
+    },
+    "guessOpenClose": {
+      "title": "Try to guess opening/closing types for placeholder codes"
+    },
+    "typesToIgnore": {
+      "title": "List of the inline code types to ignore"
+    },
+    "extraCodesAllowed": {
+      "title": "Codes allowed to be extra in the target"
+    },
+    "missingCodesAllowed": {
+      "title": "Codes allowed to be missing from the target"
+    }
+  }
+}

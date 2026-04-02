@@ -1,0 +1,23 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "countInBatch": {
+      "description": "Add character count annotation aggregated per batch"
+    },
+    "countInBatchItems": {
+      "description": "Add character count annotation for each batch item"
+    },
+    "countInDocuments": {
+      "description": "Add character count annotation for each document"
+    },
+    "countInSubDocuments": {
+      "description": "Add character count annotation for each sub-document"
+    },
+    "countInGroups": {
+      "description": "Add character count annotation for each group"
+    },
+    "bufferSize": {
+      "description": "Size of the internal text buffer used during counting (0 for default)"
+    }
+  }
+}

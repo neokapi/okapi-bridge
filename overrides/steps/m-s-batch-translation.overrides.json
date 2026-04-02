@@ -1,0 +1,29 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "markAsMT": {
+      "description": "Marks generated TM entries with a machine translation origin indicator (e.g., creationId=\"MT!\")"
+    },
+    "makeTmx": {
+      "description": "Creates a TMX translation memory document from the translation results"
+    },
+    "annotate": {
+      "description": "Adds translation match annotations to text units for use by subsequent steps"
+    },
+    "fillTarget": {
+      "description": "Copies the best-scoring translation candidate into empty target segments"
+    },
+    "onlyWhenWithoutCandidate": {
+      "description": "Sends only text units without existing translation candidates to the MT engine"
+    },
+    "sendTmx": {
+      "description": "Passes the generated TMX document as input to the next pipeline step instead of filter events"
+    },
+    "useTargetPrefix": {
+      "description": "Prepends a prefix string to translation candidates copied into the target"
+    },
+    "tmxPath": {
+      "title": "TMX Output Path"
+    }
+  }
+}

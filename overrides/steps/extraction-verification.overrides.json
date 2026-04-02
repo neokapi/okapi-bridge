@@ -1,0 +1,25 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "compareSkeleton": {
+      "title": "Compare Skeleton",
+      "description": "Include skeleton (non-extractable) parts of events in the verification comparison."
+    },
+    "stepEnabled": {
+      "title": "Perform Extraction Verification",
+      "description": "Enable or disable the verification step; when disabled, the document passes through unmodified."
+    },
+    "allEvents": {
+      "title": "Verify All Events",
+      "description": "Compare all filter events between extractions, not just text units."
+    },
+    "limit": {
+      "title": "Maximum Warnings Per Document",
+      "description": "Maximum number of verification warnings allowed per document before stopping or moving on."
+    },
+    "interrupt": {
+      "title": "Interrupt on Warning Limit",
+      "description": "Stop the pipeline when the maximum number of warnings is reached for a document."
+    }
+  }
+}

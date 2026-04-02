@@ -1,0 +1,33 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "title": "General Checker",
+  "fields": {
+    "leadingWS": {
+      "title": "Warn if a target entry has a difference in leading white spaces"
+    },
+    "trailingWS": {
+      "title": "Warn if a target entry has a difference in trailing white spaces"
+    },
+    "emptyTarget": {
+      "title": "Warn if a target segment is empty when its source is not empty"
+    },
+    "emptySource": {
+      "title": "Warn if a target segment is not empty when its source is empty"
+    },
+    "targetSameAsSource": {
+      "title": "Warn if a target segment is the same as its source (for segments with text)"
+    },
+    "targetSameAsSourceForSameLanguage": {
+      "title": "Verify for same language family (i.e. en vs. en-GB, or fr-FR vs. fr-CA)"
+    },
+    "targetSameAsSourceWithCodes": {
+      "title": "Include the codes in the comparison"
+    },
+    "doubledWord": {
+      "title": "Warn on doubled words (e.g. \"is is\" in \"This is is an example\")"
+    },
+    "doubledWordExceptions": {
+      "title": "Exceptions (words separated by ';' e.g. \"vous;nous\")"
+    }
+  }
+}

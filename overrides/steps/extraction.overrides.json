@@ -1,0 +1,37 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "writerClass": {
+      "title": "Package Format",
+      "description": "Java class of the package writer that determines the translation kit output format (e.g., XLIFF, PO, OmegaT)."
+    },
+    "packageName": {
+      "title": "Package Name",
+      "description": "Name of the package directory to create inside the output root."
+    },
+    "packageDirectory": {
+      "title": "Output Root Directory",
+      "description": "Root directory where the translation package will be created; supports ${inputRootDir} and locale variables."
+    },
+    "supportFiles": {
+      "title": "Support Material Files",
+      "description": "Additional files to include in the package as support material for translators."
+    },
+    "message": {
+      "title": "Package Message",
+      "description": "Optional message or instructions to include with the translation package."
+    },
+    "outputManifest": {
+      "title": "Output Manifest",
+      "description": "Generate a manifest file required for merging the translated kit back into the original format."
+    },
+    "createZip": {
+      "title": "Create ZIP Package",
+      "description": "Create a ZIP archive (.rkp) of the generated translation package."
+    },
+    "sendOutput": {
+      "title": "Send Output to Next Step",
+      "description": "Send prepared files as raw documents to the next pipeline step instead of the original filter events."
+    }
+  }
+}

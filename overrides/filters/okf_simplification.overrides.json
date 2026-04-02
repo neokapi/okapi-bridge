@@ -1,0 +1,17 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "filterConfigurationId": {
+      "title": "Filter Configuration ID",
+      "description": "The configuration ID of the internal filter to wrap (e.g., okf_xmlstream, okf_html)."
+    },
+    "simplifyResources": {
+      "title": "Simplify Resources",
+      "description": "Flatten resources by removing references, making them standalone text units."
+    },
+    "simplifyCodes": {
+      "title": "Simplify Codes",
+      "description": "Merge adjacent inline codes and move leading/trailing codes to skeleton."
+    }
+  }
+}

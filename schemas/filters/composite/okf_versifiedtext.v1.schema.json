@@ -26,7 +26,9 @@
   "properties": {
     "forceTargetOutput": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Force Target Output",
+      "description": "Always produce target output even when no translation is available."
     }
   },
   "additionalProperties": false,
@@ -35,5 +37,5 @@
   "x-baseVersion": 1,
   "x-introducedInOkapi": "0.38",
   "x-baseHash": "92b3ec877912",
-  "x-compositeHash": "92b3ec877912"
+  "x-compositeHash": "58f855a2297b"
 }

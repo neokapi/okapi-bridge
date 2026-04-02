@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_xinirainbowkit.v2.schema.json",
+  "version": 2,
+  "title": "XINI RainbowKit Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_xinirainbowkit",
+    "class": "net.sf.okapi.filters.xini.rainbowkit.XINIRainbowkitFilter",
+    "extensions": [],
+    "mimeTypes": [
+      "text/x-xini"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_rainbowkitxini",
+        "name": "XINI (Rainbow T-Kit)",
+        "description": "Configuration for XINI documents from ONTRAM T-Kits.",
+        "mimeType": "text/x-xini",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.xini.rainbowkit.XINIRainbowkitFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {},
+  "additionalProperties": false,
+  "x-kind": "OkfXinirainbowkitFilterConfig",
+  "x-apiVersion": "v2",
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "6eb0c06f5182",
+  "x-compositeHash": "6eb0c06f5182"
+}

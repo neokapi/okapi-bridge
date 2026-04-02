@@ -1,0 +1,8 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "suffix": {
+      "description": "Marker text appended to the output filename to distinguish joined files from the original split parts."
+    }
+  }
+}

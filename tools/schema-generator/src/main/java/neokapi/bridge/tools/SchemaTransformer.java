@@ -765,8 +765,14 @@ public class SchemaTransformer {
 
         // Add unclaimed properties at root level
         for (Map.Entry<String, JsonElement> entry : flatProperties.entrySet()) {
-            if (!claimedParams.contains(entry.getKey())) {
-                newProperties.add(entry.getKey(), entry.getValue());
+            String key = entry.getKey();
+            if (!claimedParams.contains(key)) {
+                // Skip invalid property names (e.g. regex patterns that leaked from default values)
+                if (!key.matches("[a-zA-Z_][a-zA-Z0-9_]*")) {
+                    System.err.println("[schema-gen] Skipping invalid property name: " + key);
+                    continue;
+                }
+                newProperties.add(key, entry.getValue());
             }
         }
 

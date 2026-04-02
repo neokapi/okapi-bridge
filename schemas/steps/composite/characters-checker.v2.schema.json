@@ -53,7 +53,9 @@
     },
     "charset": {
       "type": "string",
-      "default": "ISO-8859-1"
+      "default": "ISO-8859-1",
+      "title": "Character Set Encoding",
+      "description": "Name of the character set encoding to check against (e.g. ISO-8859-1)."
     },
     "extraCharsAllowed": {
       "type": "string",

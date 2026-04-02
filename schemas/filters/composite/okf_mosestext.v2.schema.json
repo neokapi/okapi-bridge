@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_mosestext.v2.schema.json",
+  "version": 2,
+  "title": "Moses Text Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_mosestext",
+    "class": "net.sf.okapi.filters.mosestext.MosesTextFilter",
+    "extensions": [
+      ".txt"
+    ],
+    "mimeTypes": [
+      "text/x-mosestext"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_mosestext",
+        "name": "Moses Text Default",
+        "description": "Default Moses Text configuration.",
+        "mimeType": "text/x-mosestext",
+        "extensions": ".txt;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.mosestext.MosesTextFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {},
+  "additionalProperties": false,
+  "x-kind": "OkfMosestextFilterConfig",
+  "x-apiVersion": "v2",
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "05c999678f58",
+  "x-compositeHash": "05c999678f58"
+}

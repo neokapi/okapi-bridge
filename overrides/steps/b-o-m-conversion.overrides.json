@@ -1,0 +1,13 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "removeBOM": {
+      "title": "Remove BOM If Present",
+      "description": "Remove the Byte-Order-Mark from input files if detected; when disabled, adds a BOM if not already present."
+    },
+    "alsoNonUTF8": {
+      "title": "Remove UTF-16 BOMs Also",
+      "description": "Also remove the BOM from UTF-16 files, not just UTF-8."
+    }
+  }
+}

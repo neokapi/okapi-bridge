@@ -1,0 +1,29 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "xsltPath": {
+      "title": "XSLT Template Path",
+      "description": "Full path of the XSLT template to apply on input documents."
+    },
+    "paramList": {
+      "title": "Template Parameters",
+      "description": "Parameters passed to the XSLT template, one per line in name=value format."
+    },
+    "useCustomTransformer": {
+      "title": "Use Custom Transformer",
+      "description": "Use custom XSLT transformer and XPath factory classes instead of JVM defaults."
+    },
+    "factoryClass": {
+      "title": "Transformer Factory Class",
+      "description": "Fully qualified class name of the TransformerFactory implementation to use."
+    },
+    "xpathClass": {
+      "title": "XPath Factory Class",
+      "description": "Fully qualified class name of the XPathFactory implementation to use."
+    },
+    "passOnOutput": {
+      "title": "Pass Output to Next Step",
+      "description": "Pass the transformation output as the raw document for subsequent pipeline steps."
+    }
+  }
+}

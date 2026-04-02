@@ -81,6 +81,22 @@
     "cleanupHtml": {
       "title": "Clean Up HTML",
       "description": "Automatically fix common HTML syntax errors such as unquoted attributes."
+    },
+    "path": {
+      "title": "Path Expressions",
+      "description": "XPath-like expressions to control extraction based on element location in the document tree."
+    },
+    "taggedConfig": {
+      "title": "Tagged Configuration",
+      "description": "Legacy tagged configuration format for element and attribute extraction rules."
+    },
+    "editorTitle": {
+      "title": "Editor Title",
+      "description": "Display title shown in the filter configuration editor."
+    },
+    "skipEncodingDeclaration": {
+      "title": "Skip Encoding Declaration",
+      "description": "Skip the encoding declaration in the output when the original document uses a different encoding."
     }
   }
 }

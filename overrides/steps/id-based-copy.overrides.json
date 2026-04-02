@@ -1,0 +1,11 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "markAsTranslateNo": {
+      "description": "When enabled, matched text units in the destination file are marked as non-translatable after the reference text is copied."
+    },
+    "markAsApproved": {
+      "description": "When enabled, the 'approved' property of matched target entries is set to 'yes' after copying."
+    }
+  }
+}

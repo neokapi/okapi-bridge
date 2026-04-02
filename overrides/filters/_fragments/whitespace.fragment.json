@@ -2,6 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Shared fragment for whitespace handling fields",
   "fields": {
+    "whitespace": {
+      "title": "Whitespace",
+      "description": "Whitespace handling settings for extracted text."
+    },
     "preserveWhitespace": {
       "description": "Preserve original whitespace in extracted text"
     },

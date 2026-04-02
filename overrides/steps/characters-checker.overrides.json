@@ -1,0 +1,22 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "title": "Characters Checker",
+  "fields": {
+    "corruptedCharacters": {
+      "title": "Warn if some possibly corrupted characters are found in the target entry"
+    },
+    "checkAllowedCharacters": {
+      "title": "Verify the ITS Allowed Characters property"
+    },
+    "checkCharacters": {
+      "title": "Warn if a character is not included in the following character set encoding"
+    },
+    "extraCharsAllowed": {
+      "title": "Allow the characters matching the following regular expression pattern"
+    },
+    "charset": {
+      "title": "Character Set Encoding",
+      "description": "Name of the character set encoding to check against (e.g. ISO-8859-1)."
+    }
+  }
+}

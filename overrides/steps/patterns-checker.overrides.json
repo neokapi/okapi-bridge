@@ -1,0 +1,129 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "title": "Patterns Checker",
+  "fields": {
+    "checkPatterns": {
+      "title": "Verify that the following source patterns are translated as expected"
+    },
+    "fromSourcePattern0": {
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
+    },
+    "severityPattern0": {
+      "title": "Severity"
+    },
+    "sourcePattern0": {
+      "title": "Source Pattern"
+    },
+    "targetPattern0": {
+      "title": "Target Pattern"
+    },
+    "descPattern0": {
+      "title": "Description"
+    },
+    "fromSourcePattern1": {
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
+    },
+    "severityPattern1": {
+      "title": "Severity"
+    },
+    "sourcePattern1": {
+      "title": "Source Pattern"
+    },
+    "targetPattern1": {
+      "title": "Target Pattern"
+    },
+    "descPattern1": {
+      "title": "Description"
+    },
+    "fromSourcePattern2": {
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
+    },
+    "severityPattern2": {
+      "title": "Severity"
+    },
+    "sourcePattern2": {
+      "title": "Source Pattern"
+    },
+    "targetPattern2": {
+      "title": "Target Pattern"
+    },
+    "descPattern2": {
+      "title": "Description"
+    },
+    "fromSourcePattern3": {
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
+    },
+    "severityPattern3": {
+      "title": "Severity"
+    },
+    "sourcePattern3": {
+      "title": "Source Pattern"
+    },
+    "targetPattern3": {
+      "title": "Target Pattern"
+    },
+    "descPattern3": {
+      "title": "Description"
+    },
+    "fromSourcePattern4": {
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
+    },
+    "severityPattern4": {
+      "title": "Severity"
+    },
+    "sourcePattern4": {
+      "title": "Source Pattern"
+    },
+    "targetPattern4": {
+      "title": "Target Pattern"
+    },
+    "descPattern4": {
+      "title": "Description"
+    },
+    "fromSourcePattern5": {
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
+    },
+    "severityPattern5": {
+      "title": "Severity"
+    },
+    "sourcePattern5": {
+      "title": "Source Pattern"
+    },
+    "targetPattern5": {
+      "title": "Target Pattern"
+    },
+    "descPattern5": {
+      "title": "Description"
+    },
+    "fromSourcePattern6": {
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
+    },
+    "severityPattern6": {
+      "title": "Severity"
+    },
+    "sourcePattern6": {
+      "title": "Source Pattern"
+    },
+    "targetPattern6": {
+      "title": "Target Pattern"
+    },
+    "descPattern6": {
+      "title": "Description"
+    },
+    "fromSourcePattern7": {
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
+    },
+    "severityPattern7": {
+      "title": "Severity"
+    },
+    "sourcePattern7": {
+      "title": "Source Pattern"
+    },
+    "targetPattern7": {
+      "title": "Target Pattern"
+    },
+    "descPattern7": {
+      "title": "Description"
+    }
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "copyContent": {
+      "description": "Copy the source text into the newly created target container."
+    },
+    "copyProperties": {
+      "description": "Copy the source properties (metadata) into the created target."
+    },
+    "overwriteExisting": {
+      "description": "Overwrite existing target content and/or properties with source values."
+    },
+    "createOnNonTranslatable": {
+      "description": "Create a target container even for non-translatable text units."
+    }
+  }
+}

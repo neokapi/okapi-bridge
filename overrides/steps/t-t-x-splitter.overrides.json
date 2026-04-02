@@ -1,0 +1,8 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "partCount": {
+      "description": "The number of output files to create from one input document, split by roughly equal word count."
+    }
+  }
+}

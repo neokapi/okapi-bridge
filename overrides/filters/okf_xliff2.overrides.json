@@ -1,5 +1,8 @@
 {
   "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "$include": [
+    "_fragments/inlineCodes.fragment.json"
+  ],
   "fields": {
     "extractSource": {
       "description": "Extract source text from XLIFF 2.x file."

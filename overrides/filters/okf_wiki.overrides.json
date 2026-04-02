@@ -4,7 +4,14 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "path": {},
+    "path": {
+      "title": "Wiki Path Rules",
+      "description": "Path expressions controlling which wiki elements to extract for translation."
+    },
+    "preserve_whitespace": {
+      "title": "Preserve Whitespace",
+      "description": "Preserve original whitespace in wiki markup instead of normalizing it."
+    },
     "preserveWhitespace": {
       "title": "Preserve Whitespace",
       "description": "Prevents collapsing of consecutive whitespace characters in extracted text."

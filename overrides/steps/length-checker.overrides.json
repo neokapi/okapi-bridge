@@ -1,0 +1,40 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "title": "Length Checker",
+  "fields": {
+    "checkMaxCharLength": {
+      "title": "Warn if a target is longer than the given percentage of the character length of its source"
+    },
+    "maxCharLengthBreak": {
+      "title": "Character length above which a text is considered \"long\""
+    },
+    "maxCharLengthAbove": {
+      "title": "Percentage for \"long\" text"
+    },
+    "maxCharLengthBelow": {
+      "title": "Percentage for \"short\" text"
+    },
+    "checkMinCharLength": {
+      "title": "Warn if a target is shorter than the given percentage of the character length of its source"
+    },
+    "minCharLengthBreak": {
+      "title": "Character length above which a text is considered \"long\""
+    },
+    "minCharLengthAbove": {
+      "title": "Percentage for \"long\" text"
+    },
+    "minCharLengthBelow": {
+      "title": "Percentage for \"short\" text"
+    },
+    "checkStorageSize": {
+      "title": "Warn if a source or target text unit does not fit its ITS Storage Size property"
+    },
+    "checkAbsoluteMaxCharLength": {
+      "title": "Warn if a target is longer than"
+    },
+    "absoluteMaxCharLength": {
+      "title": "Absolute Maximum Character Length",
+      "description": "Maximum number of characters allowed in target text, regardless of source length."
+    }
+  }
+}

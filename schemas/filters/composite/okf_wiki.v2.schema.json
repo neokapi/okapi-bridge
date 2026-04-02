@@ -38,11 +38,15 @@
       "x-widget": "simplifierRulesEditor"
     },
     "path": {
-      "type": "string"
+      "type": "string",
+      "title": "Wiki Path Rules",
+      "description": "Path expressions controlling which wiki elements to extract for translation."
     },
     "preserve_whitespace": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Preserve Whitespace",
+      "description": "Preserve original whitespace in wiki markup instead of normalizing it."
     },
     "moveLeadingAndTrailingCodesToSkeleton": {
       "type": "boolean",
@@ -61,5 +65,5 @@
   "x-baseVersion": 2,
   "x-introducedInOkapi": "1.48.0",
   "x-baseHash": "2a292dd72400",
-  "x-compositeHash": "eb917782593c"
+  "x-compositeHash": "17e0600a0521"
 }

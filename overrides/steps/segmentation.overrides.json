@@ -1,0 +1,57 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "segmentSource": {
+      "title": "Segment Source Text",
+      "description": "Segment the source text of text units using SRX rules."
+    },
+    "segmentTarget": {
+      "title": "Segment Target Text",
+      "description": "Segment existing target text using SRX rules for the processed locales."
+    },
+    "renumberCodes": {
+      "title": "Renumber Code IDs",
+      "description": "Renumber inline code IDs in each segment to start at 1."
+    },
+    "checkSegments": {
+      "title": "Verify Segment Alignment",
+      "description": "Verify that target segments match source segments when target content exists."
+    },
+    "trimSrcLeadingWS": {
+      "title": "Trim Source Leading Whitespace",
+      "description": "Maximum leading whitespace characters to trim from source segments (-1 for default)."
+    },
+    "trimSrcTrailingWS": {
+      "title": "Trim Source Trailing Whitespace",
+      "description": "Maximum trailing whitespace characters to trim from source segments (-1 for default)."
+    },
+    "trimTrgLeadingWS": {
+      "title": "Trim Target Leading Whitespace",
+      "description": "Maximum leading whitespace characters to trim from target segments (-1 for default)."
+    },
+    "trimTrgTrailingWS": {
+      "title": "Trim Target Trailing Whitespace",
+      "description": "Maximum trailing whitespace characters to trim from target segments (-1 for default)."
+    },
+    "forceSegmentedOutput": {
+      "title": "Force Segmented Output",
+      "description": "Force output formats to show segmentation regardless of filter configuration."
+    },
+    "overwriteSegmentation": {
+      "title": "Overwrite Existing Segmentation",
+      "description": "Re-segment already-segmented text units, replacing previous segmentation."
+    },
+    "deepenSegmentation": {
+      "title": "Deepen Existing Segmentation",
+      "description": "Keep existing segmentation but split segments further using the current SRX rules."
+    },
+    "treatIsolatedCodesAsWhitespace": {
+      "title": "Treat Isolated Codes as Whitespace",
+      "description": "Treat isolated inline codes as whitespace during segmentation."
+    },
+    "doNotSegmentIfHasTarget": {
+      "title": "Skip Segmentation if Target Exists",
+      "description": "Do not segment text units that already have target content."
+    }
+  }
+}

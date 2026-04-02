@@ -1,0 +1,26 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "autoOpen": {
+      "description": "Automatically open the result file in the default application after completion"
+    },
+    "keepCase": {
+      "description": "Treat words with different casing as distinct tokens (e.g. 'Term' vs 'term')"
+    },
+    "removeSubTerms": {
+      "description": "Remove candidate terms that are sub-sequences of longer retained terms"
+    },
+    "sortByOccurrence": {
+      "description": "Sort output by occurrence count instead of alphabetically"
+    },
+    "useTerminologyAnnotations": {
+      "description": "Include terms from ITS Terminology annotations attached to text units"
+    },
+    "useTextAnalysisAnnotations": {
+      "description": "Include terms from Text Analysis annotation spans on source content"
+    },
+    "useStatistics": {
+      "description": "Find term candidates using frequency-based statistical analysis of word sequences"
+    }
+  }
+}

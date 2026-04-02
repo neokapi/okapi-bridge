@@ -1,0 +1,21 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "bigFile": {
+      "title": "Process Large Files",
+      "description": "Use a stream-based parser to handle very large XLIFF files that would not fit in memory with the default DOM parser."
+    },
+    "fileMarker": {
+      "title": "File Marker",
+      "description": "Marker string appended to generated filenames before the numeric counter (e.g. '_PART' produces 'file_PART1.xlf')."
+    },
+    "updateSDLTranslationStatus": {
+      "title": "Update WorldServer Translation Status",
+      "description": "Update translation_type and translation_status flags in <iws:status> elements (WorldServer XLIFF-specific)."
+    },
+    "restoreOriginalNames": {
+      "title": "Restore Original File Names",
+      "description": "Use original file names for split output documents instead of generated numbered names."
+    }
+  }
+}

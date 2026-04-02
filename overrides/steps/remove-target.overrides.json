@@ -1,0 +1,21 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "tusForTargetRemoval": {
+      "title": "Text Unit IDs for Removal",
+      "description": "Comma-delimited list of text unit IDs whose targets should be removed; empty removes all targets."
+    },
+    "targetLocalesToKeep": {
+      "title": "Target Locales to Keep",
+      "description": "Comma-delimited list of target locales to preserve; targets with other locales are removed."
+    },
+    "filterBasedOnIds": {
+      "title": "Filter by IDs",
+      "description": "When true, filter text units by ID; when false, filter by target locale."
+    },
+    "removeTUIfNoTarget": {
+      "title": "Remove Empty Text Units",
+      "description": "Remove the text unit entirely if it has no remaining targets after removal."
+    }
+  }
+}

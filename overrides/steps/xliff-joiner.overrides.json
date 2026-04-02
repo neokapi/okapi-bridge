@@ -1,0 +1,11 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "inputFileMarker": {
+      "description": "Marker text in input filenames used to identify and group split XLIFF files for joining."
+    },
+    "outputFileMarker": {
+      "description": "Marker text used to generate the output filename(s) by replacing the input marker and index."
+    }
+  }
+}

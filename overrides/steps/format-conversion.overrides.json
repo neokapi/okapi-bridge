@@ -1,0 +1,29 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "singleOutput": {
+      "title": "Single Output Document",
+      "description": "Generates one combined output document for all input documents instead of one per input"
+    },
+    "autoExtensions": {
+      "title": "Append Format Extension",
+      "description": "Output paths are the input paths with the new format extension appended (e.g., .tmx, .po)"
+    },
+    "useGenericCodes": {
+      "title": "Generic Inline Codes",
+      "description": "Replaces original inline codes with generic placeholders like <N>, </N>, and <N/>"
+    },
+    "skipEntriesWithoutText": {
+      "title": "Skip Empty Entries",
+      "description": "Suppresses output of entries that contain no text (empty or inline-codes only)"
+    },
+    "approvedEntriesOnly": {
+      "title": "Approved Entries Only",
+      "description": "Restricts output to entries with the target approved property set to yes"
+    },
+    "overwriteSameSource": {
+      "title": "Overwrite Same Source",
+      "description": "For Pensieve TM output, replaces existing entries when the source text matches"
+    }
+  }
+}

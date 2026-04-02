@@ -1,0 +1,8 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "makeGray": {
+      "description": "Convert the image colors into a set of grays."
+    }
+  }
+}

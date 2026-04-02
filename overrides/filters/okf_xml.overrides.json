@@ -4,6 +4,9 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "path": {}
+    "path": {
+      "title": "XPath Expressions",
+      "description": "XPath expressions defining which elements and attributes to extract for translation."
+    }
   }
 }

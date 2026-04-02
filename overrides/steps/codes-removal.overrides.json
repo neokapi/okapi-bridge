@@ -1,0 +1,17 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "stripSource": {
+      "description": "Apply the selected removal action to the source text of each text unit"
+    },
+    "stripTarget": {
+      "description": "Apply the selected removal action to the target text of each text unit"
+    },
+    "includeNonTranslatable": {
+      "description": "Apply the removal action even to text units marked as non-translatable"
+    },
+    "replaceWithSpace": {
+      "description": "Replace line-break inline codes with spaces instead of removing them entirely (only when removing both marker and content)"
+    }
+  }
+}

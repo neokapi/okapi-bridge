@@ -1,0 +1,11 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "bomOnUTF8": {
+      "description": "Add a Byte-Order-Mark at the beginning of the file when the output encoding is UTF-8."
+    },
+    "updateEncoding": {
+      "description": "Automatically update encoding declarations in XML and HTML output files to match the output encoding."
+    }
+  }
+}

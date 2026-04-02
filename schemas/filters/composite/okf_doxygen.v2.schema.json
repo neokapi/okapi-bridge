@@ -1576,7 +1576,9 @@
   },
   "properties": {
     "inlineCodes": {
-      "$ref": "#/$defs/inlineCodes"
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
     },
     "parser": {
       "type": "object",
@@ -1601,7 +1603,9 @@
       }
     },
     "path": {
-      "type": "string"
+      "type": "string",
+      "title": "Comment Style Path",
+      "description": "Path pattern defining which Doxygen comment style to extract (C++, Javadoc, Qt, or Python)."
     }
   },
   "additionalProperties": false,
@@ -1684,5 +1688,5 @@
   "x-baseVersion": 2,
   "x-introducedInOkapi": "1.46.0",
   "x-baseHash": "de9a091d7fb1",
-  "x-compositeHash": "97f6a4bda0b4"
+  "x-compositeHash": "be90da9279b7"
 }

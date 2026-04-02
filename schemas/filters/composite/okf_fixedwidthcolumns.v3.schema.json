@@ -95,7 +95,9 @@
     },
     "numColumns": {
       "type": "integer",
-      "default": 2
+      "default": 2,
+      "title": "Number of Columns",
+      "description": "Fixed number of columns when column detection mode is set to fixed."
     },
     "sendHeaderMode": {
       "type": "integer",
@@ -278,5 +280,5 @@
   "x-baseVersion": 3,
   "x-introducedInOkapi": "1.47.0",
   "x-baseHash": "908746df89d7",
-  "x-compositeHash": "22f3d5f4a0fb"
+  "x-compositeHash": "85535a972d4f"
 }

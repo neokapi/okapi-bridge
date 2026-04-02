@@ -1,0 +1,69 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "leverage": {
+      "title": "Leverage Text Units",
+      "description": "Enable leveraging of text units with existing translations."
+    },
+    "resourceClassName": {
+      "title": "Translation Resource",
+      "description": "Java class name of the translation resource connector (TM or MT engine)."
+    },
+    "noQueryThreshold": {
+      "title": "No-Query Threshold",
+      "description": "Skip query if an existing candidate scores at or above this value (101 = always query)."
+    },
+    "threshold": {
+      "title": "Minimum Match Score",
+      "description": "Accept only matches with a score equal to or above this threshold."
+    },
+    "fillTarget": {
+      "title": "Fill Target with Translation",
+      "description": "Copy the best translation candidate into the target content."
+    },
+    "fillTargetThreshold": {
+      "title": "Fill Target Threshold",
+      "description": "Minimum match score required to copy the best candidate into the target."
+    },
+    "fillIfTargetIsEmpty": {
+      "title": "Only If Target Is Empty",
+      "description": "Fill the target only when it has no existing content."
+    },
+    "fillIfTargetIsSameAsSource": {
+      "title": "Also If Target Equals Source",
+      "description": "Also fill the target when its content is identical to the source."
+    },
+    "downgradeIdenticalBestMatches": {
+      "title": "Downgrade Identical Exact Matches",
+      "description": "Reduce score by 1% when multiple identical exact matches are returned."
+    },
+    "makeTMX": {
+      "title": "Generate TMX Document",
+      "description": "Create a TMX file with all leveraged matches."
+    },
+    "tmxPath": {
+      "title": "TMX Output Path",
+      "description": "File path for the generated TMX document."
+    },
+    "useMTPrefix": {
+      "title": "Add MT Prefix to Source",
+      "description": "Add an MT-specific prefix to the source text for MT-origin entries."
+    },
+    "useTargetPrefix": {
+      "title": "Add Prefix to Translation",
+      "description": "Add a prefix to leveraged translations based on match score."
+    },
+    "targetPrefix": {
+      "title": "Target Prefix Text",
+      "description": "Prefix string to prepend to leveraged translations."
+    },
+    "targetPrefixThreshold": {
+      "title": "Prefix Score Threshold",
+      "description": "Add the prefix when the match score is equal to or below this value."
+    },
+    "copySourceOnNoText": {
+      "title": "Copy Source If No Text",
+      "description": "Copy source into target when the source has no translatable text."
+    }
+  }
+}

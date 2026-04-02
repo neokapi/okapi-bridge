@@ -1,0 +1,17 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "conversionType": {
+      "title": "Conversion Direction",
+      "description": "Whether to un-escape (decode) or escape (encode) URI sequences."
+    },
+    "updateAll": {
+      "title": "Escape All Extended Characters",
+      "description": "Convert all non-ASCII characters to URI escape sequences."
+    },
+    "escapeList": {
+      "title": "Characters to Escape",
+      "description": "The set of characters to convert to URI escape sequences."
+    }
+  }
+}

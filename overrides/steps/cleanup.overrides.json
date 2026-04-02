@@ -1,0 +1,26 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "normalizeQuotes": {
+      "description": "Replace all quotation marks with straight double quotes and apostrophes with single straight quotes."
+    },
+    "checkCharacters": {
+      "description": "Detect and remove text units containing common corrupt character strings."
+    },
+    "matchRegexExpressions": {
+      "description": "Mark segments matching built-in regular expressions for removal. This option is not currently used."
+    },
+    "matchUserRegex": {
+      "description": "Remove text units containing text that matches user-defined regular expressions."
+    },
+    "pruneTextUnit": {
+      "description": "Remove text units marked for removal or that have no target text."
+    },
+    "normalizePunctuations": {
+      "description": "Standardize spaces around punctuation marks to English writing style conventions."
+    },
+    "keepCrNlIntact": {
+      "description": "Preserve CR and NL characters instead of normalizing them to spaces."
+    }
+  }
+}

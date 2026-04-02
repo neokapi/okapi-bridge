@@ -1,0 +1,8 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "baseUrl": {
+      "description": "Endpoint URL of the Enrycher Web service to use for disambiguation annotations"
+    }
+  }
+}

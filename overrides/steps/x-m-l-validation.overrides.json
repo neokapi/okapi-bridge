@@ -1,0 +1,13 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "validate": {
+      "title": "Validate Document Structure",
+      "description": "Perform DTD, W3C, or RelaxNG schema validation in addition to the well-formedness check."
+    },
+    "useFoundDTD": {
+      "title": "Use DTD From Input Documents",
+      "description": "Use DTD declarations found in the input documents for validation."
+    }
+  }
+}

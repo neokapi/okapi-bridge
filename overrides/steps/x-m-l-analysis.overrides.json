@@ -1,0 +1,8 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "autoOpen": {
+      "description": "Automatically open the result file after the process is complete."
+    }
+  }
+}

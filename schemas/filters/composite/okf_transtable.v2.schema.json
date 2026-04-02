@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_transtable.v2.schema.json",
+  "version": 2,
+  "title": "TransTable Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_transtable",
+    "class": "net.sf.okapi.filters.transtable.TransTableFilter",
+    "extensions": [],
+    "mimeTypes": [
+      "text/x-transtable"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_transtable",
+        "name": "Translation Table Default",
+        "description": "Default TransTable configuration.",
+        "mimeType": "text/x-transtable",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.transtable.TransTableFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {},
+  "additionalProperties": false,
+  "x-kind": "OkfTranstableFilterConfig",
+  "x-apiVersion": "v2",
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "61063c155946",
+  "x-compositeHash": "61063c155946"
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "segmentSource": {
+      "title": "Segment Source Content",
+      "description": "Segment the source content before alignment, overriding any existing segmentation"
+    },
+    "useCustomSourceRules": {
+      "title": "Custom Source Segmentation Rules",
+      "description": "Use a custom SRX file for source segmentation instead of the built-in default rules"
+    },
+    "segmentTarget": {
+      "title": "Segment Target Content",
+      "description": "Segment the target content before alignment, overriding any existing segmentation"
+    },
+    "useCustomTargetRules": {
+      "title": "Custom Target Segmentation Rules",
+      "description": "Use a custom SRX file for target segmentation instead of the built-in default rules"
+    }
+  }
+}

@@ -4,6 +4,9 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "path": {}
+    "path": {
+      "title": "Comment Style Path",
+      "description": "Path pattern defining which Doxygen comment style to extract (C++, Javadoc, Qt, or Python)."
+    }
   }
 }

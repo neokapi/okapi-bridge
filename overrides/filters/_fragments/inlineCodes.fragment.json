@@ -2,6 +2,10 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "description": "Shared fragment for inline code handling fields",
   "fields": {
+    "inlineCodes": {
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
     "useCodeFinder": {
       "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
     },

@@ -1,0 +1,14 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "desegmentSource": {
+      "description": "Joins all segments of each source text unit into a single content."
+    },
+    "desegmentTarget": {
+      "description": "Joins all segments of each target text unit into a single content, if a target exists."
+    },
+    "renumberCodes": {
+      "description": "Restores original code IDs that were renumbered during segmentation."
+    }
+  }
+}

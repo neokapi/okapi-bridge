@@ -1,0 +1,24 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "countInBatch": {
+      "description": "Set word count annotation aggregated per batch."
+    },
+    "countInBatchItems": {
+      "description": "Set word count annotation per batch item."
+    },
+    "countInDocuments": {
+      "description": "Set word count annotation per document."
+    },
+    "countInSubDocuments": {
+      "description": "Set word count annotation per sub-document."
+    },
+    "countInGroups": {
+      "description": "Set word count annotation per group."
+    },
+    "bufferSize": {
+      "title": "Text Buffer Size",
+      "description": "Size of the internal text buffer used during word counting (0 for default)."
+    }
+  }
+}

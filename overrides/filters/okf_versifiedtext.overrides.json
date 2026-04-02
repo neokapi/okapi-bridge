@@ -1,0 +1,9 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "forceTargetOutput": {
+      "title": "Force Target Output",
+      "description": "Always produce target output even when no translation is available."
+    }
+  }
+}

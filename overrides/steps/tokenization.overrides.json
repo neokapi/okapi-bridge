@@ -1,0 +1,8 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "OTHER_SYMBOL": {
+      "description": "Various Unicode symbols (mathematical, technical, etc.)."
+    }
+  }
+}

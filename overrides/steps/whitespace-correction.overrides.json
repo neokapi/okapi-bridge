@@ -1,0 +1,13 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "punctuation": {
+      "title": "Punctuation Types",
+      "description": "Punctuation categories to apply whitespace correction to, with full-width CJK to ASCII conversion."
+    },
+    "whitespace": {
+      "title": "Whitespace Characters",
+      "description": "Unicode whitespace character categories considered during spacing adjustment."
+    }
+  }
+}

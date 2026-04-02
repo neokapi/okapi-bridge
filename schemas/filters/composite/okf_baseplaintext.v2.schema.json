@@ -66,7 +66,9 @@
   },
   "properties": {
     "inlineCodes": {
-      "$ref": "#/$defs/inlineCodes"
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
     },
     "parser": {
       "type": "object",
@@ -190,5 +192,5 @@
   "x-baseVersion": 2,
   "x-introducedInOkapi": "1.46.0",
   "x-baseHash": "9ccf4d93143b",
-  "x-compositeHash": "8a0a94710f5b"
+  "x-compositeHash": "f3c1d168188f"
 }

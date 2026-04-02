@@ -1,0 +1,53 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "type": {
+      "title": "Type of Change",
+      "description": "Select the kind of text modification to apply to each text unit."
+    },
+    "addPrefix": {
+      "title": "Add Prefix",
+      "description": "Add a prefix string at the start of each text unit."
+    },
+    "prefix": {
+      "title": "Prefix Text",
+      "description": "The prefix text to prepend to each text unit."
+    },
+    "addSuffix": {
+      "title": "Add Suffix",
+      "description": "Add a suffix string at the end of each text unit."
+    },
+    "suffix": {
+      "title": "Suffix Text",
+      "description": "The suffix text to append to each text unit."
+    },
+    "applyToExistingTarget": {
+      "title": "Modify Existing Translations",
+      "description": "Apply modifications also to text units that already have a translation."
+    },
+    "addName": {
+      "title": "Append Item Name",
+      "description": "Append the name of each text unit at the end of its value."
+    },
+    "addID": {
+      "title": "Append Extraction ID",
+      "description": "Append the extraction ID of each text unit at the end of its value."
+    },
+    "markSegments": {
+      "title": "Mark Segment Boundaries",
+      "description": "Add '[' and ']' delimiters around segments within each text unit."
+    },
+    "applyToBlankEntries": {
+      "title": "Modify Blank Entries",
+      "description": "Apply modifications also to text units without text content."
+    },
+    "expand": {
+      "title": "Expand Text",
+      "description": "Expand text length to simulate translation growth for UI testing."
+    },
+    "script": {
+      "title": "Replacement Script",
+      "description": "Script variant used for character replacement modes."
+    }
+  }
+}

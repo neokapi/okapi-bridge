@@ -1,0 +1,35 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "markAsMT": {
+      "description": "Marks generated TM entries as machine translation by setting creationId to \"MT!\""
+    },
+    "makeTM": {
+      "description": "Imports translated entries into a Pensieve TM, creating it if necessary"
+    },
+    "makeTMX": {
+      "description": "Creates a TMX document with all translated entries across all input documents"
+    },
+    "sendTMX": {
+      "description": "Sends the generated TMX document to the next step instead of the original input document"
+    },
+    "checkExistingTm": {
+      "description": "Skips entries that already have translations in an existing Pensieve TM"
+    },
+    "segment": {
+      "description": "Segments text units into sentences using SRX rules before translation"
+    },
+    "tmDirectory": {
+      "title": "Pensieve TM directory"
+    },
+    "tmxPath": {
+      "title": "TMX output path"
+    },
+    "existingTm": {
+      "title": "Existing TM directory"
+    },
+    "srxPath": {
+      "title": "SRX rules path"
+    }
+  }
+}

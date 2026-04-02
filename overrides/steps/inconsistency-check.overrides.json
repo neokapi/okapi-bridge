@@ -1,0 +1,25 @@
+{
+  "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
+  "fields": {
+    "checkInconststencies": {
+      "title": "Check Inconsistencies",
+      "description": "Enable or disable inconsistency checking; allows the step to be toggled off without removing it from the pipeline."
+    },
+    "checkPerFile": {
+      "title": "Per-File Checking",
+      "description": "Process each input file individually instead of comparing segments across all documents, reducing memory usage."
+    },
+    "outputPath": {
+      "title": "Report File Path",
+      "description": "Full path of the XML report file to generate; supports ${rootDir} and ${inputRootDir} variables."
+    },
+    "displayOption": {
+      "title": "Inline Code Display",
+      "description": "Controls how inline codes are represented in the report: original codes, generic markers, or plain text."
+    },
+    "autoOpen": {
+      "title": "Auto-Open Report",
+      "description": "Automatically open the generated report file in the default application after processing completes."
+    }
+  }
+}

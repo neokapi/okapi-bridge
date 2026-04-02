@@ -1,0 +1,76 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Shared fragment for table/columnar format field titles",
+  "fields": {
+    "numColumns": {
+      "title": "Number of Columns",
+      "description": "Fixed number of columns when column detection mode is set to fixed."
+    },
+    "columnNamesLineNum": {
+      "title": "Line with column names (0 if none)"
+    },
+    "valuesStartLineNum": {
+      "title": "Values start at line"
+    },
+    "detectColumnsMode": {
+      "title": "Number of columns"
+    },
+    "sendHeaderMode": {
+      "title": "Extract header lines"
+    },
+    "trimMode": {
+      "title": "Exclude leading/trailing white spaces from extracted text"
+    },
+    "sendColumnsMode": {
+      "title": "Extract table data"
+    },
+    "recordIdColumn": {
+      "title": "Record ID"
+    },
+    "exposeCommentsAsMetadata": {
+      "title": "Expose comments as metadata"
+    },
+    "sourceColumns": {
+      "title": "Source"
+    },
+    "sourceIdColumns": {
+      "title": "Source ID"
+    },
+    "sourceIdSuffixes": {
+      "title": "ID suffix"
+    },
+    "sourceIdSourceRefs": {
+      "title": "Source column"
+    },
+    "targetColumns": {
+      "title": "Target"
+    },
+    "targetSourceRefs": {
+      "title": "Source column"
+    },
+    "targetLanguages": {
+      "title": "Language"
+    },
+    "commentColumns": {
+      "title": "Comment"
+    },
+    "commentSourceRefs": {
+      "title": "Source column"
+    },
+    "unescapeSource": {
+      "title": "Convert \\t, \\n, \\\\, \\uXXXX into characters"
+    },
+    "trimLeading": {
+      "title": "Trim leading spaces and tabs"
+    },
+    "trimTrailing": {
+      "title": "Trim trailing spaces and tabs"
+    },
+    "preserveWS": {
+      "title": "Allow trimming"
+    },
+    "wrapMode": {
+      "title": "Multi-line text units"
+    }
+  }
+}
