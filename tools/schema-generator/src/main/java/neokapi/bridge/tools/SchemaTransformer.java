@@ -726,6 +726,8 @@ public class SchemaTransformer {
         for (Map.Entry<String, JsonElement> entry : filterGrouping.entrySet()) {
             String groupName = entry.getKey();
             JsonObject groupDef = entry.getValue().getAsJsonObject();
+            String groupTitle = groupDef.has("title")
+                    ? groupDef.get("title").getAsString() : null;
             String groupDescription = groupDef.has("description")
                     ? groupDef.get("description").getAsString() : null;
             JsonObject groupProps = groupDef.has("properties")
@@ -733,6 +735,9 @@ public class SchemaTransformer {
 
             JsonObject groupSchema = new JsonObject();
             groupSchema.addProperty("type", "object");
+            if (groupTitle != null) {
+                groupSchema.addProperty("title", groupTitle);
+            }
             if (groupDescription != null) {
                 groupSchema.addProperty("description", groupDescription);
             }
