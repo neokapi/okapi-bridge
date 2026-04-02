@@ -1,14 +1,18 @@
 {
   "filterName": "EPUB Filter",
-  "overview": "Processes EPUB (Electronic Publication) documents. The filter handles encoding detection automatically, supporting Unicode Byte-Order-Mark detection and configurable default encoding fallback.",
+  "overview": "Processes EPUB (Electronic Publication) documents for localization. The filter handles encoding detection automatically, supporting Unicode BOM detection and configurable default encoding. At this time, the filter does not have a dedicated parameter editor — custom configurations must be edited manually in a text editor.",
   "parameters": {},
-  "processingNotes": [
-    "If the file has a Unicode BOM, the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically, overriding any default encoding setting.",
-    "If no BOM is detected, the default encoding specified in the filter options is used.",
-    "For UTF-8 output: a BOM is written only if the input was also UTF-8 **and** a BOM was detected in the input. If the input was a different encoding, no BOM is written to the output."
+  "limitations": [
+    "No known limitations."
   ],
-  "limitations": [],
+  "processingNotes": [
+    "If the file has a Unicode Byte-Order-Mark, the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically, overriding any default encoding setting.",
+    "If no BOM is detected, the default encoding specified in the filter options is used.",
+    "For UTF-8 output: a BOM is included only if the input was also UTF-8 **and** had a BOM. If the input was a different encoding, no BOM is written.",
+    "No parameter editor is available — custom configurations must be edited with a text editor."
+  ],
   "examples": [],
+  "fullDoc": "# EPUB Filter\n\nProcesses EPUB (Electronic Publication) documents for localization. The filter handles encoding detection automatically, supporting Unicode BOM detection and configurable default encoding. At this time, the filter does not have a dedicated parameter editor — custom configurations must be edited manually in a text editor.\n\n## Parameters\n\nThis filter does not currently expose configurable parameters through a UI editor. Custom configurations must be edited with a text editor.\n\n## Encoding Behavior\n\n### Input Encoding\n\nThe filter decides which encoding to use for the input file using the following logic:\n\n- If the file has a Unicode Byte-Order-Mark, the corresponding encoding (e.g. UTF-8, UTF-16) is used.\n- Otherwise, the default encoding specified in the filter options is used.\n\n### Output Encoding\n\nIf the output encoding is UTF-8:\n\n- If the input encoding was also UTF-8, a BOM is written only if one was detected in the input document.\n- If the input encoding was not UTF-8, no BOM is written in the output document.\n\n## Limitations\n\nNo known limitations.\n\n## Notes\n\n- EPUB documents are essentially ZIP archives containing XHTML content files, CSS, images, and metadata. The filter processes the translatable text content within these files.\n- Since no parameter editor is available, any custom configuration must be done by directly editing the configuration file in a text editor.",
   "filterId": "okf_epub",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/EPUB_Filter"
 }

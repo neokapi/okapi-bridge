@@ -1,15 +1,17 @@
 {
   "filterName": "Localizable Quality Check",
-  "overview": "This step checks that all localizables (dates, times, and numbers) exist in the target and are localized correctly for the target locale. It compares source and target number, date, and time patterns, adding an issue annotation if a target localizable is missing or not properly localized. Requires both source and target languages to be set.",
+  "overview": "This step checks that all localizables (dates, times, and numbers) exist in the target and are localized correctly for the target locale. It compares source and target number, date, and time patterns, adding issue annotations if a target localizable is missing or not properly localized. Both source and target languages must be set for the step to function.",
   "parameters": {},
   "limitations": [
-    "Numbers using different units in source and target (e.g., imperial vs. metric, currency conversions) will be flagged as **false positives**."
+    "Numbers that use different units in the source and target will be flagged as false positives (e.g., imperial vs. metric measurements, currency conversions)."
   ],
   "processingNotes": [
-    "The step adds **issue annotations** to segments where target localizables are missing or incorrectly localized — it does not modify content.",
-    "Checks cover dates, times (in various formats), and numbers.",
-    "Requires both `source-language` and `target-language` to be configured in the pipeline for locale-aware comparison."
+    "Requires both source and target language to be set in the pipeline for locale-aware checking.",
+    "Produces issue annotations on segments where target localizables are missing or incorrectly localized — does not modify content.",
+    "Checks dates, times (in various formats), and numbers."
   ],
+  "examples": [],
+  "fullDoc": "# Localizable Quality Check\n\nThis step checks that all localizables (dates, times, and numbers) exist in the target and are localized correctly for the target locale. It compares source and target number, date, and time patterns, adding issue annotations if a target localizable is missing or not properly localized. Both source and target languages must be set for the step to function.\n\n## Parameters\n\nThis step has no configurable parameters.\n\n## Limitations\n\n- Numbers that use different units in the source and target will be flagged as false positives (e.g., imperial vs. metric measurements, currency conversions).\n\n## Notes\n\n- Requires both source and target language to be set in the pipeline.\n- Produces issue annotations on segments — does not modify content.\n- Checks dates, times (in various formats), and numbers.",
   "stepId": "localizable-checker",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/localizables_check_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Localizables_Check_Step"
 }

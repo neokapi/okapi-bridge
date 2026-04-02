@@ -4,6 +4,38 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "openProject": {}
+    "openProject": {},
+    "openProjectFile": {
+      "title": "Open Project File Before Processing",
+      "description": "Opens the .txp project file in an editor dialog before processing, allowing resource selection and settings review."
+    },
+    "host": {
+      "title": "Host URL",
+      "description": "The URL of the Transifex server where the project is hosted."
+    },
+    "username": {
+      "title": "Username",
+      "description": "Transifex username for authentication."
+    },
+    "password": {
+      "title": "Password",
+      "description": "Password for the Transifex user account."
+    },
+    "projectId": {
+      "title": "Project ID",
+      "description": "The identifier of the Transifex project to work with."
+    },
+    "protectApproved": {
+      "title": "Protect Approved Entries",
+      "description": "Marks non-empty, non-fuzzy entries as non-translatable to protect approved translations."
+    },
+    "sourceLocale": {
+      "title": "Source Locale",
+      "description": "Fall-back source locale code used when not specified by the calling application."
+    },
+    "targetLocale": {
+      "title": "Target Locale",
+      "description": "Fall-back target locale code used when not specified by the calling application."
+    }
   }
 }

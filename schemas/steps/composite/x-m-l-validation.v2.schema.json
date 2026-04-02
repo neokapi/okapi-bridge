@@ -33,12 +33,19 @@
       "default": "",
       "description": "Full path of the XML Schema.",
       "title": "Path of the XML Schema",
-      "x-path": { "type": "file", "role": "input", "accepts": ["xsd"] }
+      "x-path": {
+        "type": "file",
+        "role": "input",
+        "accepts": [
+          "xsd"
+        ]
+      }
     },
     "validate": {
       "type": "boolean",
       "default": false,
-      "title": "Validate the documents structure [Well-formedness is always checked]"
+      "title": "Validate Document Structure",
+      "description": "Perform DTD, W3C, or RelaxNG schema validation in addition to the well-formedness check."
     },
     "validationType": {
       "type": "integer",
@@ -49,7 +56,8 @@
     "useFoundDTD": {
       "type": "boolean",
       "default": true,
-      "title": "Use DTD declarations found in the input documents"
+      "title": "Use DTD From Input Documents",
+      "description": "Use DTD declarations found in the input documents for validation."
     }
   }
 }

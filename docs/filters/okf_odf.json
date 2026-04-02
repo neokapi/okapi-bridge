@@ -1,40 +1,60 @@
 {
-  "filterName": "OpenOffice/ODF Filter",
-  "overview": "The OpenOffice Filter processes OpenOffice.org documents: **ODT** (text), **ODS** (spreadsheet), **ODP** (slides), **ODG** (graphics), and their corresponding template formats. These documents use the [OpenDocument format (ODF)](http://en.wikipedia.org/wiki/OpenDocument). The filter handles the ZIP-based ODF package, extracting translatable content from multiple embedded XML files (`content.xml`, `meta.xml`, `style.xml`) as sub-documents.",
+  "filterName": "OpenOffice / ODF Filter",
+  "overview": "The OpenOffice Filter processes OpenOffice.org documents in OpenDocument format (ODF): ODT (text), ODS (spreadsheet), ODP (slides), ODG (graphics), and their corresponding template formats. The filter internally wraps an ODF Filter for raw OpenDocument XML files. Documents are ZIP archives containing multiple sub-documents (`content.xml`, `meta.xml`, `style.xml`), each treated independently during extraction.",
   "parameters": {
-    "extraction.extractNotes": {
-      "help": "Extracts the content of `<office:annotation>` elements (notes) as translatable text. When not set, notes are skipped entirely during extraction.",
+    "extractNotes": {
+      "help": "Extracts the content of `<office:annotation>` elements (notes/comments) as translatable text.\n\nWhen disabled, annotations are skipped entirely during extraction.",
       "notes": [
-        "**Warning:** The option to extract or not extract notes is reported as not working yet — notes may be extracted regardless of this setting."
+        "**Known issue:** This option may not take effect — notes may be extracted regardless of the setting."
       ]
     },
-    "extraction.extractMetadata": {
-      "help": "Extracts metadata fields from `meta.xml` for translation. The metadata file is processed as a separate sub-document within the ODF package."
-    },
-    "extraction.extractReferences": {
-      "help": "Extracts the content of `<text:bookmark-ref>` elements. The content of these elements is only a **copy** of the referent — OpenOffice automatically overwrites it when the document is updated, so any translation done for these references will be lost on the next document update. However, extracting them can be useful to have the referenced text visible as part of the segment where it is inserted.",
+    "extractReferences": {
+      "help": "Extracts the content of `<text:bookmark-ref>` elements. These elements contain a **copy** of the referenced text that is automatically updated by OpenOffice when the document is refreshed.\n\nAny translation of referenced text will be **overwritten** the next time the document updates its references. However, enabling this can be useful to provide context — the referenced text appears inline within the segment where it is inserted.",
       "notes": [
-        "**Warning:** The option to extract or not extract references is reported as not working yet — references may be extracted regardless of this setting.",
-        "Translated reference content will be **automatically overwritten** by OpenOffice when the document is updated."
+        "**Known issue:** This option may not take effect — references may be extracted regardless of the setting.",
+        "Translations of bookmark references will be lost when OpenOffice updates the document, since the reference content is regenerated from the referent."
       ]
     },
-    "extraction.encodeCharacterEntityReferenceGlyphs": {
-      "help": "Controls whether character entity reference glyphs are encoded in the output."
+    "extractMetadata": {
+      "help": "Extracts translatable metadata from `meta.xml` within the ODF package (e.g., document title, subject, keywords).",
+      "notes": []
+    },
+    "encodeCharEntityReferenceGlyphs": {
+      "help": "Controls whether special glyphs are encoded as character entity references in the output."
     }
   },
   "limitations": [
-    "Some **deleted text** may get extracted. Accept or reject all revision changes before processing the input document.",
-    "The options to extract or not extract **notes** and **references** are not working yet — they will be extracted regardless of the option settings.",
-    "Sequential **tabs may get reduced** to a single tab during extraction and merge round trip: space/tab elements are supported in output but incorrectly handled on input.",
-    "The target (output) encoding **must be set to UTF-8** when extracting documents to merge them back properly."
+    "Some deleted text may get extracted. Accept or reject all revision changes before processing the input document.",
+    "The `extractNotes` and `extractReferences` options may not work — content may be extracted regardless of settings.",
+    "Sequential tabs may be reduced to a single tab during extraction and merge round-trip due to incorrect handling of space/tab elements on input.",
+    "The target (output) encoding **must** be set to UTF-8 when extracting documents intended to be merged back."
   ],
   "processingNotes": [
-    "Input encoding is **automatically detected**.",
-    "Output encoding is always **UTF-8** — any user-specified output encoding is ignored.",
-    "Line-breaks in the output are always set to **LF** (simple linefeed).",
-    "An ODF document is a ZIP file containing multiple XML files. The filter processes `content.xml`, `meta.xml`, and `style.xml` as **separate sub-documents**. In XLIFF output, a single ODT file produces three `<file>` elements — one for each embedded XML file. Typically only `content.xml` contains extracted text."
+    "Input encoding is automatically detected; any user-specified encoding is ignored. Output is always UTF-8.",
+    "Line-breaks in output are always simple linefeed (LF).",
+    "ODF documents are ZIP archives. The filter processes `content.xml`, `meta.xml`, and `style.xml` as separate sub-documents. In XLIFF output, each becomes a separate `<file>` element.",
+    "Typically only `content.xml` contains extracted text; `meta.xml` and `style.xml` are often empty."
   ],
   "examples": [],
+  "propertySuggestions": {
+    "extractNotes": {
+      "title": "Extract Notes",
+      "description": "Extract the content of annotation elements as translatable text"
+    },
+    "extractReferences": {
+      "title": "Extract References",
+      "description": "Extract the content of bookmark reference elements as translatable text"
+    },
+    "extractMetadata": {
+      "title": "Extract Metadata",
+      "description": "Extract translatable metadata from meta.xml"
+    },
+    "encodeCharEntityReferenceGlyphs": {
+      "title": "Encode Character Entity Reference Glyphs",
+      "description": "Encode special glyphs as character entity references in the output"
+    }
+  },
+  "fullDoc": "# OpenOffice / ODF Filter\n\nThe OpenOffice Filter processes OpenOffice.org documents in OpenDocument format (ODF): ODT (text), ODS (spreadsheet), ODP (slides), ODG (graphics), and their corresponding template formats. The filter internally wraps an ODF Filter for raw OpenDocument XML files. Documents are ZIP archives containing multiple sub-documents (`content.xml`, `meta.xml`, `style.xml`), each treated independently during extraction.\n\n## Parameters\n\n#### Extract Notes\nExtracts the content of `<office:annotation>` elements (notes/comments) as translatable text. When disabled, annotations are skipped entirely during extraction.\n\n> **Known issue:** This option may not take effect — notes may be extracted regardless of the setting.\n\n#### Extract References\nExtracts the content of `<text:bookmark-ref>` elements. These elements contain a **copy** of the referenced text that is automatically updated by OpenOffice when the document is refreshed.\n\nAny translation of referenced text will be **overwritten** the next time the document updates its references. However, enabling this can be useful to provide context — the referenced text appears inline within the segment where it is inserted.\n\n> **Known issue:** This option may not take effect — references may be extracted regardless of the setting.\n\n> **Warning:** Translations of bookmark references will be lost when OpenOffice updates the document, since the reference content is regenerated from the referent.\n\n#### Extract Metadata\nExtracts translatable metadata from `meta.xml` within the ODF package (e.g., document title, subject, keywords). Enabled by default.\n\n#### Encode Character Entity Reference Glyphs\nControls whether special glyphs are encoded as character entity references in the output. Enabled by default.\n\n## Limitations\n\n- Some deleted text may get extracted. Accept or reject all revision changes before processing the input document.\n- The `extractNotes` and `extractReferences` options may not work — content may be extracted regardless of settings.\n- Sequential tabs may be reduced to a single tab during extraction and merge round-trip due to incorrect handling of space/tab elements on input.\n- The target (output) encoding **must** be set to UTF-8 when extracting documents intended to be merged back.\n\n## Notes\n\n- Input encoding is automatically detected; any user-specified encoding is ignored. Output is always UTF-8.\n- Line-breaks in output are always simple linefeed (LF).\n- ODF documents are ZIP archives. The filter processes `content.xml`, `meta.xml`, and `style.xml` as separate sub-documents. In XLIFF output, each becomes a separate `<file>` element.\n- Typically only `content.xml` contains extracted text; `meta.xml` and `style.xml` are often empty.\n- If you need to process a raw ODF XML file directly (not packaged as a ZIP), use the ODF Filter instead.",
   "filterId": "okf_odf",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/OpenOffice_Filter"
 }

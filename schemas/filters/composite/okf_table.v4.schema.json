@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_table.v4.schema.json",
   "version": 4,
-  "title": "Table Filter Filter",
-  "description": "Configuration for the Okapi Table Filter Filter",
+  "title": "Table Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_table",
@@ -242,8 +241,9 @@
   "properties": {
     "simplifierRules": {
       "type": "string",
-      "description": "Rules for simplifying inline code representation",
-      "x-widget": "simplifierRulesEditor"
+      "description": "Rules for simplifying inline code representation in extracted segments",
+      "x-widget": "simplifierRulesEditor",
+      "title": "Simplifier Rules"
     },
     "moveLeadingAndTrailingCodesToSkeleton": {
       "type": "boolean",
@@ -261,6 +261,6 @@
   "x-apiVersion": "v4",
   "x-baseVersion": 4,
   "x-introducedInOkapi": "1.48.0",
-  "x-baseHash": "700adbf25f24",
-  "x-compositeHash": "27595040ef5d"
+  "x-baseHash": "b6d401ec60dc",
+  "x-compositeHash": "97b8280a5c3e"
 }

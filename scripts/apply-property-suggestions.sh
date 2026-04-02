@@ -54,13 +54,12 @@ for component_id in $(jq -r 'keys[]' "$SUGGESTIONS_FILE"); do
         # Merge suggestions into existing fields
         existing_fields=$(jq '.fields // {}' "$override_file")
         merged_fields=$(echo "$existing_fields" | jq --argjson sugg "$suggestions" '
-            # For each suggestion, add title as "description" override if not already present
+            # For each suggestion, add title and/or description — merge into existing entries
+            # Existing values are preserved (suggestion fills gaps only)
             reduce ($sugg | to_entries[]) as $s (.;
-                if .[$s.key] then .
-                else
-                    .[$s.key] = (
-                        ($s.value | if .description then {description: .description} else {} end)
-                    ) | if .[$s.key] == {} then del(.[$s.key]) else . end
+                ($s.value | {title, description} | with_entries(select(.value != null))) as $hints |
+                if $hints == {} then .
+                else .[$s.key] = ($hints + (.[$s.key] // {}))
                 end
             )
         ')
@@ -78,7 +77,7 @@ for component_id in $(jq -r 'keys[]' "$SUGGESTIONS_FILE"); do
         fields=$(echo "$suggestions" | jq '
             to_entries | map(
                 {key: .key, value: (
-                    (.value | if .description then {description: .description} else {} end)
+                    .value | to_entries | map(select(.key == "title" or .key == "description")) | from_entries
                 )} | select(.value != {})
             ) | from_entries
         ')

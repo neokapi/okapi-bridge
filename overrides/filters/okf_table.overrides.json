@@ -2,5 +2,11 @@
   "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
   "$include": [
     "_fragments/inlineCodes.fragment.json"
-  ]
+  ],
+  "fields": {
+    "simplifierRules": {
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation in extracted segments"
+    }
+  }
 }

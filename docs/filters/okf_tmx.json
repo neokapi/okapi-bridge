@@ -1,47 +1,76 @@
 {
   "filterName": "TMX Filter",
-  "overview": "The TMX Filter processes **TMX (Translation Memory eXchange)** documents conforming to the TMX 1.4b specification. It extracts translation units (`<tu>`) and their variants (`<tuv>`) for processing through the Okapi pipeline. The filter supports multiple target languages within a single TMX file and provides options for controlling segmentation behavior based on the `segtype` attribute.",
+  "overview": "The TMX Filter implements the `IFilter` interface for **TMX (Translation Memory eXchange)** documents. TMX is a LISA standard for transporting translation memory data between translation tools. The filter reads `<tu>` entries with configurable target and segmentation behavior, and supports the TMX 1.4b specification.",
   "parameters": {
-    "extraction.segType": {
-      "help": "Controls whether a segment is created for each extracted `<tu>` entry, based on the `segtype` attribute in the TMX file.\n\n- **0** — Always creates the segment regardless of the `segtype` attribute value\n- **1** — Never creates the segment, even if `segtype` is \"sentence\"\n- **2** — Creates the segment if `segtype` is \"sentence\" or is undefined (default)\n- **3** — Creates the segment only if `segtype` is explicitly \"sentence\"",
-      "values": "Integer `0`–`3` mapping to segmentation strategies based on the TMX `segtype` attribute."
-    },
-    "extraction.processAllTargets": {
-      "help": "Reads all target `<tuv>` elements into the text unit. When disabled, only the selected target language is read and all remaining `<tuv>` elements become part of the skeleton.\n\nThe effect of this setting depends on whether downstream pipeline steps can handle multiple targets."
-    },
-    "extraction.exitOnInvalid": {
-      "help": "By default, invalid `<tu>` elements are skipped with a warning message. This means the processed output file may not match the input file if invalid entries were silently dropped.\n\nEnable this to halt processing immediately on invalid content, allowing you to correct the TMX file before re-running.",
+    "readAllTargets": {
+      "help": "Reads all target `<tuv>` elements into the text unit rather than only the selected target language.\n\nWhen disabled, only the selected target `<tuv>` is read and all remaining target entries become part of the skeleton (non-translatable structure).\n\n**Note:** The effect of this setting depends on whether downstream pipeline steps can process multiple targets.",
       "notes": [
-        "Using the default (skip) behavior and ignoring warnings risks producing an output file that doesn't match the input file structure."
+        "Any effect this setting has depends on the following pipeline steps and the ability they have to process multiple targets."
       ]
     },
-    "extraction.consolidateDpSkeleton": {
-      "help": "Groups all document-part skeleton into a single consolidated part, sending fewer events through the pipeline. This is sufficient for most use cases.\n\nDisable this if you need fine-grained access to individual skeleton resources within custom pipeline steps."
+    "consolidateDpSkeleton": {
+      "help": "Consolidates skeleton parts from document-part resources and sends fewer events through the pipeline.\n\nThis is sufficient for most use cases. Disable only if you need fine-grained access to individual document-part resources in the pipeline (e.g., for custom pipeline step development)."
     },
-    "extraction.propValueSep": {
-      "help": "Delimiter string used to join values when a `<tu>` contains duplicate properties (properties with the same name).",
-      "values": "Any string. Default is `\", \"` (comma followed by space)."
+    "exitOnInvalidTu": {
+      "help": "Controls whether the filter stops processing when it encounters an invalid `<tu>` element.\n\nBy default, invalid `<tu>` entries are **skipped** with a warning message. However, skipping invalid entries risks producing an output file that doesn't match the input structure.\n\nEnable this to be notified immediately of invalid content so you can correct the file before re-running.",
+      "notes": [
+        "Warning: By using the default setting (skip invalid TUs) or ignoring warning messages, you might get a processed file that doesn't match the input file."
+      ]
     },
-    "output.escapeGT": {
-      "help": "Forces all `>` characters to be escaped as `&gt;` in the output. By default, greater-than characters are written unescaped since XML only requires escaping `<` and `&`."
+    "segmentationType": {
+      "help": "Controls whether a segment is created for each extracted `<tu>` entry, based on the value of the `segtype` attribute in the TMX.\n\n- **Always** — Creates a segment regardless of `segtype`\n- **Never** — Never creates a segment, even if `segtype=\"sentence\"`\n- **If sentence or undefined** — Creates a segment when `segtype=\"sentence\"` or when `segtype` is not set\n- **Only if sentence** — Creates a segment only when `segtype=\"sentence\"`",
+      "values": "Enum with four options controlling segment creation based on the `segtype` attribute of `<tu>` elements."
     },
-    "inlineCodes.enabled": {
-      "help": "Activates regex-based detection of inline codes within TMX segment content. When enabled, text matching the defined patterns is wrapped as inline codes rather than translatable text."
+    "escapeGt": {
+      "help": "Escapes all greater-than characters (`>`) as `&gt;` in the output.\n\nBy default, `>` characters may be left unescaped in XML output since they are only required to be escaped in certain contexts. Enable this for stricter XML escaping."
     },
-    "inlineCodes.rules": {
-      "help": "Regex patterns that identify inline codes within TMX segment text. Each pattern match is converted to an inline code placeholder, protecting it from translation."
+    "duplicatePropertyValueSeparator": {
+      "help": "The string used to separate values when a TMX property appears more than once on the same element.\n\nFor example, if a `<tu>` has two `<prop>` elements with the same type, their values are concatenated using this separator.",
+      "values": "Any string. Default is `\", \"` (comma followed by a space)."
     }
   },
   "limitations": [
-    "The `<sub>` element is not supported. When encountered, a warning is issued and the element content is merged into its parent element.",
-    "The filter cannot reconstruct DTD declarations in the output."
+    "The `<sub>` element is not supported. When encountered, a warning is issued and the element content is merged into its parent element's content.",
+    "The filter cannot reconstruct any DTD declaration from the original document."
   ],
   "processingNotes": [
-    "**Input encoding**: Uses the document's encoding declaration if present; otherwise defaults to UTF-8 regardless of any specified default encoding.",
-    "**BOM handling**: When output encoding is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. If converting from a non-UTF-8 input, no BOM is written.",
-    "**Line breaks**: Output preserves the same line-break style as the original input document."
+    "**Input encoding:** Uses the document's encoding declaration if present; otherwise defaults to UTF-8 regardless of any specified default encoding.",
+    "**Output BOM handling:** When output encoding is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. If input was not UTF-8, no BOM is written.",
+    "**Line breaks:** The output preserves the same line-break style as the original input document."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "title": "Default configuration for TM exchange",
+      "description": "The default settings read all target entries and consolidate skeleton, which is suitable for most TM exchange workflows."
+    }
+  ],
+  "propertySuggestions": {
+    "readAllTargets": {
+      "title": "Read All Target Entries",
+      "description": "Read all target <tuv> elements into the text unit instead of only the selected target."
+    },
+    "consolidateDpSkeleton": {
+      "title": "Consolidate Document Part Skeleton",
+      "description": "Group all document part skeleton into a single resource to reduce pipeline events."
+    },
+    "exitOnInvalidTu": {
+      "title": "Exit on Invalid TUs",
+      "description": "Stop processing when encountering invalid <tu> elements instead of skipping them."
+    },
+    "segmentationType": {
+      "title": "Segment Creation Mode",
+      "description": "Controls whether and when segments are created for extracted <tu> entries based on segtype."
+    },
+    "escapeGt": {
+      "title": "Escape Greater-Than Characters",
+      "description": "Escape all > characters as &gt; in the output."
+    },
+    "duplicatePropertyValueSeparator": {
+      "title": "Duplicate Property Separator",
+      "description": "String used to separate values when duplicate TMX properties are found."
+    }
+  },
+  "fullDoc": "# TMX Filter\n\nThe TMX Filter implements the `IFilter` interface for **TMX (Translation Memory eXchange)** documents. TMX is a LISA standard for transporting translation memory data between translation tools. The filter reads `<tu>` entries with configurable target and segmentation behavior, and supports the [TMX 1.4b specification](https://www.gala-global.org/tmx-14b).\n\n## Parameters\n\n#### Read All Target Entries\nReads all target `<tuv>` elements into the text unit rather than only the selected target language. When disabled, only the selected target `<tuv>` is read and all remaining target entries become part of the skeleton.\n\n> **Note:** The effect of this setting depends on whether downstream pipeline steps can process multiple targets.\n\n#### Consolidate Document Part Skeleton\nConsolidates skeleton parts from document-part resources and sends fewer events through the pipeline. This is sufficient for most use cases. Disable only if you need fine-grained access to individual document-part resources in custom pipeline steps.\n\n#### Exit on Invalid TUs\nControls whether the filter stops processing when it encounters an invalid `<tu>` element. By default, invalid `<tu>` entries are skipped with a warning message.\n\n> **Warning:** Skipping invalid entries risks producing an output file that doesn't match the input structure. Enable this to catch problems early.\n\n#### Segment Creation Mode\nControls whether a segment is created for each extracted `<tu>` entry, based on the `segtype` attribute:\n\n- **Always creates the segment** — Creates a segment regardless of `segtype`\n- **Never creates the segment** — Never creates a segment, even if `segtype=\"sentence\"`\n- **Creates if segtype is 'sentence' or undefined** — Creates a segment when `segtype=\"sentence\"` or when `segtype` is not set\n- **Only if segtype is 'sentence'** — Creates a segment only when `segtype=\"sentence\"`\n\n#### Escape Greater-Than Characters\nEscapes all `>` characters as `&gt;` in the output for stricter XML escaping.\n\n#### Duplicate Property Separator\nThe string used to separate values when a TMX property appears more than once on the same element. Default: `\", \"`\n\n## Limitations\n\n- The `<sub>` element is not supported. When encountered, a warning is issued and the element content is merged into its parent element's content.\n- The filter cannot reconstruct any DTD declaration from the original document.\n\n## Notes\n\n- **Input encoding:** Uses the document's encoding declaration if present; otherwise defaults to UTF-8 regardless of any specified default encoding.\n- **Output BOM:** When output is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. If input was not UTF-8, no BOM is written.\n- **Line breaks:** Output preserves the same line-break style as the original input.",
   "filterId": "okf_tmx",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/TMX_Filter"
 }

@@ -36,17 +36,20 @@
     "bigFile": {
       "type": "boolean",
       "default": false,
-      "title": "Process big file"
+      "title": "Process Large Files",
+      "description": "Use a stream-based parser to handle very large XLIFF files that would not fit in memory with the default DOM parser."
     },
     "fileMarker": {
       "type": "string",
       "default": "_PART",
-      "title": "File marker"
+      "title": "File Marker",
+      "description": "Marker string appended to generated filenames before the numeric counter (e.g. '_PART' produces 'file_PART1.xlf')."
     },
     "updateSDLTranslationStatus": {
       "type": "boolean",
       "default": false,
-      "title": "Update the <iws:status> translation status (WorldServer-specific)"
+      "title": "Update WorldServer Translation Status",
+      "description": "Update translation_type and translation_status flags in <iws:status> elements (WorldServer XLIFF-specific)."
     },
     "translationTypeValue": {
       "type": "string",
@@ -63,7 +66,8 @@
     "restoreOriginalNames": {
       "type": "boolean",
       "default": false,
-      "title": "Restore original file names"
+      "title": "Restore Original File Names",
+      "description": "Use original file names for split output documents instead of generated numbered names."
     }
   }
 }

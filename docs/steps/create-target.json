@@ -1,35 +1,46 @@
 {
-  "filterName": "Create Target",
-  "overview": "This step creates the target segment container for each text unit in the pipeline, optionally copying source content and/or properties into the new target. It is typically placed early in a pipeline before any translation or leveraging steps, ensuring that a target entry exists for downstream processing. Takes filter events and sends filter events.",
+  "filterName": "Create Target Step",
+  "overview": "Creates the target segment container for each text unit in the pipeline. Optionally copies source content and/or source properties into the newly created target. This step operates on filter events and is typically placed early in a pipeline before any translation or leveraging steps.",
   "parameters": {
     "copyContent": {
-      "help": "Copies the source text into the newly created target segment. This is useful as a starting point before translation or leveraging steps modify the target content.\n\nWhen used together with **Copy the source properties to the target**, both content and metadata are duplicated."
+      "help": "Copies the source text into the newly created target container. This is useful when you want the target to start as a copy of the source — for example, before applying translation memory leveraging or machine translation.\n\nIf disabled, the target container is created empty."
     },
     "copyProperties": {
-      "help": "Copies source-level properties (metadata key-value pairs attached to the text unit) into the target. Properties may include annotations, notes, or custom attributes set by earlier pipeline steps or the filter."
+      "help": "Copies source-level properties (metadata attributes on the text unit) into the target. Properties may include state information, notes, or other metadata attached to the source entry.\n\nIf disabled, the target is created with no properties."
     },
     "overwriteExisting": {
-      "help": "Forces the source content and/or properties to be copied into the target **even if a target already exists**. Without this option, text units that already have a target entry (e.g., from a bilingual input format) are left unchanged.",
+      "help": "Forces the source content and/or properties to be copied into the target **even when a target already exists**. Without this option, existing targets are left untouched.\n\nUseful when re-processing bilingual files where you want to reset all targets back to source content.",
       "notes": [
-        "**Warning:** Enabling this will discard any existing target content, including previously applied translations. Use with care in pipelines that process bilingual files."
-      ],
-      "dependsOn": [
-        {
-          "property": "copyContent",
-          "condition": "only meaningful when at least one of copyContent or copyProperties is true"
-        }
+        "Warning: Enabling this will discard any existing translations in the target. Use with care on bilingual files that already contain translated content."
       ]
     },
     "createOnNonTranslatable": {
-      "help": "Controls whether a target entry is created for text units marked as non-translatable (`translate=\"no\"`). Disabling this skips target creation for non-translatable segments, which can reduce noise in downstream steps that only care about translatable content."
+      "help": "Controls whether a target container is created for text units marked as non-translatable. Some downstream steps may still need a target entry to exist even for non-translatable segments (e.g., for consistent output structure).\n\nDisable this to skip target creation for non-translatable text units."
     }
   },
-  "processingNotes": [
-    "If neither **copyContent** nor **copyProperties** is enabled, the step still creates an empty target container — downstream steps can then populate it.",
-    "This step is commonly placed immediately after the Raw Document to Filter Events step and before any leveraging or translation steps."
+  "propertySuggestions": {
+    "copyContent": {
+      "description": "Copy the source text into the newly created target container."
+    },
+    "copyProperties": {
+      "description": "Copy the source properties (metadata) into the created target."
+    },
+    "overwriteExisting": {
+      "description": "Overwrite existing target content and/or properties with source values."
+    },
+    "createOnNonTranslatable": {
+      "description": "Create a target container even for non-translatable text units."
+    }
+  },
+  "limitations": [
+    "None known."
   ],
-  "limitations": [],
+  "processingNotes": [
+    "Operates on filter events — must be placed after a filter step in the pipeline.",
+    "Requires both source and target languages to be set in the pipeline context."
+  ],
   "examples": [],
+  "fullDoc": "# Create Target Step\n\nCreates the target segment container for each text unit in the pipeline. Optionally copies source content and/or source properties into the newly created target. This step operates on filter events and is typically placed early in a pipeline before any translation or leveraging steps.\n\n## Parameters\n\n#### Copy the source content to the target\n\nCopies the source text into the newly created target container. This is useful when you want the target to start as a copy of the source — for example, before applying translation memory leveraging or machine translation.\n\nIf disabled, the target container is created empty.\n\n**Default:** enabled\n\n#### Copy the source properties to the target\n\nCopies source-level properties (metadata attributes on the text unit) into the target. Properties may include state information, notes, or other metadata attached to the source entry.\n\nIf disabled, the target is created with no properties.\n\n**Default:** enabled\n\n#### Overwrite the current target content\n\nForces the source content and/or properties to be copied into the target **even when a target already exists**. Without this option, existing targets are left untouched.\n\nUseful when re-processing bilingual files where you want to reset all targets back to source content.\n\n> **Warning:** Enabling this will discard any existing translations in the target. Use with care on bilingual files that already contain translated content.\n\n**Default:** disabled\n\n#### Creates target for non-translatable text units\n\nControls whether a target container is created for text units marked as non-translatable. Some downstream steps may still need a target entry to exist even for non-translatable segments (e.g., for consistent output structure).\n\nDisable this to skip target creation for non-translatable text units.\n\n**Default:** enabled\n\n## Limitations\n\n- None known.\n\n## Notes\n\n- This step requires both source and target languages to be configured in the pipeline.\n- Operates on filter events — must appear after a filter step in the pipeline.\n- Typically placed early in the pipeline, before leveraging or translation steps.",
   "stepId": "create-target",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/create_target_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Create_Target_Step"
 }

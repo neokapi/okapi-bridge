@@ -1,32 +1,32 @@
 {
   "filterName": "Tokenization Step",
-  "overview": "This step creates annotations containing different tokenized forms of text units in a document. It uses ICU-based rules to break text content into classified tokens (words, numbers, URLs, etc.) and attaches them as annotations to the filter events. Both source and target content can be tokenized independently, with locale-aware processing.",
+  "overview": "The Tokenization step creates annotations containing different tokenized forms of text units in a document. It recognizes 18+ token types (words, numbers, URLs, emails, emoji, CJK characters, etc.) using Unicode-aware and language-specific rules. Tokenization annotations are attached to filter events and can be consumed by downstream pipeline steps or external tools.",
   "parameters": {
     "tokenizeSource": {
-      "help": "Tokenizes the content of the source text units. At least one of **Tokenize Source** or **Tokenize Targets** should be enabled for the step to produce output."
+      "help": "Tokenizes the content of the **source** locale. At least one of `tokenizeSource` or `tokenizeTargets` should be enabled for the step to produce output."
     },
     "tokenizeTargets": {
-      "help": "Tokenizes the content of all selected target locales. Useful when you need token-level analysis of translated content, e.g. for quality checks or metrics that compare source and target tokens."
+      "help": "Tokenizes the content of all **target** locales. Useful when you need token-level analysis of translated content for quality checks or alignment."
     },
     "WORD": {
-      "help": "Matches runs of characters that constitute a word in the given language. Word boundaries are determined by Unicode rules and are language-aware."
+      "help": "Matches runs of characters that constitute a word in the given language. Word boundaries are determined by the locale's tokenizer rules, so results vary by language."
     },
     "HYPHENATED_WORD": {
-      "help": "Matches words that include hyphens of various types (e.g. `self-contained`, `well-known`). These would otherwise be split into separate `WORD` tokens at hyphen boundaries."
+      "help": "Matches words that include hyphens of various types (e.g., `well-known`, `state-of-the-art`). Captures the entire hyphenated compound as a single token rather than splitting at hyphens."
     },
     "NUMBER": {
-      "help": "Matches numeric values including those with commas or decimal points (e.g. `1,234.56`, `3.14`)."
+      "help": "Matches numeric values including those with comma or period separators (e.g., `1,234.56`, `3.14`)."
     },
     "PUNCTUATION": {
-      "help": "Matches punctuation characters as classified by the Unicode Consortium standards."
+      "help": "Matches punctuation characters as classified by Unicode general category `P` (connectors, dashes, open/close brackets, quotes, etc.)."
     },
     "WHITESPACE": {
-      "help": "Matches whitespace characters as classified by the Unicode Consortium standards, including spaces, tabs, and other Unicode whitespace."
+      "help": "Matches whitespace characters as classified by Unicode — spaces, tabs, line breaks, and other separator characters."
     },
     "ABBREVIATION": {
-      "help": "Matches limited types of abbreviations such as `pct` in `3.3pct`, `U.S.`, and `USD`.",
+      "help": "Matches a limited set of English-style abbreviations such as `pct` in `3.3pct`, `U.S.`, and `USD`.",
       "notes": [
-        "The abbreviation detection is primarily designed for English abbreviations and may not cover abbreviation patterns in other languages."
+        "Recognition is limited to English abbreviation patterns. Non-English abbreviations may not be matched."
       ]
     },
     "INTERNET": {
@@ -37,60 +37,86 @@
       ]
     },
     "EMAIL": {
-      "help": "Matches e-mail address patterns (e.g. `user@example.com`)."
+      "help": "Matches e-mail address patterns (e.g., `user@example.com`)."
     },
     "EMOTICON": {
       "help": "Matches text-based emoticon sequences.",
       "examples": [
-        "`:-)`, `:(`, `;-)`"
+        "`:-)`, `:-(`, `;-)`"
       ]
     },
     "EMOJI": {
-      "help": "Matches all emoji characters as defined in the Unicode standard."
+      "help": "Matches all emoji characters as defined in the Unicode standard, including multi-codepoint sequences."
     },
     "DATE": {
-      "help": "Matches dates in `MM/DD/YYYY` format.",
+      "help": "Matches dates in `MM/DD/YYYY` format only.",
+      "values": "Only the `MM/DD/YYYY` format is recognized. Other date formats (e.g., `YYYY-MM-DD`, `DD/MM/YYYY`) are **not** matched.",
       "notes": [
-        "Only recognizes the US-style `MM/DD/YYYY` format. Other date formats (e.g. `DD/MM/YYYY`, `YYYY-MM-DD`) will not be matched as DATE tokens."
+        "Only US-style `MM/DD/YYYY` dates are recognized. International date formats require custom tokenization."
       ]
     },
     "CURRENCY": {
-      "help": "Matches sums in various currencies.",
+      "help": "Matches monetary sums in various currencies.",
       "notes": [
-        "The wiki documents this as primarily supporting US dollar amounts — coverage of other currency formats may be limited."
+        "The wiki and HTML help mention this is limited to **US dollars**, though the schema description says \"various currencies\". Actual coverage may vary by Okapi version."
       ]
     },
     "TIME": {
-      "help": "Matches time expressions using `:` or `.` as separators, in both 24-hour and 12-hour (with AM/PM) formats.",
+      "help": "Matches time expressions separated by `:` or `.` in both 24-hour and 12-hour (with AM/PM) formats.",
       "examples": [
-        "`14:30`, `2:30 PM`, `14.30`"
+        "`14:30`, `2.30 PM`, `08:00`"
       ]
     },
     "MARKUP": {
-      "help": "Matches runs that begin with `<` and end with `>`, such as HTML and XML tags. Useful for detecting inline markup that appears within text content."
+      "help": "Matches runs of text that begin with `<` and end with `>`, capturing HTML/XML-style tags as single tokens.",
+      "notes": [
+        "This performs simple delimiter matching, not full XML parsing. Self-closing tags like `<br/>` and tags with attributes are matched."
+      ]
     },
     "OTHER_SYMBOL": {
-      "help": "Matches various Unicode symbols including mathematical operators, arrows, and other symbol characters."
+      "help": "Matches Unicode symbols in the `S` general category — mathematical operators, technical symbols, and other miscellaneous symbols not covered by other token types."
     },
     "KANA": {
-      "help": "Matches Japanese Hiragana and Katakana characters. Useful for CJK text processing where you need to distinguish kana from kanji (ideograms)."
+      "help": "Matches Japanese Hiragana and Katakana character runs. Useful for CJK text processing where you need to distinguish phonetic scripts from ideographic content."
     },
     "IDEOGRAM": {
-      "help": "Matches ideographic characters (CJK unified ideographs) as defined by the Unicode Consortium standards. Covers Chinese characters (hanzi), Japanese kanji, and Korean hanja."
+      "help": "Matches ideographic characters as defined by Unicode — primarily CJK unified ideographs (Chinese characters / Kanji). Each ideogram is typically a single token."
     }
   },
-  "processingNotes": [
-    "The step takes filter events as input and sends filter events as output — it adds token annotations to existing events rather than transforming the event stream.",
-    "If no token types are selected, all available token types are generated.",
-    "Token detection is rule-based using Unicode character properties and pattern matching, not statistical NLP.",
-    "The wiki lists two additional token types (`COMPANY` and `STOPWORD`) that are not exposed in the current schema — `COMPANY` matches patterns like `AT&T`, `P&G`, `Johnson&Johnson`; `STOPWORD` matches frequent words with no significant meaning."
-  ],
   "limitations": [
-    "DATE token only recognizes `MM/DD/YYYY` format — other date formats are not detected.",
-    "ABBREVIATION detection is limited to English abbreviation patterns.",
-    "CURRENCY detection may be primarily oriented toward US dollar amounts."
+    "Only the `MM/DD/YYYY` date format is recognized by the DATE token type.",
+    "ABBREVIATION recognition is limited to English-style patterns.",
+    "The wiki mentions COMPANY and STOPWORD token types that are not exposed in the current schema — these may be available only in certain Okapi versions or through direct configuration."
   ],
-  "examples": [],
+  "processingNotes": [
+    "Token annotations are attached to the filter events and passed downstream — they do not modify the text content itself.",
+    "All token type booleans default to `false`. If no token types are selected, all available token types are generated.",
+    "The step requires both source and target languages to be configured in the pipeline.",
+    "The wiki documents additional token types (`COMPANY`, `STOPWORD`) and a locale filter parameter not present in the current schema."
+  ],
+  "examples": [
+    {
+      "title": "Extract words and numbers from source",
+      "description": "Tokenize the source content to extract word and number tokens for downstream analysis.",
+      "config": "```yaml\ntokenizeSource: true\ntokenizeTargets: false\nWORD: true\nNUMBER: true\n```"
+    },
+    {
+      "title": "Full tokenization of source and targets",
+      "description": "Enable all common token types on both source and target content for quality assurance or alignment.",
+      "config": "```yaml\ntokenizeSource: true\ntokenizeTargets: true\nWORD: true\nNUMBER: true\nPUNCTUATION: true\nWHITESPACE: true\nINTERNET: true\nEMAIL: true\nEMOJI: true\n```"
+    },
+    {
+      "title": "CJK-focused tokenization",
+      "description": "Tokenize Japanese/Chinese content focusing on ideographic and kana script detection.",
+      "config": "```yaml\ntokenizeSource: true\nWORD: true\nKANA: true\nIDEOGRAM: true\n```"
+    }
+  ],
+  "propertySuggestions": {
+    "OTHER_SYMBOL": {
+      "description": "Various Unicode symbols (mathematical, technical, etc.)."
+    }
+  },
+  "fullDoc": "# Tokenization Step\n\nThe Tokenization step creates annotations containing different tokenized forms of text units in a document. It recognizes 18+ token types (words, numbers, URLs, emails, emoji, CJK characters, etc.) using Unicode-aware and language-specific rules. Tokenization annotations are attached to filter events and can be consumed by downstream pipeline steps or external tools.\n\nTakes: Filter events. Sends: Filter events.\n\n## Parameters\n\n### Scope\n\n#### Tokenize Source\nTokenizes the content of the **source** locale. At least one of `tokenizeSource` or `tokenizeTargets` should be enabled for the step to produce output.\n\n#### Tokenize Targets\nTokenizes the content of all **target** locales. Useful when you need token-level analysis of translated content for quality checks or alignment.\n\n### Token Types\n\nAll token type booleans default to `false`. If no token types are selected, all available token types are generated.\n\n#### WORD\nMatches runs of characters that constitute a word in the given language. Word boundaries are determined by the locale's tokenizer rules, so results vary by language.\n\n#### HYPHENATED_WORD\nMatches words that include hyphens of various types (e.g., `well-known`, `state-of-the-art`). Captures the entire hyphenated compound as a single token.\n\n#### NUMBER\nMatches numeric values including those with comma or period separators (e.g., `1,234.56`, `3.14`).\n\n#### PUNCTUATION\nMatches punctuation characters as classified by Unicode general category `P`.\n\n#### WHITESPACE\nMatches whitespace characters as classified by Unicode — spaces, tabs, line breaks, and other separator characters.\n\n#### ABBREVIATION\nMatches a limited set of English-style abbreviations such as `pct` in `3.3pct`, `U.S.`, and `USD`.\n\n> **Note:** Recognition is limited to English abbreviation patterns.\n\n#### INTERNET\nMatches Internet addresses including URIs and IP addresses (e.g., `http://www.somesite.org/foo/index.html`, `192.168.0.5`).\n\n#### EMAIL\nMatches e-mail address patterns (e.g., `user@example.com`).\n\n#### EMOTICON\nMatches text-based emoticon sequences like `:-)`.\n\n#### EMOJI\nMatches all emoji characters as defined in the Unicode standard, including multi-codepoint sequences.\n\n#### DATE\nMatches dates in `MM/DD/YYYY` format only.\n\n> **Note:** Only US-style `MM/DD/YYYY` dates are recognized. International date formats are not matched.\n\n#### CURRENCY\nMatches monetary sums. The wiki documentation mentions this is limited to US dollars, though coverage may vary by Okapi version.\n\n#### TIME\nMatches time expressions separated by `:` or `.` in both 24-hour and 12-hour (AM/PM) formats.\n\n#### MARKUP\nMatches runs of text that begin with `<` and end with `>`, capturing HTML/XML-style tags as single tokens.\n\n#### OTHER_SYMBOL\nMatches Unicode symbols — mathematical operators, technical symbols, and other miscellaneous symbols not covered by other token types.\n\n#### KANA\nMatches Japanese Hiragana and Katakana character runs.\n\n#### IDEOGRAM\nMatches ideographic characters as defined by Unicode — primarily CJK unified ideographs.\n\n## Limitations\n\n- Only the `MM/DD/YYYY` date format is recognized by the DATE token type.\n- ABBREVIATION recognition is limited to English-style patterns.\n- The wiki mentions COMPANY and STOPWORD token types not exposed in the current schema.\n\n## Notes\n\n- Token annotations are attached to the filter events and passed downstream — they do not modify the text content.\n- The step requires both source and target languages to be configured in the pipeline.\n- The wiki documents a locale filter parameter for fine-grained control over which locales are tokenized, not present in the current schema.\n\n## Examples\n\n### Extract words and numbers from source\n```yaml\ntokenizeSource: true\ntokenizeTargets: false\nWORD: true\nNUMBER: true\n```\n\n### CJK-focused tokenization\n```yaml\ntokenizeSource: true\nWORD: true\nKANA: true\nIDEOGRAM: true\n```",
   "stepId": "tokenization",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/tokenization_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Tokenization_Step"
 }

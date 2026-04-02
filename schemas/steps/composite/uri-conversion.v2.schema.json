@@ -32,15 +32,21 @@
   "properties": {
     "conversionType": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Conversion Direction",
+      "description": "Whether to un-escape (decode) or escape (encode) URI sequences."
     },
     "updateAll": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Escape All Extended Characters",
+      "description": "Convert all non-ASCII characters to URI escape sequences."
     },
     "escapeList": {
       "type": "string",
-      "default": "%{}[]()&"
+      "default": "%{}[]()&",
+      "title": "Characters to Escape",
+      "description": "The set of characters to convert to URI escape sequences."
     }
   }
 }

@@ -2,5 +2,15 @@
   "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
   "$include": [
     "_fragments/inlineCodes.fragment.json"
-  ]
+  ],
+  "fields": {
+    "useCodeFinder": {
+      "title": "Use Code Finder",
+      "description": "Enable regular expression-based inline code detection in extracted text."
+    },
+    "codeFinderRules": {
+      "title": "Code Finder Rules",
+      "description": "Regular expressions in #v1 format defining patterns to treat as inline codes."
+    }
+  }
 }

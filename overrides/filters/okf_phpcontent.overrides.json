@@ -5,6 +5,14 @@
   ],
   "fields": {
     "useDirectives": {},
-    "extractOutsideDirectives": {}
+    "extractOutsideDirectives": {},
+    "inlineCodes.mergeAdjacent": {
+      "title": "Merge Adjacent Codes",
+      "description": "Merge consecutive inline codes into a single placeholder to simplify translatable segments."
+    },
+    "inlineCodes.moveBoundaryCodes": {
+      "title": "Move Boundary Codes to Skeleton",
+      "description": "Move inline codes at segment boundaries out of the translatable text into the non-translatable skeleton."
+    }
   }
 }

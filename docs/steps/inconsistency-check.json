@@ -1,47 +1,88 @@
 {
   "filterName": "Inconsistency Check",
-  "overview": "Generates a report of potential inconsistencies by comparing source and target segments across multiple input documents. It checks both directions: different translations for the same source text, and different sources for the same target text. The XML report groups findings by \"key text\" with all corresponding variants for easy review.",
+  "overview": "Generates a report of potential inconsistencies found by comparing source and target segments across multiple input documents. It checks for cases where the same source text has different translations, and where the same target text corresponds to different sources. The XML report groups findings by \"key text\" for easy review. Comparisons are case-sensitive, whitespace-sensitive, and ignore inline codes.",
   "parameters": {
     "checkInconststencies": {
-      "help": "Master switch that enables or disables the inconsistency check. Useful for temporarily disabling this step in a pipeline without removing it."
+      "help": "Master toggle for the inconsistency checking functionality. Disabling this effectively turns the step into a pass-through, allowing you to disable it in a pipeline without removing it.",
+      "notes": [
+        "This is a convenience toggle to disable the step within a pipeline configuration without removing it entirely."
+      ]
     },
     "checkPerFile": {
-      "help": "Processes each input file individually instead of comparing segments across all files.\n\nBy default, segments are compared across **all** input documents, which requires holding all segments in memory. Enabling this option reduces memory usage at the cost of only detecting inconsistencies within a single file.",
+      "help": "Processes each input file individually rather than comparing segments across all files.\n\nBy default, segments are compared across **all** input documents, which requires keeping all segments in memory. Enabling this option limits comparison scope to a single file at a time, significantly reducing memory usage at the cost of not detecting cross-file inconsistencies.",
       "notes": [
-        "Select this option if you experience memory issues when processing a large number of segments."
+        "Consider enabling this option if you experience memory issues with large document sets."
+      ],
+      "dependsOn": [
+        {
+          "property": "checkInconststencies",
+          "condition": "must be true for this setting to have any effect"
+        }
       ]
     },
     "outputPath": {
-      "help": "Full path of the XML report file to generate.",
-      "values": "Supports the variables `${rootDir}` and `${inputRootDir}` in the path.",
+      "help": "Full path for the generated XML inconsistency report.\n\nSupported variables:\n- `${rootDir}` — the pipeline root directory\n- `${inputRootDir}` — the input root directory",
+      "values": "File path string. Supports `${rootDir}` and `${inputRootDir}` variables.",
       "examples": [
-        "`${rootDir}/inconsistency-report.xml` — default, writes to the root directory",
-        "`${inputRootDir}/qa/inconsistencies.xml` — writes to a `qa` subdirectory relative to the input root"
+        "`${rootDir}/inconsistency-report.xml` — default, writes to the pipeline root",
+        "`${inputRootDir}/qa/inconsistencies.xml` — writes to a qa subfolder under the input root"
       ]
     },
     "displayOption": {
-      "help": "Controls how inline codes are rendered in the generated report.\n\n- **Original codes** — displays inline codes as they appear in the input documents\n- **Generic markers** — replaces inline codes with generic numbered markers (e.g. `<1>`, `</1>`, `<2/>`)\n- **Plain text** — strips all inline codes from the report",
-      "values": "One of: `generic` (Generic markers), `original` (Original codes), or `plain` (Plain text)."
+      "help": "Controls how inline codes are rendered in the generated report.\n\n- **Original codes** (`original`): Inline codes appear as they do in the source documents\n- **Generic markers** (`generic`): Codes are replaced with numbered markers like `<1>``</1>` or `<2/>`\n- **Plain text** (`plainText`): All inline codes are stripped from the report output",
+      "values": "One of: `original` (original codes), `generic` (generic markers like `<1></1>`), `plainText` (inline codes removed)"
     },
     "autoOpen": {
-      "help": "Automatically opens the generated report file in the system's default application after processing completes. Useful for interactive use in Rainbow or similar tools."
+      "help": "Automatically opens the generated XML report file in the system's default application after processing completes.\n\nThis is useful for interactive/desktop usage but should typically be disabled in automated pipelines or server environments."
     }
   },
-  "processingNotes": [
-    "Inline codes are **not** taken into account when comparing segments for inconsistencies.",
-    "Comparisons are **case-sensitive** and **whitespace-sensitive**.",
-    "Text units or segments with no target are excluded from the check.",
-    "Text units or segments that are empty **are** included in the check."
-  ],
   "limitations": [
-    "May run out of memory when processing a large number of segments across many files. Use the per-file option to mitigate this."
+    "May run out of memory when processing a large number of segments across many files. Use the per-file option to mitigate.",
+    "Inline codes are ignored during comparisons — differences only in inline codes will not be flagged.",
+    "Comparisons are case-sensitive and whitespace-sensitive — `Hello` and `hello` are treated as different texts.",
+    "Text units or segments with no target are excluded from the check.",
+    "Empty text units or segments are included in the check."
+  ],
+  "processingNotes": [
+    "The step collects all segments in memory (unless per-file mode is enabled) before generating the report, so memory usage scales with the total number of segments.",
+    "The step is a pass-through for filter events — it reads and analyzes segments but does not modify them.",
+    "The report is XML format, grouping inconsistencies by their \"key text\" with all corresponding source or target variants listed."
   ],
   "examples": [
     {
-      "title": "Cross-file inconsistency check",
-      "description": "Default configuration that checks for inconsistencies across all input documents and generates a report with generic inline code markers."
+      "title": "Basic inconsistency check with default settings",
+      "description": "Runs inconsistency checking across all input documents and writes the report to the pipeline root directory.",
+      "config": "```yaml\ncheckInconststencies: true\ncheckPerFile: false\noutputPath: ${rootDir}/inconsistency-report.xml\ndisplayOption: generic\nautoOpen: true\n```"
+    },
+    {
+      "title": "Large-scale batch check with reduced memory",
+      "description": "For processing a large number of files where cross-file memory usage is a concern, enable per-file checking and disable auto-open for automated pipelines.",
+      "config": "```yaml\ncheckInconststencies: true\ncheckPerFile: true\noutputPath: ${rootDir}/qa/inconsistency-report.xml\ndisplayOption: generic\nautoOpen: false\n```"
     }
   ],
+  "propertySuggestions": {
+    "checkInconststencies": {
+      "title": "Check Inconsistencies",
+      "description": "Enable or disable inconsistency checking; allows the step to be toggled off without removing it from the pipeline."
+    },
+    "checkPerFile": {
+      "title": "Per-File Checking",
+      "description": "Process each input file individually instead of comparing segments across all documents, reducing memory usage."
+    },
+    "outputPath": {
+      "title": "Report File Path",
+      "description": "Full path of the XML report file to generate; supports ${rootDir} and ${inputRootDir} variables."
+    },
+    "displayOption": {
+      "title": "Inline Code Display",
+      "description": "Controls how inline codes are represented in the report: original codes, generic markers, or plain text."
+    },
+    "autoOpen": {
+      "title": "Auto-Open Report",
+      "description": "Automatically open the generated report file in the default application after processing completes."
+    }
+  },
+  "fullDoc": "# Inconsistency Check\n\nGenerates a report of potential inconsistencies found by comparing source and target segments across multiple input documents. It checks for cases where the same source text has different translations, and where the same target text corresponds to different sources. The XML report groups findings by \"key text\" for easy review. Comparisons are case-sensitive, whitespace-sensitive, and ignore inline codes.\n\n## Parameters\n\n#### Check Inconsistencies\nMaster toggle for the inconsistency checking functionality. Disabling this effectively turns the step into a pass-through, allowing you to disable it in a pipeline without removing it.\n\n> **Note:** This is a convenience toggle to disable the step within a pipeline configuration without removing it entirely.\n\n#### Per-File Checking\nProcesses each input file individually rather than comparing segments across all files.\n\nBy default, segments are compared across **all** input documents, which requires keeping all segments in memory. Enabling this option limits comparison scope to a single file at a time, significantly reducing memory usage at the cost of not detecting cross-file inconsistencies.\n\n> **Note:** Consider enabling this option if you experience memory issues with large document sets.\n\n#### Report File Path\nFull path for the generated XML inconsistency report.\n\nSupported variables:\n- `${rootDir}` — the pipeline root directory\n- `${inputRootDir}` — the input root directory\n\nExamples:\n- `${rootDir}/inconsistency-report.xml` — default, writes to the pipeline root\n- `${inputRootDir}/qa/inconsistencies.xml` — writes to a qa subfolder under the input root\n\n#### Inline Code Display\nControls how inline codes are rendered in the generated report.\n\n- **Original codes**: Inline codes appear as they do in the source documents\n- **Generic markers**: Codes are replaced with numbered markers like `<1>``</1>` or `<2/>`\n- **Plain text**: All inline codes are stripped from the report output\n\n#### Auto-Open Report\nAutomatically opens the generated XML report file in the system's default application after processing completes. Useful for interactive/desktop usage but should typically be disabled in automated pipelines or server environments.\n\n## Limitations\n\n- May run out of memory when processing a large number of segments across many files. Use the per-file option to mitigate.\n- Inline codes are ignored during comparisons — differences only in inline codes will not be flagged.\n- Comparisons are case-sensitive and whitespace-sensitive — `Hello` and `hello` are treated as different texts.\n- Text units or segments with no target are excluded from the check.\n- Empty text units or segments are included in the check.\n\n## Notes\n\n- The step collects all segments in memory (unless per-file mode is enabled) before generating the report, so memory usage scales with the total number of segments.\n- The step is a pass-through for filter events — it reads and analyzes segments but does not modify them.\n- The report is XML format, grouping inconsistencies by their \"key text\" with all corresponding source or target variants listed.\n\n## Examples\n\n### Basic inconsistency check\nRuns inconsistency checking across all input documents with default settings:\n\n```yaml\ncheckInconststencies: true\ncheckPerFile: false\noutputPath: ${rootDir}/inconsistency-report.xml\ndisplayOption: generic\nautoOpen: true\n```\n\n### Large-scale batch check\nFor processing many files with reduced memory usage in an automated pipeline:\n\n```yaml\ncheckInconststencies: true\ncheckPerFile: true\noutputPath: ${rootDir}/qa/inconsistency-report.xml\ndisplayOption: generic\nautoOpen: false\n```",
   "stepId": "inconsistency-check",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/inconsistency_check_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Inconsistency_Check_Step"
 }

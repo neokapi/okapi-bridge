@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_yaml.v2.schema.json",
   "version": 2,
-  "title": "YAML Filter Filter",
-  "description": "Configuration for the Okapi YAML Filter Filter",
+  "title": "YAML Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_yaml",
@@ -46,13 +45,15 @@
           "type": "boolean",
           "default": false,
           "x-flattenPath": "extractIsolatedStrings",
-          "description": "Extract array string values"
+          "description": "Extract string values that are not directly associated with a key.",
+          "title": "Extract Isolated Strings"
         },
         "excludeKeys": {
           "type": "string",
           "default": "",
           "x-flattenPath": "exceptions",
-          "description": "Comma-separated keys to exclude"
+          "description": "Regular expression for keys that behave opposite to the default extraction mode.",
+          "title": "Key Exception Pattern"
         }
       }
     },
@@ -94,7 +95,8 @@
           "type": "boolean",
           "default": false,
           "x-flattenPath": "subFilterProcessLiteralAsBlock",
-          "description": "Process literal blocks with sub-filter"
+          "description": "Process YAML literal block scalars through the configured sub-filter.",
+          "title": "Sub-filter Literal Blocks"
         }
       }
     }
@@ -195,6 +197,6 @@
   "x-apiVersion": "v2",
   "x-baseVersion": 2,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "343d918dcd8f",
-  "x-compositeHash": "3c0c43f04c39"
+  "x-baseHash": "e7572678662a",
+  "x-compositeHash": "9e26da4982c5"
 }

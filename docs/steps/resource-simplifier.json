@@ -1,15 +1,18 @@
 {
   "filterName": "Resource Simplifier",
-  "overview": "Simplifies the resources of filter events by splitting generic skeletons into parts that contain no references. Original references are converted to skeleton parts or `TEXT_UNIT` events, and the resulting sequence is packed into a single `MULTI_EVENT` event. This is a format-specific transformation that operates on filter events.",
+  "overview": "Simplifies the resources of filter events by splitting generic skeletons into parts that contain no references. Original references are converted to skeleton parts or `TEXT_UNIT` events, and the resulting sequence is packed into a single `MULTI_EVENT` event. This step is format-specific and operates on filter events.",
   "parameters": {},
+  "limitations": [
+    "None known."
+  ],
   "processingNotes": [
-    "Skeleton parts from the split are attached to newly created `DOCUMENT_PART` events.",
+    "Skeleton parts are attached to newly created `DOCUMENT_PART` events.",
     "Original references are converted either to skeleton parts or `TEXT_UNIT` events.",
     "The resulting sequence of `DOCUMENT_PART` and `TEXT_UNIT` events is packed into a single `MULTI_EVENT` event.",
     "The simplification algorithm is format-specific — behavior varies depending on the filter that produced the events."
   ],
-  "limitations": [],
   "examples": [],
+  "fullDoc": "# Resource Simplifier\n\nSimplifies the resources of filter events by splitting generic skeletons into parts that contain no references. Original references are converted to skeleton parts or `TEXT_UNIT` events, and the resulting sequence is packed into a single `MULTI_EVENT` event. This step is format-specific and operates on filter events.\n\n## Parameters\n\nThis step has no parameters.\n\n## Processing Details\n\n- The skeleton parts are attached to newly created `DOCUMENT_PART` events.\n- Original references are converted either to skeleton parts or `TEXT_UNIT` events.\n- The sequence of `DOCUMENT_PART` and `TEXT_UNIT` events is packed into a single `MULTI_EVENT` event.\n- The simplification algorithm is format-specific — behavior varies depending on the filter that produced the events.\n\n## Limitations\n\nNone known.\n",
   "stepId": "resource-simplifier",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/resource_simplifier_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Resource_Simplifier_Step"
 }

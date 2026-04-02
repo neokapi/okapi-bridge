@@ -37,31 +37,45 @@
   "properties": {
     "toHalfWidth": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Convert to Half-Width",
+      "description": "Convert full-width characters to half-width or ASCII equivalents; when false, converts in the opposite direction."
     },
     "asciiOnly": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "ASCII Only",
+      "description": "When converting to full-width, restrict conversion to ASCII characters only."
     },
     "katakanaOnly": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Katakana Only",
+      "description": "When converting to full-width, restrict conversion to Japanese Katakana and associated punctuation only."
     },
     "includeSLA": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Include Squared Latin Abbreviations",
+      "description": "Also convert Squared Latin Abbreviations from the CJK Compatibility block to non-CJK character sequences."
     },
     "includeLLS": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Include Letter-Like Symbols",
+      "description": "Also convert characters from the Letter-Like Symbols block to character sequences."
     },
     "includeKatakana": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Include Katakana",
+      "description": "Also convert Japanese Katakana and associated punctuation to half-width forms."
     },
     "normalizeOutput": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Normalize Output (NFC)",
+      "description": "Apply Unicode NFC normalization to the output text after conversions."
     }
   }
 }

@@ -1,5 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_baseplaintext.v2.schema.json",
+  "version": 2,
   "title": "Plain Text (Line-Based)",
   "type": "object",
   "x-filter": {
@@ -182,5 +184,11 @@
       "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
     }
-  }
+  },
+  "x-kind": "OkfBaseplaintextFilterConfig",
+  "x-apiVersion": "v2",
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.46.0",
+  "x-baseHash": "9ccf4d93143b",
+  "x-compositeHash": "8a0a94710f5b"
 }

@@ -1,21 +1,23 @@
 {
   "filterName": "Segments to Text Units Converter",
-  "overview": "Converts segmented text units (paragraphs) into multiple text units, one per aligned sentence pair, for each target locale. This is useful for steps like the Diff Leverage Step that require un-segmented text units. Text units that reference other `IResource` objects or serve as referents are passed through unchanged.",
+  "overview": "Converts segmented text units (paragraphs) into multiple text units, one per aligned sentence pair, for each target locale. This is useful for steps like the Diff Leverage Step which require un-segmented text units. Text units that reference other `IResource` objects or are referents are passed through unchanged.",
   "parameters": {},
   "limitations": [
-    "Using this step may prevent merging, so it should only be used in pipelines that do **not** require translated translation kits to be merged.",
-    "Text units that reference or are referents of other `IResource` objects are passed through as-is, even if they contain segments."
+    "Using this step may prevent merging, so it should only be used in pipelines that do not require translated translation kits to be merged.",
+    "Text units that refer to another `IResource` or are referents are passed through as-is, even if they contain segments."
   ],
   "processingNotes": [
-    "Each segmented text unit is split into multiple text units with single segments, one per aligned sentence pair.",
-    "The conversion is performed for **all target locales** present in the text unit."
+    "Each segmented text unit (paragraph) is split into multiple text units, one per aligned segment pair.",
+    "The conversion is applied for all target locales.",
+    "Referent and reference text units are passed through unchanged to avoid complex dependency handling."
   ],
+  "fullDoc": "# Segments to Text Units Converter\n\nConverts segmented text units (paragraphs) into multiple text units, one per aligned sentence pair, for each target locale. This is useful for steps like the Diff Leverage Step which require un-segmented text units. Text units that reference other `IResource` objects or are referents are passed through unchanged.\n\n## Parameters\n\nThis step has no parameters.\n\n## Limitations\n\n- Using this step may prevent merging, so it should only be used in pipelines that do not require translated translation kits to be merged.\n- Text units that refer to another `IResource` or are referents are passed through as-is, even if they contain segments.\n\n## Notes\n\n- This step is commonly paired with the Diff Leverage Step, which requires un-segmented text units to function correctly.\n- The conversion operates on all target locales present in the document.\n\n## Examples\n\n### Converting segmented paragraphs for diff leverage\n\nA typical use case is placing this step before the Diff Leverage Step in a pipeline:\n\n1. Segmentation Step — segments paragraphs into sentences\n2. **Segments to Text Units Converter** — converts each segment pair into its own text unit\n3. Diff Leverage Step — performs leverage on the now-individual text units",
   "examples": [
     {
-      "title": "Use with Diff Leverage Step",
-      "description": "The primary use case is to prepare segmented content for steps that require un-segmented text units. Place this step **before** the Diff Leverage Step in the pipeline to convert paragraph-level text units into sentence-level text units."
+      "title": "Pipeline with Diff Leverage Step",
+      "description": "Place this step before the Diff Leverage Step to convert segmented paragraphs into individual text units, which the Diff Leverage Step requires.\n\n1. Segmentation Step segments paragraphs into aligned sentence pairs\n2. Segments to Text Units Converter splits each segment pair into its own text unit\n3. Diff Leverage Step performs leverage on the individual text units"
     }
   ],
   "stepId": "convert-segments-to-text-units",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/segments_to_text_units_converter_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Segments_to_Text_Units_Converter_Step"
 }

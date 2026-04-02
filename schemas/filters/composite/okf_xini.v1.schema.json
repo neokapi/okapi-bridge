@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_xini.v1.schema.json",
   "version": 1,
-  "title": "XINI Filter Filter",
-  "description": "Configuration for the Okapi XINI Filter Filter",
+  "title": "XINI Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_xini",
@@ -137,6 +136,6 @@
   "x-apiVersion": "v1",
   "x-baseVersion": 1,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "517131e0f7be",
-  "x-compositeHash": "0322ece26eeb"
+  "x-baseHash": "6e797be1dcf1",
+  "x-compositeHash": "d90e2a66d41e"
 }

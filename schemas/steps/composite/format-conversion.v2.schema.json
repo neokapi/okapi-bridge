@@ -38,12 +38,14 @@
     "singleOutput": {
       "type": "boolean",
       "default": true,
-      "title": "Create a single output document"
+      "title": "Single Output Document",
+      "description": "Generates one combined output document for all input documents instead of one per input"
     },
     "autoExtensions": {
       "type": "boolean",
       "default": false,
-      "title": "Output paths are the input paths plus the new format extension"
+      "title": "Append Format Extension",
+      "description": "Output paths are the input paths with the new format extension appended (e.g., .tmx, .po)"
     },
     "targetStyle": {
       "type": "integer",
@@ -56,7 +58,10 @@
       "default": "",
       "description": "Full path of the single output document to generate",
       "title": "Output path",
-      "x-path": { "type": "file", "role": "output" }
+      "x-path": {
+        "type": "file",
+        "role": "output"
+      }
     },
     "outputFormat": {
       "type": "string",
@@ -67,22 +72,26 @@
     "useGenericCodes": {
       "type": "boolean",
       "default": false,
-      "title": "Output generic inline codes"
+      "title": "Generic Inline Codes",
+      "description": "Replaces original inline codes with generic placeholders like <N>, </N>, and <N/>"
     },
     "skipEntriesWithoutText": {
       "type": "boolean",
       "default": true,
-      "title": "Do not output entries without text"
+      "title": "Skip Empty Entries",
+      "description": "Suppresses output of entries that contain no text (empty or inline-codes only)"
     },
     "approvedEntriesOnly": {
       "type": "boolean",
       "default": false,
-      "title": "Output only approved entries"
+      "title": "Approved Entries Only",
+      "description": "Restricts output to entries with the target approved property set to yes"
     },
     "overwriteSameSource": {
       "type": "boolean",
       "default": false,
-      "title": "Overwrite if source is the same (for Pensieve TM)"
+      "title": "Overwrite Same Source",
+      "description": "For Pensieve TM output, replaces existing entries when the source text matches"
     }
   }
 }

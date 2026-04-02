@@ -1,56 +1,67 @@
 {
-  "filterName": "Image Modification",
-  "overview": "This step modifies the size or format of image files. It takes a raw document containing an image and produces a modified raw document with the resized or reformatted image. Both source and target languages are required in the pipeline context.",
+  "filterName": "Image Modification Step",
+  "overview": "This step modifies the size or format of image files. It takes a raw document containing an image and sends back a modified raw document. Supports scaling width and height independently, converting to grayscale, and changing the output image format.",
   "parameters": {
     "scaleWidth": {
-      "help": "Sets the width of the output image as a percentage of the original width. Use `100` to keep the original width unchanged.",
-      "values": "Integer greater than 0. A value of `100` means no change; values below 100 shrink, above 100 enlarge.",
+      "help": "Sets the width of the output image as a percentage of the original. Use `100` for the same width as the original, `50` for half-width, `200` for double-width.",
+      "values": "Integer greater than 0. Value of `100` means no change.",
       "examples": [
+        "`100` — same width as original",
         "`50` — half the original width",
-        "`100` — same as the original width",
         "`200` — double the original width"
       ]
     },
     "scaleHeight": {
-      "help": "Sets the height of the output image as a percentage of the original height. Use `100` to keep the original height unchanged.",
-      "values": "Integer greater than 0. A value of `100` means no change; values below 100 shrink, above 100 enlarge.",
+      "help": "Sets the height of the output image as a percentage of the original. Use `100` for the same height as the original, `50` for half-height, `200` for double-height.",
+      "values": "Integer greater than 0. Value of `100` means no change.",
       "examples": [
+        "`100` — same height as original",
         "`50` — half the original height",
-        "`100` — same as the original height",
         "`200` — double the original height"
       ]
     },
     "makeGray": {
-      "help": "Converts the image to grayscale, replacing all colors with corresponding gray values."
+      "help": "Converts all colors in the image to a corresponding set of grays, producing a grayscale output image."
     },
     "format": {
-      "help": "Selects the output image format. Leave empty (or use the default) to output in the same format as the original. If a specific format is chosen, the file extension is **not** changed automatically.",
+      "help": "Sets the image format for the output file. Leave empty (or use `<same as the original>`) to keep the original format. If the original format is not supported for output, a warning is generated and the output falls back to **PNG** if possible.",
       "notes": [
-        "If the original format is not supported for output, a warning is generated and the output falls back to PNG if possible.",
-        "Selecting a specific format does **not** automatically change the file extension — you may need a separate renaming step."
+        "Selecting a specific output format does **not** automatically change the file extension — you may need a separate renaming step.",
+        "If the original format is unsupported for writing, the step falls back to PNG output with a warning."
+      ],
+      "examples": [
+        "Empty string — keep the original format",
+        "`png` — convert to PNG",
+        "`jpg` — convert to JPEG"
       ]
     }
   },
   "limitations": [
-    "Supported image formats on input vary depending on the Java VM, version, and platform.",
-    "When converting to a specific output format, the file extension is not changed automatically."
+    "Supported input image formats depend on the Java VM, its version, and the platform — not all formats may be available in all environments.",
+    "Changing the output format does **not** automatically rename the file extension."
   ],
   "processingNotes": [
-    "Width and height scaling are independent — setting different percentages will change the aspect ratio.",
-    "If the original image format is unsupported for output, the step falls back to PNG."
+    "Width and height scaling are independent — non-uniform scaling is possible (e.g., 50% width with 100% height).",
+    "The step operates on raw documents, so it must be placed in a pipeline path that routes image files as raw documents."
   ],
   "examples": [
     {
-      "title": "Scale images to 50%",
-      "description": "Reduce both width and height to half the original size (the default configuration).",
-      "config": "```yaml\nscaleWidth: 50\nscaleHeight: 50\nformat: ''\nmakeGray: false\n```"
+      "title": "Scale images to half size",
+      "description": "Reduces both width and height to 50% of the original, keeping the original format.",
+      "config": "```yaml\nscaleWidth: 50\nscaleHeight: 50\nformat: \"\"\nmakeGray: false\n```"
     },
     {
       "title": "Convert to grayscale PNG",
-      "description": "Convert images to grayscale and force PNG output format.",
+      "description": "Converts images to grayscale and outputs as PNG format.",
       "config": "```yaml\nscaleWidth: 100\nscaleHeight: 100\nformat: png\nmakeGray: true\n```"
     }
   ],
+  "propertySuggestions": {
+    "makeGray": {
+      "description": "Convert the image colors into a set of grays."
+    }
+  },
+  "fullDoc": "# Image Modification Step\n\nThis step modifies the size or format of image files. It takes a raw document containing an image and sends back a modified raw document. Supports scaling width and height independently, converting to grayscale, and changing the output image format.\n\n## Parameters\n\n#### Percentage of the original width\n\nSets the width of the output image as a percentage of the original. Use `100` for the same width as the original, `50` for half-width, `200` for double-width. Value must be greater than 0.\n\n#### Percentage of the original height\n\nSets the height of the output image as a percentage of the original. Use `100` for the same height as the original, `50` for half-height, `200` for double-height. Value must be greater than 0.\n\n#### Convert to gray scale\n\nConverts all colors in the image to a corresponding set of grays, producing a grayscale output image.\n\n#### Output format\n\nSets the image format for the output file. Leave empty (or use `<same as the original>`) to keep the original format. If the original format is not supported for output, a warning is generated and the output falls back to **PNG** if possible.\n\n> **Note:** Selecting a specific output format does **not** automatically change the file extension — you may need a separate renaming step.\n\n## Limitations\n\n- Supported input image formats depend on the Java VM, its version, and the platform — not all formats may be available in all environments.\n- Changing the output format does **not** automatically rename the file extension.\n\n## Notes\n\n- Width and height scaling are independent — non-uniform scaling is possible (e.g., 50% width with 100% height).\n- The step operates on raw documents, so it must be placed in a pipeline path that routes image files as raw documents.\n\n## Examples\n\n### Scale images to half size\n\nReduces both width and height to 50% of the original, keeping the original format.\n\n```yaml\nscaleWidth: 50\nscaleHeight: 50\nformat: \"\"\nmakeGray: false\n```\n\n### Convert to grayscale PNG\n\nConverts images to grayscale and outputs as PNG format.\n\n```yaml\nscaleWidth: 100\nscaleHeight: 100\nformat: png\nmakeGray: true\n```",
   "stepId": "image-modification",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/image_modification_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Image_Modification_Step"
 }

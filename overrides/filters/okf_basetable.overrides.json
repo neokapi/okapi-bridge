@@ -3,5 +3,10 @@
   "title": "Table (Generic)",
   "$include": [
     "_fragments/inlineCodes.fragment.json"
-  ]
+  ],
+  "fields": {
+    "columns": {
+      "title": "Column definitions"
+    }
+  }
 }

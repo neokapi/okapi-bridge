@@ -1,38 +1,42 @@
 {
-  "filterName": "Leveraging",
-  "overview": "This step leverages existing translations into extracted text units by querying translation resources (TM engines or MT systems) and optionally copying the best match into the target content. It processes filter events, skipping non-translatable and approved text units. Multiple Leveraging steps can be chained to query different resources in sequence — e.g., a TM first, then an MT engine for unleveraged entries.",
+  "filterName": "Leveraging Step",
+  "overview": "The Leveraging step sends extracted text units (or segments) to a translation resource — either a TM engine or an MT system — and retrieves matching translations. Matches above a configurable threshold are attached as annotations to the target, and optionally the best match can be copied directly into the target content. Non-translatable and approved text units are automatically skipped. Multiple Leveraging steps can be chained to query several resources in sequence (e.g., TM first, then MT for unmatched entries).",
   "parameters": {
     "leverage": {
-      "help": "Master switch for this step. Allows you to keep the step in your pipeline configuration while toggling it on and off without removing it."
+      "help": "Master switch for the step. Allows you to keep the step configured in your pipeline while toggling it on and off without removing it."
     },
     "resourceClassName": {
-      "help": "Fully qualified Java class name of the translation resource connector to use. Can be a TM connector or an MT engine connector.\n\nFor available connectors and their configuration, see the **Connectors** documentation.",
-      "values": "Fully qualified Java class name. Common values include:\n- `net.sf.okapi.connectors.pensieve.PensieveTMConnector` — Pensieve TM\n- Various MT engine connectors depending on installation",
+      "help": "Fully qualified Java class name of the translation resource connector to use. Can be a TM connector (e.g., Pensieve) or an MT connector. The list of available connectors depends on your installation. Internet-based resources may be slow and result in lengthy processing time.\n\nSee the Okapi **Connectors** documentation for available options.",
+      "values": "Fully qualified Java class name implementing `ITranslationResource`. Default is `net.sf.okapi.connectors.pensieve.PensieveTMConnector`.",
       "seeAlso": "Connectors"
     },
     "noQueryThreshold": {
-      "help": "If a text unit already has a translation candidate with a score at or above this value, no query is sent to the translation resource. This is useful for avoiding queries to **for-fee resources** (e.g., MT engines) when a good-enough match already exists from a previous leveraging step.\n\nSet to **101** to always query regardless of existing candidates.",
-      "values": "Integer score threshold (0–101). Use `101` to always allow the query.",
+      "help": "If a text unit already has a translation candidate with a score equal to or above this value, no query is sent to the translation resource. This avoids unnecessary (and potentially costly) lookups when a good-enough match already exists.\n\nSet to **101** to always query the resource regardless of existing candidates.",
+      "values": "Integer score from 0–101. Use `101` to always allow the query.",
       "examples": [
-        "`101` — always query the resource (default)",
+        "`101` — always query the resource",
         "`100` — skip query if an exact match already exists",
         "`95` — skip query if a 95%+ match already exists"
       ]
     },
     "threshold": {
-      "help": "Minimum match score for a result to be accepted. Matches below this score are discarded entirely and not added to the candidate list.",
-      "values": "Integer percentage (0–100)."
+      "help": "Minimum match score for a translation to be accepted and attached as an annotation to the text unit. Matches below this score are discarded entirely."
     },
     "fillTarget": {
-      "help": "Copies the translation of the best match directly into the target content of the text unit, provided its score meets the `fillTargetThreshold`. If the score is below the threshold, the match is still added to the candidate list but **not** copied into the target."
+      "help": "Copies the best translation candidate directly into the target content of the text unit, provided its score meets the `fillTargetThreshold`. The match is still added as an annotation regardless of this setting.",
+      "dependsOn": [
+        {
+          "property": "fillTargetThreshold",
+          "condition": "controls the minimum score for filling"
+        }
+      ]
     },
     "fillTargetThreshold": {
-      "help": "The minimum score the best match must have for its translation to be copied into the target content. Matches below this threshold remain in the candidate list but are not applied to the target.",
-      "values": "Integer percentage (0–100).",
+      "help": "Minimum match score for copying the best candidate into the target content. If the best match scores below this value, the translation is **not** copied into the target — but it is still attached as an annotation/candidate.",
       "dependsOn": [
         {
           "property": "fillTarget",
-          "condition": "must be true for this threshold to have any effect"
+          "condition": "must be true for this to take effect"
         }
       ]
     },
@@ -41,58 +45,77 @@
       "dependsOn": [
         {
           "property": "fillTarget",
-          "condition": "must be true"
+          "condition": "must be true for this to take effect"
         }
       ]
     },
     "fillIfTargetIsSameAsSource": {
-      "help": "Also fills the target when the existing target content is identical (text and codes) to the source. This catches cases where the target was pre-populated with a copy of the source rather than a real translation.",
+      "help": "Allows overwriting target content when it is identical (text and codes) to the source. Useful for catching untranslated entries that were initialized with source content.",
       "dependsOn": [
         {
           "property": "fillIfTargetIsEmpty",
-          "condition": "must be true — this option extends the 'only if empty' behavior"
+          "condition": "must be true for this option to be enabled"
         },
         {
           "property": "fillTarget",
-          "condition": "must be true"
+          "condition": "must be true for this to take effect"
         }
       ]
     },
     "downgradeIdenticalBestMatches": {
-      "help": "Downgrades by **1%** the score of top exact matches that are identical to each other. When a connector returns multiple exact matches with different translations, some downstream components may trigger automated actions on exact matches. This option prevents such automation when the \"exact match\" is ambiguous.",
+      "help": "Reduces the score of identical exact matches by 1%. Some connectors return multiple exact matches that differ only in their translation. Because downstream components may trigger automated processes on exact matches, this prevents such triggers when the best match is ambiguous.",
       "notes": [
-        "Only affects scoring when multiple identical best matches exist — a single unique exact match is not downgraded."
+        "Only affects cases where multiple exact matches are returned with identical source text but different translations."
       ]
     },
     "makeTMX": {
-      "help": "Creates a single TMX document containing all entries for which a match was found across all input files. Useful for archiving leveraged results or feeding them into another TM."
+      "help": "Creates a single TMX document containing all entries for which a match was found across all input files.",
+      "dependsOn": [
+        {
+          "property": "tmxPath",
+          "condition": "must specify the output file path"
+        }
+      ]
     },
     "tmxPath": {
-      "help": "Full file path for the generated TMX document. Supports pipeline variables for dynamic paths.",
-      "values": "File path string. Supports variables:\n- `${rootDir}` — pipeline root directory\n- `${inputRootDir}` — input root directory\n- `${srcLoc}`, `${trgLoc}` — source/target locale codes\n- Other locale variables",
+      "help": "Full path for the generated TMX document. Supports pipeline variables for dynamic paths.",
+      "values": "File path. Supports variables: `${rootDir}`, `${inputRootDir}`, and locale variables (`${srcLoc}`, `${trgLoc}`, etc.).",
       "examples": [
-        "`${rootDir}/leveraged_${trgLoc}.tmx`"
+        "`${rootDir}/leveraged.tmx`",
+        "`${rootDir}/${srcLoc}_${trgLoc}_leveraged.tmx`"
       ],
       "dependsOn": [
         {
           "property": "makeTMX",
-          "condition": "must be true"
+          "condition": "must be true for this path to be used"
         }
       ]
     },
     "useMTPrefix": {
-      "help": "Adds an MT-specific prefix to the source text for entries coming from an MT engine. This ensures the entry will only be treated as a **fuzzy match** in tools that cannot identify MT origin via the `creationid` attribute.",
-      "notes": [
-        "This is important for downstream TM tools that may otherwise treat MT output as an exact human translation."
-      ]
+      "help": "Adds an MT-specific prefix to the source text when the match originates from an MT engine. This ensures the entry is treated as a fuzzy match in tools that cannot identify MT origin via the `creationid` attribute."
     },
     "useTargetPrefix": {
-      "help": "Adds a configurable prefix to the front of the leveraged translation text when a match is found and copied into the target. The prefix is only added when the match score is at or below `targetPrefixThreshold`."
+      "help": "Adds a configurable prefix to the front of leveraged translations copied into the target, based on the match score. Useful for flagging fuzzy matches (e.g., prefixing with `FUZZY__`) so translators can identify them.",
+      "dependsOn": [
+        {
+          "property": "fillTarget",
+          "condition": "must be true — prefix is only added when a match is copied into target"
+        },
+        {
+          "property": "targetPrefix",
+          "condition": "defines the prefix text"
+        },
+        {
+          "property": "targetPrefixThreshold",
+          "condition": "controls the score threshold for adding the prefix"
+        }
+      ]
     },
     "targetPrefix": {
-      "help": "The prefix string prepended to leveraged translations when `useTargetPrefix` is enabled and the match score is at or below the threshold.",
+      "help": "The prefix string inserted at the front of leveraged translations when their match score is at or below `targetPrefixThreshold`.",
       "examples": [
-        "`FUZZY__` — default prefix to flag fuzzy matches"
+        "`FUZZY__` — default prefix for identifying fuzzy matches",
+        "`[REVIEW] ` — prefix flagging translations needing review"
       ],
       "dependsOn": [
         {
@@ -102,34 +125,110 @@
       ]
     },
     "targetPrefixThreshold": {
-      "help": "The prefix is added to the translation only when the best match score is **equal to or below** this value. Matches above this threshold are copied without the prefix.",
-      "values": "Integer percentage (0–100). Set to `99` to prefix all fuzzy matches but not exact (100%) matches.",
+      "help": "The prefix is added to the leveraged translation only when the best match score is **equal to or below** this value. Matches above this threshold are copied without a prefix.",
       "dependsOn": [
         {
           "property": "useTargetPrefix",
           "condition": "must be true"
         }
+      ],
+      "examples": [
+        "`99` — prefix all non-exact matches",
+        "`94` — prefix only matches below 95%"
       ]
     },
     "copySourceOnNoText": {
-      "help": "Copies the source content into the target when the source contains **no translatable text** (only whitespace and/or inline codes). This overwrites any existing target content for such entries."
+      "help": "Copies the source content into the target when the source contains no translatable text (only whitespace and/or inline codes). This copy overwrites any existing target content."
     }
   },
-  "processingNotes": [
-    "Text units flagged as **non-translatable** are skipped entirely.",
-    "Text units with the `approved` property set to `yes` are skipped — they are assumed to already have a valid translation.",
-    "When text units are segmented, queries are sent per-segment rather than per-text-unit.",
-    "Matches are stored as annotations attached to the target container or target segments of the text unit.",
-    "Multiple Leveraging steps can be chained in a pipeline to query different resources in sequence (e.g., TM first, then MT for remaining entries).",
-    "Internet-based translation resources (cloud TM/MT) may result in lengthy processing times."
-  ],
   "limitations": [],
+  "processingNotes": [
+    "Non-translatable text units are automatically skipped.",
+    "Text units with the `approved` property set to `yes` are automatically skipped.",
+    "Multiple Leveraging steps can be chained in a pipeline to query several translation resources in sequence (e.g., TM first, then MT for unmatched entries).",
+    "Matches are attached as annotations to the target container or target segments regardless of the fill-target settings.",
+    "Internet-based translation resources (e.g., cloud MT) may result in lengthy processing time.",
+    "A single TMX output document is generated across all input files when TMX generation is enabled."
+  ],
   "examples": [
     {
-      "title": "Chain TM then MT leveraging",
-      "description": "Use two Leveraging steps: the first queries a local TM, the second queries an MT engine only for entries that didn't get a high-quality TM match. Set `noQueryThreshold` on the second step to skip entries already matched by the TM."
+      "title": "TM leveraging with fuzzy prefix",
+      "description": "Leverage from a Pensieve TM, fill target for 95%+ matches, and prefix fuzzy matches for translator review.",
+      "config": "```yaml\nleverage: true\nresourceClassName: net.sf.okapi.connectors.pensieve.PensieveTMConnector\nthreshold: 70\nfillTarget: true\nfillTargetThreshold: 95\nuseTargetPrefix: true\ntargetPrefix: \"FUZZY__\"\ntargetPrefixThreshold: 99\n```"
+    },
+    {
+      "title": "Chained TM + MT leveraging",
+      "description": "Use two Leveraging steps in sequence: the first queries a TM and the second uses MT only for entries without an existing good match. Set `noQueryThreshold` on the second step to skip entries already matched by the TM.",
+      "config": "```yaml\n# Step 1 — TM\nleverage: true\nresourceClassName: net.sf.okapi.connectors.pensieve.PensieveTMConnector\nthreshold: 70\nfillTarget: true\nfillTargetThreshold: 95\nnoQueryThreshold: 101\n\n# Step 2 — MT (only for unmatched)\nleverage: true\nresourceClassName: net.sf.okapi.connectors.microsoft.MicrosoftMTConnector\nthreshold: 0\nfillTarget: true\nfillTargetThreshold: 0\nnoQueryThreshold: 95\nuseMTPrefix: true\n```"
     }
   ],
+  "propertySuggestions": {
+    "leverage": {
+      "title": "Leverage Text Units",
+      "description": "Enable leveraging of text units with existing translations."
+    },
+    "resourceClassName": {
+      "title": "Translation Resource",
+      "description": "Java class name of the translation resource connector (TM or MT engine)."
+    },
+    "noQueryThreshold": {
+      "title": "No-Query Threshold",
+      "description": "Skip query if an existing candidate scores at or above this value (101 = always query)."
+    },
+    "threshold": {
+      "title": "Minimum Match Score",
+      "description": "Accept only matches with a score equal to or above this threshold."
+    },
+    "fillTarget": {
+      "title": "Fill Target with Translation",
+      "description": "Copy the best translation candidate into the target content."
+    },
+    "fillTargetThreshold": {
+      "title": "Fill Target Threshold",
+      "description": "Minimum match score required to copy the best candidate into the target."
+    },
+    "fillIfTargetIsEmpty": {
+      "title": "Only If Target Is Empty",
+      "description": "Fill the target only when it has no existing content."
+    },
+    "fillIfTargetIsSameAsSource": {
+      "title": "Also If Target Equals Source",
+      "description": "Also fill the target when its content is identical to the source."
+    },
+    "downgradeIdenticalBestMatches": {
+      "title": "Downgrade Identical Exact Matches",
+      "description": "Reduce score by 1% when multiple identical exact matches are returned."
+    },
+    "makeTMX": {
+      "title": "Generate TMX Document",
+      "description": "Create a TMX file with all leveraged matches."
+    },
+    "tmxPath": {
+      "title": "TMX Output Path",
+      "description": "File path for the generated TMX document."
+    },
+    "useMTPrefix": {
+      "title": "Add MT Prefix to Source",
+      "description": "Add an MT-specific prefix to the source text for MT-origin entries."
+    },
+    "useTargetPrefix": {
+      "title": "Add Prefix to Translation",
+      "description": "Add a prefix to leveraged translations based on match score."
+    },
+    "targetPrefix": {
+      "title": "Target Prefix Text",
+      "description": "Prefix string to prepend to leveraged translations."
+    },
+    "targetPrefixThreshold": {
+      "title": "Prefix Score Threshold",
+      "description": "Add the prefix when the match score is equal to or below this value."
+    },
+    "copySourceOnNoText": {
+      "title": "Copy Source If No Text",
+      "description": "Copy source into target when the source has no translatable text."
+    }
+  },
+  "fullDoc": "# Leveraging Step\n\nThe Leveraging step sends extracted text units (or segments) to a translation resource — either a TM engine or an MT system — and retrieves matching translations. Matches above a configurable threshold are attached as annotations to the target, and optionally the best match can be copied directly into the target content. Non-translatable and approved text units are automatically skipped. Multiple Leveraging steps can be chained to query several resources in sequence (e.g., TM first, then MT for unmatched entries).\n\n## Parameters\n\n### General\n\n#### Leverage Text Units\nMaster switch for the step. Allows you to keep the step configured in your pipeline while toggling it on and off without removing it.\n\n#### Translation Resource\nFully qualified Java class name of the translation resource connector to use. Can be a TM connector (e.g., Pensieve) or an MT connector. The list of available connectors depends on your installation. Internet-based resources may be slow and result in lengthy processing time. See the Okapi **Connectors** documentation for available options.\n\n#### No-Query Threshold\nIf a text unit already has a translation candidate with a score equal to or above this value, no query is sent to the translation resource. This avoids unnecessary (and potentially costly) lookups when a good-enough match already exists. Set to **101** to always query the resource regardless of existing candidates.\n\n#### Minimum Match Score\nMinimum match score for a translation to be accepted and attached as an annotation to the text unit. Matches below this score are discarded entirely.\n\n#### Downgrade Identical Exact Matches\nReduces the score of identical exact matches by 1%. Some connectors return multiple exact matches that differ only in their translation. Because downstream components may trigger automated processes on exact matches, this prevents such triggers when the best match is ambiguous.\n\n#### Copy Source If No Text\nCopies the source content into the target when the source contains no translatable text (only whitespace and/or inline codes). This copy overwrites any existing target content.\n\n### Fill Target\n\n#### Fill Target with Translation\nCopies the best translation candidate directly into the target content of the text unit, provided its score meets the fill target threshold. The match is still added as an annotation regardless of this setting.\n\n#### Fill Target Threshold\nMinimum match score for copying the best candidate into the target content. If the best match scores below this value, the translation is **not** copied into the target — but it is still attached as an annotation/candidate.\n\n#### Only If Target Is Empty\nRestricts target filling to only text units where the target is currently empty. Prevents overwriting existing translations.\n\n#### Also If Target Equals Source\nAllows overwriting target content when it is identical (text and codes) to the source. Useful for catching untranslated entries that were initialized with source content. Only available when \"Only If Target Is Empty\" is enabled.\n\n### Target Prefix\n\n#### Add Prefix to Translation\nAdds a configurable prefix to the front of leveraged translations copied into the target, based on the match score. Useful for flagging fuzzy matches so translators can identify them.\n\n#### Target Prefix Text\nThe prefix string inserted at the front of leveraged translations when their match score is at or below the prefix threshold. Default: `FUZZY__`.\n\n#### Prefix Score Threshold\nThe prefix is added to the leveraged translation only when the best match score is **equal to or below** this value. Matches above this threshold are copied without a prefix.\n\n### MT Prefix\n\n#### Add MT Prefix to Source\nAdds an MT-specific prefix to the source text when the match originates from an MT engine. This ensures the entry is treated as a fuzzy match in tools that cannot identify MT origin via the `creationid` attribute.\n\n### TMX Output\n\n#### Generate TMX Document\nCreates a single TMX document containing all entries for which a match was found across all input files.\n\n#### TMX Output Path\nFull path for the generated TMX document. Supports variables: `${rootDir}`, `${inputRootDir}`, and locale variables (`${srcLoc}`, `${trgLoc}`, etc.).\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- Non-translatable text units are automatically skipped.\n- Text units with the `approved` property set to `yes` are automatically skipped.\n- Multiple Leveraging steps can be chained in a pipeline to query several translation resources in sequence (e.g., TM first, then MT for unmatched entries).\n- Matches are attached as annotations to the target container or target segments regardless of the fill-target settings.\n- Internet-based translation resources (e.g., cloud MT) may result in lengthy processing time.\n- A single TMX output document is generated across all input files when TMX generation is enabled.\n\n## Examples\n\n### TM leveraging with fuzzy prefix\n\nLeverage from a Pensieve TM, fill target for 95%+ matches, and prefix fuzzy matches for translator review.\n\n```yaml\nleverage: true\nresourceClassName: net.sf.okapi.connectors.pensieve.PensieveTMConnector\nthreshold: 70\nfillTarget: true\nfillTargetThreshold: 95\nuseTargetPrefix: true\ntargetPrefix: \"FUZZY__\"\ntargetPrefixThreshold: 99\n```\n\n### Chained TM + MT leveraging\n\nUse two Leveraging steps in sequence: the first queries a TM and the second uses MT only for entries without an existing good match. Set `noQueryThreshold` on the second step to skip entries already matched by the TM.\n\n```yaml\n# Step 1 — TM\nleverage: true\nresourceClassName: net.sf.okapi.connectors.pensieve.PensieveTMConnector\nthreshold: 70\nfillTarget: true\nfillTargetThreshold: 95\nnoQueryThreshold: 101\n\n# Step 2 — MT (only for unmatched)\nleverage: true\nresourceClassName: net.sf.okapi.connectors.microsoft.MicrosoftMTConnector\nthreshold: 0\nfillTarget: true\nfillTargetThreshold: 0\nnoQueryThreshold: 95\nuseMTPrefix: true\n```",
   "stepId": "leveraging",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/leveraging_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Leveraging_Step"
 }

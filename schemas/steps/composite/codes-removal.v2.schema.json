@@ -37,12 +37,14 @@
     "stripSource": {
       "type": "boolean",
       "default": true,
-      "title": "Strip codes in the source text"
+      "title": "Strip codes in the source text",
+      "description": "Apply the selected removal action to the source text of each text unit"
     },
     "stripTarget": {
       "type": "boolean",
       "default": true,
-      "title": "Strip codes in the target text"
+      "title": "Strip codes in the target text",
+      "description": "Apply the selected removal action to the target text of each text unit"
     },
     "mode": {
       "type": "integer",
@@ -53,12 +55,14 @@
     "includeNonTranslatable": {
       "type": "boolean",
       "default": true,
-      "title": "Apply to non-translatable text units"
+      "title": "Apply to non-translatable text units",
+      "description": "Apply the removal action even to text units marked as non-translatable"
     },
     "replaceWithSpace": {
       "type": "boolean",
       "default": false,
-      "title": "Replace line break codes with spaces (When removing content AND marker)"
+      "title": "Replace line break codes with spaces (When removing content AND marker)",
+      "description": "Replace line-break inline codes with spaces instead of removing them entirely (only when removing both marker and content)"
     }
   }
 }

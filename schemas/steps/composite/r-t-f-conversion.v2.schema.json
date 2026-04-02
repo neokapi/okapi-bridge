@@ -39,7 +39,8 @@
     "bomOnUTF8": {
       "type": "boolean",
       "default": true,
-      "title": "Use Byte-Order-Mark for UTF-8 output"
+      "title": "Use Byte-Order-Mark for UTF-8 output",
+      "description": "Add a Byte-Order-Mark at the beginning of the file when the output encoding is UTF-8."
     },
     "lineBreak": {
       "type": "string",
@@ -50,7 +51,8 @@
     "updateEncoding": {
       "type": "boolean",
       "default": true,
-      "title": "Try to update the encoding declarations (when detected)"
+      "title": "Try to update the encoding declarations (when detected)",
+      "description": "Automatically update encoding declarations in XML and HTML output files to match the output encoding."
     }
   }
 }

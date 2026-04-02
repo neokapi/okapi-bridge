@@ -5,16 +5,68 @@
     "_fragments/extraction.fragment.json"
   ],
   "fields": {
-    "startString": {},
-    "endString": {},
+    "startString": {
+      "title": "Beginning of String",
+      "description": "Character(s) marking the start of a string for string extraction."
+    },
+    "endString": {
+      "title": "End of String",
+      "description": "Character(s) marking the end of a string for string extraction."
+    },
     "useBSlashEscape": {},
-    "useDoubleCharEscape": {},
+    "useDoubleCharEscape": {
+      "title": "Double Character Escape",
+      "description": "Use character doubling to escape characters in strings."
+    },
     "removeBSlashEscape": {},
     "oneLevelGroups": {},
     "useLd": {},
     "localizeOutside": {},
     "regexOptions": {},
-    "mimeType": {},
-    "subFilter": {}
+    "mimeType": {
+      "title": "Document MIME Type",
+      "description": "MIME type used to identify the document format during extraction."
+    },
+    "subFilter": {},
+    "preserveWhiteSpaces": {
+      "title": "Preserve White Spaces",
+      "description": "Preserve all white spaces in extracted text instead of collapsing and trimming them."
+    },
+    "hasInlineCodes": {
+      "title": "Has Inline Codes",
+      "description": "Enable conversion of text patterns into inline codes."
+    },
+    "autoCloseSection": {
+      "title": "Auto-Close Sections",
+      "description": "Automatically close the previous section when a new one starts."
+    },
+    "dotAll": {
+      "title": "Dot Matches Line-Feed",
+      "description": "Enable the dot operator to match line-feed characters."
+    },
+    "multiLine": {
+      "title": "Multi-Line Mode",
+      "description": "Make ^ and $ match at line terminators, not just start and end of input."
+    },
+    "ignoreCase": {
+      "title": "Ignore Case",
+      "description": "Ignore letter case differences when matching patterns."
+    },
+    "useLocDir": {
+      "title": "Use Localization Directives",
+      "description": "Recognize and process localization directives in the input."
+    },
+    "extractOutsideLocDir": {
+      "title": "Extract Outside Directives",
+      "description": "Extract translatable items that are not within the scope of a localization directive."
+    },
+    "useBackSlashEscape": {
+      "title": "Backslash Escape",
+      "description": "Use backslash prefix to escape characters in strings."
+    },
+    "rules": {
+      "title": "Extraction Rules",
+      "description": "Ordered list of regex-based rules with actions and capturing group assignments."
+    }
   }
 }

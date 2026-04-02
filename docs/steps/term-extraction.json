@@ -1,151 +1,168 @@
 {
   "filterName": "Term Extraction Step",
-  "overview": "Generates an output file containing a list of possible terms found in the source content of processed text units. The step processes **all input documents** before creating the candidate term list, passing filter events through unchanged to the next step. Terms are found using three methods: Terminology annotations, Text Analysis annotations, or simple statistical analysis on groups of tokens. Non-translatable entries are skipped.",
+  "overview": "Generates an output file containing a list of possible term candidates found in the source content of processed text units. Terms can be discovered through three methods: Terminology annotations, Text Analysis annotations, or simple statistical analysis on groups of tokens. The step processes all input documents before creating the candidate term list, and passes filter events through unchanged to the next step.",
   "parameters": {
     "outputPath": {
-      "help": "Full path of the tab-delimited output file. The file is always written in **UTF-8** with one candidate term per line: occurrence count in the first column, term text in the second column (tab-separated).",
-      "values": "Supports the `${rootDir}` variable for the root directory of the input.",
+      "help": "The generated file is **tab-delimited UTF-8** with one candidate term per line: occurrence count in the first column, term text in the second column.\n\nSupports the `${rootDir}` variable in the path.",
+      "values": "Full file path. Supports `${rootDir}` variable.",
       "examples": [
-        "`${rootDir}/terms.txt` — writes to the input root directory",
-        "`/tmp/extracted-terms.txt` — absolute path"
+        "`${rootDir}/terms.txt` — output to project root",
+        "`${rootDir}/output/glossary-candidates.txt` — output to subdirectory"
       ]
     },
     "autoOpen": {
-      "help": "Automatically opens the result file in the system default application after the pipeline completes."
+      "help": "Automatically opens the generated result file in the system default application after the extraction process completes."
     },
     "sortByOccurrence": {
-      "help": "Controls the sort order of the output file. Results are sorted by occurrence count (descending) when enabled, or **alphabetically** when disabled."
+      "help": "Controls the sort order of the output term list. Results are sorted by descending occurrence count. If not enabled, results are listed **alphabetically**."
     },
     "useTerminologyAnnotations": {
-      "help": "Includes terms defined via the **Terminology annotation** (`TermsAnnotation`). These annotations are created by filters or other steps — for example, by [ITS Terminology data category](http://www.w3.org/TR/its/#terminology) rules when using the XML Filter.",
-      "notes": [
-        "Requires upstream filters or steps that produce `TermsAnnotation` on text unit sources."
-      ]
+      "help": "Extracts terms from `TermsAnnotation` annotations attached to text unit sources. These annotations are created by filters or other steps — for example, by [ITS Terminology data category](http://www.w3.org/TR/its/#terminology) rules when using the XML Filter.\n\nThis is one of three independent extraction methods that can be combined.",
+      "seeAlso": "Term_Extraction_Step#Parameters"
     },
     "useTextAnalysisAnnotations": {
-      "help": "Includes spans annotated with the **Text Analysis annotation** on source content. These annotations are created, for example, by the Enrycher Step.",
-      "notes": [
-        "Requires upstream steps (e.g., Enrycher Step) that produce Text Analysis annotations on source content spans."
-      ]
+      "help": "Extracts terms from spans annotated with the Text Analysis annotation on text unit source content. Such annotations are created by steps like the Enrycher Step.\n\nThis is one of three independent extraction methods that can be combined."
     },
     "useStatistics": {
-      "help": "Finds term candidates using simple statistical analysis on groups of tokens (word sequences). A \"term\" is a sequence of words matching the configured min/max word count and minimum occurrence threshold.\n\nThis method does **not** apply any linguistic processing — words are not reduced to their [stems](http://en.wikipedia.org/wiki/Word_stem).",
+      "help": "Finds term candidates using simple statistical analysis on groups of tokens (word sequences). A \"term\" is defined as a sequence of words meeting the configured minimum/maximum word count and minimum occurrence thresholds.\n\nNo linguistic processing is applied — words are **not** reduced to their [stems](http://en.wikipedia.org/wiki/Word_stem). When enabled, the word count, occurrence, stop-word, and case parameters below become active.",
       "notes": [
-        "No stemming or lemmatization is applied — `running` and `run` are treated as different words."
+        "No stemming or lemmatization is performed — purely frequency-based extraction."
       ]
     },
     "minWordsPerTerm": {
-      "help": "The minimum number of words a token sequence must contain to be considered a candidate term.",
+      "help": "Sets the lower bound on word count for a token sequence to qualify as a term candidate.",
       "dependsOn": [
         {
           "property": "useStatistics",
-          "condition": "only used when tokens-grouping statistics is enabled"
+          "condition": "only meaningful when enabled (tokens-grouping method)"
         }
       ]
     },
     "maxWordsPerTerm": {
-      "help": "The maximum number of words a token sequence can contain. Keep this to a reasonable maximum (**6 or 7, or less**) to avoid combinatorial explosion and noisy results.",
+      "help": "Sets the upper bound on word count for a token sequence to qualify as a term candidate. Keep this to a reasonable maximum — **6 or 7, or less** is recommended.",
+      "notes": [
+        "High values significantly increase processing time and produce many low-quality candidates."
+      ],
       "dependsOn": [
         {
           "property": "useStatistics",
-          "condition": "only used when tokens-grouping statistics is enabled"
+          "condition": "only meaningful when enabled (tokens-grouping method)"
         }
       ]
     },
     "minOccurrences": {
-      "help": "The minimum number of times a word sequence must appear across **all input files** to be retained as a candidate term.",
+      "help": "A word sequence must appear at least this many times across **all input files** to be retained as a term candidate.",
       "dependsOn": [
         {
           "property": "useStatistics",
-          "condition": "only used when tokens-grouping statistics is enabled"
+          "condition": "only meaningful when enabled (tokens-grouping method)"
         }
       ]
     },
     "keepCase": {
-      "help": "Controls whether case differences are preserved when computing token sequences. When disabled, `Term` and `term` are treated as the same word. When enabled, they are treated as distinct words.",
-      "examples": [
-        "Disabled: `Term` and `term` → same word, merged counts",
-        "Enabled: `Term` and `term` → different words, separate counts"
-      ],
+      "help": "Controls whether case differences are preserved during token analysis. When enabled, `Term` and `term` are treated as **different** words. When disabled, they are treated as the same word and grouped together.",
       "dependsOn": [
         {
           "property": "useStatistics",
-          "condition": "only used when tokens-grouping statistics is enabled"
+          "condition": "only meaningful when enabled (tokens-grouping method)"
         }
       ]
     },
     "removeSubTerms": {
-      "help": "Performs an extra post-processing pass that removes candidate terms that appear to be sub-sequences of longer candidate terms. The occurrence count is adjusted: a sub-term is only removed if all its occurrences can be accounted for as parts of longer terms.\n\nFor example, given:\n- `gnu free` = 6\n- `gnu free document` = 6\n- `gnu free document license` = 5\n\nThe result is:\n- `gnu free document` = 1 (retained — occurs once on its own)\n- `gnu free document license` = 5 (retained)\n- `gnu free` is removed (6 = 5 + 1, fully accounted for as sub-sequence)",
+      "help": "Performs an extra post-processing pass that removes candidate terms that appear to be sub-sequences of longer candidates.\n\nFor example, given:\n- `gnu free` = 6\n- `gnu free document` = 6\n- `gnu free document license` = 5\n\nThe result becomes:\n- `gnu free document` = 1\n- `gnu free document license` = 5\n\n`gnu free` is removed because all 6 of its occurrences can be accounted for as sub-sequences of longer retained terms. `gnu free document` is kept with count 1 because it occurs once independently of the longer phrase.",
       "notes": [
-        "**Warning:** In some cases this may remove valid entries when they happen to only occur as sub-sequences of longer, less-valid entries."
+        "**Warning:** May cause loss of valid entries when they only appear as sub-sequences of longer, less relevant entries."
       ],
       "dependsOn": [
         {
           "property": "useStatistics",
-          "condition": "only used when tokens-grouping statistics is enabled"
+          "condition": "only meaningful when enabled (tokens-grouping method)"
         }
       ]
     },
     "stopWordsPath": {
-      "help": "Path to a text file containing **stop words** — words that break a token sequence even if the maximum word count has not been reached. Leave empty to use the built-in English default list.",
-      "values": "Plain text file, one word per line. The default English lists are embedded in the step's JAR at `net/sf/okapi/steps/termextraction`.",
+      "help": "Path to a plain-text file with one stop word per line. Stop words **break** a word sequence even if the maximum word count has not been reached.\n\nLeave empty to use the **built-in English** stop word list (embedded in the step JAR).",
       "notes": [
-        "The default lists are for English only. For other languages, you must provide custom word lists."
+        "The default English lists are embedded in the compiled resources at `net/sf/okapi/steps/termextraction` inside `okapi-lib-VERSION.jar`."
       ],
       "dependsOn": [
         {
           "property": "useStatistics",
-          "condition": "only used when tokens-grouping statistics is enabled"
+          "condition": "only meaningful when enabled (tokens-grouping method)"
         }
       ]
     },
     "notStartWordsPath": {
-      "help": "Path to a text file containing **not-start words** — words that cannot appear at the beginning of a term (but can appear within or at the end). Leave empty to use the built-in English default list.",
-      "values": "Plain text file, one word per line.",
-      "notes": [
-        "The default lists are for English only. For other languages, you must provide custom word lists."
-      ],
+      "help": "Path to a plain-text file with one word per line. Not-start words are **excluded from the beginning** of a term but may appear within or at the end.\n\nLeave empty to use the **built-in English** not-start word list.",
       "dependsOn": [
         {
           "property": "useStatistics",
-          "condition": "only used when tokens-grouping statistics is enabled"
+          "condition": "only meaningful when enabled (tokens-grouping method)"
         }
       ]
     },
     "notEndWordsPath": {
-      "help": "Path to a text file containing **not-end words** — words that cannot appear at the end of a term (but can appear within or at the beginning). Leave empty to use the built-in English default list.",
-      "values": "Plain text file, one word per line.",
-      "notes": [
-        "The default lists are for English only. For other languages, you must provide custom word lists."
-      ],
+      "help": "Path to a plain-text file with one word per line. Not-end words are **excluded from the end** of a term but may appear within or at the beginning.\n\nLeave empty to use the **built-in English** not-end word list.",
       "dependsOn": [
         {
           "property": "useStatistics",
-          "condition": "only used when tokens-grouping statistics is enabled"
+          "condition": "only meaningful when enabled (tokens-grouping method)"
         }
       ]
     }
   },
-  "processingNotes": [
-    "The step collects data across **all input documents** before producing the output file — it does not output per-document results.",
-    "Filter events pass through unchanged to the next pipeline step.",
-    "Non-translatable entries are excluded from term extraction.",
-    "The output file is always written in **UTF-8** with tab-delimited columns (occurrence count, term).",
-    "The three extraction methods (Terminology annotations, Text Analysis annotations, token statistics) can be used independently or combined — each adds candidates to the same output list."
-  ],
   "limitations": [
-    "The built-in stop words, not-start words, and not-end words lists are **English only** — custom lists must be provided for other languages.",
-    "The statistical (tokens-grouping) method performs no linguistic processing — no stemming, lemmatization, or morphological analysis is applied.",
-    "The `removeSubTerms` option may incorrectly remove valid short terms that happen to only occur within longer sequences."
+    "None known (per wiki documentation)."
+  ],
+  "processingNotes": [
+    "The step processes **all** input documents before creating the term list — results are not available until the entire batch completes.",
+    "Non-translatable entries are skipped — no term extraction is performed on them.",
+    "Filter events pass through to the next step **unchanged**.",
+    "The output file is always **UTF-8 encoded**, tab-delimited.",
+    "The three extraction methods (Terminology annotations, Text Analysis annotations, tokens-grouping statistics) are independent and can be combined — results are merged into a single output."
   ],
   "examples": [
     {
+      "title": "Basic statistical term extraction",
+      "description": "Extract multi-word terms appearing at least 3 times, using default English stop words.",
+      "config": "```yaml\noutputPath: ${rootDir}/terms.txt\nuseStatistics: true\nuseTerminologyAnnotations: false\nuseTextAnalysisAnnotations: false\nminWordsPerTerm: 2\nmaxWordsPerTerm: 5\nminOccurrences: 3\nremoveSubTerms: true\nsortByOccurrence: true\n```"
+    },
+    {
+      "title": "Output format",
+      "description": "The generated tab-delimited file lists occurrence count and term on each line.",
+      "output": "```\n12\tuser interface\n8\tsource document\n5\tfile format\n3\ttranslation memory\n```"
+    },
+    {
       "title": "Sub-term removal behavior",
-      "description": "Demonstrates how `removeSubTerms` adjusts occurrence counts and removes terms that are fully accounted for as sub-sequences of longer terms.",
+      "description": "Demonstrates how `removeSubTerms` adjusts counts and removes fully-accounted-for sub-sequences.",
       "input": "```\n6\tgnu free\n6\tgnu free document\n5\tgnu free document license\n```",
-      "output": "```\n1\tgnu free document\n5\tgnu free document license\n```\n\n`gnu free` is removed (6 occurrences = 5 in \"gnu free document license\" + 1 in \"gnu free document\"). `gnu free document` is kept with count 1 (it stands alone once beyond its appearances in the longer term)."
+      "output": "```\n1\tgnu free document\n5\tgnu free document license\n```"
     }
   ],
+  "propertySuggestions": {
+    "autoOpen": {
+      "description": "Automatically open the result file in the default application after completion"
+    },
+    "keepCase": {
+      "description": "Treat words with different casing as distinct tokens (e.g. 'Term' vs 'term')"
+    },
+    "removeSubTerms": {
+      "description": "Remove candidate terms that are sub-sequences of longer retained terms"
+    },
+    "sortByOccurrence": {
+      "description": "Sort output by occurrence count instead of alphabetically"
+    },
+    "useTerminologyAnnotations": {
+      "description": "Include terms from ITS Terminology annotations attached to text units"
+    },
+    "useTextAnalysisAnnotations": {
+      "description": "Include terms from Text Analysis annotation spans on source content"
+    },
+    "useStatistics": {
+      "description": "Find term candidates using frequency-based statistical analysis of word sequences"
+    }
+  },
+  "fullDoc": "# Term Extraction Step\n\nGenerates an output file containing a list of possible term candidates found in the source content of processed text units. Terms can be discovered through three independent methods: Terminology annotations, Text Analysis annotations, or simple statistical analysis on groups of tokens. The step processes all input documents before creating the candidate term list, and passes filter events through unchanged to the next step.\n\n## Parameters\n\n### Output\n\n#### Output path\n\nThe generated file is **tab-delimited UTF-8** with one candidate term per line: occurrence count in the first column, term text in the second column. Supports the `${rootDir}` variable in the path.\n\n#### Open the result file after completion\n\nAutomatically opens the generated result file in the system default application after the extraction process completes.\n\n#### Sort the results by the number of occurrences\n\nControls the sort order of the output term list. Results are sorted by descending occurrence count. If not enabled, results are listed **alphabetically**.\n\n### Extraction Methods\n\n#### Use Terminology annotations\n\nExtracts terms from `TermsAnnotation` annotations attached to text unit sources. These annotations are created by filters or other steps — for example, by ITS Terminology data category rules when using the XML Filter.\n\n#### Use Text Analysis annotations\n\nExtracts terms from spans annotated with the Text Analysis annotation on text unit source content. Such annotations are created by steps like the Enrycher Step.\n\n#### Use tokens-grouping statistics\n\nFinds term candidates using simple statistical analysis on groups of tokens (word sequences). A \"term\" is defined as a sequence of words meeting the configured minimum/maximum word count and minimum occurrence thresholds.\n\n> **Note:** No stemming or lemmatization is performed — purely frequency-based extraction.\n\n### Statistical Method Settings\n\nThese parameters are only used when **Use tokens-grouping statistics** is enabled.\n\n#### Minimum number of words per term\n\nSets the lower bound on word count for a token sequence to qualify as a term candidate.\n\n#### Maximum number of words per term\n\nSets the upper bound on word count for a token sequence to qualify as a term candidate. Keep this to a reasonable maximum — **6 or 7, or less** is recommended.\n\n#### Minimum number of occurrences per term\n\nA word sequence must appear at least this many times across **all input files** to be retained as a term candidate.\n\n#### Preserve case differences\n\nControls whether case differences are preserved during token analysis. When enabled, `Term` and `term` are treated as **different** words. When disabled, they are treated as the same word and grouped together.\n\n#### Remove entries that seem to be sub-strings of longer entries\n\nPerforms an extra post-processing pass that removes candidate terms that appear to be sub-sequences of longer candidates. For example:\n\nInput:\n- `gnu free` = 6\n- `gnu free document` = 6\n- `gnu free document license` = 5\n\nOutput after removal:\n- `gnu free document` = 1\n- `gnu free document license` = 5\n\n> **Warning:** May cause loss of valid entries when they only appear as sub-sequences of longer, less relevant entries.\n\n### Word Lists\n\nThese parameters are only used when **Use tokens-grouping statistics** is enabled. Leave paths empty to use the built-in English defaults.\n\n#### Path of the file with stop words\n\nPath to a plain-text file with one stop word per line. Stop words **break** a word sequence even if the maximum word count has not been reached.\n\n> **Note:** The default English lists are embedded in the compiled resources at `net/sf/okapi/steps/termextraction` inside `okapi-lib-VERSION.jar`.\n\n#### Path of the file with not-start words\n\nPath to a plain-text file with one word per line. Not-start words are **excluded from the beginning** of a term but may appear within or at the end.\n\n#### Path of the file with not-end words\n\nPath to a plain-text file with one word per line. Not-end words are **excluded from the end** of a term but may appear within or at the beginning.\n\n## Limitations\n\n- None known.\n\n## Notes\n\n- The step processes **all** input documents before creating the term list — results are not available until the entire batch completes.\n- Non-translatable entries are skipped.\n- Filter events pass through to the next step unchanged.\n- The output file is always UTF-8 encoded, tab-delimited.\n- The three extraction methods are independent and can be combined.\n\n## Examples\n\n### Basic statistical term extraction\n\n```yaml\noutputPath: ${rootDir}/terms.txt\nuseStatistics: true\nuseTerminologyAnnotations: false\nuseTextAnalysisAnnotations: false\nminWordsPerTerm: 2\nmaxWordsPerTerm: 5\nminOccurrences: 3\nremoveSubTerms: true\nsortByOccurrence: true\n```\n\n### Output format\n\n```\n12\tuser interface\n8\tsource document\n5\tfile format\n3\ttranslation memory\n```",
   "stepId": "term-extraction",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/term_extraction_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Term_Extraction_Step"
 }

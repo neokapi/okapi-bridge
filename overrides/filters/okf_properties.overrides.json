@@ -4,20 +4,49 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "useLd": {},
-    "localizeOutside": {},
-    "convertLFandTab": {},
-    "useKeyCondition": {},
-    "extractOnlyMatchingKey": {},
-    "keyCondition": {},
-    "extraComments": {},
+    "useLd": {
+      "title": "Use Localization Directives",
+      "description": "Enable recognition of localization directives in comments to override default extraction behavior."
+    },
+    "localizeOutside": {
+      "title": "Extract Outside Directives",
+      "description": "Extract translatable items that are not within the scope of a localization directive."
+    },
+    "convertLFandTab": {
+      "title": "Convert \\n and \\t",
+      "description": "Convert \\n and \\t escape sequences to actual line-breaks and tabs during processing."
+    },
+    "useKeyCondition": {
+      "title": "Enable Key Condition",
+      "description": "Filter entries for extraction based on a regex condition applied to their keys."
+    },
+    "extractOnlyMatchingKey": {
+      "title": "Extract Only Matching Keys",
+      "description": "When enabled, extract only entries whose keys match the condition; otherwise exclude matching keys."
+    },
+    "keyCondition": {
+      "title": "Key Condition Pattern",
+      "description": "Regular expression pattern to test against property keys for extraction filtering."
+    },
+    "extraComments": {
+      "title": "Additional Comment Markers",
+      "description": "Recognize semicolon and double-slash comment styles in addition to standard # and ! markers."
+    },
     "commentsAreNotes": {
+      "title": "Comments as Notes",
       "description": "Treat comments as translator notes."
     },
     "escapeExtendedChars": {
+      "title": "Escape Extended Characters",
       "description": "Escape extended Unicode characters in output."
     },
-    "idLikeResname": {},
-    "useJavaEscapes": {}
+    "idLikeResname": {
+      "title": "Use Key as Text Unit ID",
+      "description": "Use the property key value as the text unit ID in addition to the resource name."
+    },
+    "useJavaEscapes": {
+      "title": "Retain Java Escapes",
+      "description": "Keep Java property escape sequences in extracted text instead of resolving them."
+    }
   }
 }

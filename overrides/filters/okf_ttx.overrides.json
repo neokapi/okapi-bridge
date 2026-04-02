@@ -5,6 +5,13 @@
   ],
   "fields": {
     "segmentMode": {},
-    "escapeGT": {}
+    "escapeGT": {
+      "title": "Escape Greater-Than Characters",
+      "description": "Escape all > characters as &gt; in the output."
+    },
+    "extractionMode": {
+      "title": "Extraction Mode",
+      "description": "Controls how existing segments affect text extraction — auto-detect, existing only, or extract all."
+    }
   }
 }

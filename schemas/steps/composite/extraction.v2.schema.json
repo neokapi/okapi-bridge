@@ -47,35 +47,51 @@
   "properties": {
     "writerClass": {
       "type": "string",
-      "default": "net.sf.okapi.steps.rainbowkit.xliff.XLIFFPackageWriter"
+      "default": "net.sf.okapi.steps.rainbowkit.xliff.XLIFFPackageWriter",
+      "title": "Package Format",
+      "description": "Java class of the package writer that determines the translation kit output format (e.g., XLIFF, PO, OmegaT)."
     },
     "packageName": {
       "type": "string",
-      "default": "pack1"
+      "default": "pack1",
+      "title": "Package Name",
+      "description": "Name of the package directory to create inside the output root."
     },
     "packageDirectory": {
       "type": "string",
-      "default": "${inputRootDir}"
+      "default": "${inputRootDir}",
+      "title": "Output Root Directory",
+      "description": "Root directory where the translation package will be created; supports ${inputRootDir} and locale variables."
     },
     "supportFiles": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Support Material Files",
+      "description": "Additional files to include in the package as support material for translators."
     },
     "message": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Package Message",
+      "description": "Optional message or instructions to include with the translation package."
     },
     "outputManifest": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Output Manifest",
+      "description": "Generate a manifest file required for merging the translated kit back into the original format."
     },
     "createZip": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Create ZIP Package",
+      "description": "Create a ZIP archive (.rkp) of the generated translation package."
     },
     "sendOutput": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Send Output to Next Step",
+      "description": "Send prepared files as raw documents to the next pipeline step instead of the original filter events."
     }
   }
 }

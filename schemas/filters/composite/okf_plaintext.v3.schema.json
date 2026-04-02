@@ -1,5 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_plaintext.v3.schema.json",
+  "version": 3,
   "title": "Plain Text",
   "type": "object",
   "x-filter": {
@@ -225,5 +227,11 @@
       "description": "Merge consecutive inline codes into a single placeholder"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-kind": "OkfPlaintextFilterConfig",
+  "x-apiVersion": "v3",
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.48.0",
+  "x-baseHash": "d8b2c2f130be",
+  "x-compositeHash": "e429c7b85762"
 }

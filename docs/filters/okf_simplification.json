@@ -1,9 +1,9 @@
 {
-  "filterName": "Simplifier Filter",
-  "overview": "The Simplifier Filter is a **wrapper filter** that delegates document parsing to another (internal) filter and then transforms the generated events using the [Resource Simplifier Step](Resource_Simplifier_Step) and/or the [Inline Codes Simplifier Step](Inline_Codes_Simplifier_Step). It simplifies filter output by flattening resources and merging or relocating inline codes. The default internal filter is `okf_xmlstream` (XML Stream Filter), but any registered Okapi filter configuration can be used.",
+  "filterName": "Simplification Filter",
+  "overview": "The Simplification Filter is a **wrapper filter** that delegates document parsing to another (internal) filter and then transforms the generated events using the Resource Simplifier Step and/or the Inline Codes Simplifier Step. It simplifies filter output by flattening resources and merging or relocating inline codes. The default internal filter is `okf_xmlstream` (XML Stream Filter), but any registered Okapi filter configuration can be used.",
   "parameters": {
     "filterConfigurationId": {
-      "help": "The configuration ID of the filter that actually parses the document. The Simplifier Filter instantiates this filter internally and post-processes its events.\n\nDefaults to `okf_xmlstream`. You can use any filter configuration ID registered with Okapi (e.g., `okf_html`, `okf_json`, `okf_xml`).",
+      "help": "The configuration ID of the filter that actually parses the document. The Simplification Filter instantiates this filter internally and post-processes its events.\n\nDefaults to `okf_xmlstream`. You can use any filter configuration ID registered with Okapi (e.g., `okf_html`, `okf_json`, `okf_xml`).",
       "values": "A valid Okapi filter configuration ID string (e.g., `okf_xmlstream`, `okf_html`, `okf_json`).",
       "examples": [
         "`okf_xmlstream` — XML Stream Filter (default)",
@@ -29,9 +29,6 @@
           "condition": "at least one of simplifyResources or simplifyCodes must be true"
         }
       ],
-      "notes": [
-        "Code simplification only works with `GenericSkeleton`-based filters. Not all filters use GenericSkeleton."
-      ],
       "seeAlso": "Inline_Codes_Simplifier_Step"
     }
   },
@@ -55,6 +52,21 @@
       "config": "```yaml\nfilterConfigurationId: okf_html\nsimplifyResources: true\nsimplifyCodes: false\n```"
     }
   ],
+  "propertySuggestions": {
+    "filterConfigurationId": {
+      "title": "Filter Configuration ID",
+      "description": "The configuration ID of the internal filter to wrap (e.g., okf_xmlstream, okf_html)."
+    },
+    "simplifyResources": {
+      "title": "Simplify Resources",
+      "description": "Flatten resources by removing references, making them standalone text units."
+    },
+    "simplifyCodes": {
+      "title": "Simplify Codes",
+      "description": "Merge adjacent inline codes and move leading/trailing codes to skeleton."
+    }
+  },
+  "fullDoc": "# Simplification Filter\n\nThe Simplification Filter is a **wrapper filter** that delegates document parsing to another (internal) filter and then transforms the generated events using the Resource Simplifier Step and/or the Inline Codes Simplifier Step. It simplifies filter output by flattening resources and merging or relocating inline codes. The default internal filter is `okf_xmlstream` (XML Stream Filter), but any registered Okapi filter configuration can be used.\n\n## Parameters\n\n#### Filter Configuration ID (`filterConfigurationId`)\n\nThe configuration ID of the filter that actually parses the document. The Simplification Filter instantiates this filter internally and post-processes its events.\n\nDefaults to `okf_xmlstream`. You can use any filter configuration ID registered with Okapi (e.g., `okf_html`, `okf_json`, `okf_xml`).\n\n#### Simplify Resources (`simplifyResources`)\n\nActivates the **Resource Simplifier Step** on events from the internal filter. This performs resource flattening — removing references from resources so they become standalone text units.\n\nAt least one of `simplifyResources` or `simplifyCodes` **must** be enabled, otherwise the filter generates an error.\n\nSee also: [Resource Simplifier Step](Resource_Simplifier_Step)\n\n#### Simplify Codes (`simplifyCodes`)\n\nActivates the **Inline Codes Simplifier Step** on events from the internal filter. This merges adjacent inline codes in the source part of a text unit and moves leading/trailing codes from the source content into the skeleton.\n\nAt least one of `simplifyResources` or `simplifyCodes` **must** be enabled, otherwise the filter generates an error.\n\nSee also: [Inline Codes Simplifier Step](Inline_Codes_Simplifier_Step)\n\n## Limitations\n\n- This filter is **BETA**.\n\n## Notes\n\n- The filter internally creates and chains two pipeline steps (Resource Simplifier and Inline Codes Simplifier). Either or both can be activated via parameters.\n- At least one simplification option must be active — enabling neither causes a runtime error.\n- The internal filter is instantiated automatically from the provided configuration ID; you do not need to configure it separately.\n\n## Examples\n\n### Simplify XML Stream output\n\nDefault configuration: wraps `okf_xmlstream` and applies both resource and code simplification.\n\n```yaml\nfilterConfigurationId: okf_xmlstream\nsimplifyResources: true\nsimplifyCodes: true\n```\n\n### Resource-only simplification for HTML\n\nWraps the HTML filter and only flattens resources, leaving inline codes untouched.\n\n```yaml\nfilterConfigurationId: okf_html\nsimplifyResources: true\nsimplifyCodes: false\n```",
   "filterId": "okf_simplification",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Simplification_Filter"
 }

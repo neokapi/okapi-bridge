@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_versifiedtext.v1.schema.json",
   "version": 1,
-  "title": "Versified Text Filter Filter",
-  "description": "Configuration for the Okapi Versified Text Filter Filter",
+  "title": "Versified Text Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_versifiedtext",
@@ -35,6 +34,6 @@
   "x-apiVersion": "v1",
   "x-baseVersion": 1,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "ef2ec9b69685",
-  "x-compositeHash": "ef2ec9b69685"
+  "x-baseHash": "92b3ec877912",
+  "x-compositeHash": "92b3ec877912"
 }

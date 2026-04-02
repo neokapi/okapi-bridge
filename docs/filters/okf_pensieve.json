@@ -1,13 +1,15 @@
 {
   "filterName": "Pensieve TM Filter",
-  "overview": "The Pensieve TM Filter implements the `IFilter` interface for Pensieve translation memories. It allows using a Pensieve TM as an input or output document, similar to other translatable document formats such as TMX, PO, etc.",
+  "overview": "The Pensieve TM Filter implements the `IFilter` interface for Pensieve TMs. It allows using a Pensieve TM as an input or output document, similar to other translatable document formats such as TMX, PO, etc. The filter always uses its internal encoding, ignoring any user-specific encoding settings.",
   "parameters": {},
-  "processingNotes": [
-    "The filter always uses its internal encoding — any user-specified encoding setting is ignored."
-  ],
   "limitations": [
-    "Since Pensieve TM content is binary, the `setOutput(OutputStream output)` method of `PensieveFilterWriter` is not implemented. You cannot output Pensieve TM content to other stream types without going through a format conversion."
+    "The `setOutput(OutputStream output)` method of `PensiveFilterWriter` is not implemented because Pensieve TM content is binary. You cannot output to other stream types without going through a format conversion."
   ],
+  "processingNotes": [
+    "The filter always uses its internal encoding — any user-specific encoding setting is ignored."
+  ],
+  "fullDoc": "# Pensieve TM Filter\\n\\nThe Pensieve TM Filter implements the `IFilter` interface for Pensieve TMs. It allows using a Pensieve TM as an input or output document, similar to other translatable document formats such as TMX, PO, etc.\\n\\n## Parameters\\n\\nThis filter has no parameters.\\n\\n## Limitations\\n\\n- The `setOutput(OutputStream output)` method of `PensiveFilterWriter` is not implemented because Pensieve TM content is binary. You cannot output to other stream types without going through a format conversion.\\n\\n## Notes\\n\\n- The filter always uses its internal encoding — any user-specific encoding setting is ignored.\"",
+  "examples": [],
   "filterId": "okf_pensieve",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Pensieve_TM_Filter"
 }

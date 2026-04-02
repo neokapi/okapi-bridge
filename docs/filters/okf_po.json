@@ -1,23 +1,23 @@
 {
   "filterName": "PO Filter",
-  "overview": "The PO Filter processes Gettext PO (Portable Object) and POT (PO Template) resource files. It supports bilingual and monolingual modes, plural forms, domains, and various PO comment types (references, extracted comments, translator comments, context). Encoding is auto-detected from BOM or the `charset` declaration in the PO header entry.",
+  "overview": "The PO Filter processes Gettext PO (Portable Object) and POT (PO Template) resource files. It supports both **bilingual mode** (where `msgid` is the source and `msgstr` is the translation) and **monolingual mode** (where `msgid` is a real identifier and `msgstr` is the text). The filter handles plural forms, domains, fuzzy flags, various comment types, and automatic encoding detection from the PO header's `charset` declaration.",
   "parameters": {
     "mode.bilingualMode": {
-      "help": "Controls how `msgid` and `msgstr` entries are interpreted:\n\n- **Bilingual mode** (true): `msgid` is the source text, `msgstr` is the translation. This is the standard PO file convention.\n- **Monolingual mode** (false): `msgid` is a real identifier (not source text), and `msgstr` contains the actual text. The `msgid` value becomes the resource name.\n\nIn bilingual mode, the fuzzy flag (`#, fuzzy`) maps to the `approved` target property set to \"no\". Removing or changing this property removes the fuzzy flag from output.",
-      "notes": [
-        "When switching to monolingual mode, the `makeID` option has no effect since `msgid` is used directly as the identifier."
-      ]
+      "help": "In **bilingual mode**, `msgid` is the source text and `msgstr` is the translation — this is the standard PO file layout.\n\nIn **monolingual mode** (when disabled), `msgid` is treated as a real identifier (not source text), and `msgstr` contains the translatable text. The `msgid` value becomes the resource name.\n\nMost PO files are bilingual. Use monolingual mode only when your PO workflow uses `msgid` as a key/identifier rather than human-readable source text."
     },
     "mode.protectApproved": {
-      "help": "Marks all entries that are **not empty and not fuzzy** with a non-translatable flag, effectively locking approved translations from modification during processing.\n\nEntries with the `#, fuzzy` flag or empty `msgstr` are left unprotected."
+      "help": "Marks all entries that are **not empty and not fuzzy** with a non-translatable flag, preventing them from being modified during translation.\n\nThis is useful when you want to re-process a PO file but only allow changes to entries that are still fuzzy or untranslated, leaving already-approved translations untouched.",
+      "notes": [
+        "The fuzzy flag (`#, fuzzy`) in PO files indicates a proposed translation. Entries **without** this flag and with non-empty `msgstr` are considered approved."
+      ]
     },
     "mode.wrapContent": {
-      "help": "Controls whether long content lines in `msgid` and `msgstr` entries are wrapped across multiple quoted strings in the output PO file.\n\nPO files conventionally wrap long lines for readability, with the first line being an empty string and subsequent lines containing the wrapped content."
+      "help": "Controls whether long content lines in `msgid` and `msgstr` entries are wrapped across multiple quoted strings in the output.\n\nPO files conventionally wrap long strings with an empty first line followed by continuation lines:\n```po\nmsgid \"\"\n\"This is a long \"\n\"wrapped string\"\n```\n\nDisabling this outputs each entry as a single line."
     },
     "identification.makeID": {
-      "help": "Generates resource identifiers from a hash of the `msgid` source text. The generated ID may include:\n\n- A **domain prefix** if the entry belongs to a named domain\n- The **`msgctxt` value** as a differentiator — two entries with the same source but different context get different IDs\n\nFor plural form entries, the ID gets an additional index suffix (e.g., `P3ADE34F0-0`, `P3ADE34F0-1`).\n\nIf `msgctxt` contains an Okapi-format context like `okpCtx:tu=123`, the specified ID (123) is used directly instead of generating one.",
+      "help": "Generates identifiers from the **hash code** of the source text (`msgid`), optionally combined with the domain prefix and `msgctxt` value.\n\nThe generated ID is set as the resource name. Two entries with the same source text but different `msgctxt` values will get different identifiers.\n\nIf a `msgctxt` is in the Okapi format `okpCtx:tu=123`, the text unit ID is set to the value specified (e.g., `123`).",
       "notes": [
-        "Generated IDs may not be unique if the source text is not unique within the same domain and has no distinct `msgctxt` values."
+        "The generated ID may not be unique if the source text is identical within the same domain and has no distinct context values."
       ],
       "dependsOn": [
         {
@@ -27,58 +27,70 @@
       ]
     },
     "identification.includeMsgContextInNote": {
-      "help": "Copies the content of `msgctxt` lines into the resource notes, making context information available alongside extracted comments and references."
+      "help": "Includes the content of the `msgctxt` line as a localization note attached to the extracted text unit.\n\nThis makes the context visible to translators in tools that display notes but may not show the PO context field directly."
     },
     "output.outputGeneric": {
-      "help": "Produces output in a generic (non-PO) format rather than standard PO format. Useful for converting PO content into a more interoperable representation."
+      "help": "Outputs the PO file in a generic (normalized) format rather than preserving the original formatting style.\n\nUseful when you want consistent output formatting regardless of how the input file was structured."
     },
     "output.allowEmptyOutputTarget": {
-      "help": "Controls behavior when no translation exists for an entry:\n\n- **Enabled**: writes an empty `msgstr \"\"` to the output\n- **Disabled**: untranslated entries are handled according to the default PO convention (typically copying the source)"
+      "help": "Allows writing empty `msgstr` entries in the output when no translation is available.\n\nBy default, entries without translations may be handled differently (e.g., copying the source). Enable this to explicitly permit empty targets in the output file."
     },
-    "inlineCodes.useCodeFinder": {
-      "help": "Enables inline code detection using the regular expressions defined below. Matched patterns are converted to inline codes (placeholders) rather than translatable text.\n\nThe default expression matches:\n- **printf-style format specifiers**: `%d`, `%s`, `%2$s`, `%-10.2f`, etc.\n- **Escape sequences**: `\\n`, `\\t`, `\\r\\n`, `\\a`, `\\b`, `\\f`, `\\v`\n- **Java-style placeholders**: `{0}`, `{1,date}`, etc."
+    "inlineCodes.enabled": {
+      "help": "Enables pattern-based detection of inline codes (placeholders, escape sequences, etc.) within translatable text. Matched patterns are converted to inline code placeholders that translators can reposition but not modify.\n\nThe default patterns detect:\n- **printf-style placeholders**: `%s`, `%d`, `%2$s`, `%-10.2f`\n- **Escape sequences**: `\\n`, `\\r`, `\\t`, `\\a`, `\\b`, `\\f`, `\\v`, `\\r\\n`\n- **Numbered placeholders**: `{0}`, `{1,date}`, etc.",
+      "seeAlso": "PO_Filter#Inline_Codes_Tab"
     },
     "inlineCodes.rules": {
-      "help": "Regular expressions that identify inline codes within translatable text. Each rule is applied against extracted content — any match becomes a non-translatable inline code.\n\nThe default rules cover common PO file patterns (printf specifiers, escape sequences, and curly-brace placeholders).",
-      "examples": [
-        "`(%(([-0+#]?)[-0+#]?)((\\d\\$)?)([\\d\\*]*(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn])` — matches printf format specifiers like `%d`, `%2$s`, `%-10.2f`",
-        "`((\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)` — matches escape sequences like `\\n`, `\\t`",
-        "`(\\{\\d.*?\\})` — matches Java MessageFormat placeholders like `{0}`, `{1,date}`"
-      ],
+      "help": "Regex patterns that identify inline codes in translatable text. Each pattern is a Java regular expression tested against extracted text — any match becomes an inline code placeholder.\n\nThe default rule set for PO files:\n```\n((%(([-0+#]?)[-0+#]?)((\\d\\$)?)([\\d\\*]*(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn])\n|((\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)\n|(\\{\\d.*?\\}))\n```\n\nThis matches printf format specifiers, C escape sequences, and Java MessageFormat placeholders.",
+      "values": "Each rule is a Java `java.util.regex.Pattern` compatible regular expression.",
       "seeAlso": "PO_Filter#Inline_Codes_Tab"
+    },
+    "inlineCodes.mergeAdjacent": {
+      "help": "When multiple inline codes appear next to each other with no translatable text between them, they are merged into a single placeholder.\n\nThis simplifies the segment for translators by reducing the number of code placeholders they need to manage."
+    },
+    "inlineCodes.moveBoundaryCodes": {
+      "help": "Moves inline codes that appear at the very beginning or end of a segment out of the translatable content and into the skeleton (non-translatable framework).\n\nThis is useful when leading/trailing codes (like `\\n` at the end of a string) don't need to be visible to translators."
     }
   },
-  "processingNotes": [
-    "Encoding is auto-detected from BOM first, then from the `charset` declaration in the PO header (first 1000 chars). If `charset` is literally the string `charset` (template placeholder), the default encoding is used.",
-    "If BOM encoding and header `charset` conflict, a warning is generated and the BOM encoding takes precedence.",
-    "The output `charset` header declaration is automatically updated to match the output encoding.",
-    "Output BOM for UTF-8: only preserved if input was also UTF-8 and had a BOM. Encoding conversion from non-UTF-8 to UTF-8 produces no BOM.",
-    "**No language information is updated in the PO header entry.** Language-related fields must be updated manually.",
-    "Line-break style (CRLF/LF) in output matches the original input.",
-    "Plural forms are processed as a single group with type `x-gettext-plurals`. Forms must appear in sequential order (`msgstr[0]`, `msgstr[1]`, etc.).",
-    "Domains are represented as groups with type `x-gettext-domain` and the domain name as the resource name.",
-    "Entries without quotes on the first line (e.g., bare `msgid` followed by quoted continuation) are automatically rewritten with an initial empty string.",
-    "The following PO flags are currently ignored: `No-Wrap Flag`, `X-Format Flag`, `No-X-Format Flag`.",
-    "Context comments (`#|`) are not processed."
+  "limitations": [
+    "None known per the official documentation."
   ],
-  "limitations": [],
+  "processingNotes": [
+    "**Encoding detection priority**: BOM → `charset` declaration in first 1000 chars → default encoding. If BOM and `charset` conflict, BOM wins with a warning.",
+    "The PO header `charset` declaration is **automatically updated** in output to match the selected output encoding.",
+    "**No language information** is updated in the PO header — language-related fields must be updated manually.",
+    "Output line-breaks match the input file's line-break style.",
+    "Plural forms (`msgstr[0]`, `msgstr[1]`, ...) must appear in **sequential order** and are grouped as `x-gettext-plurals`.",
+    "Domains are represented as groups with type `x-gettext-domain`.",
+    "The **fuzzy flag** (`#, fuzzy`) maps to the `approved` target property: fuzzy → `approved=no`; removing or changing `approved` removes the fuzzy flag from output.",
+    "Lines without quotes on their first line (e.g., bare `msgid` followed by quoted continuation) are normalized to include an empty initial string.",
+    "Comment types supported: extracted (`#.` → note), translator (`# ` → transnote), reference (`#:` → references). Context comments (`#|`) are currently ignored.",
+    "The `msgctxt` value is used as a differentiator for generated identifiers — entries with the same source but different contexts get different IDs.",
+    "If `msgctxt` matches the Okapi format `okpCtx:tu=NNN`, the text unit ID is set to the specified value."
+  ],
   "examples": [
     {
       "title": "Standard bilingual PO file",
-      "description": "A typical PO file with header, singular entry, and plural forms. The header contains encoding and plural form configuration.",
-      "input": "```po\n# PO file for myApp\n\nmsgid \"\"\nmsgstr \"\"\n\"Project-Id-Version: myApp 1.0.0\\n\"\n\"Content-Type: text/plain; charset=UTF-8\\n\"\n\"Plural-Forms: nplurals=2; plural=(n != 1);\\n\"\n\nmsgid \"diverging after version %d of %s\"\nmsgstr \"\"\n\nmsgid \"You have selected %d file for deletion\"\nmsgid_plural \"You have selected %d files for deletion\"\nmsgstr[0] \"\"\nmsgstr[1] \"\"\n```"
-    },
-    {
-      "title": "Context-based ID generation",
-      "description": "When `msgctxt` contains an Okapi-format context string (`okpCtx:tu=ID`), the filter uses the specified ID directly instead of generating one from a hash.",
-      "input": "```po\nmsgctxt \"okpCtx:tu=123\"\nmsgid \"Source\"\nmsgstr \"Target\"\n```"
+      "description": "A typical PO file with header, simple entries, and plural forms. The filter extracts `msgid` as source and `msgstr` as target in bilingual mode.",
+      "input": "```po\n# PO file for myApp\n\nmsgid \"\"\nmsgstr \"\"\n\"Content-Type: text/plain; charset=UTF-8\\n\"\n\"Plural-Forms: nplurals=2; plural=(n != 1);\\n\"\n\nmsgid \"diverging after version %d of %s\"\nmsgstr \"\"\n\nmsgid \"You have selected %d file for deletion\"\nmsgid_plural \"You have selected %d files for deletion\"\nmsgstr[0] \"\"\nmsgstr[1] \"\"\n```"
     },
     {
       "title": "Domain grouping",
-      "description": "PO domain directives are extracted as groups with type `x-gettext-domain`. Each domain becomes a separate group in the extracted output.",
+      "description": "PO files can use `domain` directives to partition entries. The filter represents each domain as a group with type `x-gettext-domain`.",
       "input": "```po\ndomain TheDomain1\nmsgid \"Text 1 in domain 'TheDomain1'\"\nmsgstr \"Texte 1 dans le domain 'TheDomain1'\"\n```"
+    },
+    {
+      "title": "Context-based ID assignment",
+      "description": "When `msgctxt` uses the Okapi format `okpCtx:tu=NNN`, the filter sets the text unit ID to the specified value.",
+      "input": "```po\nmsgctxt \"okpCtx:tu=123\"\nmsgid \"Source\"\nmsgstr \"Target\"\n```"
+    },
+    {
+      "title": "Monolingual mode configuration",
+      "description": "Configure the filter for monolingual PO files where `msgid` is a key identifier, not human-readable source text.",
+      "config": "```json\n{\n  \"mode\": {\n    \"bilingualMode\": false\n  },\n  \"identification\": {\n    \"makeID\": true\n  }\n}\n```"
     }
   ],
+  "propertySuggestions": {},
+  "fullDoc": "# PO Filter\\n\\nThe PO Filter processes Gettext PO (Portable Object) and POT (PO Template) resource files. It supports both **bilingual mode** (where `msgid` is the source and `msgstr` is the translation) and **monolingual mode** (where `msgid` is a real identifier and `msgstr` is the text). The filter handles plural forms, domains, fuzzy flags, various comment types, and automatic encoding detection from the PO header's `charset` declaration.\\n\\n## Parameters\\n\\n### Processing Mode\\n\\n#### Bilingual Mode\\nIn **bilingual mode**, `msgid` is the source text and `msgstr` is the translation — this is the standard PO file layout.\\n\\nIn **monolingual mode** (when disabled), `msgid` is treated as a real identifier (not source text), and `msgstr` contains the translatable text. The `msgid` value becomes the resource name.\\n\\nMost PO files are bilingual. Use monolingual mode only when your PO workflow uses `msgid` as a key/identifier rather than human-readable source text.\\n\\n#### Protect Approved Entries\\nMarks all entries that are **not empty and not fuzzy** with a non-translatable flag, preventing them from being modified during translation.\\n\\nThis is useful when you want to re-process a PO file but only allow changes to entries that are still fuzzy or untranslated.\\n\\n> **Note:** The fuzzy flag (`#, fuzzy`) in PO files indicates a proposed translation. Entries without this flag and with non-empty `msgstr` are considered approved.\\n\\n#### Wrap Content\\nControls whether long content lines in `msgid` and `msgstr` entries are wrapped across multiple quoted strings in the output. PO files conventionally wrap long strings with an empty first line followed by continuation lines.\\n\\n### Identification\\n\\n#### Generate Text Unit IDs\\nGenerates identifiers from the hash code of the source text (`msgid`), optionally combined with the domain prefix and `msgctxt` value. Only meaningful when bilingual mode is enabled.\\n\\nTwo entries with the same source text but different `msgctxt` values will get different identifiers. If `msgctxt` uses the Okapi format `okpCtx:tu=123`, the text unit ID is set to the specified value.\\n\\n> **Note:** The generated ID may not be unique if the source text is identical within the same domain and has no distinct context values.\\n\\n#### Include Message Context in Notes\\nIncludes the content of the `msgctxt` line as a localization note attached to the extracted text unit. This makes the context visible to translators in tools that display notes.\\n\\n### Output\\n\\n#### Output in Generic Format\\nOutputs the PO file in a generic (normalized) format rather than preserving the original formatting style.\\n\\n#### Allow Empty Output Target\\nAllows writing empty `msgstr` entries in the output when no translation is available.\\n\\n### Inline Codes\\n\\n#### Enable Inline Code Detection\\nEnables pattern-based detection of inline codes (placeholders, escape sequences, etc.) within translatable text. Matched patterns are converted to inline code placeholders.\\n\\nThe default patterns detect:\\n- **printf-style placeholders**: `%s`, `%d`, `%2$s`, `%-10.2f`\\n- **Escape sequences**: `\\\\n`, `\\\\r`, `\\\\t`, `\\\\a`, `\\\\b`, `\\\\f`, `\\\\v`, `\\\\r\\\\n`\\n- **Numbered placeholders**: `{0}`, `{1,date}`, etc.\\n\\n#### Inline Code Rules\\nRegex patterns that identify inline codes. Each pattern is a Java regular expression. The default rule set:\\n```\\n((%(([-0+#]?)[-0+#]?)((\\\\d\\\\$)?)([\\\\d\\\\*]*(\\\\.[\\\\d\\\\*]*)?)[dioxXucsfeEgGpn])\\n|((\\\\\\\\r\\\\\\\\n)|\\\\\\\\a|\\\\\\\\b|\\\\\\\\f|\\\\\\\\n|\\\\\\\\r|\\\\\\\\t|\\\\\\\\v)\\n|(\\\\{\\\\d.*?\\\\}))\\n```\\n\\n#### Merge Adjacent Codes\\nMerges consecutive inline codes with no translatable text between them into a single placeholder.\\n\\n#### Move Boundary Codes\\nMoves inline codes at segment boundaries to the skeleton (non-translatable), removing them from translator view.\\n\\n## Limitations\\n\\nNone known.\\n\\n## Notes\\n\\n- **Encoding detection**: BOM → `charset` in first 1000 chars → default encoding. BOM wins if there's a conflict.\\n- The header `charset` declaration is automatically updated to match the output encoding.\\n- **No language information** is updated in the PO header — update manually.\\n- Plural forms (`msgstr[0]`, `msgstr[1]`, ...) must appear in sequential order and are grouped as `x-gettext-plurals`.\\n- Domains are represented as groups with type `x-gettext-domain`.\\n- The **fuzzy flag** (`#, fuzzy`) maps to the `approved` target property.\\n- Comment types: extracted (`#.` → note), translator (`# ` → transnote), reference (`#:` → references). Context comments (`#|`) are ignored.\\n- The `msgctxt` value differentiates generated identifiers; the Okapi format `okpCtx:tu=NNN` directly sets the text unit ID.\\n\\n## Examples\\n\\n### Standard Bilingual PO File\\n```po\\nmsgid \\\"diverging after version %d of %s\\\"\\nmsgstr \\\"\\\"\\n\\nmsgid \\\"You have selected %d file for deletion\\\"\\nmsgid_plural \\\"You have selected %d files for deletion\\\"\\nmsgstr[0] \\\"\\\"\\nmsgstr[1] \\\"\\\"\\n```\\n\\n### Monolingual Configuration\\n```json\\n{\\n  \\\"mode\\\": { \\\"bilingualMode\\\": false },\\n  \\\"identification\\\": { \\\"makeID\\\": true }\\n}\\n```\"",
   "filterId": "okf_po",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/PO_Filter"
 }

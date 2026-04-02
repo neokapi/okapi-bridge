@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_ts.v1.schema.json",
   "version": 1,
-  "title": "TS Filter Filter",
-  "description": "Configuration for the Okapi TS Filter Filter",
+  "title": "TS Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_ts",
@@ -59,8 +58,9 @@
         "enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
-          "x-flattenPath": "useCodeFinder"
+          "description": "Enable pattern-based inline code detection using the defined regular expressions.",
+          "x-flattenPath": "useCodeFinder",
+          "title": "Has Inline Codes"
         },
         "rules": {
           "$ref": "#/$defs/codeFinderRules",
@@ -129,6 +129,6 @@
   "x-apiVersion": "v1",
   "x-baseVersion": 1,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "32a3ddc7d7b4",
-  "x-compositeHash": "6ca074c0a273"
+  "x-baseHash": "44ec74ea2521",
+  "x-compositeHash": "732b12a8c4c0"
 }

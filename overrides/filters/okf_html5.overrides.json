@@ -4,6 +4,9 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "path": {}
+    "path": {
+      "title": "ITS Parameters File",
+      "description": "Path to an ITS 2.0 rules document that overrides the default HTML5 processing behavior"
+    }
   }
 }

@@ -1,31 +1,37 @@
 {
   "filterName": "TTX Splitter",
-  "overview": "Splits a single TTX document into a given number of smaller documents of roughly equal size, calculated based on the total source word count of the original input. The original event is passed through unaltered; the step outputs new documents at the same location as the input, with an extra marker and number appended to the filename. To reassemble split files, use the **TTX Joiner Step**.",
+  "overview": "Splits a single TTX document into a given number of smaller documents of roughly equal size, based on the total source word count of the original input. The output files are written to the same location as the input document with an extra marker and number appended to the filename. This naming convention is used by the **TTX Joiner Step** to reassemble the split files later.",
   "parameters": {
     "partCount": {
-      "help": "Controls how many output files are created from one input TTX document. The step divides the original document so that each output file contains roughly the same source word count.\n\nThe output files are written to the same location as the input document, with an extra marker and sequential number appended to the filename. This naming convention is required for the **TTX Joiner Step** to reassemble them later.",
-      "values": "Integer >= 2. Each value produces that many output files from one input.",
-      "examples": [
-        "`2` — splits into two roughly equal halves",
-        "`4` — splits into four parts for parallel translation work"
+      "help": "Controls how many output files are created from one input document. The step calculates roughly equal word-count splits based on the total source word count of the original TTX file.\n\nThe output files are written alongside the input document with an extra marker and sequential number appended to the filename. This naming convention is required by the **TTX Joiner Step** to reassemble the parts.",
+      "values": "Integer >= 2. Each output file will contain approximately `total_word_count / partCount` source words.",
+      "notes": [
+        "The split is based on source word count, so individual files may differ slightly in segment count."
       ]
     }
   },
   "limitations": [
-    "Only works on **segmented** TTX files.",
-    "The original event is passed through unaltered — consumers downstream see the original, not the split parts."
+    "Works only on **segmented** TTX files.",
+    "The received event is passed through unaltered — the split documents are output as separate files alongside the original."
   ],
   "processingNotes": [
-    "Split size is based on **source word count**, not byte size or segment count — parts will have roughly equal word counts but may differ in segment count.",
-    "Output files are written to the **same directory** as the input file, with an extra marker and number appended to the filename (e.g., `file.part1.ttx`, `file.part2.ttx`).",
-    "The filename marker convention is used by the **TTX Joiner Step** to reassemble the parts — do not rename split files."
+    "Output files are written to the same directory as the input document with an appended marker and number suffix.",
+    "The filename convention used by the splitter is required by the **TTX Joiner Step** to reassemble documents.",
+    "Split size is calculated from total source word count, aiming for roughly equal parts."
   ],
   "examples": [
     {
-      "title": "Split and rejoin workflow",
-      "description": "A typical pipeline splits a TTX file for parallel translation, then joins the parts back together:\n\n1. **TTX Splitter** splits input into N parts\n2. Each part is translated independently\n3. **TTX Joiner Step** reassembles the translated parts into one document"
+      "title": "Split a TTX into 3 parts",
+      "description": "Splitting a segmented TTX file with 3000 source words into 3 output files. Each output file will contain approximately 1000 source words. The files are named with a marker and number suffix so the TTX Joiner Step can reassemble them.",
+      "config": "```yaml\npartCount: 3\n```"
     }
   ],
+  "propertySuggestions": {
+    "partCount": {
+      "description": "The number of output files to create from one input document, split by roughly equal word count."
+    }
+  },
+  "fullDoc": "# TTX Splitter\n\nSplits a single TTX document into a given number of smaller documents of roughly equal size, based on the total source word count of the original input. The output files are written to the same location as the input document with an extra marker and number appended to the filename. This naming convention is used by the **TTX Joiner Step** to reassemble the split files later.\n\n## Parameters\n\n#### Number of output files (`partCount`)\n\nControls how many output files are created from one input document. The step calculates roughly equal word-count splits based on the total source word count of the original TTX file.\n\nThe output files are written alongside the input document with an extra marker and sequential number appended to the filename. This naming convention is required by the **TTX Joiner Step** to reassemble the parts.\n\n**Default:** 2\n\n> **Note:** The split is based on source word count, so individual files may differ slightly in segment count.\n\n## Limitations\n\n- Works only on **segmented** TTX files.\n- The received event is passed through unaltered — the split documents are output as separate files alongside the original.\n\n## Notes\n\n- Output files are written to the same directory as the input document with an appended marker and number suffix.\n- The filename convention used by the splitter is required by the **TTX Joiner Step** to reassemble documents.\n- Split size is calculated from total source word count, aiming for roughly equal parts.\n\n## Examples\n\n### Split a TTX into 3 parts\n\nSplitting a segmented TTX file with 3000 source words into 3 output files. Each output file will contain approximately 1000 source words.\n\n```yaml\npartCount: 3\n```",
   "stepId": "t-t-x-splitter",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/ttx_splitter_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/TTX_Splitter_Step"
 }

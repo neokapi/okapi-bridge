@@ -1,6 +1,6 @@
 {
   "$id": "characters-checker",
-  "title": "Characters Quality Check",
+  "title": "Characters Checker",
   "type": "object",
   "x-step": {
     "class": "net.sf.okapi.steps.characterschecker.CharactersCheckerStep",
@@ -38,15 +38,18 @@
   "properties": {
     "corruptedCharacters": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn if some possibly corrupted characters are found in the target entry"
     },
     "checkAllowedCharacters": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Verify the ITS Allowed Characters property"
     },
     "checkCharacters": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Warn if a character is not included in the following character set encoding"
     },
     "charset": {
       "type": "string",
@@ -54,7 +57,8 @@
     },
     "extraCharsAllowed": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Allow the characters matching the following regular expression pattern"
     }
   }
 }

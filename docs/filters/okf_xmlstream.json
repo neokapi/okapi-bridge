@@ -1,53 +1,98 @@
 {
   "filterName": "XML Stream Filter",
-  "overview": "The XML Stream Filter processes XML documents using a **stream parser**, allowing it to handle much larger documents than the DOM-based [XML Filter](XML_Filter). It uses the same YAML-based configuration syntax as the HTML Filter. If you need [ITS](https://www.w3.org/TR/its20/) support, use the XML Filter instead.",
+  "overview": "The XML Stream Filter processes XML documents using a stream parser, allowing it to handle much larger documents than the DOM-based [[XML Filter]]. It uses the same YAML-based configuration syntax as the HTML Filter, with all HTML Filter parameters available except `escapeCharacters`. If you need ITS (Internationalization Tag Set) support, use the XML Filter instead.",
   "parameters": {
-    "inlineCodes": {
-      "help": "Controls which XML elements are treated as inline codes (formatting tags) within translatable text units rather than as structural elements.\n\nUses the same inline code configuration as the HTML Filter.",
-      "seeAlso": "HTML_Filter#Inline_Codes"
-    },
     "parser.assumeWellformed": {
-      "help": "Controls whether the parser assumes the input XML is well-formed.\n\nWhen enabled, the parser skips strict well-formedness checks, which can improve performance on large documents. Disable if you need strict XML validation during processing."
+      "help": "Controls whether the parser assumes the input XML is well-formed. When enabled, the parser uses a more lenient parsing mode that can handle documents that may not be strictly well-formed XML.\n\nThe default configurations all set this to `true`."
     },
     "parser.preserveWhitespace": {
-      "help": "Controls whether whitespace in the XML content is preserved as-is.\n\nWhen disabled, the filter may normalize whitespace according to standard XML processing rules. Enable this for documents where whitespace is significant (e.g., pre-formatted content)."
+      "help": "Controls the global default for whitespace preservation. Individual elements can override this via `PRESERVE_WHITESPACE` element rules (e.g., `<pre>`, `<codeblock>`) or the `xml:space` attribute.\n\nWhen `false` (the default), insignificant whitespace is normalized."
+    },
+    "inlineCodes.enabled": {
+      "help": "Activates pattern-based detection of inline codes (placeholders, markup tags, variables, etc.) within translatable text. The patterns are defined in the **rules** section below.\n\nThis uses the same code finder mechanism as the HTML Filter.",
+      "seeAlso": "HTML_Filter#Inline_Codes"
+    },
+    "inlineCodes.rules": {
+      "help": "Regex patterns that identify inline codes within translatable text segments. Each pattern should match a complete inline code (placeholder, variable reference, embedded markup, etc.).\n\nThese are Java regex patterns applied to the extracted text content.",
+      "seeAlso": "HTML_Filter#Inline_Codes"
+    },
+    "inlineCodes.mergeAdjacent": {
+      "help": "When multiple inline codes appear next to each other with no translatable text between them, merge them into a single code placeholder. This simplifies the segments presented to translators."
+    },
+    "inlineCodes.moveBoundaryCodes": {
+      "help": "Moves inline codes that appear at the very start or end of a segment out into the non-translatable skeleton. This keeps segment boundaries clean for translation tools."
+    },
+    "inlineCodes.simplifierRules": {
+      "help": "Rules for simplifying the representation of inline codes in extracted segments. Uses the Okapi simplifier rules format to reduce complex inline code patterns into simpler placeholders."
     },
     "attributes": {
-      "help": "Defines which XML attributes should be extracted for translation.\n\nEach key is an attribute name, and the value configures the extraction rule for that attribute. Attributes listed here are extracted globally — across all elements in the document.\n\nUses the same attribute rule configuration as the HTML Filter.",
-      "seeAlso": "HTML_Filter#Attributes"
+      "help": "Defines global attribute extraction rules that apply across all elements. Each key is an attribute name (e.g., `xml:lang`, `id`, `xml:space`) mapped to a rule specifying how that attribute should be handled.\n\nThe default configuration handles:\n- `xml:lang` — writable localizable (language tag)\n- `xml:id` and `id` — used as segment identifiers\n- `xml:space` — controls whitespace preservation state",
+      "seeAlso": "HTML_Filter#HTML_Configuration_Syntax"
+    },
+    "editorTitle": {
+      "help": "Title displayed in the parameters editor UI. This is a cosmetic setting used by the Okapi GUI tools."
+    },
+    "taggedConfig": {
+      "help": "Internal tagged configuration object used by the filter's YAML-based configuration system. This stores the parsed element and attribute rules from the YAML configuration file."
+    },
+    "path": {
+      "help": "Path to the YAML configuration file containing the filter parameters. When set, the filter loads its configuration from this external file rather than using inline parameters."
     }
   },
   "limitations": [
-    "No transparent support for namespace prefixes — element names must be declared with their prefix in the configuration.",
-    "The filter is **not case-sensitive**: elements like `<elem>` and `<Elem>` are treated as identical, which violates the XML specification."
+    "No transparent support for namespace prefixes — element names must be declared with their full prefix in the configuration (e.g., `ns:element` not just `element`).",
+    "The filter is **not case-sensitive** for element names — `<elem>` and `<Elem>` are treated as identical, which violates the XML specification.",
+    "Does not support ITS (Internationalization Tag Set) — use the XML Filter instead for ITS support.",
+    "The `escapeCharacters` parameter from the HTML Filter is **not available** in this filter."
   ],
   "processingNotes": [
-    "**Encoding detection**: Uses the document's encoding declaration if present; otherwise defaults to UTF-8 regardless of any specified default encoding.",
-    "**BOM handling**: When outputting UTF-8, a BOM is written only if the input was also UTF-8 and had a BOM. If the input was a different encoding, no BOM is added.",
-    "**Encoding declaration**: If the original document had an XML encoding declaration, it is updated on output; if not, one is automatically added.",
-    "**Line breaks**: Output line-break style matches the original input document.",
-    "**CDATA subfiltering**: CDATA sections can be processed with an additional filter (e.g., `okf_html`) via the `global_cdata_subfilter` YAML parameter.",
-    "**PCDATA subfiltering**: Escaped markup in PCDATA (e.g., double-escaped HTML) can be processed with a subfilter via `global_pcdata_subfilter`. Only content matched by a `TEXTUNIT` tag rule is passed to the subfilter — `INCLUDE` rules are excluded.",
-    "All parameters from the HTML Filter are available except `escapeCharacters`."
+    "**Input encoding**: Uses the document's encoding declaration if present; otherwise defaults to UTF-8 (ignoring any externally specified default encoding).",
+    "**Output encoding (UTF-8)**: A BOM is written only if the input was UTF-8 and had a BOM. If the input was non-UTF-8, no BOM is added.",
+    "**XML declaration**: If the original document had an XML encoding declaration, it is updated on output. If it did not, one is automatically added.",
+    "**Line breaks**: Output preserves the same line-break style (CRLF/LF) as the input document.",
+    "**Quote mode**: Escaping of quotes and apostrophes can be configured via `quoteModeDefined: true` and `quoteMode` (0=unescaped, 1=all named entities, 2=double named + single numeric, 3=double quotes only).",
+    "**CDATA subfiltering**: The `global_cdata_subfilter` parameter applies a secondary filter (e.g., `okf_html`) to all CDATA section content.",
+    "**PCDATA subfiltering**: The `global_pcdata_subfilter` parameter applies a secondary filter to escaped markup in PCDATA. Only content matched by `TEXTUNIT` element rules is passed to the subfilter — `INCLUDE` rules are not subfiltered.",
+    "Uses the same YAML-based configuration syntax as the HTML Filter — all HTML Filter parameters apply except `escapeCharacters`."
   ],
   "examples": [
     {
       "title": "CDATA subfiltering with HTML",
-      "description": "Process CDATA sections containing HTML markup with the HTML filter as a subfilter.",
+      "description": "Process CDATA sections containing HTML content using the HTML filter as a subfilter. This is useful for XML documents that embed HTML within CDATA blocks.",
       "config": "```yaml\nglobal_cdata_subfilter: okf_html\n```"
     },
     {
-      "title": "PCDATA subfiltering with escaped HTML",
-      "description": "Process double-escaped HTML content in PCDATA. The element containing the escaped HTML must be configured with a `TEXTUNIT` rule for the subfilter to apply.",
+      "title": "PCDATA subfiltering for escaped HTML",
+      "description": "Process double-escaped HTML content in PCDATA. The element containing the escaped HTML must have a `TEXTUNIT` rule — `INCLUDE` rules will not trigger subfiltering.",
       "config": "```yaml\nglobal_pcdata_subfilter: okf_html\nelements:\n  test:\n    ruleTypes: [TEXTUNIT]\n```",
       "input": "```xml\n<test>\n  &lt;p&gt;This is embedded HTML content within a p tag.&lt;/p&gt;\n</test>\n```"
     },
     {
-      "title": "Custom quote escaping mode",
-      "description": "Configure how quotes and apostrophes are escaped in the output. Mode 3 escapes only double quotes.",
+      "title": "Quote mode configuration",
+      "description": "Configure how quote and apostrophe characters are escaped in the output. Mode 3 escapes only double quotes.",
       "config": "```yaml\nquoteModeDefined: true\nquoteMode: 3\n```"
+    },
+    {
+      "title": "Java Properties XML with embedded HTML",
+      "description": "Built-in configuration (`okf_xmlstream-JavaPropertiesHTML`) for Java Properties XML files where `<entry>` elements contain HTML in CDATA sections.",
+      "config": "```yaml\nassumeWellformed: true\nglobal_cdata_subfilter: okf_html\npreserve_whitespace: false\n\nelements:\n  entry:\n    ruleTypes: [TEXTUNIT]\n    idAttributes: [key]\n```"
     }
   ],
+  "propertySuggestions": {
+    "editorTitle": {
+      "title": "Editor Title",
+      "description": "Title displayed in the parameters editor UI"
+    },
+    "taggedConfig": {
+      "title": "Tagged Configuration",
+      "description": "Internal parsed configuration object for element and attribute rules"
+    },
+    "path": {
+      "title": "Configuration File Path",
+      "description": "Path to an external YAML configuration file"
+    }
+  },
+  "fullDoc": "# XML Stream Filter\n\nThe XML Stream Filter processes XML documents using a stream parser, allowing it to handle much larger documents than the DOM-based XML Filter. It uses the same YAML-based configuration syntax as the HTML Filter, with all HTML Filter parameters available except `escapeCharacters`. If you need ITS (Internationalization Tag Set) support, use the XML Filter instead.\n\n## Parameters\n\n### Parser\n\n#### Assume Well-Formed\nControls whether the parser assumes the input XML is well-formed. When enabled, the parser uses a more lenient parsing mode. The default configurations all set this to `true`.\n\n#### Preserve Whitespace\nControls the global default for whitespace preservation. Individual elements can override this via `PRESERVE_WHITESPACE` element rules (e.g., `<pre>`, `<codeblock>`) or the `xml:space` attribute. When `false` (the default), insignificant whitespace is normalized.\n\n### Inline Codes\n\n#### Enabled\nActivates pattern-based detection of inline codes (placeholders, markup tags, variables, etc.) within translatable text. The patterns are defined in the rules section.\n\n#### Rules\nRegex patterns that identify inline codes within translatable text segments. Each pattern should match a complete inline code. These are Java regex patterns applied to the extracted text content.\n\n#### Merge Adjacent\nWhen multiple inline codes appear next to each other with no translatable text between them, merge them into a single code placeholder. This simplifies the segments presented to translators.\n\n#### Move Boundary Codes\nMoves inline codes that appear at the very start or end of a segment out into the non-translatable skeleton. This keeps segment boundaries clean for translation tools.\n\n#### Simplifier Rules\nRules for simplifying the representation of inline codes in extracted segments.\n\n### Attributes\nDefines global attribute extraction rules that apply across all elements. Each key is an attribute name mapped to a rule specifying how that attribute should be handled.\n\nThe default configuration handles:\n- `xml:lang` — writable localizable (language tag)\n- `xml:id` and `id` — used as segment identifiers\n- `xml:space` — controls whitespace preservation state\n\n### Other Parameters\n\n#### Editor Title\nTitle displayed in the parameters editor UI.\n\n#### Tagged Configuration\nInternal parsed configuration object for element and attribute rules.\n\n#### Configuration File Path\nPath to an external YAML configuration file.\n\n## CDATA Subfiltering\n\nThe `global_cdata_subfilter` parameter specifies a secondary filter applied to all CDATA content. For example, to process CDATA as HTML:\n\n```yaml\nglobal_cdata_subfilter: okf_html\n```\n\n## PCDATA Subfiltering\n\nThe `global_pcdata_subfilter` parameter applies a secondary filter to escaped markup in PCDATA content. Only content matched by `TEXTUNIT` element rules is passed to the subfilter — `INCLUDE` rules are **not** subfiltered.\n\n```yaml\nglobal_pcdata_subfilter: okf_html\nelements:\n  test:\n    ruleTypes: [TEXTUNIT]\n```\n\n## Quote Mode\n\nEscaping of quote and apostrophe characters can be configured:\n\n```yaml\nquoteModeDefined: true\nquoteMode: 3\n```\n\n- **0** — Do not escape single or double quotes\n- **1** — Escape single and double quotes to named entities\n- **2** — Escape double quotes to named entities, single quotes to numeric entities\n- **3** — Escape double quotes only\n\n## Limitations\n\n- No transparent support for namespace prefixes — element names must be declared with their full prefix in the configuration.\n- The filter is **not case-sensitive** for element names — `<elem>` and `<Elem>` are treated as identical, violating the XML specification.\n- Does not support ITS — use the XML Filter instead.\n- The `escapeCharacters` parameter from the HTML Filter is not available.\n\n## Notes\n\n- **Input encoding**: Uses the document's encoding declaration if present; defaults to UTF-8 otherwise.\n- **Output encoding**: BOM is preserved only if the input was UTF-8 with a BOM. XML encoding declarations are updated or added automatically.\n- **Line breaks**: Output preserves the input document's line-break style.\n\n## Examples\n\n### Java Properties XML with Embedded HTML\n\n```yaml\nassumeWellformed: true\nglobal_cdata_subfilter: okf_html\npreserve_whitespace: false\n\nelements:\n  entry:\n    ruleTypes: [TEXTUNIT]\n    idAttributes: [key]\n```\n\n### PCDATA Subfiltering for Escaped HTML\n\nInput:\n```xml\n<test>\n  &lt;p&gt;This is embedded HTML content.&lt;/p&gt;\n</test>\n```\n\nConfig:\n```yaml\nglobal_pcdata_subfilter: okf_html\nelements:\n  test:\n    ruleTypes: [TEXTUNIT]\n```",
   "filterId": "okf_xmlstream",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/XML_Stream_Filter"
 }

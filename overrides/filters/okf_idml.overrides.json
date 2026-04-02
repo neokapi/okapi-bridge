@@ -5,31 +5,94 @@
     "_fragments/extraction.fragment.json"
   ],
   "fields": {
-    "maxAttributeSize": {},
-    "specialCharacterPattern": {},
-    "untagXmlStructures": {},
-    "extractMasterSpreads": {},
-    "extractHiddenLayers": {},
-    "extractHiddenPasteboardItems": {},
-    "skipDiscretionaryHyphens": {},
-    "extractBreaksInline": {},
-    "extractHyperlinkTextSourcesInline": {},
-    "extractCustomTextVariables": {},
-    "extractIndexTopics": {},
-    "extractExternalHyperlinks": {},
-    "extractMathZones": {},
+    "maxAttributeSize": {
+      "title": "Maximum Attribute Size",
+      "description": "Size in MB for the attribute buffer (default 4 MB)."
+    },
+    "specialCharacterPattern": {
+      "title": "Special Character Pattern",
+      "description": "Pattern matching characters treated as inline codes."
+    },
+    "untagXmlStructures": {
+      "title": "Untag XML Structures",
+      "description": "Skip embedded XML structural information when extracting."
+    },
+    "extractMasterSpreads": {
+      "title": "Extract Master Spreads",
+      "description": "Extract content from master spreads if they exist."
+    },
+    "extractHiddenLayers": {
+      "title": "Extract Hidden Layers",
+      "description": "Include hidden layers in the extraction."
+    },
+    "extractHiddenPasteboardItems": {
+      "title": "Extract Hidden Pasteboard Items",
+      "description": "Include hidden pasteboard items in the extraction."
+    },
+    "skipDiscretionaryHyphens": {
+      "title": "Skip Discretionary Hyphens",
+      "description": "Omit discretionary (soft) hyphens from extracted text."
+    },
+    "extractBreaksInline": {
+      "title": "Extract Breaks Inline",
+      "description": "Treat break elements as inline codes within text units."
+    },
+    "extractHyperlinkTextSourcesInline": {
+      "title": "Extract Hyperlink Sources Inline",
+      "description": "Extract hyperlink text sources as inline elements."
+    },
+    "extractCustomTextVariables": {
+      "title": "Extract Custom Text Variables",
+      "description": "Include custom text variables in the extraction."
+    },
+    "extractIndexTopics": {
+      "title": "Extract Index Topics",
+      "description": "Include index topic entries in the extraction."
+    },
+    "extractExternalHyperlinks": {
+      "title": "Extract External Hyperlinks",
+      "description": "Extract external hyperlink URLs for translation."
+    },
+    "extractMathZones": {
+      "title": "Extract Math Zones",
+      "description": "Include math zone content in the extraction."
+    },
     "excludedStyleConfigurations": {},
-    "ignoreCharacterKerning": {},
+    "ignoreCharacterKerning": {
+      "title": "Ignore Character Kerning",
+      "description": "Prevent kerning differences from creating separate inline codes."
+    },
     "characterKerningMinIgnoranceThreshold": {},
     "characterKerningMaxIgnoranceThreshold": {},
-    "ignoreCharacterTracking": {},
+    "ignoreCharacterTracking": {
+      "title": "Ignore Character Tracking",
+      "description": "Prevent tracking differences from creating separate inline codes."
+    },
     "characterTrackingMinIgnoranceThreshold": {},
     "characterTrackingMaxIgnoranceThreshold": {},
-    "ignoreCharacterLeading": {},
+    "ignoreCharacterLeading": {
+      "title": "Ignore Character Leading",
+      "description": "Prevent leading differences from creating separate inline codes."
+    },
     "characterLeadingMinIgnoranceThreshold": {},
     "characterLeadingMaxIgnoranceThreshold": {},
-    "ignoreCharacterBaselineShift": {},
+    "ignoreCharacterBaselineShift": {
+      "title": "Ignore Character Baseline Shift",
+      "description": "Prevent baseline shift differences from creating separate inline codes."
+    },
     "characterBaselineShiftMinIgnoranceThreshold": {},
-    "characterBaselineShiftMaxIgnoranceThreshold": {}
+    "characterBaselineShiftMaxIgnoranceThreshold": {},
+    "mergeAdjacentCodes": {
+      "title": "Merge Adjacent Codes",
+      "description": "Merge consecutive inline codes into a single code."
+    },
+    "extractNotes": {
+      "title": "Extract Notes",
+      "description": "Extract the content of Note elements."
+    },
+    "excludedStyles": {
+      "title": "Excluded Styles",
+      "description": "Styles whose content is excluded from extraction."
+    }
   }
 }

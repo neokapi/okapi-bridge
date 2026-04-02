@@ -1,38 +1,53 @@
 {
   "filterName": "MessageFormat Filter",
-  "overview": "The MessageFormat Filter handles message formats commonly found in software applications, including **ICU Message Format** and **Java MessageFormat**. It is designed to be used as a **subfilter** — the message strings can live in various container formats such as JSON, YAML, XML, etc. The filter parses complex message syntax (plural, select, etc.) into translatable segments.",
+  "overview": "The MessageFormat Filter handles message formats commonly found in software applications, including **ICU Message Format** and **Java MessageFormat**. It is designed to be used as a **sub-filter** — the message strings can reside in various container formats such as JSON, YAML, or XML. The filter parses complex message syntax (`plural`, `select`, etc.) to expose translatable content.",
   "parameters": {
     "addPluralForms": {
-      "help": "Adds missing plural forms to the source based on the **target locale's** CLDR plural rules. The source string is modified and re-filtered so that all required plural categories (e.g., `zero`, `one`, `two`, `few`, `many`, `other`) are presented to the translator.\n\nThis is useful when the source locale (e.g., English) has fewer plural categories than the target locale (e.g., Arabic with six categories).",
+      "help": "Adds missing plural forms to the source text based on the **target locale's** CLDR plural rules. The source string is modified and re-filtered so that all required plural categories (e.g., `zero`, `one`, `two`, `few`, `many`, `other`) are presented to the translator.\n\nThis is useful when the source language (e.g., English) has fewer plural forms than the target language (e.g., Arabic with 6 forms). Without this option, translators must manually add the missing categories.",
       "notes": [
-        "The source string is modified and then refiltered — this means the segment structure may change when this option is active."
+        "The source string is modified and then refiltered — this means the translator sees plural forms that may not exist in the original source."
       ]
     },
     "normalize": {
-      "help": "Moves leading and trailing text that appears outside complex message variants (`plural`, `select`, etc.) **inside each variant**. This forces each variant to be a complete phrase or sentence, which produces better translations.\n\nFor example, `Hello {count, plural, one {# item} other {# items}} found` becomes variants like `Hello # item found` and `Hello # items found`.",
+      "help": "Moves leading and trailing text that appears outside complex argument variants (`plural`, `select`, etc.) **into each variant**. This forces each variant to be a complete, self-contained phrase or sentence, making translation easier and more natural.\n\nFor example, `Hello {count, plural, one {# item} other {# items}} found` becomes variants like `Hello # item found` and `Hello # items found`.",
       "notes": [
-        "**Warning:** This option can increase word and character counts for the source, since shared text is duplicated into each variant."
+        "**Warning:** This option can increase word and character counts for the source, since the shared leading/trailing text is duplicated into every variant."
       ]
     },
     "prettyPrint": {
-      "help": "Formats the output with indentation and line breaks to enhance readability. Any whitespace added is **not significant** to the message format syntax.\n\nWhen disabled (default), the output is a compact string, normally a single line."
+      "help": "Formats the output with indentation and line breaks for readability. Any whitespace added is **not significant** — it does not affect the meaning of the message.\n\nWhen disabled (default), the output is a compact string, normally on a single line."
     }
   },
   "limitations": [
-    "`choice` syntax is **not supported** (e.g., `{count, choice, 0#is none|1#is one|1<is more than one}`). This syntax is deprecated and should be converted to `select` or `plural` before processing."
+    "`choice` syntax is not supported (e.g., `{count, choice, 0#is none|1#is one|1<is more than one}`). This syntax is deprecated and should be converted to `select` or `plural`."
   ],
   "processingNotes": [
-    "This filter is intended to be used as a **subfilter** — it processes message format strings extracted by a parent filter (JSON, YAML, XML, etc.).",
-    "Supports ICU Message Format and Java `MessageFormat` syntax, including `plural` and `select` message types."
+    "Designed as a **sub-filter** — must be invoked from a container format filter (JSON, YAML, XML, etc.), not used standalone.",
+    "Handles ICU Message Format and Java MessageFormat syntax including `plural`, `select`, and `selectordinal` arguments."
   ],
   "examples": [
     {
-      "title": "ICU plural message",
-      "description": "A typical ICU MessageFormat plural string that the filter processes. With `normalize` enabled, the surrounding text is pushed into each variant.",
-      "input": "```\n{count, plural, one {# item} other {# items}} found\n```",
-      "output": "```\n{count, plural, one {# item found} other {# items found}}\n```"
+      "title": "Normalization effect",
+      "description": "Shows how `normalize` moves surrounding text into each plural variant to create complete sentences.",
+      "input": "```\nHello {count, plural, one {# item} other {# items}} found\n```",
+      "output": "```\n{count, plural, one {Hello # item found} other {Hello # items found}}\n```"
     }
   ],
+  "propertySuggestions": {
+    "addPluralForms": {
+      "title": "Add Plural Forms",
+      "description": "Add missing plural forms based on the target locale's CLDR plural rules."
+    },
+    "normalize": {
+      "title": "Normalize Variants",
+      "description": "Move leading and trailing text into each complex argument variant for complete phrases."
+    },
+    "prettyPrint": {
+      "title": "Pretty Print",
+      "description": "Format output with indentation and line breaks for readability."
+    }
+  },
+  "fullDoc": "# MessageFormat Filter\n\nThe MessageFormat Filter handles message formats commonly found in software applications, including **ICU Message Format** and **Java MessageFormat**. It is designed to be used as a **sub-filter** — the message strings can reside in various container formats such as JSON, YAML, or XML. The filter parses complex message syntax (`plural`, `select`, etc.) to expose translatable content.\n\n## Parameters\n\n#### Add Plural Forms\nAdds missing plural forms to the source text based on the **target locale's** CLDR plural rules. The source string is modified and re-filtered so that all required plural categories (e.g., `zero`, `one`, `two`, `few`, `many`, `other`) are presented to the translator.\n\nThis is useful when the source language (e.g., English) has fewer plural forms than the target language (e.g., Arabic with 6 forms). Without this option, translators must manually add the missing categories.\n\n> **Note:** The source string is modified and then refiltered — the translator sees plural forms that may not exist in the original source.\n\nDefault: `false`\n\n#### Normalize Variants\nMoves leading and trailing text that appears outside complex argument variants (`plural`, `select`, etc.) **into each variant**. This forces each variant to be a complete, self-contained phrase or sentence, making translation easier.\n\nFor example, `Hello {count, plural, one {# item} other {# items}} found` becomes variants like `Hello # item found` and `Hello # items found`.\n\n> **Warning:** This option can increase word and character counts for the source, since the shared leading/trailing text is duplicated into every variant.\n\nDefault: `false`\n\n#### Pretty Print\nFormats the output with indentation and line breaks for readability. Any whitespace added is **not significant** — it does not affect the meaning of the message. When disabled, the output is a compact string, normally on a single line.\n\nDefault: `false`\n\n## Limitations\n\n- `choice` syntax is not supported (e.g., `{count, choice, 0#is none|1#is one|1<is more than one}`). This syntax is deprecated and should be converted to `select` or `plural`.\n\n## Notes\n\n- This filter is a **sub-filter** and must be invoked from a container format filter (JSON, YAML, XML, etc.).\n- Handles ICU Message Format and Java MessageFormat syntax including `plural`, `select`, and `selectordinal` arguments.\n\n## Examples\n\n### Normalization effect\n\nShows how `normalize` moves surrounding text into each plural variant to create complete sentences.\n\n**Input:**\n```\nHello {count, plural, one {# item} other {# items}} found\n```\n\n**Output (normalized):**\n```\n{count, plural, one {Hello # item found} other {Hello # items found}}\n```",
   "filterId": "okf_messageformat",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Message_Format_Filter"
 }

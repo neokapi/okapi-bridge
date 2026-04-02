@@ -1,17 +1,18 @@
 {
   "filterName": "Terminology Leveraging",
-  "overview": "This step leverages glossary terms into extracted text units by querying a terminology resource. It sends segment content to a terminology connector, which returns matching glossary entries that are then annotated onto source and/or target segments. Non-translatable text units are automatically skipped.",
+  "overview": "This step leverages glossary terms into extracted text units by querying a terminology resource connector. It sends segment content to the resource, which returns matching glossary entries that are then annotated onto source and/or target segments. Non-translatable text units are automatically skipped. Requires both source and target languages to be set.",
   "parameters": {},
   "limitations": [
     "It is **not** possible to chain several steps to leverage against multiple terminology resources.",
-    "The terminology resource connector must be a subclass of `BaseTerminologyConnector` or implement the `ITerminologyQuery` interface.",
-    "Annotation only occurs if the term (or its translation) is found within the segment text."
+    "The step has no configurable parameters exposed in the schema — all settings (leverage toggle, annotation options, connector class/params) are managed internally or through the Okapi UI only."
   ],
   "processingNotes": [
-    "Text units flagged as non-translatable are skipped entirely.",
-    "The terminology resource connector defines its own strategy for generating glossary entry IDs and glossary translation IDs.",
-    "Source annotation matches glossary terms against source segment text; target annotation matches translations of terms against target segment text."
+    "Text units flagged as non-translatable are automatically skipped.",
+    "Source annotation occurs when a glossary term is found within the source segment text.",
+    "Target annotation occurs when a translation of a glossary term is found within the target segment text.",
+    "The terminology resource connector defines its own strategy for generating glossary entry IDs and glossary translation IDs."
   ],
+  "fullDoc": "# Terminology Leveraging\n\nThis step leverages glossary terms into extracted text units by querying a terminology resource connector. It sends segment content to the resource, which returns matching glossary entries that are then annotated onto source and/or target segments. Non-translatable text units are automatically skipped.\n\nRequires both source and target languages to be configured.\n\n## Parameters\n\nThis step's parameters (leverage toggle, source/target annotation, connector class and connector parameters) are not exposed in the JSON schema and are configured through Okapi's native UI.\n\n#### Leverage\nEnables or disables the step. Allows keeping the step in a pipeline while toggling it on and off without removing it.\n\n#### Annotate Source\nEnables annotation of source segment text with found glossary entries. Annotation is applied when a term is found within the source segment text.\n\n#### Annotate Target\nEnables annotation of target segment text with found glossary entries. Annotation is applied when a translation of the term is found within the target segment text.\n\n#### Connector Class Name\nSelects the terminology resource connector. Must be a subclass of `BaseTerminologyConnector` or a custom implementation of the `ITerminologyQuery` interface.\n\n#### Connector Parameters\nOpens settings for the selected terminology resource connector.\n\n## Limitations\n\n- It is **not** possible to chain several steps to leverage against multiple terminology resources.\n\n## Notes\n\n- Text units flagged as non-translatable are skipped.\n- The terminology resource connector defines its own strategy for generating glossary entry IDs and glossary translation IDs.\n- The connector splits segments into source terms or applies other techniques to find matching glossary entries.",
   "stepId": "terminology-leveraging",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/terminology_leveraging_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Terminology_Leveraging_Step"
 }

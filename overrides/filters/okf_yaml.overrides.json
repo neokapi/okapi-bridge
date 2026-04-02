@@ -39,6 +39,18 @@
     },
     "escapeExtendedChars": {
       "description": "Escape extended Unicode characters in output."
+    },
+    "extraction.excludeKeys": {
+      "title": "Key Exception Pattern",
+      "description": "Regular expression for keys that behave opposite to the default extraction mode."
+    },
+    "extraction.includeIsolatedStrings": {
+      "title": "Extract Isolated Strings",
+      "description": "Extract string values that are not directly associated with a key."
+    },
+    "output.subFilterProcessLiteralAsBlock": {
+      "title": "Sub-filter Literal Blocks",
+      "description": "Process YAML literal block scalars through the configured sub-filter."
     }
   }
 }

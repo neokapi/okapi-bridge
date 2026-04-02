@@ -1,53 +1,67 @@
 {
   "filterName": "Rainbow Translation Kit Merging Step",
-  "overview": "This step merges the files of a Rainbow translation kit back into their original format. It post-processes a package created by the Rainbow Translation Kit Creation Step, reading the `manifest.rkm` file via the Rainbow Translation Kit Filter and producing translated files in their original formats. The step can output either filter events or raw documents depending on configuration.",
+  "overview": "This step merges the files of a Rainbow translation kit back into their original format. It processes the manifest file (`manifest.rkm`) created by the Rainbow Translation Kit Creation Step, combining translated XLIFF documents from the `work` folder with originals from the `original` folder. The step can output either filter events or raw documents depending on configuration.",
   "parameters": {
     "preserveWhitespace": {
-      "help": "Preserves whitespace in the merged output. Useful when whitespace-sensitive formats need to retain their original spacing after merging."
+      "help": "Controls whether whitespace in the original content is preserved during the merging process."
     },
     "preserveSegmentation": {
-      "help": "Restores segmentation in text unit events sent to subsequent steps.\n\nWhen merging a text unit, the content is normally un-segmented. By default, segmentation is **not** restored as a performance optimization — this step is typically the last step in a pipeline, so segmentation would go unused.\n\nEnable this only if you have downstream steps that depend on segmentation data.",
+      "help": "When merging a text unit, the content is un-segmented by default. Since this step is typically the **last step** in a pipeline, restoring segmentation would be unnecessary processing.\n\nEnable this only if you have subsequent steps that need to work with segmented text units.",
       "notes": [
-        "Only needed when this step is **not** the final step in the pipeline and subsequent steps require segmented text units."
+        "Disabling this (the default) saves processing time when this step is the last in the pipeline."
       ]
     },
     "returnRawDocument": {
-      "help": "Controls whether downstream steps receive filter events or raw document events.\n\n- **Disabled** (default): subsequent steps receive the current filter events being processed.\n- **Enabled**: subsequent steps receive a raw document event for each merged output file.\n\nUseful when you need to further process the merged output files through additional filters.",
-      "notes": [
-        "If this step is the last in your pipeline, this setting has no practical effect."
-      ]
+      "help": "Controls what type of events are sent to subsequent steps in the pipeline:\n\n- **Disabled** (default): Sends the current filter events being processed\n- **Enabled**: Sends a raw document event for each merged output file\n\nUse this when downstream steps expect raw document input rather than filter events."
     },
     "forceTargetLocale": {
-      "help": "Forces the target locale to be taken from the pipeline/tool configuration rather than from the `manifest.rkm` file.\n\nBy default the manifest defines which target locale is used during merging. Enable this to override that behavior with the locale specified in the calling tool.",
-      "dependsOn": [
-        {
-          "property": "target-language",
-          "condition": "the target language from the pipeline context is used when this is enabled"
-        }
-      ]
+      "help": "Forces the target locale to be taken from the tool/pipeline calling this step, rather than reading it from the manifest file.\n\nUseful when you need to override the locale specified in the `manifest.rkm`."
     },
     "overrideOutputPath": {
-      "help": "Specifies a custom directory for generated output files. When left empty, the output path defined in the `manifest.rkm` is used.\n\nThis is useful when you want to redirect merged output to a different location than originally configured in the translation kit.",
+      "help": "Specify a directory where merged output files should be generated. When left empty, the output path defined in the manifest is used.",
       "values": "A directory path. Leave empty to use the manifest's default output path."
     },
     "copyCodeMetadata": {
-      "help": "Copies code metadata (inline codes, formatting markers) from the original source file into the merged output. This ensures that formatting and code information from the original document is preserved in the translated output."
+      "help": "Copies code metadata (inline code definitions, etc.) from the original source file into the merged output."
+    }
+  },
+  "propertySuggestions": {
+    "preserveWhitespace": {
+      "description": "Preserve whitespace from the original content during merging"
+    },
+    "preserveSegmentation": {
+      "description": "Restore segmentation in text units for use by subsequent pipeline steps"
+    },
+    "returnRawDocument": {
+      "description": "Send raw document events instead of filter events to downstream steps"
+    },
+    "forceTargetLocale": {
+      "description": "Use the target locale from the pipeline instead of the manifest file"
+    },
+    "overrideOutputPath": {
+      "description": "Directory for merged output; leave empty to use the manifest default"
+    },
+    "copyCodeMetadata": {
+      "description": "Copy inline code metadata from the original file to the merged output"
     }
   },
   "processingNotes": [
     "The input file must be the `manifest.rkm` file of the translation kit package.",
     "Translated XLIFF documents must be in the `work` folder of the package.",
     "Original documents must be in the `original` folder of the package.",
-    "Options in each manifest file can also be edited when processing starts — see the Rainbow Translation Kit Manifest page for details."
+    "Options in each manifest file can also be edited when starting processing — see the Rainbow Translation Kit Manifest page for details."
   ],
-  "limitations": [],
+  "limitations": [
+    "None known."
+  ],
   "examples": [
     {
-      "title": "Basic translation kit merging pipeline",
-      "description": "The simplest pipeline to merge a Rainbow translation kit back into the original file formats. The input is the `manifest.rkm` file from the translation kit package.\n\nThis is one of the pre-defined pipelines available in Rainbow.",
-      "config": "```\nPipeline:\n  = Raw Document to Filter Events Step\n  + Rainbow Translation Kit Merging Step\n```"
+      "title": "Basic merging pipeline",
+      "description": "The simplest pipeline to merge files of a translation kit uses the Raw Document to Filter Events Step followed by this merging step. The input file is the `manifest.rkm` file.\n\nThis is one of the pre-defined pipelines available in Rainbow.",
+      "config": "```\n= Raw Document to Filter Events Step\n+ Rainbow Translation Kit Merging Step\n```"
     }
   ],
+  "fullDoc": "# Rainbow Translation Kit Merging Step\n\nThis step merges the files of a Rainbow translation kit back into their original format. It processes the manifest file (`manifest.rkm`) created by the Rainbow Translation Kit Creation Step, combining translated XLIFF documents from the `work` folder with originals from the `original` folder. The step can output either filter events or raw documents depending on configuration.\n\n## Parameters\n\n#### Preserve the whitespace\nControls whether whitespace in the original content is preserved during the merging process.\n\n#### Preserve the segmentation for the next steps\nWhen merging a text unit, the content is un-segmented by default. Since this step is typically the **last step** in a pipeline, restoring segmentation would be unnecessary processing.\n\nEnable this only if you have subsequent steps that need to work with segmented text units. Disabling this (the default) saves processing time.\n\n#### Return raw documents instead of filter events\nControls what type of events are sent to subsequent steps in the pipeline:\n\n- **Disabled** (default): Sends the current filter events being processed\n- **Enabled**: Sends a raw document event for each merged output file\n\nUse this when downstream steps expect raw document input rather than filter events.\n\n#### Specify the target locale from the tool instead of the manifest\nForces the target locale to be taken from the tool/pipeline calling this step, rather than reading it from the manifest file. Useful when you need to override the locale specified in `manifest.rkm`.\n\n#### Override the output path\nSpecify a directory where merged output files should be generated. When left empty, the output path defined in the manifest is used.\n\n#### Copy the code metadata from the original file\nCopies code metadata (inline code definitions, etc.) from the original source file into the merged output. Enabled by default.\n\n## Limitations\n\n- None known.\n\n## Notes\n\n- The input file must be the `manifest.rkm` file of the translation kit package.\n- Translated XLIFF documents must be in the `work` folder of the package.\n- Original documents must be in the `original` folder of the package.\n- Options in each manifest file can also be edited when starting processing — see the Rainbow Translation Kit Manifest page for details.\n\n## Examples\n\n### Basic merging pipeline\n\nThe simplest pipeline to merge files of a translation kit:\n\n```\n= Raw Document to Filter Events Step\n+ Rainbow Translation Kit Merging Step\n```\n\nThe input file is the `manifest.rkm` file. This is one of the pre-defined pipelines available in Rainbow.",
   "stepId": "merging",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/rainbow_translation_kit_merging_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Rainbow_Translation_Kit_Merging_Step"
 }

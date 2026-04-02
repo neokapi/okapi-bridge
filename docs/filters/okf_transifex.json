@@ -1,34 +1,111 @@
 {
   "filterName": "Transifex Filter",
-  "overview": "The Transifex Filter processes online [Transifex](http://www.transifex.org) projects via local `.txp` project files. It connects to a Transifex host, downloads PO resources for translation, processes them as standard filter events, and can push modified translations back. The filter handles credential-based authentication and selective resource processing.",
+  "overview": "The Transifex Filter processes online [Transifex](http://www.transifex.org) translation projects by reading a local `.txp` project file. It connects to a Transifex host, downloads PO-based translation resources, and processes them as standard PO filter events. When used with a filter-writer, modified PO files are pushed back to the Transifex project.",
   "parameters": {
-    "general.openProject": {
-      "help": "Opens a dialog to view and edit the `.txp` project file before processing begins. This lets you select which resources to include, update credentials, or refresh the resource list from the Transifex server.\n\nIf disabled, the filter processes the `.txp` file as-is without prompting.",
+    "openProjectFile": {
+      "help": "Opens the `.txp` project file in an editor dialog before processing begins, allowing you to review and modify project settings (host, credentials, resource selection) interactively.\n\nThis is useful for selecting which resources to include in a processing run without manually editing the `.txp` file.",
       "notes": [
-        "The project file editor shows read-only source and target locale fields — these are driven by the calling application, not the file itself."
+        "The project file must be a UTF-8 text file with `.txp` extension."
+      ]
+    },
+    "host": {
+      "help": "The URL of the Transifex server where your project is hosted.\n\nThis corresponds to the `host` field in the `.txp` project file.",
+      "values": "A full URL including protocol, e.g. `http://www.transifex.net/`",
+      "examples": [
+        "`http://www.transifex.net/`"
+      ]
+    },
+    "username": {
+      "help": "Your Transifex username for authenticating with the host. Used together with **password** to connect and download/upload resources."
+    },
+    "password": {
+      "help": "The password for the given Transifex username. Credentials are stored in the `.txp` project file in plain text.",
+      "notes": [
+        "Credentials are stored unencrypted in the `.txp` file — handle project files with care."
+      ]
+    },
+    "projectId": {
+      "help": "The identifier of the Transifex project you want to work with. This must match the project slug/ID as it appears in Transifex.",
+      "examples": [
+        "`myproject`"
+      ]
+    },
+    "protectApproved": {
+      "help": "Marks all translation entries that are **not empty and not fuzzy** with a non-translatable flag, preventing them from being modified during processing.\n\nThis is useful for protecting reviewed/approved translations from being overwritten.",
+      "notes": [
+        "Transifex currently loses fuzzy flags and their corresponding translations when downloading a PO file that was uploaded with fuzzy entries. The only way to do round-trips without losing target text is to not label entries as fuzzy, which may cause resources to appear 100% translated in Transifex even when translations are not final."
+      ]
+    },
+    "sourceLocale": {
+      "help": "Fall-back source locale code. In most situations the source locale is driven by the application calling the filter, so this value is used only as a fall-back.",
+      "values": "A locale code such as `en`, `en_US`, `fr`, etc.",
+      "examples": [
+        "`en`"
+      ]
+    },
+    "targetLocale": {
+      "help": "Fall-back target locale code. In most situations the target locale is driven by the application calling the filter, so this value is used only as a fall-back.",
+      "values": "A locale code such as `fr`, `de`, `ja`, etc.",
+      "examples": [
+        "`fr`"
       ]
     }
   },
-  "processingNotes": [
-    "The filter reads a local `.txp` project file containing Transifex host URL, credentials, and resource list.",
-    "If the `.txp` file contains no resources, the filter connects to the Transifex host and fetches the full resource list. If resources are already listed, it uses them as-is without refreshing.",
-    "For each selected PO resource matching the source locale, the filter downloads the target-language translation file. If no translation exists yet, an empty PO file is created.",
-    "Downloaded PO files are processed sequentially, emitting standard filter events identical to those from a PO file.",
-    "When using the filter-writer (e.g., in the Filter Events to Raw Document Step), modified PO files are pushed back to Transifex using the same credentials."
-  ],
   "limitations": [
-    "**BETA** — this filter is considered beta quality.",
-    "Transifex loses fuzzy flags and their translations when downloading a PO file uploaded with fuzzy entries. To avoid losing target text during round-trips, entries are not labeled as fuzzy — which may cause Transifex to report 100% translated even when translations are not final.",
-    "Only PO-based resources in Transifex are supported — TS files are not handled.",
-    "Due to pipeline limitations, this filter only works with the **Filter Events to Raw Document Step** for output. It will not work correctly with steps like the Rainbow Translation Kit Creation Step that rewrite output per-resource."
+    "This filter is **BETA**.",
+    "Transifex loses fuzzy flags and their corresponding translations when downloading a PO file uploaded with fuzzy entries. Round-trips without losing target text require not labeling entries as fuzzy, which may incorrectly show resources as 100% translated.",
+    "Only PO-based files in Transifex are handled — TS files are not supported.",
+    "Due to pipeline mechanism limitations, this filter cannot be used with steps that re-write different output corresponding to the resource, other than the **Filter Events to Raw Document Step**. For example, it will not work properly with the **Rainbow Translation Kit Creation Step**."
+  ],
+  "processingNotes": [
+    "Input is a local `.txp` project file (UTF-8 text) that describes the Transifex project connection and resource list.",
+    "If the `.txp` file contains no resources, the filter connects to Transifex and fetches the full resource list. If resources are already listed, the filter uses those without refreshing.",
+    "Only PO resources whose source language matches the specified source locale are processed.",
+    "For each matching resource, the filter downloads the translation file for the target language. If no translation file exists, one with empty entries is created.",
+    "When a filter-writer is used, modified PO files are pushed back to the Transifex project using the same credentials."
   ],
   "examples": [
     {
-      "title": "Transifex project file (.txp) format",
-      "description": "The `.txp` input file is a UTF-8 text file describing the Transifex project connection and resource selection. Lines starting with `#` are comments. Each entry can be omitted for defaults. Resource entries without a `yes/no` flag default to selected.",
-      "input": "```\nhost=http://www.transifex.net\nuser=johndoe\npassword=xrt34@asf\nprojectId=myproject\nprotectApproved=yes\n# Fall-back values for the source and target locales:\nsourceLocale=en\ntargetLocale=fr\n# Resources\nmyfile1xmlpo\tyes\nmyfile2odtpo\tno\n```"
+      "title": "Transifex project file (.txp)",
+      "description": "A `.txp` file defines the connection settings, locale fall-backs, and which resources to process. Lines starting with `#` are comments. Each resource can be selected (`yes`) or deselected (`no`) with a tab-separated flag; resources without a flag default to selected.",
+      "config": "```properties\nhost=http://www.transifex.net\nuser=johndoe\npassword=xrt34@asf\nprojectId=myproject\nprotectApproved=yes\n# Fall-back values for the source and target locales:\nsourceLocale=en\ntargetLocale=fr\n# Resources\nmyfile1xmlpo\tyes\nmyfile2odtpo\tno\n```"
     }
   ],
+  "propertySuggestions": {
+    "openProjectFile": {
+      "title": "Open Project File Before Processing",
+      "description": "Opens the .txp project file in an editor dialog before processing, allowing resource selection and settings review."
+    },
+    "host": {
+      "title": "Host URL",
+      "description": "The URL of the Transifex server where the project is hosted."
+    },
+    "username": {
+      "title": "Username",
+      "description": "Transifex username for authentication."
+    },
+    "password": {
+      "title": "Password",
+      "description": "Password for the Transifex user account."
+    },
+    "projectId": {
+      "title": "Project ID",
+      "description": "The identifier of the Transifex project to work with."
+    },
+    "protectApproved": {
+      "title": "Protect Approved Entries",
+      "description": "Marks non-empty, non-fuzzy entries as non-translatable to protect approved translations."
+    },
+    "sourceLocale": {
+      "title": "Source Locale",
+      "description": "Fall-back source locale code used when not specified by the calling application."
+    },
+    "targetLocale": {
+      "title": "Target Locale",
+      "description": "Fall-back target locale code used when not specified by the calling application."
+    }
+  },
+  "fullDoc": "# Transifex Filter\n\nThe Transifex Filter processes online [Transifex](http://www.transifex.org) translation projects by reading a local `.txp` project file. It connects to a Transifex host, downloads PO-based translation resources, and processes them as standard PO filter events. When used with a filter-writer, modified PO files are pushed back to the Transifex project.\n\n> **Note:** This filter is BETA.\n\n## How It Works\n\n1. The filter reads a local `.txp` project file.\n2. If the file contains no resources, it connects to Transifex and fetches the full resource list. Otherwise, it uses the resources already listed.\n3. For each PO resource matching the source locale, it downloads the translation file for the target language (or creates one with empty entries if none exists).\n4. It processes the downloaded PO file, sending standard filter events.\n5. If a filter-writer is used, modified PO files are pushed back to Transifex.\n\n## Parameters\n\n#### Open Project File Before Processing\nOpens the `.txp` project file in an editor dialog before processing begins, allowing you to review and modify project settings (host, credentials, resource selection) interactively.\n\n#### Host URL\nThe URL of the Transifex server where your project is hosted (e.g., `http://www.transifex.net/`).\n\n#### Username\nYour Transifex username for authenticating with the host.\n\n#### Password\nThe password for the given Transifex user. Note that credentials are stored unencrypted in the `.txp` file.\n\n#### Project ID\nThe identifier of the Transifex project you want to work with (e.g., `myproject`).\n\n#### Protect Approved Entries\nMarks all translation entries that are not empty and not fuzzy with a non-translatable flag, preventing them from being modified during processing.\n\n> **Warning:** Transifex currently loses fuzzy flags and their translations when downloading a PO file uploaded with fuzzy entries. The only safe round-trip approach is to not label entries as fuzzy, which may cause resources to appear 100% translated even when translations are not final.\n\n#### Source Locale\nFall-back source locale code (e.g., `en`). In most situations the source locale is driven by the calling application; this value is only used as a fall-back.\n\n#### Target Locale\nFall-back target locale code (e.g., `fr`). In most situations the target locale is driven by the calling application; this value is only used as a fall-back.\n\n## Project File Format\n\nThe `.txp` file is a UTF-8 text file with the following format:\n\n```properties\nhost = <hostURL>\nuser = <username>\npassword = <password>\nprojectId = <projectId>\nprotectApproved = yes|no\nsourceLocale = <localeCode>\ntargetLocale = <localeCode>\n<resourceId1>\tyes|no\n<resourceId2>\tyes|no\n```\n\n- Each entry can be omitted (defaults will be used).\n- If the `yes|no` selection flag is not present for a resource, it defaults to *selected*.\n- Lines with only whitespace and lines starting with `#` are ignored.\n\n### Example\n\n```properties\nhost=http://www.transifex.net\nuser=johndoe\npassword=xrt34@asf\nprojectId=myproject\nprotectApproved=yes\n# Fall-back values for the source and target locales:\nsourceLocale=en\ntargetLocale=fr\n# Resources\nmyfile1xmlpo\tyes\nmyfile2odtpo\tno\n```\n\n## Limitations\n\n- This filter is **BETA**.\n- Transifex loses fuzzy flags and their corresponding translations when downloading a PO file uploaded with fuzzy entries. Round-trips without losing target text require not labeling entries as fuzzy, which may incorrectly show resources as 100% translated.\n- Only PO-based files in Transifex are handled — TS files are not supported.\n- Due to pipeline mechanism limitations, this filter cannot be used with steps that re-write different output corresponding to the resource, other than the **Filter Events to Raw Document Step**. It will not work properly with the **Rainbow Translation Kit Creation Step**.\n\n## Notes\n\n- The source and target locale values in the `.txp` file are fall-back values only; in most situations these are driven by the calling application.\n- The filter-writer pushes modified PO files back to Transifex using the same credentials specified in the project file.\n- Resource selection can be managed either by editing the `.txp` file directly or by using the **Open project file before processing** option to launch the editor dialog.",
   "filterId": "okf_transifex",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Transifex_Filter"
 }

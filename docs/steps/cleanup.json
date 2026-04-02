@@ -1,51 +1,75 @@
 {
   "filterName": "Cleanup Step",
-  "overview": "Cleans strings by normalizing quotes, punctuation, and whitespace ready for further processing. By default, **all whitespace is normalized before any further processing** — all multiple space, tab, etc. characters are replaced with a single instance. Operates on filter events and is typically used in TMX processing pipelines.",
+  "overview": "The Cleanup step cleans strings by normalizing quotes, punctuation, and whitespace ready for further processing. By default, all whitespace is normalized before any further processing — all multiple space, tab, etc. characters are replaced with a single instance. It operates on filter events and requires both source and target language to be set.",
   "parameters": {
     "normalizeQuotes": {
-      "help": "Replaces all typographic/curly quotation marks with straight double quotes (`\"`) and all typographic apostrophes with single straight quotes (`'`).\n\nUseful for normalizing text from sources that use locale-specific quote characters (e.g., “” ‘’ «») into a consistent ASCII representation."
+      "help": "Replaces all quotation marks with straight double quotes (`\"`) and all apostrophes with single straight quotes (`'`).\n\nThis is useful for normalizing curly/smart quotes and other typographic quote variants into a consistent ASCII form before further processing."
     },
     "checkCharacters": {
-      "help": "Detects and **removes entire text units** that contain common corrupt character strings.\n\nThis catches encoding artifacts and garbage characters that indicate data corruption, preventing them from propagating into translation memories or downstream processing."
+      "help": "Detects and removes text units that contain common corrupt character strings.\n\nThis can catch encoding issues such as mojibake or other garbled text that would otherwise propagate through the pipeline."
     },
     "matchRegexExpressions": {
-      "help": "Marks segments matching built-in regular expressions for removal.",
+      "help": "Intended to mark segments matching built-in regular expressions for removal.",
       "notes": [
-        "This option is **not currently used** — it exists as a placeholder for future built-in patterns."
+        "**Note:** This option is not currently used by the step. Enabling or disabling it has no effect."
       ]
     },
     "matchUserRegex": {
-      "help": "Removes text units whose content matches a user-defined regular expression.\n\nUse this to filter out segments that match known patterns you want to exclude (e.g., code-only strings, placeholder text)."
+      "help": "Removes text units that contain text matching a user-defined regular expression.\n\nUse this to filter out segments with specific patterns (e.g., placeholder-only strings, test data) before further processing."
     },
     "pruneTextUnit": {
-      "help": "Removes text units that have been **marked for removal** by other checks in this step, or that have **no target text**.\n\nThis is the final cleanup pass — without it, segments flagged by character checks or regex matching remain in the output.",
-      "notes": [
-        "Depends on the results of other enabled checks (`checkCharacters`, `matchRegexExpressions`, `matchUserRegex`). Disabling this effectively prevents those checks from removing any content."
-      ]
+      "help": "Removes text units that have been marked for removal by other checks in this step, or that have no target text.\n\nThis is the final cleanup pass — segments flagged by the character check or regex matching are actually removed when this option is enabled."
     },
     "normalizePunctuations": {
-      "help": "Standardizes spacing around punctuation marks to follow **English writing conventions** — e.g., no space before a period or comma, one space after.\n\nThis may produce incorrect results for languages like French that require spaces before certain punctuation (e.g., `;`, `?`, `!`).",
+      "help": "Standardizes spaces before and after certain punctuation marks to conform to English writing style conventions.\n\nFor example, ensures no space before periods or commas, and a single space after them.",
       "notes": [
-        "Only appropriate for English-style punctuation rules. Do not enable for French, or other languages with different punctuation spacing conventions."
+        "**Warning:** This applies English punctuation spacing rules, which may not be appropriate for all languages (e.g., French uses a space before `:`, `!`, `?`)."
       ]
     },
     "keepCrNlIntact": {
-      "help": "Preserves carriage return (CR) and newline (NL) characters during whitespace normalization.\n\nBy default, the step normalizes **all** whitespace (spaces, tabs, CR, NL) into single ASCII spaces. Enable this to keep line breaks intact while still normalizing spaces and tabs.",
-      "notes": [
-        "Only affects the whitespace normalization pass that runs before all other processing."
+      "help": "Preserves carriage return (CR) and newline (NL) characters as-is during whitespace normalization.\n\nBy default, the step normalizes all whitespace (including CR/NL) to ASCII spaces. Enable this to keep line breaks in the text while still normalizing spaces and tabs.",
+      "dependsOn": [
+        {
+          "property": "normalizeQuotes",
+          "condition": "only meaningful when whitespace normalization is active (which is always on by default)"
+        }
       ]
     }
   },
   "limitations": [
-    "Does not work with **Asian languages** (CJK).",
-    "Does not work with **bi-directional languages** (Arabic, Hebrew, etc.).",
-    "The `matchRegexExpressions` option (built-in regex patterns) is not currently implemented."
+    "Does not work with Asian languages.",
+    "Does not work with bi-directional (RTL) languages.",
+    "The `matchRegexExpressions` option is not currently implemented and has no effect."
   ],
   "processingNotes": [
-    "Whitespace normalization runs **first**, before any other processing — all multiple spaces, tabs, and (unless `keepCrNlIntact` is enabled) CR/NL characters are replaced with a single ASCII space.",
-    "Checks that mark segments for removal (`checkCharacters`, `matchUserRegex`) only take effect if `pruneTextUnit` is enabled to perform the actual removal."
+    "All whitespace is normalized before any further processing — multiple spaces, tabs, etc. are replaced with a single space instance.",
+    "CR and NL characters are also normalized to spaces by default unless `keepCrNlIntact` is enabled.",
+    "Text units are only actually removed when `pruneTextUnit` is enabled, even if other options flag them for removal."
   ],
-  "examples": [],
+  "propertySuggestions": {
+    "normalizeQuotes": {
+      "description": "Replace all quotation marks with straight double quotes and apostrophes with single straight quotes."
+    },
+    "checkCharacters": {
+      "description": "Detect and remove text units containing common corrupt character strings."
+    },
+    "matchRegexExpressions": {
+      "description": "Mark segments matching built-in regular expressions for removal. This option is not currently used."
+    },
+    "matchUserRegex": {
+      "description": "Remove text units containing text that matches user-defined regular expressions."
+    },
+    "pruneTextUnit": {
+      "description": "Remove text units marked for removal or that have no target text."
+    },
+    "normalizePunctuations": {
+      "description": "Standardize spaces around punctuation marks to English writing style conventions."
+    },
+    "keepCrNlIntact": {
+      "description": "Preserve CR and NL characters instead of normalizing them to spaces."
+    }
+  },
+  "fullDoc": "# Cleanup Step\n\nThe Cleanup step cleans strings by normalizing quotes, punctuation, and whitespace ready for further processing. By default, all whitespace is normalized before any further processing — all multiple space, tab, etc. characters are replaced with a single instance. It operates on filter events and requires both source and target language to be set.\n\n## Parameters\n\n#### Normalize Quotation Marks\nReplaces all quotation marks with straight double quotes (`\"`) and all apostrophes with single straight quotes (`'`). This is useful for normalizing curly/smart quotes and other typographic quote variants into a consistent ASCII form before further processing.\n\n#### Check for Corrupt or Unexpected Characters\nDetects and removes text units that contain common corrupt character strings. This can catch encoding issues such as mojibake or other garbled text that would otherwise propagate through the pipeline.\n\n#### Mark Segments Matching Default Regular Expressions for Removal\nIntended to mark segments matching built-in regular expressions for removal.\n\n> **Note:** This option is not currently used by the step. Enabling or disabling it has no effect.\n\n#### Mark Segments Matching User Defined Regular Expressions for Removal\nRemoves text units that contain text matching a user-defined regular expression. Use this to filter out segments with specific patterns (e.g., placeholder-only strings, test data) before further processing.\n\n#### Remove Unnecessary Segments from Text Unit\nRemoves text units that have been marked for removal by other checks in this step, or that have no target text. This is the final cleanup pass — segments flagged by the character check or regex matching are actually removed when this option is enabled.\n\n#### Standardize Punctuation Spacing\nStandardizes spaces before and after certain punctuation marks to conform to English writing style conventions. For example, ensures no space before periods or commas, and a single space after them.\n\n> **Warning:** This applies English punctuation spacing rules, which may not be appropriate for all languages (e.g., French uses a space before `:`, `!`, `?`).\n\n#### Keep CR and NL Characters Intact\nPreserves carriage return (CR) and newline (NL) characters as-is during whitespace normalization. By default, the step normalizes all whitespace (including CR/NL) to ASCII spaces. Enable this to keep line breaks in the text while still normalizing spaces and tabs.\n\n## Limitations\n\n- Does not work with Asian languages.\n- Does not work with bi-directional (RTL) languages.\n- The `matchRegexExpressions` option is not currently implemented and has no effect.\n\n## Notes\n\n- All whitespace is normalized before any further processing — multiple spaces, tabs, etc. are replaced with a single space instance.\n- CR and NL characters are also normalized to spaces by default unless `keepCrNlIntact` is enabled.\n- Text units are only actually removed when `pruneTextUnit` is enabled, even if other options flag them for removal.",
   "stepId": "cleanup",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/cleanup_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Cleanup_Step"
 }

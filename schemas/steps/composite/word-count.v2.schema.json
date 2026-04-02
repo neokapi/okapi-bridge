@@ -35,32 +35,38 @@
     "countInBatch": {
       "type": "boolean",
       "default": true,
-      "title": "Batches"
+      "title": "Batches",
+      "description": "Set word count annotation aggregated per batch."
     },
     "countInBatchItems": {
       "type": "boolean",
       "default": true,
-      "title": "Batch items"
+      "title": "Batch items",
+      "description": "Set word count annotation per batch item."
     },
     "countInDocuments": {
       "type": "boolean",
       "default": false,
-      "title": "Documents"
+      "title": "Documents",
+      "description": "Set word count annotation per document."
     },
     "countInSubDocuments": {
       "type": "boolean",
       "default": false,
-      "title": "Sub-documents"
+      "title": "Sub-documents",
+      "description": "Set word count annotation per sub-document."
     },
     "countInGroups": {
       "type": "boolean",
       "default": false,
-      "title": "Groups"
+      "title": "Groups",
+      "description": "Set word count annotation per group."
     },
     "bufferSize": {
       "type": "integer",
       "default": 0,
-      "title": "Size of text buffer:"
+      "title": "Text Buffer Size",
+      "description": "Size of the internal text buffer used during word counting (0 for default)."
     }
   }
 }

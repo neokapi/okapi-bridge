@@ -32,7 +32,8 @@
     "suffix": {
       "type": "string",
       "default": "_joined",
-      "title": "Optional suffix to place at the end of the result files"
+      "title": "Optional suffix to place at the end of the result files",
+      "description": "Marker text appended to the output filename to distinguish joined files from the original split parts."
     }
   }
 }

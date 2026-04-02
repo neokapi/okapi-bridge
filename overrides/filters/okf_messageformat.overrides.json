@@ -4,8 +4,17 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "addPluralForms": {},
-    "normalize": {},
-    "prettyPrint": {}
+    "addPluralForms": {
+      "title": "Add Plural Forms",
+      "description": "Add missing plural forms based on the target locale's CLDR plural rules."
+    },
+    "normalize": {
+      "title": "Normalize Variants",
+      "description": "Move leading and trailing text into each complex argument variant for complete phrases."
+    },
+    "prettyPrint": {
+      "title": "Pretty Print",
+      "description": "Format output with indentation and line breaks for readability."
+    }
   }
 }

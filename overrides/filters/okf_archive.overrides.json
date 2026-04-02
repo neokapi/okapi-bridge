@@ -6,6 +6,10 @@
   "fields": {
     "mimeType": {},
     "fileNames": {},
-    "configIds": {}
+    "configIds": {},
+    "identification": {
+      "title": "File Identification",
+      "description": "Settings for identifying and matching files within the archive."
+    }
   }
 }

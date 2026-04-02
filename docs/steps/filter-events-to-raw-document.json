@@ -1,19 +1,23 @@
 {
   "filterName": "Filter Events to Raw Document Step",
-  "overview": "This step merges back extracted content coming as filter events into its original document format. It is the counterpart to the **Raw Document to Filter Events Step** — together they form the minimal pipeline for round-tripping a document through a filter. Takes filter events as input and sends a raw document (or `NO_OP` if writing to a stream).",
+  "overview": "This step merges filter events back into their original document format, effectively reversing the extraction performed by the Raw Document to Filter Events step. It takes filter events as input and produces a raw document as output. It is commonly paired with the Raw Document to Filter Events step to form a minimal extract-then-merge pipeline.",
   "parameters": {},
-  "limitations": [],
+  "limitations": [
+    "None known."
+  ],
   "processingNotes": [
-    "A minimal round-trip pipeline pairs **Raw Document to Filter Events Step** → **Filter Events to Raw Document Step** to extract and then merge a document using a filter.",
-    "Sends `NO_OP` instead of a raw document when writing to a stream."
+    "This step has no user-configurable parameters — all parameters are provided by the calling application.",
+    "If writing to a stream, the step sends `NO_OP` instead of a raw document.",
+    "Requires both source and target language to be set in the pipeline."
   ],
   "examples": [
     {
-      "title": "Minimal round-trip pipeline",
-      "description": "The simplest pipeline to extract a document into filter events and merge it back into its original format. Any processing steps (e.g., leveraging, search-and-replace) would be inserted between these two steps.",
-      "config": "```\nRaw Document to Filter Events Step\n  ↓\n(... optional processing steps ...)\n  ↓\nFilter Events to Raw Document Step\n```"
+      "title": "Minimal extract-merge pipeline",
+      "description": "The simplest pipeline that extracts filter events from a document and immediately merges them back. This is useful as a roundtrip test to verify that a filter correctly reconstructs the original document format.",
+      "config": "```\nRaw Document to Filter Events Step\n  +\nFilter Events to Raw Document Step\n```"
     }
   ],
+  "fullDoc": "# Filter Events to Raw Document Step\n\nThis step merges filter events back into their original document format, effectively reversing the extraction performed by the Raw Document to Filter Events step. It takes filter events as input and produces a raw document as output. It is commonly paired with the Raw Document to Filter Events step to form a minimal extract-then-merge pipeline.\n\n## Parameters\n\nThis step has no user-configurable parameters. All parameters are provided by the calling application.\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- If writing to a stream, the step sends `NO_OP` instead of a raw document.\n- Requires both source and target language to be set in the pipeline.\n- To create the initial filter events from an input document, use the **Raw Document to Filter Events Step**.\n\n## Examples\n\n### Minimal extract-merge pipeline\n\nThe simplest pipeline that extracts filter events from a document and immediately merges them back. This is useful as a roundtrip test to verify that a filter correctly reconstructs the original document format:\n\n```\nRaw Document to Filter Events Step\n  +\nFilter Events to Raw Document Step\n```",
   "stepId": "filter-events-to-raw-document",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Filter_Events_to_Raw_Document_Step"
 }

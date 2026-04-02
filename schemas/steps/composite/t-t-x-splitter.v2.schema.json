@@ -35,7 +35,8 @@
     "partCount": {
       "type": "integer",
       "default": 2,
-      "title": "Number of output files"
+      "title": "Number of output files",
+      "description": "The number of output files to create from one input document, split by roughly equal word count."
     }
   }
 }

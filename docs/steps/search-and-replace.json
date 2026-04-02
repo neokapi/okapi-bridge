@@ -1,16 +1,16 @@
 {
   "filterName": "Search and Replace Step",
-  "overview": "Performs search and replace actions on either the text units (when receiving filter events) or the full content of input documents (when receiving raw documents). Patterns are processed in the order they are declared, and both literal and Java regular expression modes are supported. The step sends back the same type it receives — updated filter events or an updated raw document.",
+  "overview": "This step performs search and replace actions on either the text units or the full content of input documents. It can process both raw documents (whole-file text replacement) and filter events (text unit content replacement). Patterns are processed in the order they are declared, and both literal and Java regular expression modes are supported.",
   "parameters": {
     "regEx": {
-      "help": "Enables Java regular expression syntax for all search patterns. When off, search patterns are literal text with only basic escape sequences (`\\n`, `\\r`, `\\t`, `\\\\`, `\\uHHHH`).\n\nWhen on, replacement strings support `$N` for back-references to captured groups (`$1`, `$2`, etc.) and `\\$` for a literal dollar sign. See Java [`Matcher.replaceAll()`](http://java.sun.com/javase/6/docs/api/java/util/regex/Matcher.html#replaceAll(java.lang.String)) for details.",
+      "help": "Enables [Java regular expression](http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html) mode for all search patterns.\n\nWhen enabled, use `$1`, `$2`, etc. in replacement strings to reference captured groups from the search pattern (see [`Matcher.replaceAll()`](http://java.sun.com/javase/6/docs/api/java/util/regex/Matcher.html#replaceAll(java.lang.String))).\n\nIn **both** modes, search and replace strings support these escape sequences:\n- `\\n` = line-feed\n- `\\r` = carriage-return\n- `\\t` = tab\n- `\\\\` = literal backslash\n- `\\uHHHH` = Unicode character (hex)\n\nAdditionally, when regex is **on**, replacement strings support:\n- `$N` = match of search group N\n- `\\$` = literal dollar sign",
       "notes": [
-        "Applies globally to **all** patterns in the list — you cannot mix literal and regex patterns.",
-        "In all modes (regex on or off), use `\\\\` to represent a literal backslash. For `\\C` where `C` is not a recognized escape, the result is the literal character (e.g., `\\*` → `*`)."
+        "For any escape sequence `\\C` where `C` is not a recognized special character, the result is the literal character itself (e.g., `\\*` produces `*`).",
+        "You must use `\\\\` to represent a literal backslash in both modes."
       ]
     },
     "dotAll": {
-      "help": "Changes the meaning of `.` so it matches **every** character including `\\n` (line-feed). Without this, `.` matches everything except line-feed.",
+      "help": "Changes the meaning of the period character `.` so that it matches **every** character, including `\\n` (line-feed).\n\nBy default, `.` matches every character **except** `\\n`.",
       "dependsOn": [
         {
           "property": "regEx",
@@ -19,7 +19,7 @@
       ]
     },
     "ignoreCase": {
-      "help": "Makes pattern matching case-insensitive. For example, `bear` matches `Bear`, `BEAR`, and `bear`.",
+      "help": "Makes pattern matching case-insensitive. Applies to **all** search expressions, not just the currently selected one.\n\nFor example, the pattern `bear` matches `Bearcat`, `BEARCAT`, and `bearcat`.",
       "dependsOn": [
         {
           "property": "regEx",
@@ -28,7 +28,7 @@
       ]
     },
     "multiLine": {
-      "help": "Changes the meaning of `^` and `$` so they match at the beginning and end of **any line**, not just the beginning and end of the whole string.",
+      "help": "Changes the meaning of `^` and `$` so they match at the beginning and end of **any line**, not just the beginning and end of the whole string.\n\nApplies to all expressions, not just the selected one.",
       "dependsOn": [
         {
           "property": "regEx",
@@ -37,28 +37,33 @@
       ]
     },
     "target": {
-      "help": "Performs search and replace on the **target** content of text units. Ignored when processing a raw document.",
+      "help": "Performs search and replace on the **target** content of text units.\n\nIgnored when the step processes a raw document (whole-file mode).",
       "notes": [
         "When working on target content, you may need to use the **Create Target Step** before this step to ensure there is content in the target."
-      ],
-      "seeAlso": "Create_Target_Step"
+      ]
     },
     "source": {
-      "help": "Performs search and replace on the **source** content of text units. Ignored when processing a raw document."
+      "help": "Performs search and replace on the **source** content of text units.\n\nIgnored when the step processes a raw document (whole-file mode)."
     },
     "replaceALL": {
-      "help": "Replaces **all** matches found. When disabled, only the **first** match is replaced.\n\n- **Text units mode**: replaces all or only one occurrence *per text unit*\n- **Raw document mode**: replaces all or only one occurrence *for the whole file*"
+      "help": "Replaces **all** matches found. If disabled, only the **first** match is replaced.\n\n- **Text unit mode**: replaces all or only one occurrence *per text unit*\n- **Raw document mode**: replaces all or only one occurrence *for the whole file*"
     },
     "replacementsPath": {
-      "help": "Path to an external tab-delimited, UTF-8-encoded text file with two columns: search strings (column 1) and replacement strings (column 2).\n\nThis file is processed **after** all patterns in the main list have been applied. Replacements from this file are limited to **literal (non-regex) substring** searches only.",
-      "values": "File path. Supports `${rootDir}` and `${inputRootDir}` variables.",
+      "help": "Path to a **tab-delimited, UTF-8-encoded** text file with two columns: the first column contains search strings and the second contains replacement strings.\n\nThis file is processed **separately after** the table expressions have been processed.",
+      "values": "Tab-delimited UTF-8 text file. Supports `${rootDir}` and `${inputRootDir}` path variables.",
+      "notes": [
+        "Replacements from this file are currently limited to **literal searches only** (non-regex, substring matching)."
+      ],
       "examples": [
-        "`${rootDir}/my-replacements.txt` — tab-delimited file in the pipeline root directory"
+        "`${rootDir}/my-replacements.tsv` — file relative to the pipeline root directory"
       ]
     },
     "logPath": {
-      "help": "Path where the replacement log file will be written when logging is enabled.",
-      "values": "File path. Supports `${rootDir}` and `${inputRootDir}` variables.",
+      "help": "Path where the replacement log file will be written, recording which replacements were made during processing.",
+      "values": "File path. Supports `${rootDir}` and `${inputRootDir}` path variables.",
+      "examples": [
+        "`${rootDir}/replacementsLog.txt` — default log location"
+      ],
       "dependsOn": [
         {
           "property": "saveLog",
@@ -67,34 +72,82 @@
       ]
     },
     "saveLog": {
-      "help": "Saves a log of all replacements performed to the file specified in the log path."
+      "help": "Saves a log of all replacements performed during processing to the file specified in the log path."
     },
     "count": {
-      "help": "Internal counter tracking the number of replacements performed. Not typically set by the user."
+      "help": "Tracks the total number of replacements performed. Typically used as an output counter rather than a user-configured input."
     }
   },
   "limitations": [
-    "When processing a raw document, the **entire file content is loaded into memory**, which may cause problems with very large documents.",
-    "The external replacements file (`replacementsPath`) only supports **literal (non-regex) substring** searches — regex is not available for external file replacements.",
-    "The `source` and `target` options are ignored when processing a raw document (the whole file is processed regardless)."
+    "When working with a raw document as input, the **entire content** is loaded into memory. This may cause problems with very large documents.",
+    "The external replacements file (`replacementsPath`) is limited to literal (non-regex) substring searches only.",
+    "Patterns are processed sequentially in declared order — longer patterns must be placed **first** if there is a chance of overlapping matches."
   ],
   "processingNotes": [
-    "Patterns are processed **in declaration order**. Longer patterns should be placed first if there is a chance of overlapping matches.",
-    "The external replacements file is processed **after** all in-table patterns.",
-    "When receiving **filter events**, search/replace operates on text unit content. When receiving a **raw document**, it operates on the entire file as plain text (no conversion of escaped characters).",
-    "The step sends back the same event type it receives — filter events in, filter events out; raw document in, raw document out."
+    "Patterns are processed in the order they appear in the list. Ensure longer patterns come before shorter overlapping ones.",
+    "When receiving **filter events**, search/replace operates on text unit content. When receiving a **raw document**, it operates on the entire file as plain text (no escaped character conversion).",
+    "The external replacements file is processed **after** all table expressions.",
+    "The `source` and `target` options are only relevant in filter events mode; they are ignored in raw document mode."
   ],
   "examples": [
     {
-      "title": "Escape sequences in literal mode",
-      "description": "Special escape sequences available in both literal and regex modes for search and replace patterns:\n\n| Escape | Meaning |\n|--------|----------|\n| `\\n` | line-feed |\n| `\\r` | carriage-return |\n| `\\t` | tab |\n| `\\\\` | literal backslash |\n| `\\uHHHH` | Unicode character (hex) |\n\nAdditionally in **regex replacement** strings: `$N` = captured group N, `\\$` = literal dollar sign."
+      "title": "Escape sequences in search and replace",
+      "description": "Both literal and regex modes support escape sequences in search and replace strings. The available sequences differ slightly between modes.",
+      "config": "```yaml\n# Literal mode escapes (regEx: false)\n# Search: \\n \\r \\t \\\\ \\uHHHH\n# Replace: \\n \\r \\t \\\\ \\uHHHH\n\n# Regex mode additional replace escapes (regEx: true)\n# Replace: $1 $2 ... $N (group references)\n# Replace: \\$ (literal dollar sign)\n```"
     },
     {
-      "title": "Regex with group back-references",
-      "description": "With **regular expressions** enabled, captured groups in the search pattern can be referenced in the replacement using `$1`, `$2`, etc.\n\nFor example, to swap two words separated by a space:",
-      "config": "```yaml\nregEx: true\n# Search: (\\w+) (\\w+)\n# Replace: $2 $1\n```"
+      "title": "External replacements file format",
+      "description": "The tab-delimited replacements file uses two columns separated by a tab character. Each line defines one search/replace pair.",
+      "input": "```\nold term\\tnew term\nfoo\\tbar\n```"
     }
   ],
+  "propertySuggestions": {
+    "regEx": {
+      "title": "Use Regular Expressions",
+      "description": "Enable Java regular expression mode for all search patterns."
+    },
+    "dotAll": {
+      "title": "Dot Also Matches Line-Feed",
+      "description": "Make the period character match every character including line-feed."
+    },
+    "ignoreCase": {
+      "title": "Ignore Case Differences",
+      "description": "Ignore case when matching search patterns."
+    },
+    "multiLine": {
+      "title": "Multiline Mode",
+      "description": "Make ^ and $ match at the beginning and end of each line."
+    },
+    "target": {
+      "title": "Replace in Target Content",
+      "description": "Perform search and replace on the target content of text units."
+    },
+    "source": {
+      "title": "Replace in Source Content",
+      "description": "Perform search and replace on the source content of text units."
+    },
+    "replaceALL": {
+      "title": "Replace All Instances",
+      "description": "Replace all matches found instead of only the first match."
+    },
+    "replacementsPath": {
+      "title": "Replacements File Path",
+      "description": "Path to a tab-delimited UTF-8 file with search and replacement pairs."
+    },
+    "logPath": {
+      "title": "Replacement Log File Path",
+      "description": "Path where the log of performed replacements will be saved."
+    },
+    "saveLog": {
+      "title": "Save Replacement Log",
+      "description": "Save a log of all replacements performed to the specified file."
+    },
+    "count": {
+      "title": "Replacement Count",
+      "description": "Total number of replacements performed."
+    }
+  },
+  "fullDoc": "# Search and Replace Step\n\nThis step performs search and replace actions on either the text units or the full content of input documents. It can process both raw documents (whole-file text replacement) and filter events (text unit content replacement). Patterns are processed in the order they are declared, and both literal and Java regular expression modes are supported.\n\n## Input Modes\n\n- **Filter events**: Search and replace operates on the content of text units. Updated filter events are sent to the next step.\n- **Raw document**: Search and replace operates on the whole file as plain text. The document is treated exactly as it would appear in a text editor — no conversion of escaped characters is performed. An updated raw document is sent to the next step.\n\n## Parameters\n\n### Search Mode\n\n#### Use Regular Expressions\nEnable [Java regular expression](http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html) mode for all search patterns. When enabled, use `$1`, `$2`, etc. in replacement strings to reference captured groups.\n\nIn **both** modes, these escape sequences are supported:\n- `\\n` = line-feed, `\\r` = carriage-return, `\\t` = tab\n- `\\\\` = literal backslash\n- `\\uHHHH` = Unicode character (hex)\n\nIn **regex** mode, replacements additionally support:\n- `$N` = match of search group N\n- `\\$` = literal dollar sign\n\n> **Note:** You must use `\\\\` to represent a literal backslash. For `\\C` where `C` is not a special character, the result is the literal character (e.g., `\\*` → `*`).\n\n#### Dot Also Matches Line-Feed\nChanges the meaning of `.` so it matches every character including `\\n`. Only available when regular expressions are enabled.\n\n#### Ignore Case Differences\nMakes all pattern matching case-insensitive. For example, `bear` matches `Bearcat`, `BEARCAT`, and `bearcat`. Only available when regular expressions are enabled.\n\n#### Multiline Mode\nChanges `^` and `$` to match at the beginning and end of any line, not just the whole string. Only available when regular expressions are enabled.\n\n### Scope\n\n#### Replace in Target Content\nPerforms search and replace on the **target** content of text units. Ignored in raw document mode.\n\n> **Note:** When working on target content, you may need to use the **Create Target Step** before this step to ensure target content exists.\n\n#### Replace in Source Content\nPerforms search and replace on the **source** content of text units. Ignored in raw document mode.\n\n#### Replace All Instances\nReplaces all matches found. If disabled, only the first match is replaced. In text unit mode, this applies per text unit; in raw document mode, it applies to the whole file.\n\n### External Replacements\n\n#### Replacements File Path\nPath to a tab-delimited, UTF-8-encoded text file with two columns: search strings and replacement strings. Processed **after** the table expressions. Supports `${rootDir}` and `${inputRootDir}` variables.\n\n> **Note:** Replacements from this file are limited to literal (non-regex) substring matching only.\n\n### Logging\n\n#### Save Replacement Log\nEnables logging of all replacements performed.\n\n#### Replacement Log File Path\nPath where the replacement log will be saved. Supports `${rootDir}` and `${inputRootDir}` variables. Default: `${rootDir}/replacementsLog.txt`.\n\n#### Replacement Count\nTotal number of replacements performed (output counter).\n\n## Limitations\n\n- When working with a raw document as input, the **entire content** is loaded into memory. This may cause problems with very large documents.\n- The external replacements file is limited to literal (non-regex) substring searches only.\n- Patterns are processed sequentially — longer patterns must be placed **first** if overlapping matches are possible.\n\n## Notes\n\n- Patterns are processed in declared order. Ensure longer patterns precede shorter overlapping ones.\n- The external replacements file is processed **after** all inline table expressions.\n- The `source` and `target` scope options only apply in filter events mode; they are ignored in raw document mode.\n\n## Examples\n\n### Escape Sequences\n\n```\n# Literal mode (regEx: false)\nSearch:  \\n \\r \\t \\\\ \\uHHHH\nReplace: \\n \\r \\t \\\\ \\uHHHH\n\n# Regex mode adds (regEx: true)\nReplace: $1 $2 ... $N (group refs), \\$ (literal dollar)\n```\n\n### External Replacements File\n\nTab-delimited UTF-8 file with two columns:\n```\nold term\tnew term\nfoo\tbar\n```",
   "stepId": "search-and-replace",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/search_and_replace_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Search_and_Replace_Step"
 }

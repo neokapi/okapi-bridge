@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_properties.v2.schema.json",
   "version": 2,
-  "title": "Properties Filter Filter",
-  "description": "Configuration for the Okapi Properties Filter Filter",
+  "title": "Properties Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_properties",
@@ -137,31 +136,36 @@
           "type": "boolean",
           "default": true,
           "x-flattenPath": "extractOnlyMatchingKey",
-          "description": "Only extract keys matching condition"
+          "description": "When enabled, extract only entries whose keys match the condition; otherwise exclude matching keys.",
+          "title": "Extract Only Matching Keys"
         },
         "useKeyCondition": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "useKeyCondition",
-          "description": "Enable key filtering condition"
+          "description": "Filter entries for extraction based on a regex condition applied to their keys.",
+          "title": "Enable Key Condition"
         },
         "keyCondition": {
           "type": "string",
           "default": ".*text.*",
           "x-flattenPath": "keyCondition",
-          "description": "Regex condition for key extraction"
+          "description": "Regular expression pattern to test against property keys for extraction filtering.",
+          "title": "Key Condition Pattern"
         },
         "localizeOutside": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "localizeOutside",
-          "description": "Localize values outside matching keys"
+          "description": "Extract translatable items that are not within the scope of a localization directive.",
+          "title": "Extract Outside Directives"
         },
         "extraComments": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "extraComments",
-          "description": "Include extra comment lines"
+          "description": "Recognize semicolon and double-slash comment styles in addition to standard # and ! markers.",
+          "title": "Additional Comment Markers"
         }
       }
     },
@@ -173,7 +177,8 @@
           "type": "boolean",
           "default": true,
           "x-flattenPath": "commentsAreNotes",
-          "description": "Treat comments as translator notes."
+          "description": "Treat comments as translator notes.",
+          "title": "Comments as Notes"
         }
       }
     },
@@ -185,13 +190,15 @@
           "type": "boolean",
           "default": false,
           "x-flattenPath": "idLikeResname",
-          "description": "Use resource name as ID"
+          "description": "Use the property key value as the text unit ID in addition to the resource name.",
+          "title": "Use Key as Text Unit ID"
         },
         "useLd": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "useLd",
-          "description": "Use localization directives"
+          "description": "Enable recognition of localization directives in comments to override default extraction behavior.",
+          "title": "Use Localization Directives"
         }
       }
     },
@@ -203,19 +210,22 @@
           "type": "boolean",
           "default": true,
           "x-flattenPath": "escapeExtendedChars",
-          "description": "Escape extended Unicode characters in output."
+          "description": "Escape extended Unicode characters in output.",
+          "title": "Escape Extended Characters"
         },
         "useJavaEscapes": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "useJavaEscapes",
-          "description": "Use Java-style unicode escapes"
+          "description": "Keep Java property escape sequences in extracted text instead of resolving them.",
+          "title": "Retain Java Escapes"
         },
         "convertLFandTab": {
           "type": "boolean",
           "default": true,
           "x-flattenPath": "convertLFandTab",
-          "description": "Convert LF and tab characters"
+          "description": "Convert \\n and \\t escape sequences to actual line-breaks and tabs during processing.",
+          "title": "Convert \\n and \\t"
         }
       }
     }
@@ -299,6 +309,6 @@
   "x-apiVersion": "v2",
   "x-baseVersion": 2,
   "x-introducedInOkapi": "1.40.0",
-  "x-baseHash": "2772b36aee67",
-  "x-compositeHash": "72ed47db225c"
+  "x-baseHash": "f97d8e916c91",
+  "x-compositeHash": "ed32869fdf45"
 }

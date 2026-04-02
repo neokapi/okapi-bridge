@@ -1,15 +1,16 @@
 {
-  "filterName": "Full-Width Conversion",
-  "overview": "Converts characters in text units between full-width (zenkaku) and half-width forms. For historical reasons, some Asian character sets have two display forms for certain characters; this step normalizes them in one direction or the other. The conversion is applied to the **target locale** text of each text unit — if no target text exists, the source is copied to the target before processing.",
+  "filterName": "Full-Width Conversion Step",
+  "overview": "Converts characters in text units between full-width (zenkaku) and half-width (hankaku) forms, targeting Asian character sets that historically have dual display forms. The conversion operates on the target locale text of text units; if no target text exists, source text is copied to the target before processing. Supports both directions: full-width → half-width/ASCII and half-width/ASCII → full-width, with fine-grained control over which character classes are affected.",
   "parameters": {
     "toHalfWidth": {
-      "help": "Controls the conversion direction.\n\n- **true** (default): Converts full-width characters to their half-width or ASCII equivalents. For example, `Ｑ` (U+FF31) → `Q` (U+0051) and `サ` (U+30B5) → `ｻ` (U+FF7B).\n- **false**: Converts half-width and ASCII characters to their full-width equivalents. For example, `Q` (U+0051) → `Ｑ` (U+FF31) and `ｻ` (U+FF7B) → `サ` (U+30B5).\n\nThe additional options (`includeSLA`, `includeLLS`, `includeKatakana`, `asciiOnly`, `katakanaOnly`) refine what is included in the conversion.",
-      "notes": [
-        "The conversion is applied to the **target locale** text. If no target text exists, the source text is first copied to the target and then processed."
+      "help": "Controls the conversion direction.\n\n- **true** (default): Converts full-width characters to half-width or ASCII equivalents. E.g., `Ｑ` (U+FF31) → `Q` (U+0051), `サ` (U+30B5) → `ｻ` (U+FF7B).\n- **false**: Converts half-width and ASCII characters to full-width equivalents. E.g., `Q` (U+0051) → `Ｑ` (U+FF31), `ｻ` (U+FF7B) → `サ` (U+30B5).\n\nThe `asciiOnly`, `katakanaOnly`, `includeSLA`, `includeLLS`, and `includeKatakana` options modify behavior differently depending on this direction setting.",
+      "examples": [
+        "`true` — Normalize Japanese text by converting full-width alphanumerics to standard ASCII",
+        "`false` — Convert ASCII characters to full-width for CJK-style typesetting"
       ]
     },
     "asciiOnly": {
-      "help": "When converting **to full-width** (`toHalfWidth` = false), restricts conversion to only ASCII characters. Half-width Katakana and other half-width characters are left unchanged.\n\nUseful for normalizing Japanese text where half-width Katakana should stay half-width but ASCII alphanumerics should become full-width.",
+      "help": "When converting **to full-width** (`toHalfWidth` = false), restricts conversion to ASCII characters only. Half-width Katakana and other half-width characters are left unchanged.\n\nUseful when you want full-width alphanumeric rendering but need to preserve half-width Katakana as-is.",
       "dependsOn": [
         {
           "property": "toHalfWidth",
@@ -18,17 +19,17 @@
       ]
     },
     "katakanaOnly": {
-      "help": "When converting **to full-width** (`toHalfWidth` = false), restricts conversion to only Japanese Katakana and associated punctuation (`｡､｢｣`, etc.).\n\nUseful for normalizing modern Japanese text where half-width Katakana should become full-width while alphanumeric characters remain half-width.",
-      "introducedIn": "0.29-SNAPSHOT",
+      "help": "When converting **to full-width** (`toHalfWidth` = false), restricts conversion to Japanese Katakana and associated punctuation (`｡､｢｣`, etc.) only. Alphanumeric characters remain half-width.\n\nUseful for normalizing Japanese text where half-width Katakana should become full-width but ASCII/alphanumeric characters should stay as-is.",
       "dependsOn": [
         {
           "property": "toHalfWidth",
           "condition": "only meaningful when toHalfWidth is false (converting to full-width)"
         }
-      ]
+      ],
+      "introducedIn": "0.29-SNAPSHOT"
     },
     "includeSLA": {
-      "help": "Also converts the **Squared Latin Abbreviations** from the CJK Compatibility block into sequences of non-CJK characters.\n\nFor example: `㏀` (U+33C0) → `kΩ` (U+006B, U+03A9).",
+      "help": "When converting **to half-width** (`toHalfWidth` = true), also converts Squared Latin Abbreviations from the CJK Compatibility block (U+3300–U+33FF) into sequences of non-CJK characters.\n\nExample: `㏀` (U+33C0) → `kΩ` (U+006B, U+03A9).\n\nThese are additional conversions beyond the standard full-width → half-width mapping.",
       "dependsOn": [
         {
           "property": "toHalfWidth",
@@ -37,7 +38,7 @@
       ]
     },
     "includeLLS": {
-      "help": "Also converts several characters from the **Letter-Like Symbols** block to character sequences:\n\n| Symbol | Result |\n|--------|--------|\n| U+2100 | `a/c` |\n| U+2101 | `a/s` |\n| U+2105 | `c/o` |\n| U+2103 | `°C` |\n| U+2109 | `°F` |\n| U+2116 | `No` |\n| U+212A | `K` |\n| U+212B | `Å` |",
+      "help": "When converting **to half-width** (`toHalfWidth` = true), also converts several characters from the Letter-Like Symbols block to character sequences:\n\n| Symbol | Result |\n|--------|--------|\n| U+2100 | `a/c` |\n| U+2101 | `a/s` |\n| U+2105 | `c/o` |\n| U+2103 | `°C` |\n| U+2109 | `°F` |\n| U+2116 | `No` |\n| U+212A | `K` |\n| U+212B | `Å` |\n\nThese are additional conversions beyond the standard full-width → half-width mapping.",
       "dependsOn": [
         {
           "property": "toHalfWidth",
@@ -46,40 +47,88 @@
       ]
     },
     "includeKatakana": {
-      "help": "Also converts Japanese Katakana and associated punctuation (`。、「」`, etc.) to their half-width forms.\n\nOff by default to facilitate normalizing modern Japanese text: full-width alphanumeric characters can be converted to half-width while Katakana remains full-width.",
-      "introducedIn": "0.29-SNAPSHOT",
+      "help": "When converting **to half-width** (`toHalfWidth` = true), also converts Japanese Katakana and associated punctuation (`。、「」`, etc.) into their half-width forms.\n\nOff by default to facilitate normalizing modern Japanese text: typically full-width alphanumerics should be normalized to half-width ASCII, while Katakana should remain full-width.",
       "dependsOn": [
         {
           "property": "toHalfWidth",
           "condition": "only meaningful when toHalfWidth is true (converting to half-width)"
         }
-      ]
+      ],
+      "notes": [
+        "Off by default because in modern Japanese text normalization, Katakana is typically kept full-width while only alphanumeric characters are converted to half-width."
+      ],
+      "introducedIn": "0.29-SNAPSHOT"
     },
     "normalizeOutput": {
-      "help": "Applies **Unicode NFC normalization** to the output text after conversion.\n\nConverting half-width forms to full-width can produce decomposed sequences. For example, `ﾌﾟ` (U+FF8C U+FF9F) converts to `プ` (U+30D5 U+309A, decomposed), which NFC normalizes to `プ` (U+30D7, precomposed).\n\nEnabled by default to ensure standard character representations are used.",
-      "introducedIn": "0.29-SNAPSHOT",
+      "help": "Applies Unicode NFC normalization to the output text after conversions are made.\n\nConverting half-width Katakana to full-width can produce decomposed character sequences. For example, `ﾌﾟ` (U+FF8C U+FF9F) converts to `プ` (U+30D5 U+309A, decomposed), but NFC normalization produces the standard precomposed form `プ` (U+30D7).\n\nEnabled by default to ensure consistent Unicode representation.",
       "notes": [
-        "Normalization is only applied when at least one conversion has been made in the text unit."
-      ]
+        "Only applied when at least one conversion is made. If no characters are converted, the text passes through unchanged."
+      ],
+      "introducedIn": "0.29-SNAPSHOT"
     }
   },
+  "propertySuggestions": {
+    "toHalfWidth": {
+      "title": "Convert to Half-Width",
+      "description": "Convert full-width characters to half-width or ASCII equivalents; when false, converts in the opposite direction."
+    },
+    "asciiOnly": {
+      "title": "ASCII Only",
+      "description": "When converting to full-width, restrict conversion to ASCII characters only."
+    },
+    "katakanaOnly": {
+      "title": "Katakana Only",
+      "description": "When converting to full-width, restrict conversion to Japanese Katakana and associated punctuation only."
+    },
+    "includeSLA": {
+      "title": "Include Squared Latin Abbreviations",
+      "description": "Also convert Squared Latin Abbreviations from the CJK Compatibility block to non-CJK character sequences."
+    },
+    "includeLLS": {
+      "title": "Include Letter-Like Symbols",
+      "description": "Also convert characters from the Letter-Like Symbols block to character sequences."
+    },
+    "includeKatakana": {
+      "title": "Include Katakana",
+      "description": "Also convert Japanese Katakana and associated punctuation to half-width forms."
+    },
+    "normalizeOutput": {
+      "title": "Normalize Output (NFC)",
+      "description": "Apply Unicode NFC normalization to the output text after conversions."
+    }
+  },
+  "limitations": [
+    "None known."
+  ],
   "processingNotes": [
-    "The conversion operates on the **target locale** text of each text unit. If no target text exists, the source text is copied to the target before conversion.",
-    "The `asciiOnly` and `katakanaOnly` options apply only in the to-full-width direction; the `includeSLA`, `includeLLS`, and `includeKatakana` options apply only in the to-half-width direction."
+    "Operates on the target locale text of text units. If no target text exists, the source text is copied to the target before processing.",
+    "The step handles two distinct conversion directions controlled by `toHalfWidth`, each with its own set of sub-options.",
+    "Unicode NFC normalization (when enabled) only runs if at least one character conversion was made."
   ],
   "examples": [
     {
       "title": "Normalize Japanese full-width alphanumerics to half-width",
-      "description": "Converts full-width ASCII characters to half-width while leaving Katakana in full-width form — a common normalization for modern Japanese text.",
-      "config": "```yaml\ntoHalfWidth: true\nincludeKatakana: false\nnormalizeOutput: true\n```"
+      "description": "Convert full-width ASCII-range characters to standard half-width while keeping Katakana full-width — a common normalization for modern Japanese text.",
+      "config": "```yaml\ntoHalfWidth: true\nincludeKatakana: false\nnormalizeOutput: true\n```",
+      "input": "```\nＨｅｌｌｏ サンプル １２３\n```",
+      "output": "```\nHello サンプル 123\n```"
+    },
+    {
+      "title": "Convert ASCII to full-width for CJK typesetting",
+      "description": "Convert ASCII characters to full-width equivalents while leaving Katakana unchanged.",
+      "config": "```yaml\ntoHalfWidth: false\nasciiOnly: true\n```",
+      "input": "```\nHello 123\n```",
+      "output": "```\nＨｅｌｌｏ １２３\n```"
     },
     {
       "title": "Normalize half-width Katakana to full-width",
-      "description": "Converts only half-width Katakana to full-width while keeping ASCII characters in their original half-width form.",
-      "config": "```yaml\ntoHalfWidth: false\nkatakanaOnly: true\nnormalizeOutput: true\n```"
+      "description": "Convert half-width Katakana to full-width while keeping alphanumerics as-is, with NFC normalization for consistent output.",
+      "config": "```yaml\ntoHalfWidth: false\nkatakanaOnly: true\nnormalizeOutput: true\n```",
+      "input": "```\nHello ｻﾝﾌﾟﾙ 123\n```",
+      "output": "```\nHello サンプル 123\n```"
     }
   ],
-  "limitations": [],
+  "fullDoc": "# Full-Width Conversion Step\n\nConverts characters in text units between full-width (zenkaku) and half-width (hankaku) forms, targeting Asian character sets that historically have dual display forms. The conversion operates on the target locale text of text units; if no target text exists, source text is copied to the target before processing. Supports both directions: full-width → half-width/ASCII and half-width/ASCII → full-width, with fine-grained control over which character classes are affected.\n\n**Takes:** Filter events. **Sends:** Filter events.\n\n## Parameters\n\n### Conversion Direction\n\n#### Convert to Half-Width\n\nControls the conversion direction.\n\n- **true** (default): Converts full-width characters to half-width or ASCII equivalents. E.g., `Ｑ` (U+FF31) → `Q` (U+0051), `サ` (U+30B5) → `ｻ` (U+FF7B).\n- **false**: Converts half-width and ASCII characters to full-width equivalents. E.g., `Q` (U+0051) → `Ｑ` (U+FF31), `ｻ` (U+FF7B) → `サ` (U+30B5).\n\n### Half-Width Options (toHalfWidth = true)\n\n#### Include Squared Latin Abbreviations\n\nAlso converts Squared Latin Abbreviations from the CJK Compatibility block (U+3300–U+33FF) into sequences of non-CJK characters. Example: `㏀` (U+33C0) → `kΩ`.\n\n#### Include Letter-Like Symbols\n\nAlso converts several characters from the Letter-Like Symbols block to character sequences:\n\n| Symbol | Result |\n|--------|--------|\n| U+2100 | `a/c` |\n| U+2101 | `a/s` |\n| U+2105 | `c/o` |\n| U+2103 | `°C` |\n| U+2109 | `°F` |\n| U+2116 | `No` |\n| U+212A | `K` |\n| U+212B | `Å` |\n\n#### Include Katakana\n\nAlso converts Japanese Katakana and associated punctuation (`。、「」`, etc.) into their half-width forms. Off by default because in modern Japanese text normalization, Katakana is typically kept full-width while only alphanumeric characters are converted.\n\n> Available since 0.29-SNAPSHOT.\n\n### Full-Width Options (toHalfWidth = false)\n\n#### ASCII Only\n\nRestricts conversion to ASCII characters only. Half-width Katakana and other half-width characters are left unchanged.\n\n#### Katakana Only\n\nRestricts conversion to Japanese Katakana and associated punctuation (`｡､｢｣`, etc.) only. Alphanumeric characters remain half-width.\n\n> Available since 0.29-SNAPSHOT.\n\n### Output\n\n#### Normalize Output (NFC)\n\nApplies Unicode NFC normalization to the output text after conversions. Converting half-width Katakana to full-width can produce decomposed character sequences — for example, `ﾌﾟ` (U+FF8C U+FF9F) → `プ` (U+30D5 U+309A, decomposed). NFC normalization produces the standard precomposed form `プ` (U+30D7). Enabled by default.\n\n> Available since 0.29-SNAPSHOT.\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- Operates on the target locale text of text units. If no target text exists, the source text is copied to the target before processing.\n- The step handles two distinct conversion directions controlled by `toHalfWidth`, each with its own set of sub-options: `includeSLA`/`includeLLS`/`includeKatakana` apply to half-width conversion, while `asciiOnly`/`katakanaOnly` apply to full-width conversion.\n\n## Examples\n\n### Normalize Japanese full-width alphanumerics to half-width\n\nConvert full-width ASCII-range characters to standard half-width while keeping Katakana full-width:\n\n```yaml\ntoHalfWidth: true\nincludeKatakana: false\nnormalizeOutput: true\n```\n\nInput: `Ｈｅｌｌｏ サンプル １２３` → Output: `Hello サンプル 123`\n\n### Convert ASCII to full-width for CJK typesetting\n\n```yaml\ntoHalfWidth: false\nasciiOnly: true\n```\n\nInput: `Hello 123` → Output: `Ｈｅｌｌｏ １２３`\n\n### Normalize half-width Katakana to full-width\n\n```yaml\ntoHalfWidth: false\nkatakanaOnly: true\nnormalizeOutput: true\n```\n\nInput: `Hello ｻﾝﾌﾟﾙ 123` → Output: `Hello サンプル 123`",
   "stepId": "full-width-conversion",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/full_width_conversion_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Full-Width_Conversion_Step"
 }

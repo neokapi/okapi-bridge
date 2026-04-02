@@ -44,49 +44,80 @@
   "properties": {
     "regEx": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Use Regular Expressions",
+      "description": "Enable Java regular expression mode for all search patterns."
     },
     "dotAll": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Dot Also Matches Line-Feed",
+      "description": "Make the period character match every character including line-feed."
     },
     "ignoreCase": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Ignore Case Differences",
+      "description": "Ignore case when matching search patterns."
     },
     "multiLine": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Multiline Mode",
+      "description": "Make ^ and $ match at the beginning and end of each line."
     },
     "target": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Replace in Target Content",
+      "description": "Perform search and replace on the target content of text units."
     },
     "source": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Replace in Source Content",
+      "description": "Perform search and replace on the source content of text units."
     },
     "replaceALL": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Replace All Instances",
+      "description": "Replace all matches found instead of only the first match."
     },
     "replacementsPath": {
       "type": "string",
       "default": "",
-      "x-path": { "type": "file", "role": "input" }
+      "x-path": {
+        "type": "file",
+        "role": "input"
+      },
+      "title": "Replacements File Path",
+      "description": "Path to a tab-delimited UTF-8 file with search and replacement pairs."
     },
     "logPath": {
       "type": "string",
       "default": "${rootDir}/replacementsLog.txt",
-      "x-path": { "type": "file", "role": "output", "accepts": ["txt"] }
+      "x-path": {
+        "type": "file",
+        "role": "output",
+        "accepts": [
+          "txt"
+        ]
+      },
+      "title": "Replacement Log File Path",
+      "description": "Path where the log of performed replacements will be saved."
     },
     "saveLog": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Save Replacement Log",
+      "description": "Save a log of all replacements performed to the specified file."
     },
     "count": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Replacement Count",
+      "description": "Total number of replacements performed."
     }
   }
 }

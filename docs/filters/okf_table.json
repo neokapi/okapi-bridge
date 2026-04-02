@@ -1,31 +1,54 @@
 {
   "filterName": "Table Filter",
-  "overview": "The Table Filter processes plain text tabular documents including CSV (comma-separated), TSV (tab-separated), and fixed-width column formats. It supports configurable column delimiters, text qualifiers, header detection, and per-column extraction rules. The filter has multiple sub-configurations (`okf_table_csv`, `okf_table_tsv`, `okf_table_fwc`, `okf_table_catkeys`) each with their own dedicated schemas for format-specific parameters.",
+  "overview": "The Table Filter handles plain-text tabular documents including CSV, TSV, and fixed-width column formats. It supports multiple table types with configurable column delimiters, text qualifiers, escaping modes, and column-based extraction rules. The filter ships with six built-in configurations: generic table, CSV with header, Haiku CatKeys, source-target tab-separated, fixed-width columns, and TSV. Each configuration embeds its own column definitions, delimiter settings, and extraction behavior as serialized string parameters.",
   "parameters": {
     "simplifierRules": {
-      "help": "Define rules for simplifying inline code representation in extracted table cell content. These rules reduce complex inline code patterns to simpler placeholders, making segments easier for translators to work with.\n\nOnly relevant when inline codes are enabled (via the **Has inline codes** option in sub-filter configurations).",
-      "seeAlso": "Table_Filter#Inline_Codes"
+      "help": "Define rules for simplifying inline code representation in extracted text. Uses the Okapi simplifier rules syntax to merge or reduce inline codes into simpler placeholders.\n\nThis is edited via a dedicated rules editor widget.",
+      "seeAlso": "Table_Filter"
     },
     "moveLeadingAndTrailingCodesToSkeleton": {
-      "help": "Inline codes that appear at the very start or end of a segment are typically formatting wrappers (e.g., `<b>text</b>`) rather than translatable content. Moving them to the skeleton removes them from the translator's view, producing cleaner segments.\n\n- Reduces inline code clutter in translation tools\n- Codes are preserved in the output — only their visibility changes"
+      "help": "Inline codes appearing at the very beginning or end of a segment are moved into the skeleton (non-translatable portion). This reduces clutter in the translatable text when boundary codes carry no translational significance.\n\nFor example, if a segment starts with `<b>` and ends with `</b>`, those codes are moved to skeleton so translators see only the text content.",
+      "introducedIn": "1.48.0"
     },
     "mergeAdjacentCodes": {
-      "help": "When multiple inline codes appear next to each other with no text between them, they are combined into a single placeholder. This simplifies the segment for translators who would otherwise need to manage multiple consecutive code tags.\n\n- Example: `<b><i>` becomes a single code instead of two separate ones\n- Reduces the number of placeholders translators must reorder"
+      "help": "When multiple inline codes appear consecutively with no text between them, they are combined into a single placeholder code. This simplifies the translatable content by reducing the number of inline codes translators must handle.\n\nFor example, `</b><i>` would become a single placeholder rather than two separate codes.",
+      "introducedIn": "1.48.0"
     }
   },
-  "processingNotes": [
-    "**Encoding detection**: If the file has a Unicode BOM, that encoding is used automatically. Otherwise, the default encoding specified in filter options applies.",
-    "**BOM output behavior**: When output encoding is UTF-8, a BOM is written only if the input was also UTF-8 *and* had a BOM. Transcoding from non-UTF-8 never produces a BOM.",
-    "**Line breaks are preserved**: The output uses the same line-break style (CRLF, LF) as the original input.",
-    "The base `okf_table` configuration exposes only common text-processing parameters. Format-specific settings (delimiters, qualifiers, column definitions, header handling) are in the sub-filter schemas: `okf_commaseparatedvalues`, `okf_tabseparatedvalues`, and `okf_fixedwidthcolumns`."
+  "limitations": [
+    "None known according to the wiki documentation."
   ],
-  "limitations": [],
+  "processingNotes": [
+    "**Input encoding**: If the file has a Unicode BOM, the corresponding encoding (UTF-8, UTF-16, etc.) is used. Otherwise the default encoding from filter options is used.",
+    "**Output encoding**: When output is UTF-8, a BOM is included only if the input was also UTF-8 and had a BOM. Converting from non-UTF-8 to UTF-8 produces no BOM.",
+    "**Line breaks**: Output preserves the same line-break style as the original input.",
+    "The filter uses `serializationFormat: stringParameters` — most configuration is embedded within each built-in configuration rather than as top-level schema properties.",
+    "Six built-in configurations are available: `okf_table` (generic), `okf_table_csv` (CSV with header), `okf_table_catkeys` (Haiku CatKeys), `okf_table_src-tab-trg` (2-column source+target), `okf_table_fwc` (fixed-width columns), `okf_table_tsv` (tab-separated values)."
+  ],
+  "propertySuggestions": {
+    "simplifierRules": {
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation in extracted segments"
+    }
+  },
   "examples": [
     {
-      "title": "Sub-configurations overview",
-      "description": "The Table Filter provides several pre-configured sub-types, each with its own schema for format-specific parameters:\n\n- **okf_table_csv** — Comma-separated values with optional header\n- **okf_table_tsv** — Tab-separated values (one or more tabs as delimiter)\n- **okf_table_src-tab-trg** — Two-column source+target tab-separated files\n- **okf_table_fwc** — Fixed-width columns padded with whitespace\n- **okf_table_catkeys** — Haiku CatKeys resource files\n\nThe base `okf_table` schema contains only shared inline-code processing options. Column definitions, delimiters, qualifiers, and extraction modes are configured in each sub-type's dedicated schema."
+      "title": "CSV with header row",
+      "description": "Use the `okf_table_csv` configuration for standard CSV files where the first line contains column names and data starts on line 2. The default CSV configuration uses comma as field delimiter and double-quote as text qualifier.",
+      "config": "```yaml\nconfigId: okf_table_csv\n# Built-in settings:\n#   fieldDelimiter: \",\"\n#   textQualifier: '\"'\n#   columnNamesLineNum: 1\n#   valuesStartLineNum: 2\n#   sendColumnsMode: 2 (extract by column definitions)\n```"
+    },
+    {
+      "title": "Two-column source/target tab-separated",
+      "description": "Use `okf_table_src-tab-trg` for simple bilingual files where column 1 is source text and column 2 is target text, separated by tabs. No header line is expected.",
+      "input": "```\nHello world\tBonjour le monde\nGoodbye\tAu revoir\n```"
+    },
+    {
+      "title": "Handling qualifiers with embedded delimiters",
+      "description": "In CSV mode, text qualifiers allow field delimiters inside field values. If the qualifier itself appears in the text, it must be escaped — either by duplication (`\"\"`) or backslash (`\\\"`) depending on the escaping mode setting.",
+      "input": "```csv\nName,Description\n\"Widget\",\"A small, useful device\"\n\"Quote Test\",\"She said \"\"hello\"\"\"\n```"
     }
   ],
+  "fullDoc": "# Table Filter\n\nThe Table Filter handles plain-text tabular documents including CSV, TSV, and fixed-width column formats. It supports multiple table types with configurable column delimiters, text qualifiers, escaping modes, and column-based extraction rules. The filter ships with six built-in configurations covering common tabular formats.\n\n## Built-in Configurations\n\n| Config ID | Description |\n|-----------|-------------|\n| `okf_table` | Generic table files (default) |\n| `okf_table_csv` | Comma-Separated Values with optional header |\n| `okf_table_catkeys` | Haiku CatKeys resource files |\n| `okf_table_src-tab-trg` | 2-column tab-separated (source + target) |\n| `okf_table_fwc` | Fixed-Width Columns |\n| `okf_table_tsv` | Tab-Separated Values |\n\n## Parameters\n\n### Simplifier Rules\n\nRules for simplifying inline code representation in extracted segments. Uses the Okapi simplifier rules syntax to merge or reduce inline codes into simpler placeholders. Edited via a dedicated rules editor widget.\n\n### Move Boundary Codes to Skeleton\n\n*Introduced in Okapi 1.48.0*\n\nInline codes appearing at the very beginning or end of a segment are moved into the skeleton (non-translatable portion). This reduces clutter in translatable text when boundary codes carry no translational significance.\n\n### Merge Adjacent Codes\n\n*Introduced in Okapi 1.48.0*\n\nWhen multiple inline codes appear consecutively with no text between them, they are combined into a single placeholder code. This simplifies the translatable content by reducing the number of inline codes translators must handle.\n\n## Configuration Parameters (per configuration)\n\nEach built-in configuration embeds detailed parameters controlling table parsing behavior. These include:\n\n### Table Type\n- **CSV**: Columns separated by a single character (comma, semicolon, tab, etc.)\n- **TSV**: Columns separated by one or more tabs (consecutive tabs do NOT mark empty columns)\n- **Fixed-width columns**: Each column has a fixed character width\n\n### Table Properties\n- **valuesStartLineNum**: Line number where table data begins (default: 1, meaning from the start)\n- **columnNamesLineNum**: Line number containing column names (default: 0, meaning no column names)\n\nLines are numbered from 1. For typical CSV with a header, set `valuesStartLineNum=2` and `columnNamesLineNum=1`.\n\n### CSV Options\n- **fieldDelimiter**: Character separating fields in a row (default: `,`)\n- **textQualifier**: Character wrapping field values to allow delimiters inside (default: `\"`)\n\n### CSV Escaping Mode\n- **escapingMode=1**: Duplicate qualifier escaping — `\"Text, \"\"quoted text\"\"\"`\n- **escapingMode=2**: Backslash escaping — `\"Text, \\\"quoted text\\\"\"`\n\n### CSV Actions\n- **removeQualifiers**: Remove qualifiers from extracted text (moved to skeleton)\n- **trimMode**: Controls whitespace trimming:\n  - `0`: No trimming\n  - `1`: Only non-qualified fields trimmed\n  - `2`: All fields trimmed\n- **addQualifiers**: Add qualifiers to output values containing delimiters or line breaks\n\n### Extraction Mode\n- **sendHeaderMode**: `0` = don't extract header, `1` = column names only, `2` = all header lines\n- **sendColumnsMode**: `1` = extract by column definitions, `2` = extract from all columns\n\n### Column Detection\n- **detectColumnsMode**: `0` = defined by values per row, `1` = defined by column names count, `2` = fixed number\n- **numColumns**: Fixed column count (1-100, used when detectColumnsMode=2)\n\n### Column Definitions\n- **sourceColumns**: Comma-separated 1-based column indices for source text\n- **targetColumns**: Comma-separated 1-based column indices for target text\n- **sourceIdColumns**: Columns providing unique IDs for source columns\n- **commentColumns**: Columns containing comments\n- **recordIdColumn**: Column providing the record (row) ID\n\n### Text Processing\n- **trimLeading** / **trimTrailing**: Trim leading/trailing spaces and tabs\n- **unescapeSource**: Convert `\\t`, `\\n`, `\\\\`, `\\uXXXX` escape sequences to characters\n- **wrapMode**: Multi-line handling: `0` = separate with line feeds, `1` = unwrap (merge with space), `2` = inline codes for line breaks\n\n### Inline Codes\n- **useCodeFinder**: Enable regex-based inline code detection\n- **codeFinderRules**: Okapi `#v1` format code finder rules\n\n## Encoding Behavior\n\n- **Input**: Unicode BOM takes priority; otherwise uses the default encoding from filter options\n- **Output**: UTF-8 BOM is included only if input was UTF-8 with BOM; converting from non-UTF-8 produces no BOM\n- **Line breaks**: Output preserves the original input's line-break style\n\n## Limitations\n\nNone known.\n\n## Examples\n\n### CSV with header\n```csv\nName,Description,Comment\n\"Widget\",\"A small, useful device\",\"For testing\"\n\"Gadget\",\"Another item\",\"Optional\"\n```\nUse `okf_table_csv` — extracts Name and Description columns as translatable text.\n\n### Two-column source/target\n```\nHello world\tBonjour le monde\nGoodbye\tAu revoir\n```\nUse `okf_table_src-tab-trg` — column 1 is source, column 2 is target.",
   "filterId": "okf_table",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Table_Filter"
 }

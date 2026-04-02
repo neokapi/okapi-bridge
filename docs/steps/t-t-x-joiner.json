@@ -1,35 +1,44 @@
 {
   "filterName": "TTX Joiner",
-  "overview": "Re-joins multiple TTX documents (previously split by the **TTX Splitter Step**) back into single documents. The step takes raw documents as input and outputs the resulting joined files in the same directory as the input documents. Input files are automatically sorted by their part markers before joining. Files without valid part markers are ignored with a warning.",
+  "overview": "Re-joins multiple TTX documents that were previously split (by the TTX Splitter Step) back into single documents. The step sorts input files by their part markers, groups them by original filename, and concatenates each group into one output TTX file placed in the same directory as the input documents.",
   "parameters": {
     "suffix": {
-      "help": "A marker text appended to the end of the output filename (before the `.ttx` extension area). For example, if the original file was `index.html` and the suffix is `_CONCAT`, the output will be `index.html_CONCAT.ttx`.\n\nIf a file with the resulting name already exists in the output directory, it will be **overwritten without warning**.",
+      "help": "A marker text appended to the end of the output filename (before the `.ttx` extension area). The suffix distinguishes joined output files from the original split parts.\n\nIf a file with the resulting name already exists in the output directory, it will be **overwritten without warning**.",
       "notes": [
-        "**Warning:** Existing files with the same output name will be overridden silently — no confirmation or backup is created."
+        "**Warning:** Existing files with the same output name will be silently overwritten — no confirmation or backup is made."
       ],
       "examples": [
-        "Suffix `_CONCAT` with input parts `index.html_part001.ttx` and `index.html_part002.ttx` → output `index.html_CONCAT.ttx`",
-        "Suffix `_joined` (default) with `someFile.html_part001.ttx` and `someFile.html_part002.ttx` → output `someFile.html_joined.ttx`"
+        "`_CONCAT` — `index.html_part001.ttx` + `index.html_part002.ttx` → `index.html_CONCAT.ttx`",
+        "`_joined` (default) — `someFile.html_part001.ttx` + `someFile.html_part002.ttx` → `someFile.html_joined.ttx`"
       ]
     }
   },
   "limitations": [
-    "This step is triggered at the `END_BATCH` event, meaning it runs only after all documents in the batch have been processed.",
-    "Input files with no part marker or an invalid part marker are silently ignored (with a warning logged)."
+    "This step is triggered at the **END_BATCH** event, not per-document — all input files must be available before processing begins.",
+    "Input files with no part marker or an invalid part marker are **ignored** with a warning.",
+    "Existing output files with the same name are overwritten without warning."
   ],
   "processingNotes": [
-    "Input files are automatically sorted internally so that parts are joined in the correct order, regardless of the order they appear in the input file list.",
-    "The received event is passed through unaltered — the joined output file is written as a side effect to the same directory as the input documents."
+    "The step internally sorts all input files so parts are processed in the correct order, regardless of the order they appear in the input list.",
+    "Files are grouped by their original filename (before the part marker), and each group is joined into a single output file.",
+    "The output file is written to the same directory as the input documents.",
+    "The received pipeline event is passed through unaltered."
   ],
   "examples": [
     {
-      "title": "Joining split TTX parts with a custom suffix",
-      "description": "Four TTX part files from two original documents are joined back together. The step sorts them by part number and produces one output file per original document.",
-      "config": "```yaml\nsuffix: _CONCAT\n```",
+      "title": "Joining split TTX files with a custom suffix",
+      "description": "Given four TTX parts from two original files, the joiner sorts them, groups by original filename, and produces two joined output files with the `_CONCAT` suffix.",
+      "config": "```yaml\nsuffix: \"_CONCAT\"\n```",
       "input": "```\nC:\\Project\\FolderABC\\index.html_part001.ttx\nC:\\Project\\FolderABC\\someFile.html_part002.ttx\nC:\\Project\\FolderABC\\index.html_part002.ttx\nC:\\Project\\FolderABC\\someFile.html_part001.ttx\n```",
       "output": "```\nC:\\Project\\FolderABC\\index.html_CONCAT.ttx\nC:\\Project\\FolderABC\\someFile.html_CONCAT.ttx\n```"
     }
   ],
+  "propertySuggestions": {
+    "suffix": {
+      "description": "Marker text appended to the output filename to distinguish joined files from the original split parts."
+    }
+  },
+  "fullDoc": "# TTX Joiner\n\nRe-joins multiple TTX documents that were previously split (by the TTX Splitter Step) back into single documents. The step sorts input files by their part markers, groups them by original filename, and concatenates each group into one output TTX file placed in the same directory as the input documents.\n\n## Parameters\n\n#### Optional suffix\n\nA marker text appended to the end of the output filename. The suffix distinguishes joined output files from the original split parts. Default: `_joined`.\n\nIf a file with the resulting name already exists in the output directory, it will be **overwritten without warning**.\n\n**Examples:**\n- `_CONCAT` — `index.html_part001.ttx` + `index.html_part002.ttx` → `index.html_CONCAT.ttx`\n- `_joined` (default) — `someFile.html_part001.ttx` + `someFile.html_part002.ttx` → `someFile.html_joined.ttx`\n\n> **Warning:** Existing files with the same output name will be silently overwritten — no confirmation or backup is made.\n\n## Limitations\n\n- This step is triggered at the **END_BATCH** event, not per-document — all input files must be available before processing begins.\n- Input files with no part marker or an invalid part marker are **ignored** with a warning.\n- Existing output files with the same name are overwritten without warning.\n\n## Notes\n\n- The step internally sorts all input files so parts are processed in the correct order, regardless of the order they appear in the input list.\n- Files are grouped by their original filename (before the part marker), and each group is joined into a single output file.\n- The output file is written to the same directory as the input documents.\n- The received pipeline event is passed through unaltered.\n- To split a single TTX document into several parts, use the **TTX Splitter Step**.\n\n## Examples\n\n### Joining split TTX files with a custom suffix\n\nGiven four TTX parts from two original files, the joiner sorts them, groups by original filename, and produces two joined output files with the `_CONCAT` suffix.\n\n**Configuration:**\n```yaml\nsuffix: \"_CONCAT\"\n```\n\n**Input files:**\n```\nC:\\Project\\FolderABC\\index.html_part001.ttx\nC:\\Project\\FolderABC\\someFile.html_part002.ttx\nC:\\Project\\FolderABC\\index.html_part002.ttx\nC:\\Project\\FolderABC\\someFile.html_part001.ttx\n```\n\n**Output files:**\n```\nC:\\Project\\FolderABC\\index.html_CONCAT.ttx\nC:\\Project\\FolderABC\\someFile.html_CONCAT.ttx\n```",
   "stepId": "t-t-x-joiner",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/ttx_joiner_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/TTX_Joiner_Step"
 }

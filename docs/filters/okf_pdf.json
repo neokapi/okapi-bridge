@@ -1,37 +1,19 @@
 {
   "filterName": "PDF Filter",
-  "overview": "The PDF Filter extracts text from PDF files for processing. It does not handle complex formatting like tables or multi-level lists. The typical use case is scraping text from PDFs for quick word counts and leverage analysis. **This filter does not merge back into PDF format** — it produces plain text output upon merging.",
-  "parameters": {
-    "parser.preserveWhitespace": {
-      "help": "Keeps the original whitespace from the PDF content instead of normalizing it. Useful when spatial layout of the PDF carries meaning (e.g., code listings, preformatted tables)."
-    },
-    "parser.indentThreshold": {
-      "help": "Controls how much horizontal indent (in PDF coordinate units) is required before the parser treats indented text as the start of a new paragraph. A higher value means text must be indented further before it triggers a paragraph break.\n\nThe default of `2.0` works for typical documents. Lower the value to detect subtler indentation; raise it if normal text is being incorrectly split into separate paragraphs.",
-      "values": "A decimal number representing PDF coordinate units. Default: `2.0`."
-    },
-    "parser.spacingTolerance": {
-      "help": "Controls how much horizontal space between characters is needed before the parser inserts a whitespace character. Adjusting this affects how tightly- or loosely-spaced text is parsed.\n\nLower values make the parser more sensitive to small gaps (potentially inserting spaces within words). Higher values require wider gaps before inserting a space.",
-      "values": "A decimal number representing PDF coordinate units. Default: `0.5`."
-    },
-    "output.lineSeparator": {
-      "help": "The character sequence inserted between lines within a paragraph in the extracted output. Since the filter merges to **plain text** (not PDF), this controls the line break style in the output file.",
-      "values": "A string literal. Common values: `\\n` (Unix), `\\r\\n` (Windows)."
-    },
-    "output.paragraphSeparator": {
-      "help": "The character sequence inserted between paragraphs in the extracted output. Use a double newline (`\\n\\n`) to create visible paragraph breaks in the plain-text output, or a single newline if you want compact output.",
-      "values": "A string literal. Common values: `\\n` (single), `\\n\\n` (double/blank line between paragraphs)."
-    }
-  },
+  "overview": "The PDF Filter extracts text content from PDF files for processing. It does not handle complex formatting like tables or multi-level lists. The typical use case is scraping text from PDFs for quick word counts and leverage analysis. **Important:** This filter does not merge back into PDF format — it produces plain text output upon merging.",
+  "parameters": {},
   "limitations": [
-    "The filter **does not merge back into PDF format**. Output upon merging is always plain text.",
-    "Complex formatting such as tables and multi-level lists is not preserved.",
-    "This is a \"quick and dirty\" text extraction — not suitable for round-trip PDF translation."
+    "This filter merges back in **plain text format**, not PDF.",
+    "Does not handle complex formatting like tables or multi-level lists.",
+    "Any encoding selected in tools like Rainbow will be ignored — the filter forces UTF-16."
   ],
   "processingNotes": [
-    "PDF files are binary and have no specific encoding. The filter extracts all text as Java strings and forces the encoding to **UTF-16**. Any encoding selected in tools like Rainbow will be ignored.",
-    "TextUnits are created following the default rules of the Plain Text filter — any text followed by a newline creates a new TextUnit (paragraph)."
+    "PDF files are binary and do not have a specific encoding. Okapi extracts all text as a Java string and forces the encoding to `UTF-16`.",
+    "TextUnits are created following the default rules of the Plain Text filter — any text followed by a newline creates a new TextUnit (paragraph).",
+    "This filter has no configurable parameters."
   ],
   "examples": [],
+  "fullDoc": "# PDF Filter\n\nThe PDF Filter extracts text content from PDF files for processing. It does not handle complex formatting like tables or multi-level lists. The typical use case is scraping text from PDFs for quick word counts and leverage analysis. **Important:** This filter does not merge back into PDF format — it produces plain text output upon merging.\n\n## Parameters\n\nThis filter has no parameters.\n\n## Processing Details\n\n### Input Encoding\n\nPDF files are binary and do not have a specific encoding. Okapi extracts all text as a Java string and forces the encoding to `UTF-16`. Any encoding selected in tools like Rainbow will be ignored.\n\n### Segmentation\n\nTextUnits are created following the default rules of the Plain Text filter. Any text followed by a newline creates a new TextUnit (paragraph).\n\n## Limitations\n\n- This filter merges back in **plain text format**, not PDF.\n- Does not handle complex formatting like tables or multi-level lists.\n- Any encoding selected in tools like Rainbow will be ignored — the filter forces UTF-16.\n\n## Notes\n\n- The primary use case is text extraction for word counts and leverage analysis, not round-trip translation back to PDF.\n",
   "filterId": "okf_pdf",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/PDF_Filter"
 }

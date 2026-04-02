@@ -1,119 +1,177 @@
 {
   "filterName": "Regex Filter",
-  "overview": "The Regex Filter processes any text-based format where translatable content can be captured using regular expressions. You define rules with regex patterns and associate capturing groups with roles (source, target, identifier, note) and actions (extract content, extract strings, comment, section start/end). Rules are evaluated in list order from top to bottom, with the filter searching for the first matching rule at each position in the document.",
+  "overview": "The Regex Filter extracts translatable text from any text-based format using user-defined regular expressions with capturing groups. Each rule pairs a regex pattern with an action (extract content, extract strings, treat as comment, start/end section, or skip), and capturing groups map matched text to source, target, identifier, and note roles. The filter processes rules in order, scanning the document from top to bottom and applying the first matching rule at each position.",
   "parameters": {
-    "extraction.startString": {
-      "help": "Characters that mark the beginning of a string literal in the document. Each character defines a separate way to start a string — entering `\"'` means either `\"` or `'` can begin a string.\n\nIf you define multiple start characters, you **must** define the same number of end characters in `endString`, with positions corresponding 1:1.",
-      "values": "One or more characters. Each character is a separate string delimiter. For example, `\"` for double-quoted strings, or `\"'` for both double and single-quoted strings.",
-      "dependsOn": [
-        {
-          "property": "extraction.endString",
-          "condition": "must have the same number of characters, with positions corresponding 1:1"
-        }
-      ]
+    "preserveWhiteSpaces": {
+      "help": "Controls whitespace handling in extracted text. When disabled, consecutive whitespace sequences (spaces, tabs, CR, LF) are collapsed to a single space, and leading/trailing whitespace is trimmed."
     },
-    "extraction.endString": {
-      "help": "Characters that mark the end of a string literal. If multiple beginning characters are defined, you must define an equal number of end characters, where each end character's position corresponds to its matching beginning character.\n\nFor example, if `startString` is `\"'` then `endString` must also be two characters like `\"'`.",
-      "values": "One or more characters, positionally matched to `startString`.",
-      "dependsOn": [
-        {
-          "property": "extraction.startString",
-          "condition": "must have the same number of characters, with positions corresponding 1:1"
-        }
-      ]
+    "hasInlineCodes": {
+      "help": "Enables conversion of parts of extracted text into inline codes. When enabled, use the inline codes patterns editor to define which text patterns become codes."
     },
-    "extraction.regexOptions": {
-      "help": "Bitmask of Java `java.util.regex.Pattern` flags applied to **all** rules. Common flags:\n\n- `2` — `CASE_INSENSITIVE` — ignore letter case differences\n- `8` — `MULTILINE` — `^` and `$` match at line boundaries, not just start/end of input\n- `32` — `DOTALL` — dot (`.`) also matches line-feed characters\n\nCombine by adding values (e.g., `40` = DOTALL + MULTILINE). To override for a single rule, use the `(?idmsux-idmsux)` construct directly in that rule's pattern.",
-      "values": "Integer bitmask of `java.util.regex.Pattern` flags. Common values: `0` (none), `2` (CASE_INSENSITIVE), `8` (MULTILINE), `32` (DOTALL), `40` (DOTALL + MULTILINE)."
-    },
-    "extraction.extractOuterStrings": {
-      "help": "Extracts string literals found outside the scope of extraction rules. Strings are delimited by the `startString`/`endString` characters.\n\n**Note:** The wiki indicates this option is not yet fully implemented.",
+    "autoCloseSection": {
+      "help": "Automatically sends an `END_GROUP` event before each new `START_GROUP`. This means you only need **Start a section** rules — no matching **End a section** rules are required.\n\nIf disabled, every **Start a section** rule **must** have a corresponding **End a section** rule.",
       "notes": [
-        "The option *Extract strings outside the rules* is listed as **not yet implemented** in the Limitations section."
+        "When enabled, you **must not** define explicit End a section rules."
       ]
     },
-    "extraction.oneLevelGroups": {
-      "help": "Controls whether sections (groups) created by *Start a section* rules are nested or flat. When enabled, any previously opened section is automatically closed when a new one starts — you only need *Start a section* rules, no *End a section* rules.\n\nWhen disabled, each *Start a section* action **must** have a corresponding *End a section* action."
+    "dotAll": {
+      "help": "Makes the `.` operator match line-feed characters in addition to all other characters. Applies to all rules globally.\n\nTo override per-rule, use the `(?s)` flag construct in that rule's pattern.",
+      "values": "Equivalent to Java's `Pattern.DOTALL` flag."
     },
-    "extraction.mimeType": {
-      "help": "The MIME type to associate with extracted content. This value identifies the document type and may affect how text is written back to the original format.\n\nIn most cases `text/plain` is appropriate.",
-      "values": "A valid MIME type string, e.g., `text/plain`, `text/html`."
+    "multiLine": {
+      "help": "Makes `^` and `$` match at line terminators within the input, not just at the start and end of the entire input sequence. Applies to all rules globally.\n\nTo override per-rule, use the `(?m)` flag construct in that rule's pattern.",
+      "values": "Equivalent to Java's `Pattern.MULTILINE` flag."
     },
-    "output.localizeOutside": {
-      "help": "Makes content **outside** the scope of localization directives translatable. This lets you mark up fewer parts of the source document — only the parts you want to *exclude* need directives.\n\nOnly effective when `useLd` is enabled.",
+    "ignoreCase": {
+      "help": "Makes pattern matching case-insensitive. When enabled, `abc` matches `Abc`, `ABC`, etc. Applies to all rules globally.\n\nTo override per-rule, use the `(?i)` flag construct in that rule's pattern.",
+      "values": "Equivalent to Java's `Pattern.CASE_INSENSITIVE` flag."
+    },
+    "useLocDir": {
+      "help": "Enables recognition of localization directives embedded in the input file. When disabled, all localization directives are ignored."
+    },
+    "extractOutsideLocDir": {
+      "help": "Controls whether translatable items outside the scope of any localization directive are extracted. Useful for minimizing markup — you can annotate only the exceptions rather than every translatable segment.",
       "dependsOn": [
         {
-          "property": "output.useLd",
-          "condition": "must be enabled for this option to have any effect"
+          "property": "useLocDir",
+          "condition": "must be enabled for this option to take effect"
         }
       ]
     },
-    "output.useBSlashEscape": {
-      "help": "Treats backslash-prefixed characters as escape sequences (e.g., `\\\"` is an escaped quote, not the end of a string). Used when parsing string boundaries defined by `startString`/`endString`.",
+    "startString": {
+      "help": "Defines the character(s) that mark the beginning of a string, used by the **Extract the strings in the source group** action.\n\nMultiple characters define multiple alternative string delimiters. Each character position must correspond to its matching end character.",
+      "values": "One or more single characters. E.g., `\"` or `\"'` (double-quote and single-quote as two alternatives).",
       "examples": [
-        "`\\\"` — escaped double quote inside a double-quoted string",
-        "`\\n` — escaped newline"
-      ],
+        "`\"` — strings delimited by double quotes",
+        "`\"'` — strings delimited by either `\"` or `'` (pair with `\"'` in End of string)"
+      ]
+    },
+    "endString": {
+      "help": "Defines the character(s) that mark the end of a string. Must have the same number of characters as **Beginning of string**, with each position corresponding to its matching start character.",
+      "values": "One or more single characters, positionally paired with start characters.",
       "dependsOn": [
         {
-          "property": "output.useDoubleCharEscape",
-          "condition": "typically only one escape style should be active"
+          "property": "startString",
+          "condition": "must have equal number of characters, positionally paired"
         }
       ]
     },
-    "output.removeBSlashEscape": {
-      "help": "Strips backslash escape prefixes from extracted content. When enabled, `\\\"` becomes `\"` in the extracted text."
+    "useBackSlashEscape": {
+      "help": "Characters escaped with a backslash prefix (e.g., `\\\"`) are treated as literal content, not string delimiters.",
+      "dependsOn": [
+        {
+          "property": "useDoubleCharEscape",
+          "condition": "conflicts — only one escape mechanism should be active"
+        }
+      ]
     },
-    "output.useDoubleCharEscape": {
-      "help": "Treats doubled characters as escape sequences (e.g., `\"\"` is an escaped quote inside a double-quoted string).",
+    "useDoubleCharEscape": {
+      "help": "Characters escaped by doubling (e.g., `\"\"`) are treated as literal content, not string delimiters.",
+      "dependsOn": [
+        {
+          "property": "useBackSlashEscape",
+          "condition": "conflicts — only one escape mechanism should be active"
+        }
+      ]
+    },
+    "mimeType": {
+      "help": "The MIME type identifies the document format and may affect how translated text is written back. For most use cases, `text/plain` is appropriate.",
+      "values": "Standard MIME type string, e.g., `text/plain`, `text/html`, `text/xml`."
+    },
+    "rules": {
+      "help": "Ordered list of extraction rules. Each rule has a Java regular expression, an action, and capturing group assignments for source, target, identifier, and note.\n\nRules are evaluated **in list order** — the first matching rule at each position wins. Order matters for correct extraction.\n\n**Capturing groups** are numbered by opening parenthesis from left to right (group 0 = entire match). Assign groups to roles:\n- **Source group** — the translatable text (required for extract actions)\n- **Target group** — pre-existing translation (use `-1` if undefined)\n- **Identifier group** — resource name/ID (use `-1` if undefined)\n- **Note group** — translator note (use `-1` if undefined)\n\n**Actions:**\n- **Extract the strings in the source group** — finds delimited strings within the source group (delimiters set in Options/Strings)\n- **Extract the content of the source group** — extracts the entire source group as one text unit\n- **Treat as comment** — scans for localization directives but does not extract\n- **Do not extract** — skips the match\n- **Start a section** / **End a section** — creates `START_GROUP`/`END_GROUP` events",
+      "seeAlso": "Regex_Filter#Actions",
       "examples": [
-        "`\"\"` — escaped double quote when strings are delimited by `\"`"
-      ],
-      "dependsOn": [
-        {
-          "property": "output.useBSlashEscape",
-          "condition": "typically only one escape style should be active"
-        }
+        "`^\\[(.*?)\\](=|:)(.*?)$` with source=3, id=1 — extracts `key=value` or `key:value` pairs"
       ]
-    },
-    "output.useLd": {
-      "help": "Enables recognition of **localization directives** in the input file. When disabled, any localization directives present in the file are ignored.\n\nLocalization directives allow fine-grained control over which parts of the document are extracted for translation."
-    },
-    "subfilters.subFilter": {
-      "help": "Specifies a sub-filter to apply to extracted content. The extracted text is passed through the named filter for further processing, enabling nested format handling (e.g., HTML content embedded in a text-based format).",
-      "values": "A filter configuration ID (e.g., `okf_html`), or empty string for no sub-filter."
     }
   },
   "limitations": [
-    "The **entire document is loaded into memory** to apply regular expressions — this may cause issues with very large files.",
-    "The option *Extract strings outside the rules* is **not yet implemented**."
+    "The **entire document is loaded into memory** to apply regular expressions — very large documents may cause memory issues.",
+    "The **Extract strings outside the rules** option is not yet implemented.",
+    "The filter does not recognize encoding declarations in the document and therefore cannot update them automatically."
   ],
   "processingNotes": [
-    "**Encoding detection**: Uses Unicode BOM if present; otherwise falls back to the default encoding specified when opening the document.",
-    "**Output encoding**: The filter cannot detect or update encoding declarations in the document. BOM is preserved in UTF-8 output only if the input was also UTF-8 and had a BOM.",
-    "**Line breaks**: Output preserves the same line-break style as the original input.",
-    "**Rule evaluation order**: Rules are evaluated in list order. At each position, the filter uses the first rule that matches, applies its action, then advances past the match.",
-    "**Capturing groups** are numbered by counting opening parentheses left to right. Group 0 is the whole match. In `(A)(B(C))`: group 1 = `(A)`, group 2 = `(B(C))`, group 3 = `(C)`."
+    "**Encoding detection**: Unicode BOM is detected and used automatically; otherwise falls back to the default encoding specified when opening the document.",
+    "**BOM handling**: UTF-8 output includes a BOM only if the input was also UTF-8 and had a BOM. Transcoding from non-UTF-8 to UTF-8 never adds a BOM.",
+    "**Line-breaks**: Output preserves the same line-break style as the input.",
+    "**Parsing order**: Rules are evaluated in list order at each position; the first match wins and the search position advances to the end of that match.",
+    "**Regex options**: `dotAll`, `multiLine`, and `ignoreCase` apply globally to all rules. Per-rule overrides are possible using the `(?idmsux-idmsux)` inline flag construct within the pattern.",
+    "**Metadata rules**: FPRM-only `metaRule` parameters allow adding matched regex content as metadata on TextUnits (not accessible via UI)."
   ],
   "examples": [
     {
-      "title": "Simple key=value extraction",
-      "description": "Extract translatable text from a file where each line is `[ID]=Text` or `[ID]:Text`. The regex uses three capturing groups: group 1 for the identifier, group 2 for the separator, and group 3 for the source text.",
+      "title": "Key-value extraction",
+      "description": "Extract translatable values from a simple `key=value` or `key:value` format, using the key as the resource identifier.",
       "input": "```\n[ID1]=Text for ID1\n[ID2]:Text for ID2\n```",
-      "config": "```\nRule regex: ^\\[(.*?)\\](=|:)(.*?)$\nAction: Extract the content of the source group\nSource group: 3\nIdentifier group: 1\n```",
+      "config": "```\nRule expression: ^\\[(.*?)\\](=|:)(.*?)$\nAction: Extract the content of the source group\nSource group: 3\nIdentifier group: 1\nRegex options: Multi-line enabled\n```",
       "output": "```xml\n<trans-unit id=\"1\" resname=\"ID1\" xml:space=\"preserve\">\n  <source xml:lang=\"en\">Text for ID1</source>\n</trans-unit>\n<trans-unit id=\"2\" resname=\"ID2\" xml:space=\"preserve\">\n  <source xml:lang=\"en\">Text for ID2</source>\n</trans-unit>\n```"
     },
     {
-      "title": "SRT subtitle extraction",
-      "description": "The built-in `okf_regex-srt` configuration handles SubRip Text subtitle files, extracting subtitle text while preserving timing codes as non-translatable structure.",
-      "input": "```srt\n1\n00:00:01,000 --> 00:00:04,000\nHello, world!\n\n2\n00:00:05,000 --> 00:00:08,000\nGoodbye, world!\n```"
-    },
-    {
-      "title": "Metadata rules (FPRM only)",
-      "description": "Metadata rules add matched regex content as metadata to TextUnits. These are only configurable via the `.fprm` parameter file, not through the UI.",
-      "config": "```properties\nmetaRuleCount.i=2\nmetaRule0.ruleName=meta1\nmetaRule0.expr=(\\d\\d:\\d\\d:\\d\\d)\nmetaRule1.ruleName=meta2\nmetaRule1.expr=(\\d\\d:\\d\\d:\\d\\d)\n```"
+      "title": "FPRM metadata rules",
+      "description": "Add regex-matched content as metadata on TextUnits. This is configured only via FPRM parameters, not the UI.",
+      "config": "```\nmetaRuleCount.i=2\nmetaRule0.ruleName=meta1\nmetaRule0.expr=(\\d\\d:\\d\\d:\\d\\d)\nmetaRule1.ruleName=meta2\nmetaRule1.expr=(\\d\\d:\\d\\d:\\d\\d)\n```"
     }
   ],
+  "propertySuggestions": {
+    "preserveWhiteSpaces": {
+      "title": "Preserve White Spaces",
+      "description": "Preserve all white spaces in extracted text instead of collapsing and trimming them."
+    },
+    "hasInlineCodes": {
+      "title": "Has Inline Codes",
+      "description": "Enable conversion of text patterns into inline codes."
+    },
+    "autoCloseSection": {
+      "title": "Auto-Close Sections",
+      "description": "Automatically close the previous section when a new one starts."
+    },
+    "dotAll": {
+      "title": "Dot Matches Line-Feed",
+      "description": "Enable the dot operator to match line-feed characters."
+    },
+    "multiLine": {
+      "title": "Multi-Line Mode",
+      "description": "Make ^ and $ match at line terminators, not just start and end of input."
+    },
+    "ignoreCase": {
+      "title": "Ignore Case",
+      "description": "Ignore letter case differences when matching patterns."
+    },
+    "useLocDir": {
+      "title": "Use Localization Directives",
+      "description": "Recognize and process localization directives in the input."
+    },
+    "extractOutsideLocDir": {
+      "title": "Extract Outside Directives",
+      "description": "Extract translatable items that are not within the scope of a localization directive."
+    },
+    "startString": {
+      "title": "Beginning of String",
+      "description": "Character(s) marking the start of a string for string extraction."
+    },
+    "endString": {
+      "title": "End of String",
+      "description": "Character(s) marking the end of a string for string extraction."
+    },
+    "useBackSlashEscape": {
+      "title": "Backslash Escape",
+      "description": "Use backslash prefix to escape characters in strings."
+    },
+    "useDoubleCharEscape": {
+      "title": "Double Character Escape",
+      "description": "Use character doubling to escape characters in strings."
+    },
+    "mimeType": {
+      "title": "Document MIME Type",
+      "description": "MIME type used to identify the document format during extraction."
+    },
+    "rules": {
+      "title": "Extraction Rules",
+      "description": "Ordered list of regex-based rules with actions and capturing group assignments."
+    }
+  },
+  "fullDoc": "# Regex Filter\n\nThe Regex Filter extracts translatable text from any text-based format using user-defined regular expressions with capturing groups. Each rule pairs a regex pattern with an action (extract content, extract strings, treat as comment, start/end section, or skip), and capturing groups map matched text to source, target, identifier, and note roles. The filter processes rules in order, scanning the document from top to bottom and applying the first matching rule at each position.\n\n## Parameters\n\n### Rules\n\n#### Rules\nOrdered list of extraction rules. Each rule has a Java regular expression, an action, and capturing group assignments for source, target, identifier, and note.\n\nRules are evaluated **in list order** — the first matching rule at each position wins. Order matters for correct extraction.\n\n**Capturing groups** are numbered by opening parenthesis from left to right (group 0 = entire match). Assign groups to roles:\n- **Source group** — the translatable text (required for extract actions)\n- **Target group** — pre-existing translation (use `-1` if undefined)\n- **Identifier group** — resource name/ID (use `-1` if undefined)\n- **Note group** — translator note (use `-1` if undefined)\n\n**Actions:**\n\n| Action | Effect | Source | Target | Identifier | Note |\n|--------|--------|--------|--------|------------|------|\n| Extract the strings in source group | `TEXT_UNIT` per string found | Required — contains strings | Not used | Name for first TU (sequential suffix for others) | Note for each TU |\n| Extract the content of source group | Single `TEXT_UNIT` | Required — source text | Target text | TU name | TU note |\n| Treat as comment | Scan for loc directives | Required — scanned | Not used | Not used | Not used |\n| Do not extract | Skip | Not used | Not used | Not used | Not used |\n| Start a section | `START_GROUP` event | Not used | Not used | Section name | Section note |\n| End a section | `END_GROUP` event | Not used | Not used | Not used | Not used |\n\n#### Preserve White Spaces\nPreserve all white spaces in extracted text. When disabled, consecutive whitespace (spaces, tabs, CR, LF) is collapsed to a single space and leading/trailing whitespace is trimmed.\n\n#### Has Inline Codes\nEnable conversion of text patterns into inline codes. Configure patterns via the Inline Codes Patterns editor.\n\n#### Auto-Close Sections\nAutomatically close the previous section when a new one starts. When enabled, only define **Start a section** rules — do **not** define matching **End a section** rules. When disabled, every start must have a corresponding end.\n\n### Regular Expression Options\n\nThese options apply globally to all rules. Override per-rule using `(?idmsux-idmsux)` inline flag syntax in the pattern.\n\n#### Dot Matches Line-Feed\nMakes the `.` operator match line-feed characters (equivalent to Java `Pattern.DOTALL`).\n\n#### Multi-Line Mode\nMakes `^` and `$` match at line terminators within the input, not just at the absolute start/end (equivalent to Java `Pattern.MULTILINE`).\n\n#### Ignore Case\nMakes matching case-insensitive — `abc` matches `Abc`, `ABC`, etc. (equivalent to Java `Pattern.CASE_INSENSITIVE`).\n\n### Localization Directives\n\n#### Use Localization Directives\nEnables the filter to recognize localization directives. When disabled, all directives are ignored.\n\n#### Extract Outside Directives\nExtract translatable items outside the scope of localization directives. Only active when **Use Localization Directives** is enabled.\n\n### Strings\n\nThese settings control the **Extract the strings in the source group** action.\n\n#### Beginning of String\nCharacter(s) marking the start of a string. Multiple characters define multiple alternative delimiters, positionally paired with end characters.\n\n#### End of String\nCharacter(s) marking the end of a string. Must have the same count as beginning characters, with each position corresponding to its pair.\n\n#### Backslash Escape\nTreat backslash-prefixed characters (e.g., `\\\"`) as escaped literals, not delimiters.\n\n#### Double Character Escape\nTreat doubled characters (e.g., `\"\"`) as escaped literals, not delimiters.\n\n### Content Type\n\n#### Document MIME Type\nThe MIME type for the document. Affects how text is written back. Use `text/plain` for most cases.\n\n## Limitations\n\n- The **entire document is loaded into memory** to apply regular expressions — very large documents may cause memory issues.\n- The **Extract strings outside the rules** option is not yet implemented.\n- The filter does not recognize encoding declarations in the document and therefore cannot update them automatically.\n\n## Notes\n\n- Unicode BOM is auto-detected; otherwise the default encoding specified when opening the document is used.\n- UTF-8 output includes a BOM only if the input was also UTF-8 and had a BOM.\n- Output preserves the input's line-break style.\n- FPRM-only `metaRule` parameters allow adding matched regex content as metadata on TextUnits (not accessible via UI).\n\n## Examples\n\n### Key-Value Extraction\n\nExtract translatable values from `key=value` or `key:value` format:\n\n**Input:**\n```\n[ID1]=Text for ID1\n[ID2]:Text for ID2\n```\n\n**Rule:** `^\\[(.*?)\\](=|:)(.*?)$` with source group = 3, identifier group = 1, multi-line enabled.\n\n**Output (XLIFF):**\n```xml\n<trans-unit id=\"1\" resname=\"ID1\" xml:space=\"preserve\">\n  <source xml:lang=\"en\">Text for ID1</source>\n</trans-unit>\n<trans-unit id=\"2\" resname=\"ID2\" xml:space=\"preserve\">\n  <source xml:lang=\"en\">Text for ID2</source>\n</trans-unit>\n```\n\n### FPRM Metadata Rules\n\nAdd regex-matched content as metadata (FPRM only, not in UI):\n\n```\nmetaRuleCount.i=2\nmetaRule0.ruleName=meta1\nmetaRule0.expr=(\\d\\d:\\d\\d:\\d\\d)\nmetaRule1.ruleName=meta2\nmetaRule1.expr=(\\d\\d:\\d\\d:\\d\\d)\n```",
   "filterId": "okf_regex",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Regex_Filter"
 }

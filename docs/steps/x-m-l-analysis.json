@@ -1,31 +1,36 @@
 {
-  "filterName": "XML Analysis",
-  "overview": "Generates an analysis report on the elements present in a set of input XML documents. The report helps guess localization-related aspects of the input documents, such as which elements should have their content extracted, which elements are likely to be inline, and whether there are any CDATA sections. Expects raw documents and passes them through unchanged.",
+  "filterName": "XML Analysis Step",
+  "overview": "Generates an analysis report on the elements present in a set of input XML documents. The report helps guess localization-related aspects of the input documents, such as which elements should have their content extracted, which elements are likely inline, and whether there are any CDATA sections. Expects raw documents and passes them through unchanged.",
   "parameters": {
     "outputPath": {
-      "help": "Full path (including filename) where the HTML analysis report will be written. The report summarizes element usage across all processed XML documents to help determine localization properties.",
+      "help": "Full path where the HTML analysis report will be written. The report summarizes all XML elements found across the input documents, helping identify localization-relevant structures such as extractable content elements, inline elements, and CDATA sections.",
       "values": "A file system path ending in `.html`. Can be absolute or relative to the working directory.",
       "examples": [
-        "`analysis.html` — writes to current directory",
-        "`/reports/xml-analysis.html` — absolute path"
+        "`analysis.html` — writes to the current working directory",
+        "`/tmp/reports/xml-analysis.html` — absolute path"
       ]
     },
     "autoOpen": {
-      "help": "Automatically opens the generated report file in the system's default browser/application after the pipeline finishes processing all documents."
+      "help": "Automatically opens the generated report file in the system's default browser or HTML viewer after the pipeline completes. Useful during interactive sessions; disable for batch or CI workflows."
     }
   },
-  "processingNotes": [
-    "The step passes raw documents through unchanged — it only reads and analyzes the XML content without modifying it.",
-    "The report aggregates information across **all** XML documents processed in the batch, not just a single file.",
-    "The generated report is HTML format and covers element inventory, inline element candidates, and CDATA section detection."
-  ],
   "limitations": [],
+  "processingNotes": [
+    "This step passes raw documents through unchanged — it only reads documents to build the report, it does not modify them.",
+    "The output report is HTML format, summarizing XML element usage across all documents processed in the batch."
+  ],
   "examples": [
     {
       "title": "Basic XML analysis",
-      "description": "Run the step with default settings to generate an `analysis.html` report that opens automatically after completion. Use the report to determine which elements contain translatable content and which are inline before configuring an XML filter."
+      "description": "Run the XML Analysis step to generate a report of element usage across a set of XML files, automatically opening the result."
     }
   ],
+  "propertySuggestions": {
+    "autoOpen": {
+      "description": "Automatically open the result file after the process is complete."
+    }
+  },
+  "fullDoc": "# XML Analysis Step\\n\\nGenerates an analysis report on the elements present in a set of input XML documents. The report helps guess localization-related aspects of the input documents, such as which elements should have their content extracted, which elements are likely inline, and whether there are any CDATA sections. Expects raw documents and passes them through unchanged.\\n\\n## Parameters\\n\\n#### Path of the result file\\n\\nFull path where the HTML analysis report will be written. The report summarizes all XML elements found across the input documents, helping identify localization-relevant structures such as extractable content elements, inline elements, and CDATA sections.\\n\\nThe path can be absolute or relative to the working directory, and should end in `.html`.\\n\\n**Examples:**\\n- `analysis.html` — writes to the current working directory\\n- `/tmp/reports/xml-analysis.html` — absolute path\\n\\n#### Open the result file after completion\\n\\nAutomatically opens the generated report file in the system's default browser or HTML viewer after the pipeline completes. Useful during interactive sessions; disable for batch or CI workflows.\\n\\n## Limitations\\n\\nNone known.\\n\\n## Notes\\n\\n- This step passes raw documents through unchanged — it only reads documents to build the report, it does not modify them.\\n- The output report is HTML format, summarizing XML element usage across all documents processed in the batch.",
   "stepId": "x-m-l-analysis",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/xml_analysis_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/XML_Analysis_Step"
 }

@@ -6,9 +6,32 @@
   "fields": {
     "segType": {},
     "processAllTargets": {},
-    "consolidateDpSkeleton": {},
+    "consolidateDpSkeleton": {
+      "title": "Consolidate Document Part Skeleton",
+      "description": "Group all document part skeleton into a single resource to reduce pipeline events."
+    },
     "exitOnInvalid": {},
     "propValueSep": {},
-    "escapeGT": {}
+    "escapeGT": {},
+    "readAllTargets": {
+      "title": "Read All Target Entries",
+      "description": "Read all target <tuv> elements into the text unit instead of only the selected target."
+    },
+    "exitOnInvalidTu": {
+      "title": "Exit on Invalid TUs",
+      "description": "Stop processing when encountering invalid <tu> elements instead of skipping them."
+    },
+    "segmentationType": {
+      "title": "Segment Creation Mode",
+      "description": "Controls whether and when segments are created for extracted <tu> entries based on segtype."
+    },
+    "escapeGt": {
+      "title": "Escape Greater-Than Characters",
+      "description": "Escape all > characters as &gt; in the output."
+    },
+    "duplicatePropertyValueSeparator": {
+      "title": "Duplicate Property Separator",
+      "description": "String used to separate values when duplicate TMX properties are found."
+    }
   }
 }

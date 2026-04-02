@@ -133,7 +133,7 @@
     "OTHER_SYMBOL": {
       "type": "boolean",
       "default": false,
-      "description": "VVarious Unicode symbols (mathematical etc.)",
+      "description": "Various Unicode symbols (mathematical, technical, etc.).",
       "title": "OTHER_SYMBOL"
     },
     "KANA": {

@@ -5,6 +5,14 @@
   ],
   "fields": {
     "escapeGT": {},
-    "decodeByteValues": {}
+    "decodeByteValues": {},
+    "convertByteValues": {
+      "title": "Convert Byte Elements",
+      "description": "Convert <byte value=\"[value]\"/> elements to raw characters instead of treating them as inline codes."
+    },
+    "useCodeFinder": {
+      "title": "Has Inline Codes",
+      "description": "Enable pattern-based inline code detection using the defined regular expressions."
+    }
   }
 }

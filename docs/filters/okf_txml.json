@@ -1,28 +1,40 @@
 {
   "filterName": "TXML Filter",
-  "overview": "The TXML Filter processes **Wordfast Pro TXML documents**, a proprietary XML-based bilingual format used by Wordfast Pro and supported by several other tools. It extracts source and target content from segmented bilingual entries, preserving existing translations and handling revisions. There are no official public specifications for the TXML format.",
+  "overview": "The TXML Filter processes **Wordfast Pro TXML documents**, a proprietary XML-based bilingual format used by Wordfast Pro and supported by several other tools. It extracts blocks of one or more segments as text units, preserving existing translations and handling revisions. There are no official public specifications for the TXML format.",
   "parameters": {
-    "output.allowEmptyOutputTarget": {
-      "help": "Controls what happens when a segment has no translation at merge time.\n\n- **Enabled**: empty target segments are written as-is (empty) in the output.\n- **Disabled**: the source text is copied into the target when no translation exists, ensuring every segment has target content.\n\nThe pre-configured variant **\"TXML (Fill empty targets in output)\"** has this option disabled.",
+    "allowEmptyOutputTarget": {
+      "help": "Controls what happens when a translated segment has an empty target:\n\n- **Enabled**: Empty translations are written as-is to the output TXML file\n- **Disabled**: A copy of the source text is used in place of the empty translation\n\nThis is useful when downstream tools require non-empty target segments, or when you want to preserve empty targets as a signal that translation is still needed.",
       "notes": [
-        "The `okf_txml-fillEmptyTargets` configuration sets this to `false`, copying source text into empty targets on output."
+        "When disabled, empty targets are replaced with a copy of the source — this modifies the output without affecting the internal translation memory or segment status."
       ]
     }
   },
   "processingNotes": [
     "**Encoding detection**: Uses the XML encoding declaration if present; otherwise defaults to UTF-8 regardless of any externally specified default encoding.",
-    "**BOM handling**: A UTF-8 BOM is preserved in output only if the input was also UTF-8 and contained a BOM. Transcoding from non-UTF-8 to UTF-8 never adds a BOM.",
-    "**XML encoding declaration**: Automatically updated on output if present, or added if missing.",
-    "**Line breaks**: Output preserves the same line-break style as the input document.",
-    "**Segmentation**: TXML blocks contain one or more segments. Each block is extracted as a single text unit with all its segments.",
-    "**Existing translations**: Target text is extracted alongside source. Segments marked `gtmt=\"true\"` without `modified=\"true\"` are also stored as `AltTranslationsAnnotation`.",
-    "**Revisions**: Only the latest translation is extracted; `<revisions>` elements are ignored. Merging overwrites the previous translation without creating revision entries."
+    "**BOM handling**: When output is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. If converting from another encoding to UTF-8, no BOM is added.",
+    "**XML declaration**: If the original document had an XML encoding declaration it is updated on output; if it did not have one, a declaration is automatically added.",
+    "**Line-breaks**: Output line-break style matches the original input document.",
+    "**Segmentation**: TXML files are always segmented — each block contains one or more segments. The content of each block is extracted as a single text unit with all its segments.",
+    "**Existing translations**: Translated segments are extracted with both source and target. Segments marked `gtmt=\"true\"` (without `modified=\"true\"`) also generate an `AltTranslationsAnnotation`.",
+    "**Revisions**: Only the latest translation is extracted; `<revisions>` elements are ignored. On merge, updated translations overwrite originals — no revision entries are created in the output."
   ],
   "limitations": [
-    "The TXML format does not allow different source and target content for inter-segment parts. If these parts change after extraction, the difference cannot be represented at merge time — only the source representation is preserved.",
-    "No official public specification exists for the TXML format."
+    "The TXML format does not allow different source and target content for inter-segment parts. If these parts change after extraction, only the source representation is preserved on merge — the difference cannot be represented."
   ],
-  "examples": [],
+  "propertySuggestions": {
+    "allowEmptyOutputTarget": {
+      "title": "Allow Empty Target Segments",
+      "description": "Allow empty translations to be written as-is in output; when disabled, source text is copied into empty targets."
+    }
+  },
+  "examples": [
+    {
+      "title": "Segment with machine translation annotation",
+      "description": "When a TXML segment has `gtmt=\"true\"` (machine-translated) but not `modified=\"true\"`, the filter extracts both source and target and creates an `AltTranslationsAnnotation`. This allows downstream steps to distinguish machine-translated content from human-reviewed translations.",
+      "input": "```xml\n<segment gtmt=\"true\">\n  <source>Hello world</source>\n  <target>Bonjour le monde</target>\n</segment>\n```"
+    }
+  ],
+  "fullDoc": "# TXML Filter\n\nThe TXML Filter processes **Wordfast Pro TXML documents**, a proprietary XML-based bilingual format used by Wordfast Pro and supported by several other tools. It extracts blocks of one or more segments as text units, preserving existing translations and handling revisions. There are no official public specifications for the TXML format.\n\n## Parameters\n\n### Allow Empty Target Segments\n\nControls what happens when a translated segment has an empty target:\n\n- **Enabled**: Empty translations are written as-is to the output TXML file\n- **Disabled**: A copy of the source text is used in place of the empty translation\n\nThis is useful when downstream tools require non-empty target segments, or when you want to preserve empty targets as a signal that translation is still needed.\n\n## Processing Details\n\n### Encoding\n\n- Uses the XML encoding declaration if present; otherwise defaults to **UTF-8** regardless of any externally specified default encoding.\n- On output, if the original document had an XML encoding declaration it is updated; if it did not, one is automatically added.\n- **BOM handling**: When output is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. Converting from another encoding to UTF-8 produces no BOM.\n\n### Line-Breaks\n\nOutput line-break style matches the original input document.\n\n### Segmentation\n\nTXML files are always segmented — each block contains one or more segments. The content of each block is extracted as a single text unit with all its segments.\n\n### Existing Translations\n\nTranslated segments are extracted with both source and target. Segments marked with `gtmt=\"true\"` (without `modified=\"true\"`) also generate an `AltTranslationsAnnotation`.\n\n### Revisions\n\nOnly the latest translation is extracted; content in `<revisions>` elements is ignored. On merge, updated translations overwrite originals — no revision entries are created in the output TXML document.\n\n## Limitations\n\n- The TXML format does not allow different source and target content for inter-segment parts. If these parts change after extraction, only the source representation is preserved on merge — the difference cannot be represented.\n\n## Examples\n\n### Machine Translation Annotation\n\nWhen a TXML segment has `gtmt=\"true\"` but not `modified=\"true\"`, the filter creates an `AltTranslationsAnnotation` alongside the normal source/target extraction:\n\n```xml\n<segment gtmt=\"true\">\n  <source>Hello world</source>\n  <target>Bonjour le monde</target>\n</segment>\n```\n\nThis allows downstream pipeline steps to distinguish machine-translated content from human-reviewed translations.",
   "filterId": "okf_txml",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/TXML_Filter"
 }

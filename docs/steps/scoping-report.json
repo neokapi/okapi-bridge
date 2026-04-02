@@ -1,159 +1,127 @@
 {
   "filterName": "Scoping Report Step",
-  "overview": "This step creates a template-based report on various counts (word count, character count, etc.) and optionally leveraged data. It acts as a **presentation layer** — most count values are calculated by upstream steps like the Word Count Step, Character Count Step, or Leveraging Step. If those steps are missing from the pipeline, the report will show zeros. Both plain text and HTML report templates are supported.",
+  "overview": "This step creates a template-based report on various counts (word count, character count, etc.) and optionally leveraged data. It acts as a presentation layer, displaying information provided by other steps such as the Word Count Step, Character Count Step, or Leveraging Step. Reports can be generated in plain text or HTML format using customizable templates with report field placeholders. To include leveraging statistics, the pipeline must include a leveraging step prior to this step.",
   "parameters": {
     "projectName": {
-      "help": "Displayed in the report title. Corresponds to the `[PROJECT_NAME]` template field."
+      "help": "The project name appears in the report title and is available as the `[PROJECT_NAME]` template field. This is a display-only label — it does not affect processing."
     },
     "customTemplateURI": {
-      "help": "Path or URI to a custom report template file. If left empty or the URI is not found, the **built-in default HTML template** is used.\n\nTemplates contain literal text interspersed with report fields enclosed in `[BRACKETS]`. Table rows use double brackets: `[[col1],[col2],...]`.",
-      "values": "A file URI or absolute path to an HTML or plain-text template file.",
+      "help": "Path or URI to a custom report template file. Templates contain text mixed with report field placeholders enclosed in brackets (e.g. `[PROJECT_NAME]`, `[ITEM_TOTAL_WORD_COUNT]`). Table rows use double brackets: `[[col1],[col2],]`.\n\nIf left empty or the URI is not found, the **default HTML template** is used.",
       "notes": [
-        "If both `customTemplateURI` and `customTemplateString` are empty, the default HTML template is used."
+        "If the specified URI is not found, the step silently falls back to the default template rather than raising an error."
       ],
-      "dependsOn": [
-        {
-          "property": "customTemplateString",
-          "condition": "customTemplateString takes precedence if both are specified"
-        }
-      ],
-      "examples": [
-        "`file:///path/to/my_report_template.html`"
-      ]
+      "seeAlso": "Scoping_Report_Step#Templates"
     },
     "customTemplateString": {
-      "help": "Specify the report template content directly as a string instead of referencing an external file. Useful for embedding simple templates without a separate file.\n\nTemplate syntax: report fields in `[BRACKETS]`, table rows in `[[col1],[col2],...]`.",
+      "help": "Specify the report template directly as a string instead of referencing a file. Uses the same template syntax as file-based templates — text with `[FIELD]` placeholders and `[[row]]` table rows.\n\nUseful when generating templates programmatically or embedding short templates inline.",
       "dependsOn": [
         {
           "property": "customTemplateURI",
-          "condition": "overrides customTemplateURI when set"
+          "condition": "customTemplateURI takes precedence if both are specified"
         }
       ]
     },
     "outputPath": {
-      "help": "Full path where the generated report file will be written. Supports variable substitution for dynamic paths.",
-      "values": "Supports `${rootDir}` (pipeline root directory) and locale variables: `${srcLoc}`, `${trgLoc}`, etc.",
+      "help": "Full path for the generated report file. Supports variable substitution:\n\n- `${rootDir}` — the pipeline root directory\n- `${srcLoc}` — source locale\n- `${trgLoc}` — target locale\n- Other source/target locale variables",
+      "values": "Path string with optional `${rootDir}`, `${srcLoc}`, `${trgLoc}` variable substitution. Typically an `.html` file when using the default template.",
       "examples": [
-        "`${rootDir}/scoping_report.html`",
-        "`${rootDir}/reports/${trgLoc}_scope.html`"
+        "`${rootDir}/scoping_report.html` — default, writes to root dir",
+        "`${rootDir}/reports/${trgLoc}/scope.html` — per-locale output"
       ]
     },
     "countAsNonTranslatable_GMXProtected": {
-      "help": "Words/characters marked as 'protected' (e.g. XLIFF `<mrk mtype=\"protected\">` elements) are excluded from the translatable count. These are text segments explicitly marked as not requiring translation.",
-      "seeAlso": "Match_Types"
+      "help": "Words/characters in text marked as 'protected' or not translatable (e.g. XLIFF `<mrk mtype=\"protected\">` elements). Affects the `PROJECT_GMX_NONTRANSLATABLE_WORD_COUNT` / `PROJECT_GMX_TRANSLATABLE_WORD_COUNT` split in the report."
     },
     "countAsNonTranslatable_GMXExactMatched": {
-      "help": "Words/characters from text units matched **unambiguously** with a prior translation (requiring no translator input) are excluded from the translatable count. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words/characters in text units matched unambiguously with a prior translation, requiring no translator input. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_GMXLeveragedMatched": {
-      "help": "Words/characters from text units matched against a **leveraged translation memory** database are excluded from the translatable count. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words/characters in text units matched against a leveraged translation memory database. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_GMXRepetitionMatched": {
-      "help": "Words/characters from **repeating text units** not matched in any other form are excluded from the translatable count. Repetition matching takes precedence over fuzzy matching. Typically populated by the **Repetition Analysis Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words/characters in repeating text units not matched in any other form. Repetition matching takes precedence over fuzzy matching. Typically provided by the **Repetition Analysis Step**."
     },
     "countAsNonTranslatable_GMXFuzzyMatch": {
-      "help": "Words/characters from text units **fuzzy-matched** against a leveraged translation memory are excluded from the translatable count. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words/characters in text units fuzzy-matched against a leveraged TM database. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_GMXAlphanumericOnlyTextUnit": {
-      "help": "Words/characters from text units containing **only alphanumeric words** (no natural language) are excluded from the translatable count.",
-      "seeAlso": "Match_Types"
+      "help": "Words/characters in text units containing only alphanumeric words (no natural language content requiring translation)."
     },
     "countAsNonTranslatable_GMXNumericOnlyTextUnit": {
-      "help": "Words/characters from text units containing **only numeric words** are excluded from the translatable count.",
-      "seeAlso": "Match_Types"
+      "help": "Words/characters in text units containing only numeric words."
     },
     "countAsNonTranslatable_GMXMeasurementOnlyTextUnit": {
-      "help": "Words/characters from **measurement-only** text units are excluded from the translatable count.",
-      "seeAlso": "Match_Types"
+      "help": "Words/characters from measurement-only text units (e.g. \"10 cm\", \"5 kg\")."
     },
     "countAsNonTranslatable_ExactUniqueIdMatch": {
-      "help": "Words from segments that match **exactly** and also match a **unique ID** are excluded from the translatable count. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words matching EXACT and a unique ID. Typically provided by the **Leveraging Step**. Affects the Okapi-category non-translatable/translatable split."
     },
     "countAsNonTranslatable_ExactPreviousVersionMatch": {
-      "help": "Words from segments that match exactly and come from the **preceding version** of the same document. Strictly the immediately prior version (e.g. v3 for v4, not v2 or v1). Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words matching EXACT from the preceding version of the same document. Note: must come from the immediately prior version (e.g. v3 for v4, not v2 or v1). Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_ExactLocalContextMatch": {
-      "help": "Words from segments that match exactly and also match a **small number of surrounding segments** (local context). Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words matching EXACT plus a small number of surrounding segments. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_ExactDocumentContextMatch": {
-      "help": "Words from segments that match exactly and come from the **same document**. Typically populated by the **Repetition Analysis Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words matching EXACT from the same document. Typically provided by the **Repetition Analysis Step**."
     },
     "countAsNonTranslatable_ExactStructuralMatch": {
-      "help": "Words from segments that match exactly and share the same **structural type** (title, paragraph, list element, etc.). Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words matching EXACT plus the structural type of the segment (title, paragraph, list element, etc.). Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_ExactMatch": {
-      "help": "Words from segments that match **text and codes exactly** (100% match). Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words matching text and codes exactly (100% match). Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_ExactTextOnlyPreviousVersionMatch": {
-      "help": "Words from segments where **text matches exactly** but codes differ, and the match comes from a **previous version** of the same document. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words matching text exactly (ignoring code differences) from a previous version of the same document. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_ExactTextOnlyUniqueIdMatch": {
-      "help": "Words from segments where **text matches exactly** but codes differ, and the match also has a **unique ID** match. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words matching text exactly (ignoring code differences) with a unique ID match. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_ExactTextOnly": {
-      "help": "Words from segments where **text matches exactly** but there is a difference in one or more inline codes. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words matching text exactly, but with a difference in one or more inline codes. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_ExactRepaired": {
-      "help": "Words from segments that match exactly only **after automated repair** (number replacement, code repair, capitalization, punctuation changes). Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words matching text and codes exactly only after automated repair (e.g. number replacement, code repair, capitalization, punctuation). Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_FuzzyPreviousVersionMatch": {
-      "help": "Words from **fuzzy-matched** segments that come from a **previous version** of the same document. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words with a fuzzy match from a previous version of the same document. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_FuzzyUniqueIdMatch": {
-      "help": "Words from **fuzzy-matched** segments that also match a **unique ID**. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words with a fuzzy match that also match a unique ID. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_FuzzyMatch": {
-      "help": "Words from segments that **partially match** text and/or codes (fuzzy match). Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words with a partial match on text and/or codes (fuzzy match). Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_FuzzyRepaired": {
-      "help": "Words from **fuzzy-matched** segments where automated repair (number replacement, code repair, etc.) was applied to the target. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words with a fuzzy match where automated repair (number replacement, code repair, etc.) was applied to the target. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_PhraseAssembled": {
-      "help": "Words from translations **assembled from phrases** in the TM or other resources using various algorithms.",
-      "seeAlso": "Match_Types"
+      "help": "Words from translations assembled from phrases in the TM or other resources. Different algorithms may be used for assembly."
     },
     "countAsNonTranslatable_MT": {
-      "help": "Words from translations produced by a **machine translation engine**. Typically populated by the **Leveraging Step**.",
-      "seeAlso": "Match_Types"
+      "help": "Words from translations provided by a machine translation engine. Typically provided by the **Leveraging Step**."
     },
     "countAsNonTranslatable_Concordance": {
-      "help": "Words from **TM concordance or phrase matches** (usually individual words or terms only).",
-      "seeAlso": "Match_Types"
+      "help": "Words from TM concordance or phrase matches (usually word- or term-level matches only)."
     }
   },
   "processingNotes": [
-    "This step is a **presentation layer** only — it does not calculate counts itself. Word counts come from the **Word Count Step**, character counts from the **Character Count Step**, and leverage data from the **Leveraging Step** or **Repetition Analysis Step**. Missing upstream steps result in zeros in the report.",
-    "The `countAsNonTranslatable_*` flags control which match categories are subtracted from the total to compute the **translatable word count**. The non-translatable count is the sum of all enabled categories; the translatable count is `total - non-translatable`.",
-    "Character count equivalents exist for all word-count report fields — replace `WORD` with `CHARACTER` or append `_CHARACTER` to the field name. Character counts **exclude** whitespace and punctuation.",
-    "The `PROJECT_NOCATEGORY` / `ITEM_NOCATEGORY` fields are computed by subtracting the sum of all categorized words from the total word count."
-  ],
-  "examples": [
-    {
-      "title": "Custom CSV template",
-      "description": "A plain-text template producing a CSV-style scoping report with leveraging breakdown per file. Row syntax `[[...]]` repeats for each input document.",
-      "config": "```yaml\nprojectName: Community website\ncustomTemplateString: |\n  Project Name: [PROJECT_NAME]\n  Creation Date: [PROJECT_DATE]\n  Target Locale: [PROJECT_TARGET_LOCALE]\n\n  File,Exact Previous Version,Exact Local Context,100% Matches,Fuzzy,Repetitions,Total\n  [[ITEM_NAME],[ITEM_EXACT_PREVIOUS_VERSION],[ITEM_EXACT_LOCAL_CONTEXT],[ITEM_EXACT],[ITEM_FUZZY],[ITEM_GMX_REPETITION_MATCHED_WORD_COUNT],[ITEM_TOTAL_WORD_COUNT],]\n  Total,[PROJECT_EXACT_PREVIOUS_VERSION],[PROJECT_EXACT_LOCAL_CONTEXT],[PROJECT_EXACT],[PROJECT_FUZZY],[PROJECT_GMX_REPETITION_MATCHED_WORD_COUNT],[PROJECT_TOTAL_WORD_COUNT]\noutputPath: ${rootDir}/scoping_report.csv\n```",
-      "output": "```\nProject Name: Community website\nCreation Date: 17.03.2011 23:21:23 CET\nTarget Locale: fr-ca\n\nFile,Exact Previous Version,Exact Local Context,100% Matches,Fuzzy,Repetitions,Total\naa324.html,10,23,12,57,132,23,\nform.html,31,22,13,17,19,17,\nTotal,210,323,512,357,312,154\n```"
-    }
+    "The step is a **presentation layer** — it does not calculate counts itself. Count data must be provided by preceding pipeline steps (Word Count Step, Character Count Step, Leveraging Step, Repetition Analysis Step). Missing steps result in zeros in the report.",
+    "The `countAsNonTranslatable_*` flags control which match categories are subtracted from the total to compute the **translatable** vs **non-translatable** split. They affect both GMX-category and Okapi-category calculations.",
+    "Character count equivalents for all report fields are available by replacing `WORD` with `CHARACTER` or adding `_CHARACTER` suffix. Character counts exclude whitespace and punctuation.",
+    "The step passes filter events through unchanged — it only reads annotations to generate the report."
   ],
   "limitations": [],
+  "examples": [
+    {
+      "title": "CSV-style plain text template",
+      "description": "A minimal plain text template producing a CSV-like scoping report with per-file leveraging breakdown. Table rows use double-bracket syntax `[[...]]` to iterate over items.",
+      "config": "```yaml\nprojectName: Community website\noutputPath: ${rootDir}/scoping_report.csv\n```",
+      "input": "```\nProject Name: [PROJECT_NAME]\nCreation Date: [PROJECT_DATE]\nTarget Locale: [PROJECT_TARGET_LOCALE]\n\nFile,Exact Previous Version,Exact Local Context,100% Matches,Fuzzy,Repetitions,Total,\n[[ITEM_NAME],[ITEM_EXACT_PREVIOUS_VERSION],[ITEM_EXACT_LOCAL_CONTEXT],[ITEM_EXACT],[ITEM_FUZZY],[ITEM_GMX_REPETITION_MATCHED_WORD_COUNT],[ITEM_TOTAL_WORD_COUNT],]\nTotal,[PROJECT_EXACT_PREVIOUS_VERSION],[PROJECT_EXACT_LOCAL_CONTEXT],[PROJECT_EXACT],[PROJECT_FUZZY],[PROJECT_GMX_REPETITION_MATCHED_WORD_COUNT],[PROJECT_TOTAL_WORD_COUNT]\n```",
+      "output": "```\nProject Name: Community website\nCreation Date: 17.03.2011 23:21:23 CET\nTarget Locale: fr-ca\n\nFile,Exact Previous Version,Exact Local Context,100% Matches,Fuzzy,Repetitions,Total,\naa324.html,10,23,12,57,132,23,\nform.html,31,22,13,17,19,17,\nTotal,210,323,512,357,312,154\n```"
+    }
+  ],
+  "fullDoc": "# Scoping Report Step\n\nThis step creates a template-based report on various counts (word count, character count, etc.) and optionally leveraged data. It acts as a presentation layer, displaying information provided by other steps such as the Word Count Step, Character Count Step, or Leveraging Step. Reports can be generated in plain text or HTML format using customizable templates with report field placeholders.\n\nTo include leveraging statistics, the pipeline must include a leveraging step (e.g. Leveraging Step) prior to this step. For just generating word- or character-count annotations without a report, use the Word Count Step or Character Count Step instead.\n\n## Parameters\n\n### General\n\n#### Name of the project\nThe project name appears in the report title and is available as the `[PROJECT_NAME]` template field. This is a display-only label.\n\n#### Custom template URI\nPath or URI to a custom report template file. Templates contain text mixed with report field placeholders enclosed in brackets (e.g. `[PROJECT_NAME]`, `[ITEM_TOTAL_WORD_COUNT]`). Table rows use double brackets: `[[col1],[col2],]`.\n\nIf left empty or the URI is not found, the default HTML template is used.\n\n> **Note:** If the specified URI is not found, the step silently falls back to the default template rather than raising an error.\n\n#### Custom template string\nSpecify the report template directly as a string instead of referencing a file. Uses the same template syntax as file-based templates. If `customTemplateURI` is also specified, the URI takes precedence.\n\n#### Output path\nFull path for the generated report file. Supports variable substitution:\n- `${rootDir}` — the pipeline root directory\n- `${srcLoc}` — source locale\n- `${trgLoc}` — target locale\n\n### GMX Non-Translatable Categories\n\nThese flags control which GMX word/character count categories are treated as non-translatable in the report's translatable/non-translatable split.\n\n#### GMX Protected Count\nWords/characters in text marked as 'protected' or not translatable (e.g. XLIFF `<mrk mtype=\"protected\">` elements). **Default: enabled.**\n\n#### GMX Exact Matched Count\nWords/characters matched unambiguously with a prior translation. Provided by the Leveraging Step. **Default: enabled.**\n\n#### GMX Leveraged Matched Count\nWords/characters matched against a leveraged TM database. Provided by the Leveraging Step. **Default: disabled.**\n\n#### GMX Repetition Matched Count\nWords/characters in repeating text units. Repetition matching takes precedence over fuzzy matching. Provided by the Repetition Analysis Step. **Default: disabled.**\n\n#### GMX Fuzzy Matched Count\nWords/characters fuzzy-matched against a leveraged TM. Provided by the Leveraging Step. **Default: disabled.**\n\n#### GMX Alphanumeric Only Text Unit Count\nWords/characters in text units containing only alphanumeric words. **Default: enabled.**\n\n#### GMX Numeric Only Text Unit Count\nWords/characters in text units containing only numeric words. **Default: enabled.**\n\n#### GMX Measurement Only Text Unit Count\nWords/characters from measurement-only text units. **Default: enabled.**\n\n### Okapi Non-Translatable Categories\n\nThese flags control which Okapi match categories are treated as non-translatable.\n\n#### Exact Unique Id Match\nMatches EXACT and a unique ID. **Default: enabled.**\n\n#### Exact Previous Version Match\nMatches EXACT from the immediately preceding document version (v3 for v4, not v2). **Default: enabled.**\n\n#### Exact Local Context Match\nMatches EXACT plus surrounding segments. **Default: disabled.**\n\n#### Exact Document Context Match\nMatches EXACT from the same document. **Default: disabled.**\n\n#### Exact Structural Match\nMatches EXACT plus structural segment type (title, paragraph, etc.). **Default: disabled.**\n\n#### Exact Match\n100% match on text and codes. **Default: disabled.**\n\n#### Exact Text Only Previous Version Match\nText-only exact match from a previous document version. **Default: disabled.**\n\n#### Exact Text Only Unique Id Match\nText-only exact match with unique ID. **Default: disabled.**\n\n#### Exact Text Only\nText matches exactly but inline codes differ. **Default: disabled.**\n\n#### Exact Repaired\nExact match after automated repair (number replacement, code repair, etc.). **Default: disabled.**\n\n#### Fuzzy Previous Version Match\nFuzzy match from a previous document version. **Default: disabled.**\n\n#### Fuzzy Unique Id Match\nFuzzy match with unique ID. **Default: disabled.**\n\n#### Fuzzy Match\nPartial match on text and/or codes. **Default: disabled.**\n\n#### Fuzzy Repaired\nFuzzy match with automated repair applied. **Default: disabled.**\n\n#### Phrase Assembled\nTranslations assembled from TM phrases. **Default: disabled.**\n\n#### MT\nMachine translation output. **Default: disabled.**\n\n#### Concordance\nTM concordance or phrase match (usually word/term level). **Default: disabled.**\n\n## Templates\n\nTemplates contain text and report field placeholders. Report fields are enclosed in brackets (e.g. `[PROJECT_NAME]`). Table rows use double brackets to iterate over project items: `[[ITEM_NAME],[ITEM_TOTAL_WORD_COUNT],]`.\n\nAvailable field prefixes:\n- `PROJECT_` — aggregated across all items\n- `ITEM_` — per-file values\n\nCharacter count variants are available by replacing `WORD` with `CHARACTER` or appending `_CHARACTER`.\n\n## Notes\n\n- The step is a **presentation layer** — count data must be provided by preceding pipeline steps. Missing steps result in zeros.\n- The `countAsNonTranslatable_*` flags control which categories are subtracted from total counts to compute translatable vs non-translatable word/character counts.\n- The step passes filter events through unchanged — it only reads annotations to generate the report.\n\n## Examples\n\n### CSV-style plain text template\n\nA minimal template producing a CSV-like report with per-file leveraging:\n\n```\nProject Name: [PROJECT_NAME]\nCreation Date: [PROJECT_DATE]\nTarget Locale: [PROJECT_TARGET_LOCALE]\n\nFile,Exact Previous Version,100% Matches,Fuzzy,Total,\n[[ITEM_NAME],[ITEM_EXACT_PREVIOUS_VERSION],[ITEM_EXACT],[ITEM_FUZZY],[ITEM_TOTAL_WORD_COUNT],]\nTotal,[PROJECT_EXACT_PREVIOUS_VERSION],[PROJECT_EXACT],[PROJECT_FUZZY],[PROJECT_TOTAL_WORD_COUNT]\n```",
   "stepId": "scoping-report",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/scoping_report_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Scoping_Report_Step"
 }

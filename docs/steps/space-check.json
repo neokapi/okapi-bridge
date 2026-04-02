@@ -1,13 +1,19 @@
 {
   "filterName": "Space Quality Check",
-  "overview": "Fixes spaces around target inline codes within text units so that spacing matches the source. Spaces are inserted or removed from target segments to match the spacing around each inline code in the source. When there is a mismatched number of inline codes between source and target, unmatched codes are skipped and the remainder of the text unit is still processed.",
+  "overview": "Fixes spaces around target inline codes within text units so that spacing matches the source. If there is a mismatched number of inline codes between source and target, unmatched codes are skipped and the remainder of the text unit is still processed.",
   "parameters": {},
-  "processingNotes": [
-    "When inline code counts differ between source and target, unmatched codes are skipped and processing continues on the remaining text.",
-    "Only spaces immediately adjacent to inline codes are affected — other whitespace in the segment is left unchanged."
-  ],
   "limitations": [],
-  "examples": [],
+  "processingNotes": [
+    "When inline code counts differ between source and target, unmatched codes are skipped and the rest of the text unit is still processed — no error is raised.",
+    "Spaces are either inserted or removed in the target to match the source spacing pattern around each inline code."
+  ],
+  "examples": [
+    {
+      "title": "Basic space correction around inline codes",
+      "description": "If the source has `Hello <b>world</b>` (no space before `<b>`) but the target has `Bonjour <b>monde</b>` (extra space before `<b>`), the step removes the extra space in the target to match the source pattern."
+    }
+  ],
+  "fullDoc": "# Space Quality Check\n\nFixes spaces around target inline codes within text units so that spacing matches the source. If there is a mismatched number of inline codes between source and target, unmatched codes are skipped and the remainder of the text unit is still processed.\n\n## Parameters\n\nThis step has no parameters.\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- Spaces are either inserted or removed in the target segments so that the spacing around each inline code in the source is matched.\n- When inline code counts differ between source and target, unmatched codes are skipped and the rest of the text unit is still processed — no error is raised.\n\n## Examples\n\n#### Basic space correction around inline codes\n\nIf the source has `Hello <b>world</b>` (no space before `<b>`) but the target has `Bonjour <b>monde</b>` (extra space before `<b>`), the step removes the extra space in the target to match the source pattern.",
   "stepId": "space-check",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/space_check_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Space_Check_Step"
 }

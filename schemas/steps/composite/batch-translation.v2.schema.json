@@ -53,34 +53,50 @@
     "markAsMT": {
       "type": "boolean",
       "default": true,
-      "title": "Mark the generated translation as machine translation results"
+      "title": "Mark the generated translation as machine translation results",
+      "description": "Marks generated TM entries as machine translation by setting creationId to \"MT!\""
     },
     "makeTM": {
       "type": "boolean",
       "default": false,
-      "title": "Import into the following Pensieve TM:"
+      "title": "Import into the following Pensieve TM:",
+      "description": "Imports translated entries into a Pensieve TM, creating it if necessary"
     },
     "tmDirectory": {
       "type": "string",
       "default": "",
       "description": "Location of the TM to create or use",
-      "x-path": { "type": "directory", "role": "input", "resourceKind": "tm" }
+      "x-path": {
+        "type": "directory",
+        "role": "input",
+        "resourceKind": "tm"
+      },
+      "title": "Pensieve TM directory"
     },
     "makeTMX": {
       "type": "boolean",
       "default": false,
-      "title": "Create the following TMX document:"
+      "title": "Create the following TMX document:",
+      "description": "Creates a TMX document with all translated entries across all input documents"
     },
     "tmxPath": {
       "type": "string",
       "default": "",
       "description": "Full path of the new TMX document to create",
-      "x-path": { "type": "file", "role": "output", "accepts": ["tmx"] }
+      "x-path": {
+        "type": "file",
+        "role": "output",
+        "accepts": [
+          "tmx"
+        ]
+      },
+      "title": "TMX output path"
     },
     "sendTMX": {
       "type": "boolean",
       "default": false,
-      "title": "Send the TMX document to the next step"
+      "title": "Send the TMX document to the next step",
+      "description": "Sends the generated TMX document to the next step instead of the original input document"
     },
     "blockSize": {
       "type": "integer",
@@ -91,24 +107,39 @@
     "checkExistingTm": {
       "type": "boolean",
       "default": false,
-      "title": "Check for existing entries in an existing Pensieve TM:"
+      "title": "Check for existing entries in an existing Pensieve TM:",
+      "description": "Skips entries that already have translations in an existing Pensieve TM"
     },
     "existingTm": {
       "type": "string",
       "default": "",
       "description": "Location of the TM to lookup",
-      "x-path": { "type": "directory", "role": "input", "resourceKind": "tm" }
+      "x-path": {
+        "type": "directory",
+        "role": "input",
+        "resourceKind": "tm"
+      },
+      "title": "Existing TM directory"
     },
     "segment": {
       "type": "boolean",
       "default": false,
-      "title": "Segment the text units, using the following SRX rules:"
+      "title": "Segment the text units, using the following SRX rules:",
+      "description": "Segments text units into sentences using SRX rules before translation"
     },
     "srxPath": {
       "type": "string",
       "default": "",
       "description": "Full path of the segmentation rules file to use",
-      "x-path": { "type": "file", "role": "input", "resourceKind": "srx", "accepts": ["srx"] }
+      "x-path": {
+        "type": "file",
+        "role": "input",
+        "resourceKind": "srx",
+        "accepts": [
+          "srx"
+        ]
+      },
+      "title": "SRX rules path"
     }
   }
 }

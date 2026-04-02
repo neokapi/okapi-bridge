@@ -1,6 +1,6 @@
 {
   "$id": "patterns-checker",
-  "title": "Pattern (regex) Quality Check",
+  "title": "Patterns Checker",
   "type": "object",
   "x-step": {
     "class": "net.sf.okapi.steps.patternschecker.PatternsCheckerStep",
@@ -39,7 +39,8 @@
   "properties": {
     "checkPatterns": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Verify that the following source patterns are translated as expected"
     },
     "patternCount": {
       "type": "integer",
@@ -51,23 +52,28 @@
     },
     "fromSourcePattern0": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
     },
     "severityPattern0": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Severity"
     },
     "sourcePattern0": {
       "type": "string",
-      "default": "[\\(\\uFF08]"
+      "default": "[\\(\\uFF08]",
+      "title": "Source Pattern"
     },
     "targetPattern0": {
       "type": "string",
-      "default": "[\\(\\uFF08]"
+      "default": "[\\(\\uFF08]",
+      "title": "Target Pattern"
     },
     "descPattern0": {
       "type": "string",
-      "default": "Opening parenthesis"
+      "default": "Opening parenthesis",
+      "title": "Description"
     },
     "usePattern1": {
       "type": "boolean",
@@ -75,23 +81,28 @@
     },
     "fromSourcePattern1": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
     },
     "severityPattern1": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Severity"
     },
     "sourcePattern1": {
       "type": "string",
-      "default": "[\\)\\uFF09]"
+      "default": "[\\)\\uFF09]",
+      "title": "Source Pattern"
     },
     "targetPattern1": {
       "type": "string",
-      "default": "[\\)\\uFF09]"
+      "default": "[\\)\\uFF09]",
+      "title": "Target Pattern"
     },
     "descPattern1": {
       "type": "string",
-      "default": "Closing parenthesis"
+      "default": "Closing parenthesis",
+      "title": "Description"
     },
     "usePattern2": {
       "type": "boolean",
@@ -99,23 +110,28 @@
     },
     "fromSourcePattern2": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
     },
     "severityPattern2": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Severity"
     },
     "sourcePattern2": {
       "type": "string",
-      "default": "[\\p{Ps}\\p{Pe}&&[^\\(\\)\\uFF08\\uFF09]]"
+      "default": "[\\p{Ps}\\p{Pe}&&[^\\(\\)\\uFF08\\uFF09]]",
+      "title": "Source Pattern"
     },
     "targetPattern2": {
       "type": "string",
-      "default": "<same>"
+      "default": "<same>",
+      "title": "Target Pattern"
     },
     "descPattern2": {
       "type": "string",
-      "default": "Bracketing characters (except parentheses)"
+      "default": "Bracketing characters (except parentheses)",
+      "title": "Description"
     },
     "usePattern3": {
       "type": "boolean",
@@ -123,23 +139,28 @@
     },
     "fromSourcePattern3": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
     },
     "severityPattern3": {
       "type": "integer",
-      "default": 1
+      "default": 1,
+      "title": "Severity"
     },
     "sourcePattern3": {
       "type": "string",
-      "default": "[\\w\\.\\-]+@[\\w\\.\\-]+"
+      "default": "[\\w\\.\\-]+@[\\w\\.\\-]+",
+      "title": "Source Pattern"
     },
     "targetPattern3": {
       "type": "string",
-      "default": "<same>"
+      "default": "<same>",
+      "title": "Target Pattern"
     },
     "descPattern3": {
       "type": "string",
-      "default": "Email addresses"
+      "default": "Email addresses",
+      "title": "Description"
     },
     "usePattern4": {
       "type": "boolean",
@@ -147,23 +168,28 @@
     },
     "fromSourcePattern4": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
     },
     "severityPattern4": {
       "type": "integer",
-      "default": 1
+      "default": 1,
+      "title": "Severity"
     },
     "sourcePattern4": {
       "type": "string",
-      "default": "https?:[\\w/\\.:;+\\-~\\%#\\$?=&,()]+[\\w/:;+\\-~\\%#\\$?=&,()]+|www\\.[\\w/\\.:;+\\-~\\%#\\$?=&,()]+|ftp:[\\w/\\.:;+\\-~\\%#?=&,]+"
+      "default": "https?:[\\w/\\.:;+\\-~\\%#\\$?=&,()]+[\\w/:;+\\-~\\%#\\$?=&,()]+|www\\.[\\w/\\.:;+\\-~\\%#\\$?=&,()]+|ftp:[\\w/\\.:;+\\-~\\%#?=&,]+",
+      "title": "Source Pattern"
     },
     "targetPattern4": {
       "type": "string",
-      "default": "<same>"
+      "default": "<same>",
+      "title": "Target Pattern"
     },
     "descPattern4": {
       "type": "string",
-      "default": "URLs"
+      "default": "URLs",
+      "title": "Description"
     },
     "usePattern5": {
       "type": "boolean",
@@ -171,23 +197,28 @@
     },
     "fromSourcePattern5": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
     },
     "severityPattern5": {
       "type": "integer",
-      "default": 2
+      "default": 2,
+      "title": "Severity"
     },
     "sourcePattern5": {
       "type": "string",
-      "default": "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b"
+      "default": "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b",
+      "title": "Source Pattern"
     },
     "targetPattern5": {
       "type": "string",
-      "default": "<same>"
+      "default": "<same>",
+      "title": "Target Pattern"
     },
     "descPattern5": {
       "type": "string",
-      "default": "IP addresses"
+      "default": "IP addresses",
+      "title": "Description"
     },
     "usePattern6": {
       "type": "boolean",
@@ -195,23 +226,28 @@
     },
     "fromSourcePattern6": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
     },
     "severityPattern6": {
       "type": "integer",
-      "default": 2
+      "default": 2,
+      "title": "Severity"
     },
     "sourcePattern6": {
       "type": "string",
-      "default": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]"
+      "default": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
+      "title": "Source Pattern"
     },
     "targetPattern6": {
       "type": "string",
-      "default": "<same>"
+      "default": "<same>",
+      "title": "Target Pattern"
     },
     "descPattern6": {
       "type": "string",
-      "default": "C-style printf codes"
+      "default": "C-style printf codes",
+      "title": "Description"
     },
     "usePattern7": {
       "type": "boolean",
@@ -219,23 +255,28 @@
     },
     "fromSourcePattern7": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Search in the source then compare with the target (if single-pattern is not set)"
     },
     "severityPattern7": {
       "type": "integer",
-      "default": 1
+      "default": 1,
+      "title": "Severity"
     },
     "sourcePattern7": {
       "type": "string",
-      "default": "<same>"
+      "default": "<same>",
+      "title": "Source Pattern"
     },
     "targetPattern7": {
       "type": "string",
-      "default": "([\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lo}])\\1\\1"
+      "default": "([\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lo}])\\1\\1",
+      "title": "Target Pattern"
     },
     "descPattern7": {
       "type": "string",
-      "default": "Tripled letter"
+      "default": "Tripled letter",
+      "title": "Description"
     }
   }
 }

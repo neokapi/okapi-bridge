@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_po.v3.schema.json",
   "version": 3,
-  "title": "PO Filter Filter",
-  "description": "Configuration for the Okapi PO Filter Filter",
+  "title": "PO Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_po",
@@ -197,6 +196,6 @@
   "x-apiVersion": "v3",
   "x-baseVersion": 3,
   "x-introducedInOkapi": "1.42.0",
-  "x-baseHash": "6904f6db8040",
-  "x-compositeHash": "fa135475b0c3"
+  "x-baseHash": "be14d0257c09",
+  "x-compositeHash": "b7a35d46aa6f"
 }

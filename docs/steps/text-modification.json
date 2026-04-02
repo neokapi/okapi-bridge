@@ -1,107 +1,167 @@
 {
-  "filterName": "Text Modification",
-  "overview": "Modifies the content of text units in a document pipeline, typically used for pseudo-localization and translation testing. Supports character substitution (Latin, Cyrillic, Arabic, Chinese), text expansion, prefix/suffix addition, and segment marking. Text units marked as non-translatable are always skipped.",
+  "filterName": "Text Modification Step",
+  "overview": "Modifies the content of text units by applying various transformations such as character replacement, pseudo-localization, prefix/suffix addition, and text expansion. Text units marked as non-translatable are skipped. Useful for pseudo-localization testing, generating placeholder translations, and verifying that UI layouts can accommodate longer strings.",
   "parameters": {
     "type": {
-      "help": "Controls the character transformation applied to text unit content. Options range from keeping original text to replacing characters with script-specific substitutions.\n\n- **0** — Keep the original text (no character change)\n- **1** — Replace letters with `X` and digits with `N`\n- **2** — Remove text but keep inline codes\n- **3** — Replace selected ASCII with Extended Latin characters\n- **4** — Replace selected ASCII with Cyrillic characters\n- **5** — Replace selected ASCII with Arabic characters\n- **6** — Replace selected ASCII with Chinese characters",
-      "values": "Integer `0`–`6`. Each value selects a different character substitution strategy.",
+      "help": "Controls which text transformation is applied to each text unit's content:\n\n- **0** — Keep the original text (no modification to content itself; prefix/suffix/name/ID options still apply)\n- **1** — Replace letters with `X` and digits with `N` (masks content while preserving length)\n- **2** — Remove all text but keep inline codes intact\n- **3** — Replace ASCII characters with Extended Latin characters\n- **4** — Replace ASCII characters with Cyrillic characters\n- **5** — Replace ASCII characters with Arabic characters\n- **6** — Replace ASCII characters with Chinese characters\n\nOptions 3–6 perform visual character substitution for pseudo-localization — the result has no linguistic meaning.",
+      "values": "Integer `0`–`6`. Each value selects a different transformation mode.",
       "notes": [
-        "The character substitution does **not** produce meaningful translations, transliterations, or any linguistic output — it is purely visual pseudo-localization."
+        "Character substitution (types 3–6) does **not** perform translation, transliteration, or any meaningful linguistic operation — it simply swaps characters for visual testing purposes."
       ]
     },
     "addPrefix": {
-      "help": "Adds a configurable prefix string at the **start** of each text unit. Useful for visually identifying pseudo-localized strings in the UI (e.g., spotting untranslated or truncated strings)."
+      "help": "Adds the configured prefix string at the start of each text unit. Commonly used with bracket markers like `{START_` to visually identify translated/pseudo-localized strings in the UI.",
+      "dependsOn": [
+        {
+          "property": "prefix",
+          "condition": "provides the prefix text to prepend"
+        }
+      ]
     },
     "prefix": {
-      "help": "The text to prepend to each text unit when `addPrefix` is enabled.",
+      "help": "The text to prepend to each text unit when prefix addition is enabled.",
+      "examples": [
+        "`{START_` — default bracket-style marker",
+        "`[!!` — compact pseudo-localization marker",
+        "`>>>` — directional overflow indicator"
+      ],
       "dependsOn": [
         {
           "property": "addPrefix",
-          "condition": "must be true for this value to take effect"
+          "condition": "must be true for this value to be used"
         }
-      ],
-      "examples": [
-        "`{START_` — default bracket-style marker",
-        "`[!!` — common pseudo-loc prefix for visual scanning",
-        "`►` — Unicode arrow for easy spotting in UI"
       ]
     },
     "addSuffix": {
-      "help": "Adds a configurable suffix string at the **end** of each text unit. Combined with a prefix, this makes pseudo-localized strings easy to spot and helps detect UI truncation."
+      "help": "Adds the configured suffix string at the end of each text unit. Paired with a prefix, this helps testers visually identify which strings have been processed.",
+      "dependsOn": [
+        {
+          "property": "suffix",
+          "condition": "provides the suffix text to append"
+        }
+      ]
     },
     "suffix": {
-      "help": "The text to append to each text unit when `addSuffix` is enabled.",
+      "help": "The text to append to each text unit when suffix addition is enabled.",
+      "examples": [
+        "`_END}` — default bracket-style marker",
+        "`!!]` — compact pseudo-localization marker",
+        "`<<<` — directional overflow indicator"
+      ],
       "dependsOn": [
         {
           "property": "addSuffix",
-          "condition": "must be true for this value to take effect"
+          "condition": "must be true for this value to be used"
         }
-      ],
-      "examples": [
-        "`_END}` — default bracket-style marker",
-        "`!!]` — matching pair with `[!!` prefix",
-        "`◄` — Unicode arrow end marker"
       ]
     },
     "applyToExistingTarget": {
-      "help": "By default, text units that already have a translation are left untouched. Enable this to apply modifications even when a target translation exists (e.g., in multilingual files like XLIFF)."
+      "help": "By default, text units that already have a translation are left unchanged. Enable this to apply modifications even when a target translation exists (e.g., in multilingual file formats like XLIFF or PO files with existing translations)."
     },
     "addName": {
-      "help": "Appends the **name** of each text unit at the end of its value. If the text unit has no associated name, the extraction ID is used as a fallback instead. Useful for debugging which resource key produced a given string.",
-      "notes": [
-        "When both `addName` and `addID` are enabled, both values are appended."
-      ]
+      "help": "Appends the **name** (resource key) of each text unit at the end of its value. If the text unit has no name, the extraction ID is appended instead. Useful for identifying which resource key corresponds to which visible string during testing."
     },
     "addID": {
-      "help": "Appends the **extraction ID** of each text unit at the end of its value. Extraction IDs are filter-specific identifiers assigned during parsing. Useful for tracing strings back to their source location.",
-      "notes": [
-        "Extraction IDs are assigned by the filter and may differ between filter types for the same logical resource."
-      ]
+      "help": "Appends the **extraction ID** of each text unit at the end of its value. Extraction IDs are assigned by the filter and are filter-specific. Useful for debugging filter output or tracing text units back to their source location."
     },
     "markSegments": {
-      "help": "Wraps each segment within a text unit with `[` and `]` delimiters. The delimiters are placed around the text content only — after any prefix and before any suffix, name, or ID additions. If the text unit is not segmented, delimiters wrap the full content.",
-      "notes": [
-        "Delimiter placement order: prefix → `[` segment text `]` → name/ID → suffix"
-      ]
+      "help": "Wraps each segment within a text unit with `[` and `]` delimiters. The delimiters are placed around the segment text itself — after any prefix and before any appended name, ID, or suffix. If the text unit is not segmented, the delimiters wrap the full content."
     },
     "applyToBlankEntries": {
-      "help": "Controls whether modifications are applied to text units that have no meaningful text — i.e., entries that are empty or contain only whitespace and inline codes. Disable to skip blank entries."
+      "help": "Controls whether modifications are applied to text units that have no actual text content — i.e., entries that are empty or contain only whitespace and/or inline codes. Disable to skip blank entries."
     },
     "expand": {
-      "help": "Pads the text to simulate the expansion that typically occurs during translation. This helps test UI layouts for languages that produce longer strings than the source.\n\n- Content **≤ 30 characters**: expanded by **50%** (minimum 1 character added)\n- Content **> 30 characters**: expanded by **100%**\n- Empty strings are **not** expanded"
+      "help": "Expands the text to simulate translation length growth, which is useful for testing UI layout capacity:\n\n- Content **≤ 30 characters**: expanded by **50%** (minimum 1 character added)\n- Content **> 30 characters**: expanded by **100%**\n- Empty strings are **not** expanded",
+      "notes": [
+        "Expansion is applied in addition to any other modifications (prefix, suffix, character replacement, etc.)."
+      ]
     },
     "script": {
-      "help": "Internal parameter associated with the script selection for character replacement. Typically controlled indirectly through the `type` parameter.",
+      "help": "Internal parameter that tracks which script variant is selected for character replacement. This corresponds to the script-specific replacement modes (Extended Latin, Cyrillic, Arabic, Chinese) within the `type` parameter.",
       "dependsOn": [
         {
           "property": "type",
-          "condition": "only meaningful when type selects a script-based replacement"
+          "condition": "only meaningful when type is set to a character replacement mode (3–6)"
         }
       ]
     }
   },
-  "processingNotes": [
-    "Text units flagged as **non-translatable** are never modified, regardless of settings.",
-    "Text units with existing translations are skipped unless `applyToExistingTarget` is enabled.",
-    "Modifications are applied in a specific order: character substitution first, then prefix, segment markers, name/ID, suffix, and finally expansion."
+  "propertySuggestions": {
+    "type": {
+      "title": "Type of Change",
+      "description": "Select the kind of text modification to apply to each text unit."
+    },
+    "addPrefix": {
+      "title": "Add Prefix",
+      "description": "Add a prefix string at the start of each text unit."
+    },
+    "prefix": {
+      "title": "Prefix Text",
+      "description": "The prefix text to prepend to each text unit."
+    },
+    "addSuffix": {
+      "title": "Add Suffix",
+      "description": "Add a suffix string at the end of each text unit."
+    },
+    "suffix": {
+      "title": "Suffix Text",
+      "description": "The suffix text to append to each text unit."
+    },
+    "applyToExistingTarget": {
+      "title": "Modify Existing Translations",
+      "description": "Apply modifications also to text units that already have a translation."
+    },
+    "addName": {
+      "title": "Append Item Name",
+      "description": "Append the name of each text unit at the end of its value."
+    },
+    "addID": {
+      "title": "Append Extraction ID",
+      "description": "Append the extraction ID of each text unit at the end of its value."
+    },
+    "markSegments": {
+      "title": "Mark Segment Boundaries",
+      "description": "Add '[' and ']' delimiters around segments within each text unit."
+    },
+    "applyToBlankEntries": {
+      "title": "Modify Blank Entries",
+      "description": "Apply modifications also to text units without text content."
+    },
+    "expand": {
+      "title": "Expand Text",
+      "description": "Expand text length to simulate translation growth for UI testing."
+    },
+    "script": {
+      "title": "Replacement Script",
+      "description": "Script variant used for character replacement modes."
+    }
+  },
+  "limitations": [
+    "None known per the Okapi wiki."
   ],
-  "limitations": [],
+  "processingNotes": [
+    "Text units marked as non-translatable are always skipped, regardless of settings.",
+    "Text units with existing translations are only modified when **Modify Existing Translations** is enabled.",
+    "Prefix is added before segment markers; suffix, name, and ID are added after segment markers.",
+    "Character substitution modes (Extended Latin, Cyrillic, Arabic, Chinese) produce visually distinct but linguistically meaningless output."
+  ],
   "examples": [
     {
-      "title": "Basic pseudo-localization with markers",
-      "description": "Applies Extended Latin character substitution with prefix/suffix markers and text expansion — a common pseudo-localization setup for detecting UI issues.",
-      "config": "```yaml\ntype: 3\naddPrefix: true\nprefix: \"[!!\"\naddSuffix: true\nsuffix: \"!!]\"\nexpand: true\n```",
-      "input": "```\nSave Changes\n```",
-      "output": "```\n[!!Šàvé Çhàñgéš Çhàñgéš!!]\n```"
+      "title": "Pseudo-localization with prefix/suffix",
+      "description": "Wraps all text units with bracket markers and replaces ASCII with Extended Latin characters to simulate a foreign-language translation for UI testing.",
+      "config": "```yaml\ntype: 3\naddPrefix: true\nprefix: \"[!!\"\naddSuffix: true\nsuffix: \"!!]\"\nexpand: true\napplyToBlankEntries: false\n```",
+      "input": "```\nSave\nCancel\nAre you sure you want to delete this item?\n```",
+      "output": "```\n[!!Šàvé Šàv!!]\n[!!Çàñçél Çàñ!!]\n[!!Àré ýöü šüré ýöü wàñt tö délété thíš ítem? Àré ýöü šüré ýöü wàñt tö délété thíš ítem?!!]\n```"
     },
     {
-      "title": "X-replacement with segment markers",
-      "description": "Replaces all letters with X and digits with N, and marks segment boundaries. Useful for verifying inline code preservation and segment boundaries.",
-      "config": "```yaml\ntype: 1\nmarkSegments: true\napplyToBlankEntries: false\n```",
-      "input": "```\nYou have 3 items in your cart.\n```",
-      "output": "```\n[XXX XXXX N XXXXX XX XXXX XXXX.]\n```"
+      "title": "Mask content with Xs",
+      "description": "Replaces all letters with X and digits with N, useful for identifying hard-coded strings that bypass localization.",
+      "config": "```yaml\ntype: 1\naddPrefix: false\naddSuffix: false\n```",
+      "input": "```\nTotal: 42 items\n```",
+      "output": "```\nXXXXX: NN XXXXX\n```"
     }
   ],
+  "fullDoc": "# Text Modification Step\n\nModifies the content of text units by applying various transformations such as character replacement, pseudo-localization, prefix/suffix addition, and text expansion. Text units marked as non-translatable are skipped. Useful for pseudo-localization testing, generating placeholder translations, and verifying that UI layouts can accommodate longer strings.\n\nTakes: Filter events. Sends: Filter events.\n\n## Parameters\n\n#### Type of Change\n\nControls which text transformation is applied to each text unit's content:\n\n- **0** — Keep the original text (no modification to content itself; prefix/suffix/name/ID options still apply)\n- **1** — Replace letters with `X` and digits with `N` (masks content while preserving length)\n- **2** — Remove all text but keep inline codes intact\n- **3** — Replace ASCII characters with Extended Latin characters\n- **4** — Replace ASCII characters with Cyrillic characters\n- **5** — Replace ASCII characters with Arabic characters\n- **6** — Replace ASCII characters with Chinese characters\n\n> **Note:** Character substitution (types 3–6) does not perform translation, transliteration, or any meaningful linguistic operation — it simply swaps characters for visual testing purposes.\n\n#### Add Prefix\n\nAdd a prefix string at the start of each text unit. Uses the **Prefix Text** value.\n\n#### Prefix Text\n\nThe text to prepend to each text unit when prefix addition is enabled. Default: `{START_`.\n\n#### Add Suffix\n\nAdd a suffix string at the end of each text unit. Uses the **Suffix Text** value.\n\n#### Suffix Text\n\nThe text to append to each text unit when suffix addition is enabled. Default: `_END}`.\n\n#### Modify Existing Translations\n\nBy default, text units that already have a translation are left unchanged. Enable this to apply modifications even when a target translation exists (e.g., in multilingual file formats like XLIFF or PO files with existing translations).\n\n#### Append Item Name\n\nAppends the name (resource key) of each text unit at the end of its value. If the text unit has no name, the extraction ID is appended instead.\n\n#### Append Extraction ID\n\nAppends the extraction ID of each text unit at the end of its value. Extraction IDs are filter-specific.\n\n#### Mark Segment Boundaries\n\nWraps each segment within a text unit with `[` and `]` delimiters. Delimiters are placed after any prefix and before any appended name, ID, or suffix. If the text unit is not segmented, the delimiters wrap the full content.\n\n#### Modify Blank Entries\n\nControls whether modifications are applied to text units with no actual text content — entries that are empty or contain only whitespace and/or inline codes. Enabled by default.\n\n#### Expand Text\n\nExpands text to simulate translation length growth for UI testing:\n\n- Content ≤ 30 characters: expanded by 50% (minimum 1 character added)\n- Content > 30 characters: expanded by 100%\n- Empty strings are not expanded\n\n#### Replacement Script\n\nInternal parameter tracking which script variant is selected for character replacement modes. Corresponds to types 3–6.\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- Text units marked as non-translatable are always skipped.\n- Prefix is added before segment markers; suffix, name, and ID are added after segment markers.\n- Character substitution modes produce visually distinct but linguistically meaningless output.\n\n## Examples\n\n### Pseudo-localization with prefix/suffix\n\nWraps all text units with bracket markers and replaces ASCII with Extended Latin characters:\n\n```yaml\ntype: 3\naddPrefix: true\nprefix: \"[!!\"\naddSuffix: true\nsuffix: \"!!]\"\nexpand: true\napplyToBlankEntries: false\n```\n\nInput: `Save` → Output: `[!!Šàvé Šàv!!]`\n\n### Mask content with Xs\n\nReplaces all letters with X and digits with N:\n\n```yaml\ntype: 1\n```\n\nInput: `Total: 42 items` → Output: `XXXXX: NN XXXXX`",
   "stepId": "text-modification",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/text_modification_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Text_Modification_Step"
 }

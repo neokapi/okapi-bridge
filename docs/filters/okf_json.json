@@ -1,106 +1,119 @@
 {
   "filterName": "JSON Filter",
-  "overview": "The JSON Filter extracts translatable text from JSON (JavaScript Object Notation) files based on the [JSON specification](http://www.json.org/). It supports extracting all key-value pairs or selective extraction via regex path rules, and can map JSON keys to translation unit identifiers (`resname` in XLIFF). The filter also supports comments (though not technically legal in JSON): `//`, `#`, `/* */`, and `<!-- -->` styles.",
+  "overview": "The JSON Filter processes JSON (JavaScript Object Notation) files for translation. It extracts string values — both standalone and key-associated — as translatable content, with flexible control over which paths to extract using regex rules. The filter supports multiple Unicode encodings with BOM detection, inline code patterns for placeholders, sub-filtering for embedded content (e.g., HTML within JSON values), and metadata extraction rules for notes, IDs, and length constraints.",
   "parameters": {
     "extraction.extractAll": {
-      "help": "Controls whether all key-value string pairs are extracted for translation.\n\n- **When true** (default): all string values with associated keys are extracted. Use `excludeKeys` to skip specific keys.\n- **When false**: no key-value pairs are extracted unless they match the `pathRules` regex.\n\nThe `excludeKeys` field acts as an exception list — its behavior **inverts** based on this setting:\n- If extracting all: keys matching the exception are **excluded**\n- If not extracting all: keys matching the exception are **included**"
-    },
-    "extraction.pathRules": {
-      "help": "Regex pattern matched against the **full key path** (e.g. `/widgets/body.*`). When specified, this **overrides** the `extractAll` toggle and the `excludeKeys` exceptions — only keys matching this regex are extracted.\n\nPaths use `/` separators matching the JSON nesting structure.",
-      "values": "Java regex matched against full JSON key paths like `/menu/value/popup/menuitem/value`.",
-      "examples": [
-        "`/widgets/body.*` — extract all keys under `widgets` starting with `body`",
-        "`/messages/.*|/labels/.*` — extract keys under `messages` or `labels`"
-      ],
-      "introducedIn": "M39",
+      "help": "Controls the default extraction behavior for key/value pairs.\n\n- **true**: All key/value string pairs are extracted, except those matching `excludeKeys`.\n- **false**: No key/value pairs are extracted unless they match `pathRules`.\n\nUse `excludeKeys` or `pathRules` to fine-tune which content is included or excluded.",
       "dependsOn": [
         {
-          "property": "extraction.extractAll",
-          "condition": "overrides extractAll and excludeKeys when specified"
+          "property": "extraction.pathRules",
+          "condition": "pathRules overrides this setting when specified"
         }
       ]
     },
+    "extraction.pathRules": {
+      "help": "Regex matching full JSON key paths of values to extract. **Overrides `extractAll` when specified.** Paths use `/`-separated key names.\n\nThis is an M39+ extraction rule that takes precedence over the older extractAll + excludeKeys approach.",
+      "values": "Java regex applied against the full key path (e.g. `/menu/popup/menuitem/value`). Use `.*` wildcards for subtrees.",
+      "examples": [
+        "`/widgets/body.*` — extract all keys under `/widgets/body`",
+        "`/messages/.*|/labels/.*` — extract from multiple subtrees"
+      ],
+      "introducedIn": "M39",
+      "seeAlso": "JSON_Filter#New_Extraction_Rules_.3E.3D_version_M39"
+    },
     "extraction.includeIsolatedStrings": {
-      "help": "Extracts string values that appear in arrays without an associated key. By default, only key-value pairs are considered for extraction — standalone strings in arrays are skipped."
+      "help": "Extracts string values that appear in arrays without an associated key. For example, in `[\"Hello\", \"World\"]`, the strings have no key — they are standalone/isolated. Without this option, only key-value pairs like `{\"greeting\": \"Hello\"}` are extracted."
     },
     "extraction.excludeKeys": {
-      "help": "Keys listed here behave as **exceptions** to the `extractAll` setting:\n\n- If `extractAll` is **true**: matching keys are **excluded** from extraction\n- If `extractAll` is **false**: matching keys are **included** for extraction\n\nWhen `useFullPath` is enabled, you can match against the full nested path.",
-      "values": "Comma-separated key names or, when combined with `useFullPath`, regex patterns like `^.*?/excludedStructure/.*`",
+      "help": "Keys whose string values should be excluded from extraction (when `extractAll` is true) or included (when `extractAll` is false — inverted behavior).\n\nWhen `useFullPath` is enabled in the keys settings, the regex is matched against the full path (e.g. `/root/excludedStructure/key`).",
+      "values": "Comma-separated key names or a regex pattern. With `useFullKeyPath`, use path patterns like `^.*?/excludedStructure/.*`.",
       "examples": [
-        "`key1,key2` — exclude (or include) specific keys",
-        "`^.*?/excludedStructure/.*` — with `useFullPath`, exclude all nested elements under `excludedStructure`"
+        "`key1,key2,key3` — exclude specific keys by name",
+        "`^.*?/excludedStructure/.*` — exclude an entire nested structure (requires full key path)"
+      ],
+      "dependsOn": [
+        {
+          "property": "keys.useFullPath",
+          "condition": "when enabled, regex patterns apply to full paths instead of key names"
+        }
       ]
     },
     "extraction.subfilterRules": {
-      "help": "Specify an Okapi filter ID (e.g. `okf_html`) to process the content of all translatable text values with that sub-filter. Leave blank for default behavior.\n\nUseful when JSON values contain embedded markup (e.g. HTML snippets).",
-      "values": "An Okapi filter ID such as `okf_html`, `okf_xmlstream`, etc.",
+      "help": "Specify an Okapi filter ID to process the content of all translatable text values with a sub-filter. For example, use `okf_html` to process HTML markup embedded within JSON string values.\n\nLeave blank for default behavior (no sub-filtering).",
+      "values": "An Okapi filter configuration ID (e.g. `okf_html`, `okf_xml`).",
       "notes": [
-        "This option **cannot** be used together with the inline codes option — they are mutually exclusive."
+        "**Cannot be used together with inline codes.** If sub-filtering is enabled, the inline code finder is ignored."
+      ],
+      "examples": [
+        "`okf_html` — process HTML tags within JSON string values"
       ]
     },
     "keys.useAsName": {
-      "help": "Uses the JSON key as the `resname` (resource name) of the extracted text unit. This provides a stable identifier for matching translations back to their source entries."
+      "help": "Uses the JSON key as the `resname` (resource name / Block name) for the extracted text unit. This makes it easier to identify translations by their original JSON key in downstream tools."
     },
     "keys.useFullPath": {
-      "help": "Uses the full nested key path (e.g. `/menu/value/popup/menuitem/value`) as the text unit name instead of just the immediate key.\n\nWhen enabled, the `excludeKeys` regex patterns also apply against the **full path**, allowing more precise filtering of nested structures.",
+      "help": "Uses the complete path from root to the key (e.g. `/menu/popup/menuitem/value`) instead of just the immediate key name. `useAsName` must be enabled for this to take effect.\n\nWhen enabled, exception regex patterns in `excludeKeys` also match against the full path.",
+      "examples": [
+        "Key path: `/menu/value/popup/menuitem/value`"
+      ],
       "dependsOn": [
         {
           "property": "keys.useAsName",
-          "condition": "must be true for this option to take effect"
+          "condition": "must be enabled for useFullPath to take effect"
         }
       ]
     },
     "keys.leadingSlash": {
-      "help": "Controls whether the full key path starts with a `/` character. Only relevant when `useFullPath` is enabled.\n\nExample: `/menu/value` vs `menu/value`",
+      "help": "Controls whether the full key path starts with a `/` character. Only applies when `useFullPath` is enabled.\n\n- **true**: `/menu/popup/value`\n- **false**: `menu/popup/value`",
       "dependsOn": [
         {
           "property": "keys.useFullPath",
-          "condition": "only meaningful when useFullPath is true"
+          "condition": "only meaningful when useFullPath is enabled"
         }
       ]
     },
     "keys.useIdStack": {
-      "help": "Builds text unit IDs by stacking nested keys. This provides hierarchical IDs that reflect the JSON structure."
+      "help": "Builds text unit IDs by stacking nested JSON keys. Useful for creating deterministic, path-based IDs for deeply nested structures."
     },
     "keys.idRules": {
-      "help": "Regex matching keys whose **values** become the text unit ID (`resname` in XLIFF), overriding the `useAsName` behavior.\n\nUseful when your JSON contains explicit ID fields alongside translatable text.",
+      "help": "Regex matching keys whose **values** become the `resname` (Block ID) of sibling text units. This overrides `useAsName`.\n\nUseful when the JSON structure stores IDs as values in a sibling key rather than using the key name itself.",
+      "values": "Java regex matched against key names or full paths.",
       "examples": [
-        "Given `{\"key\": \"datePicker_marchMonth\", \"text\": \"March\"}`, the regex `key` causes `datePicker_marchMonth` to become the `resname` of the `text` value's text unit."
+        "Given `{\"key\": \"datePicker_march\", \"text\": \"March\"}`, setting idRules to `key` produces a text unit with `resname=\"datePicker_march\"` for the \"March\" value."
       ],
       "introducedIn": "M39",
-      "dependsOn": [
-        {
-          "property": "keys.useAsName",
-          "condition": "overrides useAsName when specified"
-        }
-      ]
+      "seeAlso": "JSON_Filter#New_Extraction_Rules_.3E.3D_version_M39"
     },
     "metadata.noteRules": {
-      "help": "Regex matching keys whose **values** are attached as translator notes (`<note>` elements in XLIFF) to the associated text unit.\n\nUseful for passing context, descriptions, or comments to translators.",
+      "help": "Regex matching keys whose **values** are attached as translator notes (`<note>` in XLIFF) to sibling text units.\n\nUseful for including descriptions or comments that help translators understand context.",
       "values": "Java regex matched against key names or full paths.",
       "examples": [
-        "`/widgets/name.*` — values of matching keys become notes on the text unit",
-        "`/description|/comment` — match keys named `description` or `comment`"
-      ]
+        "`/description|/comment` — keys named \"description\" or \"comment\" become notes",
+        "`/widgets/name.*` — all name-like keys under widgets become notes"
+      ],
+      "introducedIn": "M39",
+      "seeAlso": "JSON_Filter#New_Extraction_Rules_.3E.3D_version_M39"
     },
     "metadata.metaRules": {
-      "help": "Regex matching keys whose **values** are added as generic metadata (`<context-group>` elements in XLIFF) to the associated text unit.",
+      "help": "Regex matching keys whose **values** are added as generic metadata (`<context-group>` in XLIFF) to sibling text units.\n\nThis metadata is preserved through the translation pipeline and can be used by downstream tools.",
       "values": "Java regex matched against key names or full paths.",
       "examples": [
-        "`/widgets/image.*` — matched key:value pairs are added as metadata"
-      ]
+        "`/widgets/image.*` — attach image-related metadata to text units"
+      ],
+      "introducedIn": "M39"
     },
     "metadata.maxwidthRules": {
-      "help": "Regex matching keys whose **numeric values** set the `maxwidth` property on the XLIFF `<trans-unit>`, enabling length restrictions for translations.\n\n- The matched value applies as `maxwidth` to **all other elements at the same array level**\n- Only **one** matching element per hierarchy level is allowed\n- For nested arrays, different parent-child and sibling levels can define different maxwidth values\n- If no key matches at a sub-level but one exists at a higher level, the higher-level value applies to the **deepest** hierarchy level only\n- When keys match at both higher and lower levels, the higher-level matching key must appear **after** the last child element",
-      "values": "Java regex matched against key names.",
+      "help": "Regex matching keys whose numeric **values** define maximum width constraints for sibling text units. The matched value becomes the `maxwidth` attribute in XLIFF.\n\n- The matched value applies to **all other elements at the same array level**.\n- Only **one** matching key is allowed per hierarchy level.\n- For nested arrays, each level can have its own maxwidth definition.\n- If no key matches at a sublevel but a parent level has a match, the parent's value applies to the deepest level only.\n- When both parent and child levels have matches, the parent's matching key must appear **after** the last child element.",
+      "values": "Java regex matched against key names or full paths.",
       "notes": [
-        "Only one matching array element for the regex is allowed on each hierarchy level.",
-        "When keys match at both higher and lower levels, the higher-level matching key must be defined **after** the last child element."
-      ]
+        "Only one matching array element per hierarchy level is allowed.",
+        "For parent-level keys to apply correctly with child-level keys, the parent matching key must be defined after the last child element."
+      ],
+      "introducedIn": "M39"
     },
     "maxwidthSizeUnit": {
-      "help": "The value entered here is used as the `size-unit` attribute on XLIFF `<trans-unit>` elements that have length restrictions (from `maxwidthRules`).",
-      "values": "A string value for the XLIFF `size-unit` attribute (e.g. `char`, `pixel`, `byte`).",
+      "help": "The string value used as the `size-unit` attribute on XLIFF `<trans-unit>` elements when `maxwidthRules` extracts length restrictions.\n\nCommon values include `char`, `byte`, `pixel`, etc.",
+      "values": "Free-form string used as the XLIFF `size-unit` attribute value (e.g. `char`, `byte`, `pixel`).",
       "dependsOn": [
         {
           "property": "metadata.maxwidthRules",
@@ -109,44 +122,62 @@
       ]
     },
     "output.escapeSlashes": {
-      "help": "Controls whether forward slashes (`/`) are escaped as `\\/` in the output JSON. Some JSON producers escape slashes (especially in URLs or HTML within JSON), while others do not."
+      "help": "Controls whether forward slashes (`/`) are escaped as `\\/` in the output JSON. JSON allows both forms, but some systems expect escaped slashes.\n\n- **true** (default): forward slashes are escaped (`\\/`)\n- **false**: forward slashes are written as-is (`/`)"
     },
-    "inlineCodes": {
-      "help": "Enables detection of inline codes within extracted text using regex patterns. Any match is converted to an inline code placeholder in the extracted content.\n\nThe default pattern detects:\n- `printf`-style format specifiers (e.g. `%s`, `%d`, `%2$s`)\n- Escape sequences (`\\n`, `\\t`, `\\r\\n`, etc.)\n- Curly-brace placeholders (e.g. `{0}`, `{name}`)",
+    "inlineCodes.enabled": {
+      "help": "Enables pattern-based detection of inline codes (placeholders, format specifiers, escape sequences, etc.) within extracted text. Matched patterns are converted to inline code placeholders that translators cannot accidentally modify.\n\nThe default pattern set detects printf-style format specifiers (`%s`, `%d`), escape sequences (`\\n`, `\\t`), and ICU-style placeholders (`{0}`).",
       "notes": [
-        "This option **cannot** be used together with the sub-filter option — they are mutually exclusive."
+        "**Cannot be used together with the sub-filtering option.** If a sub-filter is configured, inline code detection is ignored."
+      ]
+    },
+    "inlineCodes.rules": {
+      "help": "Regex patterns that identify inline codes within translatable text. Each pattern match is converted to an inline code placeholder.\n\nThe default patterns detect:\n- Printf-style specifiers: `%s`, `%d`, `%2$s`\n- Escape sequences: `\\n`, `\\r`, `\\t`\n- ICU/positional placeholders: `{0}`, `{name}`",
+      "values": "Each rule contains a `pattern` field with a Java regex. Use the sample field and presets to test patterns.",
+      "examples": [
+        "`<[^>]+>` — detect HTML tags as inline codes",
+        "`%[\\\\d]*[sdioxXucsfeEgGpn]` — detect printf format specifiers",
+        "`\\\\{[^}]+\\\\}` — detect ICU message format placeholders"
       ],
       "seeAlso": "JSON_Filter#Content_Processing_Tab"
     }
   },
   "processingNotes": [
-    "The filter supports any encoding, not just Unicode. It detects encoding via: (1) Unicode BOM, (2) `charset` declaration in the first 1000 characters, (3) fallback to the default encoding.",
-    "If output encoding is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. If input was a different encoding, no BOM is written.",
-    "Output line-breaks match the original input line-break style.",
-    "Though not technically legal in JSON, the filter supports `//`, `#`, `/* */`, and `<!-- -->` comment styles."
+    "JSON files are normally in Unicode encoding, but the filter supports any encoding. Encoding is determined by: BOM detection first, then `charset` declaration in the first 1000 characters, then default encoding.",
+    "If output encoding is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. If input was not UTF-8, no BOM is written.",
+    "Line-break style (CRLF/LF) of the output matches the input document.",
+    "Though not technically legal in JSON, the filter supports comments: `// comment`, `# comment`, `/* comment */`, and `<!-- comment -->`.",
+    "Comments within a JSON string value are parsed as part of the string content, not as actual comments."
   ],
   "limitations": [
-    "Comments within a JSON **string value** are parsed as part of the string content, not as comments. A configured sub-filter will then process these as true comments (they become part of the skeleton)."
+    "Comments within a JSON string are parsed as part of the string content, not as comments. A configured sub-filter will then process these as true comments.",
+    "Inline codes and sub-filtering cannot be used simultaneously — enabling sub-filtering disables inline code detection."
   ],
   "examples": [
     {
-      "title": "Basic JSON extraction",
-      "description": "A simple JSON file with nested translatable values. With default settings (`extractAll: true`), all string values associated with keys are extracted.",
-      "input": "```json\n{\"menu\": {\n  \"value\": \"File\",\n  \"popup\": {\n    \"menuitem\": [\n      {\"value\": \"New\"},\n      {\"value\": \"Open\"},\n      {\"value\": \"Close\"}\n    ]\n  }\n}}\n```"
+      "title": "Basic JSON file extraction",
+      "description": "A simple JSON file with key-value pairs. All string values associated with keys are extracted by default.",
+      "input": "```json\n{\"menu\": {\n  \"value\": \"File\",\n   \"popup\": {\n      \"menuitem\": [\n         {\"value\": \"New\"},\n         {\"value\": \"Open\"},\n         {\"value\": \"Close\"}\n      ]\n   }\n}}\n```"
     },
     {
-      "title": "Using ID rules with key-value arrays",
-      "description": "When your JSON uses a separate `key` field to identify entries (common in flat translation formats), configure `idRules` with the regex `key` to use those values as the text unit `resname`.",
-      "input": "```json\n[\n  {\"key\": \"datePicker_marchMonth\", \"text\": \"March\"},\n  {\"key\": \"datePicker_aprilMonth\", \"text\": \"April\"}\n]\n```",
+      "title": "Using extraction rules with ID rules",
+      "description": "Extract specific paths and use sibling key values as resource names. Given JSON with `key` and `text` pairs, the `idRules` regex `key` causes the value of the `key` field to become the `resname` of the `text` field's text unit.",
+      "input": "```json\n[\n  {\n    \"key\": \"datePicker_marchMonth\",\n    \"text\": \"March\"\n  },\n  {\n    \"key\": \"datePicker_aprilMonth\",\n    \"text\": \"April\"\n  }\n]\n```",
       "config": "```yaml\nkeys:\n  idRules: \"key\"\n```",
       "output": "```xml\n<trans-unit id=\"tu1\" resname=\"datePicker_marchMonth\">\n  <source>March</source>\n</trans-unit>\n<trans-unit id=\"tu2\" resname=\"datePicker_aprilMonth\">\n  <source>April</source>\n</trans-unit>\n```"
     },
     {
-      "title": "Selective extraction with path rules",
-      "description": "Use `pathRules` to extract only specific sections of a large JSON file. This overrides the `extractAll` and `excludeKeys` settings.",
+      "title": "FPRM-style extraction rules (M39+)",
+      "description": "The M39+ extraction rules override the older extractAll + exceptions approach. These regex patterns match against full key paths.",
       "config": "```yaml\nextraction:\n  pathRules: \"/widgets/body.*\"\nmetadata:\n  noteRules: \"/widgets/name.*\"\n  metaRules: \"/widgets/image.*\"\nkeys:\n  idRules: \"/widgets/id.*\"\n```"
     }
   ],
+  "propertySuggestions": {
+    "maxwidthSizeUnit": {
+      "title": "Max Width Size Unit",
+      "description": "The size-unit attribute value used for XLIFF length restriction elements."
+    }
+  },
+  "fullDoc": "# JSON Filter\n\nThe JSON Filter processes JSON (JavaScript Object Notation) files for translation. It extracts string values — both standalone and key-associated — as translatable content, with flexible control over which paths to extract using regex rules. The filter supports multiple Unicode encodings with BOM detection, inline code patterns for placeholders, sub-filtering for embedded content (e.g., HTML within JSON values), and metadata extraction rules for notes, IDs, and length constraints.\n\n## Parameters\n\n### Extraction\n\n#### Extract All\nControls the default extraction behavior for key/value pairs. When **true**, all key/value string pairs are extracted, except those matching `excludeKeys`. When **false**, no key/value pairs are extracted unless they match `pathRules`.\n\n#### Path Rules\nRegex matching full JSON key paths of values to extract. **Overrides extractAll when specified.** Paths use `/`-separated key names.\n\nIntroduced in version **M39**. These rules take precedence over the older extractAll + excludeKeys approach.\n\nExamples:\n- `/widgets/body.*` — extract all keys under `/widgets/body`\n- `/messages/.*|/labels/.*` — extract from multiple subtrees\n\n#### Include Isolated Strings\nExtracts string values that appear in arrays without an associated key. For example, in `[\\\"Hello\\\", \\\"World\\\"]`, the strings have no key and would not normally be extracted.\n\n#### Exclude Keys\nKeys whose string values should be excluded from extraction (when extractAll is true) or included (when extractAll is false — inverted behavior).\n\nWhen `useFullPath` is enabled, regex patterns apply to full paths like `^.*?/excludedStructure/.*`.\n\n#### Sub-filter Rules\nSpecify an Okapi filter ID (e.g. `okf_html`) to process the content of all translatable text values with a sub-filter.\n\n> **Note:** Cannot be used together with inline codes. If sub-filtering is enabled, inline code detection is ignored.\n\n### Keys\n\n#### Use as Name\nUses the JSON key as the `resname` (resource name) for the extracted text unit.\n\n#### Use Full Path\nUses the complete path from root to the key (e.g. `/menu/popup/menuitem/value`) instead of just the immediate key name. Requires `useAsName` to be enabled.\n\n#### Leading Slash\nControls whether the full key path starts with a `/` character. Only applies when `useFullPath` is enabled.\n\n#### Use ID Stack\nBuilds text unit IDs by stacking nested JSON keys.\n\n#### ID Rules\nRegex matching keys whose **values** become the `resname` (Block ID) of sibling text units. Overrides `useAsName`.\n\nIntroduced in version **M39**.\n\nExample: Given `{\\\"key\\\": \\\"datePicker_march\\\", \\\"text\\\": \\\"March\\\"}`, setting idRules to `key` produces `resname=\\\"datePicker_march\\\"` for the \\\"March\\\" text unit.\n\n### Metadata\n\n#### Note Rules\nRegex matching keys whose values are attached as translator notes (`<note>` in XLIFF) to sibling text units.\n\nIntroduced in version **M39**.\n\n#### Meta Rules\nRegex matching keys whose values are added as generic metadata (`<context-group>` in XLIFF) to sibling text units.\n\nIntroduced in version **M39**.\n\n#### Max Width Rules\nRegex matching keys whose numeric values define maximum width constraints for sibling text units. Only one matching key is allowed per hierarchy level. For nested arrays, each level can have its own maxwidth definition.\n\nIntroduced in version **M39**.\n\n### Max Width Size Unit\nThe string value used as the `size-unit` attribute on XLIFF elements when maxwidthRules extracts length restrictions. Only meaningful when maxwidthRules is configured.\n\n### Output\n\n#### Escape Slashes\nControls whether forward slashes (`/`) are escaped as `\\\\/` in the output JSON.\n\n### Inline Codes\n\n#### Enabled\nEnables pattern-based detection of inline codes within extracted text. Cannot be used together with sub-filtering.\n\n#### Rules\nRegex patterns that identify inline codes. Default patterns detect printf-style specifiers (`%s`, `%d`), escape sequences (`\\\\n`, `\\\\t`), and ICU placeholders (`{0}`).\n\n#### Merge Adjacent\nMerges consecutive inline codes into a single placeholder.\n\n#### Move Boundary Codes\nMoves inline codes at segment boundaries to the skeleton (non-translatable).\n\n## Limitations\n\n- Comments within a JSON string are parsed as part of the string content, not as comments. A configured sub-filter will then process these as true comments.\n- Inline codes and sub-filtering cannot be used simultaneously.\n\n## Notes\n\n- JSON files are normally in Unicode encoding, but the filter supports any encoding with BOM detection, charset declaration, or default encoding fallback.\n- Line-break style of the output matches the input document.\n- Though not technically legal in JSON, the filter supports `//`, `#`, `/* */`, and `<!-- -->` comments.\n- The M39+ extraction rules (pathRules, noteRules, idRules, metaRules) override the corresponding older rules when specified.\n\n## Examples\n\n### Basic Extraction\n```json\n{\\\"menu\\\": {\n  \\\"value\\\": \\\"File\\\",\n  \\\"popup\\\": {\n    \\\"menuitem\\\": [\n      {\\\"value\\\": \\\"New\\\"},\n      {\\\"value\\\": \\\"Open\\\"},\n      {\\\"value\\\": \\\"Close\\\"}\n    ]\n  }\n}}\n```\nAll string values with keys are extracted by default.\n\n### ID Rules with Sibling Keys\nInput:\n```json\n[\n  {\\\"key\\\": \\\"datePicker_marchMonth\\\", \\\"text\\\": \\\"March\\\"},\n  {\\\"key\\\": \\\"datePicker_aprilMonth\\\", \\\"text\\\": \\\"April\\\"}\n]\n```\nWith `idRules: \\\"key\\\"`, produces text units with `resname=\\\"datePicker_marchMonth\\\"` and `resname=\\\"datePicker_aprilMonth\\\"`.",
   "filterId": "okf_json",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/JSON_Filter"
 }

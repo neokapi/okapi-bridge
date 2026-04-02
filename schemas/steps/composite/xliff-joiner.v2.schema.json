@@ -36,12 +36,14 @@
     "inputFileMarker": {
       "type": "string",
       "default": "_PART",
-      "title": "Input file marker"
+      "title": "Input file marker",
+      "description": "Marker text in input filenames used to identify and group split XLIFF files for joining."
     },
     "outputFileMarker": {
       "type": "string",
       "default": "_CONCAT",
-      "title": "Output file marker"
+      "title": "Output file marker",
+      "description": "Marker text used to generate the output filename(s) by replacing the input marker and index."
     }
   }
 }

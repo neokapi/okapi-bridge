@@ -37,22 +37,26 @@
     "tusForTargetRemoval": {
       "type": "string",
       "default": "",
-      "title": "Comma-delimited list of ids of the text units where targets are to be removed (empty - remove all targets)"
+      "title": "Text Unit IDs for Removal",
+      "description": "Comma-delimited list of text unit IDs whose targets should be removed; empty removes all targets."
     },
     "targetLocalesToKeep": {
       "type": "string",
       "default": "",
-      "title": "Comma-delimited list of locales of the text units of targets that should be kept (empty - keep all targets)"
+      "title": "Target Locales to Keep",
+      "description": "Comma-delimited list of target locales to preserve; targets with other locales are removed."
     },
     "filterBasedOnIds": {
       "type": "boolean",
       "default": true,
-      "title": "If true filter on ID's, if false filter on locales (you cannot filter on both)"
+      "title": "Filter by IDs",
+      "description": "When true, filter text units by ID; when false, filter by target locale."
     },
     "removeTUIfNoTarget": {
       "type": "boolean",
       "default": false,
-      "title": "If true remove the Text Unit if it has no remaining targets, if false do nothing"
+      "title": "Remove Empty Text Units",
+      "description": "Remove the text unit entirely if it has no remaining targets after removal."
     }
   }
 }

@@ -47,10 +47,10 @@ for json_file in "$PARSED_DIR"/okf_*.json; do
     cp "$json_file" "$OUTPUT_DIR/filters/${filter_id}.json"
     ((filter_count++))
 
-    # Extract fullDoc as markdown file
+    # Extract fullDoc as markdown file (unescape literal \n from LLM output)
     full_doc=$(jq -r '.fullDoc // empty' "$json_file")
     if [ -n "$full_doc" ]; then
-        echo "$full_doc" > "$OUTPUT_DIR/filters/${filter_id}.md"
+        printf '%b\n' "$full_doc" > "$OUTPUT_DIR/filters/${filter_id}.md"
         ((md_count++))
     fi
 
@@ -70,10 +70,10 @@ if [ -d "$PARSED_DIR/steps" ]; then
         cp "$json_file" "$OUTPUT_DIR/steps/${step_id}.json"
         ((step_count++))
 
-        # Extract fullDoc as markdown file
+        # Extract fullDoc as markdown file (unescape literal \n from LLM output)
         full_doc=$(jq -r '.fullDoc // empty' "$json_file")
         if [ -n "$full_doc" ]; then
-            echo "$full_doc" > "$OUTPUT_DIR/steps/${step_id}.md"
+            printf '%b\n' "$full_doc" > "$OUTPUT_DIR/steps/${step_id}.md"
             ((md_count++))
         fi
 

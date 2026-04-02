@@ -36,6 +36,14 @@
     },
     "preserveSegmentation": {
       "description": "Preserve original segmentation in output."
+    },
+    "maxValidation": {
+      "title": "Maximum Validation",
+      "description": "Perform maximum validation of the XLIFF 2.x format when parsing."
+    },
+    "needsSegmentation": {
+      "title": "Needs Segmentation",
+      "description": "Resegment units marked with canSegment=\"yes\" that do not already have a target."
     }
   }
 }

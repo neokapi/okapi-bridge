@@ -4,15 +4,40 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "extractBodyPages": {},
-    "extractReferencePages": {},
-    "extractMasterPages": {},
-    "extractHiddenPages": {},
-    "extractVariables": {},
-    "extractIndexMarkers": {},
-    "extractLinks": {},
+    "extractBodyPages": {
+      "title": "Body Pages",
+      "description": "Extract translatable text from body pages."
+    },
+    "extractReferencePages": {
+      "title": "Reference Pages",
+      "description": "Extract translatable text from reference pages."
+    },
+    "extractMasterPages": {
+      "title": "Master Pages",
+      "description": "Extract translatable text from master pages."
+    },
+    "extractHiddenPages": {
+      "title": "Hidden Pages",
+      "description": "Extract translatable text from hidden pages."
+    },
+    "extractVariables": {
+      "title": "Extract Variables",
+      "description": "Extract the definitions of FrameMaker variables for translation."
+    },
+    "extractIndexMarkers": {
+      "title": "Extract Index Markers",
+      "description": "Extract index marker text from extractable pages as separate text units."
+    },
+    "extractLinks": {
+      "title": "Extract Links",
+      "description": "Extract hypertext link URLs from extractable pages as separate text units."
+    },
     "extractPgfNumFormatsInline": {},
     "extractReferenceFormats": {},
-    "extractHardReturnsAsText": {}
+    "extractHardReturnsAsText": {},
+    "useCodeFinder": {
+      "title": "Use Inline Code Rules",
+      "description": "Apply regular expressions to convert matched text patterns into inline codes."
+    }
   }
 }

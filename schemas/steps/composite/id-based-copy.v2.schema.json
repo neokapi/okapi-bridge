@@ -40,12 +40,14 @@
     "markAsTranslateNo": {
       "type": "boolean",
       "default": false,
-      "title": "Set the text unit as non-translatable"
+      "title": "Set the text unit as non-translatable",
+      "description": "When enabled, matched text units in the destination file are marked as non-translatable after the reference text is copied."
     },
     "markAsApproved": {
       "type": "boolean",
       "default": true,
-      "title": "Set the target property 'approved' to 'yes'"
+      "title": "Set the target property 'approved' to 'yes'",
+      "description": "When enabled, the 'approved' property of matched target entries is set to 'yes' after copying."
     }
   }
 }

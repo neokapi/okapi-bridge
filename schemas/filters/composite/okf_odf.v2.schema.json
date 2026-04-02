@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_odf.v2.schema.json",
   "version": 2,
-  "title": "ODF-Content Filter Filter",
-  "description": "Configuration for the Okapi ODF-Content Filter Filter",
+  "title": "ODF-Content Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_odf",
@@ -36,19 +35,22 @@
           "type": "boolean",
           "default": false,
           "x-flattenPath": "extractNotes",
-          "description": "Extract notes/comments as translator notes"
+          "description": "Extract the content of annotation elements as translatable text",
+          "title": "Extract Notes"
         },
         "extractMetadata": {
           "type": "boolean",
           "default": true,
           "x-flattenPath": "extractMetadata",
-          "description": "Extract metadata fields for translation"
+          "description": "Extract translatable metadata from meta.xml",
+          "title": "Extract Metadata"
         },
         "extractReferences": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "extractReferences",
-          "description": "Extract cross-references"
+          "description": "Extract the content of bookmark reference elements as translatable text",
+          "title": "Extract References"
         },
         "encodeCharacterEntityReferenceGlyphs": {
           "type": "boolean",
@@ -138,6 +140,6 @@
   "x-apiVersion": "v2",
   "x-baseVersion": 2,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "eb51aa822e56",
-  "x-compositeHash": "840cb8f76d03"
+  "x-baseHash": "e2513ea212be",
+  "x-compositeHash": "9be0341608c6"
 }

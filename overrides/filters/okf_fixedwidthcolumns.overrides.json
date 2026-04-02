@@ -2,6 +2,15 @@
   "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
   "title": "Fixed-Width Columns",
   "$include": [
-    "_fragments/inlineCodes.fragment.json"
-  ]
+    "_fragments/inlineCodes.fragment.json",
+    "_fragments/tableColumns.fragment.json"
+  ],
+  "fields": {
+    "inlineCodes": {
+      "title": "Inline codes"
+    },
+    "columns": {
+      "title": "Column definitions"
+    }
+  }
 }

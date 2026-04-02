@@ -37,32 +37,38 @@
     "preserveWhitespace": {
       "type": "boolean",
       "default": false,
-      "title": "Preserve the whitespace"
+      "title": "Preserve the whitespace",
+      "description": "Preserve whitespace from the original content during merging"
     },
     "preserveSegmentation": {
       "type": "boolean",
       "default": false,
-      "title": "Preserve the segmentation for the next steps"
+      "title": "Preserve the segmentation for the next steps",
+      "description": "Restore segmentation in text units for use by subsequent pipeline steps"
     },
     "returnRawDocument": {
       "type": "boolean",
       "default": false,
-      "title": "Return raw documents instead of filter events"
+      "title": "Return raw documents instead of filter events",
+      "description": "Send raw document events instead of filter events to downstream steps"
     },
     "forceTargetLocale": {
       "type": "boolean",
       "default": false,
-      "title": "Specify the target locale from the tool instead of the manifest"
+      "title": "Specify the target locale from the tool instead of the manifest",
+      "description": "Use the target locale from the pipeline instead of the manifest file"
     },
     "overrideOutputPath": {
       "type": "string",
       "default": "",
-      "title": "Override the output path (leave empty to use the path from the manifest)"
+      "title": "Override the output path (leave empty to use the path from the manifest)",
+      "description": "Directory for merged output; leave empty to use the manifest default"
     },
     "copyCodeMetadata": {
       "type": "boolean",
       "default": true,
-      "title": "Copy the code metadata from the original file"
+      "title": "Copy the code metadata from the original file",
+      "description": "Copy inline code metadata from the original file to the merged output"
     }
   }
 }

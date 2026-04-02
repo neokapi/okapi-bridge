@@ -5,6 +5,7 @@
   ],
   "fields": {
     "allowEmptyOutputTarget": {
+      "title": "Allow Empty Target Segments",
       "description": "Allow empty target in output when no translation."
     }
   }

@@ -1,19 +1,23 @@
 {
   "filterName": "Raw Document to Filter Events Step",
-  "overview": "Extracts the content of a raw document into a set of filter events using the document's associated filter configuration. This step is typically the first step in a pipeline, but can be placed after any step that sends a raw document. To convert back from filter events to a raw document, use the **Filter Events to Raw Document Step**.",
+  "overview": "This step extracts the content of a raw document into a set of filter events using an associated filter configuration. It is typically the first step in a pipeline, converting raw document input into structured filter events that downstream steps can process. To reverse the conversion, use the **Filter Events to Raw Document Step**.",
   "parameters": {},
-  "processingNotes": [
-    "The raw document must have an associated filter configuration for extraction to work.",
-    "A minimal extract-then-merge pipeline can be built with just this step followed by the **Filter Events to Raw Document Step**."
+  "limitations": [
+    "No known limitations."
   ],
-  "limitations": [],
+  "processingNotes": [
+    "This step has no user-configurable parameters — all parameters are provided by the calling application (filter configuration, input encoding, etc.).",
+    "Can be placed after any step that sends a raw document, not just at the start of the pipeline.",
+    "Requires both source and target language to be set in the pipeline context."
+  ],
   "examples": [
     {
-      "title": "Minimal extract and merge pipeline",
-      "description": "The simplest pipeline that extracts filter events from a raw document and then merges them back. This is useful as a round-trip validation or as a starting template for more complex pipelines.",
-      "config": "```\nRaw Document to Filter Events Step\n  + Filter Events to Raw Document Step\n```"
+      "title": "Minimal extract-then-merge pipeline",
+      "description": "The simplest pipeline that extracts a document into filter events and then merges them back into a raw document. This is useful as a baseline or when intermediate processing steps will be added between extraction and merging.",
+      "config": "```yaml\nsteps:\n  - raw-document-to-filter-events\n  - filter-events-to-raw-document\n```"
     }
   ],
+  "fullDoc": "# Raw Document to Filter Events Step\n\nThis step extracts the content of a raw document into a set of filter events using an associated filter configuration. It is typically the first step in a pipeline, converting raw document input into structured filter events that downstream steps can process. To reverse the conversion, use the **Filter Events to Raw Document Step**.\n\n## Parameters\n\nThis step has no user-configurable parameters. All parameters are provided by the calling application (filter configuration, input encoding, etc.).\n\n## Limitations\n\nNo known limitations.\n\n## Notes\n\n- This step is typically the first step in a pipeline, but it can be placed after any step that sends a raw document.\n- Requires both source and target language to be set in the pipeline context.\n\n## Examples\n\n#### Minimal extract-then-merge pipeline\n\nThe simplest useful pipeline extracts a document into filter events and merges them back:\n\n```yaml\nsteps:\n  - raw-document-to-filter-events\n  - filter-events-to-raw-document\n```\n\nThis baseline pipeline can be extended by inserting processing steps between extraction and merging.",
   "stepId": "raw-document-to-filter-events",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Raw_Document_to_Filter_Events_Step"
 }

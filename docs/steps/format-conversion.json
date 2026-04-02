@@ -1,94 +1,124 @@
 {
   "filterName": "Format Conversion Step",
-  "overview": "This step creates output in a given format using the data extracted from an input document, allowing conversion from one format to another. It takes filter events and sends filter events. The generated documents are **not** meant to be merged back into their original format — for round-trip workflows, use the Raw Document to Filter Events Step followed by the Filter Events to Raw Document Step instead.",
+  "overview": "Converts input documents from one format to another using extracted filter events. Supports output to PO, TMX, tab-delimited, Pensieve TM, parallel corpus files, and Word table (RTF) formats. The generated documents are not meant to be merged back into their original format — use the Raw Document to Filter Events / Filter Events to Raw Document step pair for round-trip scenarios.",
   "parameters": {
     "outputFormat": {
-      "help": "Select the type of output file to generate. Available formats:\n\n- **PO File** — Output in Gettext's PO format, encoded in UTF-8.\n- **TMX Document** — Output in TMX (Translation Memory eXchange) format.\n- **Tab-Delimited Table** — Tab-delimited text (UTF-8). First column is source, second is target. Literal tab characters are escaped as `\\t`.\n- **Pensieve TM** — Output to a Pensieve TM database. The output path must be a **directory**, not a file.\n- **Parallel Corpus Files** — Two plain text files (inline codes stripped), one entry per line. Each file has its locale code appended to the filename. Used with systems like Moses MT.\n- **Word Table** — RTF table format with generic inline codes. Each entry in a separate row. When input is a TTX file, the match percentage appears in the Type column.",
-      "values": "Format identifier string. Known values: `tmx`, `po`, `table`, `pensieve`, `corpus`, `wordtable`.",
-      "seeAlso": "Format_Conversion_Step#Parameters"
+      "help": "Select the output file format. Available formats:\n\n- **PO File** — Gettext PO format, UTF-8 encoded\n- **TMX Document** — Translation Memory eXchange format\n- **Tab-Delimited Table** — UTF-8 tab-delimited text; source in first column, target in second; literal tabs escaped as `\\t`\n- **Pensieve TM** — Pensieve TM database (output path must be a directory)\n- **Parallel Corpus Files** — Two plain text files (inline codes stripped), one entry per line, locale code appended to filename. Used by systems like Moses MT\n- **Word Table** — RTF table with generic inline codes; one entry per row. For TTX input, match percentage appears in the Type column",
+      "values": "String value identifying the format: `tmx`, `po`, etc."
     },
     "singleOutput": {
-      "help": "Controls whether all input documents are merged into one output file or each input produces a separate output.\n\n- **Enabled**: A single output document is generated for all input documents. The `outputPath` parameter specifies where to write it.\n- **Disabled**: One output document is created per input document. Output paths are determined by the calling application (or by `autoExtensions` if set).",
+      "help": "Generates one combined output document for all input documents. When disabled, each input document produces its own separate output file.",
       "notes": [
-        "When enabled, the `outputPath` parameter becomes active. When disabled, `autoExtensions` becomes available instead."
+        "When enabled, the **Output path** field becomes active and must be specified."
       ]
     },
     "outputPath": {
-      "help": "Full path of the single output document to generate. For **Pensieve TM** output, this must be a **directory** rather than a file path.\n\nThe variable `${rootDir}` can be used in the path to reference the root directory of the pipeline.",
-      "values": "File system path. Supports the `${rootDir}` variable.",
-      "examples": [
-        "`${rootDir}/output/translations.tmx`",
-        "`${rootDir}/pensieve-db/` — for Pensieve TM output (must be a directory)"
-      ],
+      "help": "Full path of the single output document to generate. For a **Pensieve TM**, this must be a directory rather than a file path. The variable `${rootDir}` can be used in the path.",
+      "values": "File path string. Supports the `${rootDir}` variable.",
       "dependsOn": [
         {
           "property": "singleOutput",
           "condition": "must be true for this field to be active"
         }
+      ],
+      "examples": [
+        "`${rootDir}/output/combined.tmx`",
+        "`${rootDir}/pensieve-db/` (for Pensieve TM output)"
       ]
     },
     "autoExtensions": {
-      "help": "When set, output file paths are constructed by appending the format-specific extension (`.po`, `.tmx`, etc.) to each input file's path. If not set, output paths are determined by the calling application.",
+      "help": "Output files use the same path as the input file with an additional format extension appended (e.g., `.po`, `.tmx`). When disabled, the output paths are determined by the calling application.",
       "dependsOn": [
         {
           "property": "singleOutput",
           "condition": "must be false (disabled) for this option to be available"
         }
+      ],
+      "examples": [
+        "`document.html` → `document.html.tmx`",
+        "`readme.txt` → `readme.txt.po`"
       ]
     },
-    "targetStyle": {
-      "help": "Controls what content is placed in the target side of each output entry."
-    },
     "useGenericCodes": {
-      "help": "Replaces original inline codes with a generic numbered format: `<N>` for opening, `</N>` for closing, and `<N/>` for standalone codes, where `N` is the code's identifier.\n\nWhen disabled, inline codes are output in their original format (except for references).",
+      "help": "Replaces original inline codes with generic placeholders in the form `<N>`, `</N>`, and `<N/>` where `N` is the code's numeric identifier. When disabled, inline codes are output in their original format (except for references).",
       "notes": [
-        "If the output format is **TMX**, this option is ignored — inline codes always use the TMX format regardless of this setting."
+        "If the output format is **TMX**, this option is ignored — inline codes always use TMX format regardless of this setting."
       ]
     },
     "skipEntriesWithoutText": {
-      "help": "Filters out entries from the input document that have no actual text content — i.e., entries that are empty or contain only inline codes with no surrounding text."
+      "help": "Suppresses output of entries that have no actual text content — i.e., entries that are empty or contain only inline codes with no surrounding text."
     },
     "approvedEntriesOnly": {
-      "help": "Restricts output to entries where the target has the `approved` property set to `yes`. For example, \"fuzzy\" entries in a PO file have this property set to `no` and would be excluded.",
+      "help": "Restricts output to entries where the target `approved` property is set to `yes`. For example, \"fuzzy\" entries in a PO file have this property set to `no`.",
       "notes": [
-        "Entries that do not have the `approved` property at all are treated as **non-approved** and will be excluded when this option is enabled."
+        "Entries that lack the `approved` property entirely are treated as **non-approved** and will be excluded."
       ]
     },
     "overwriteSameSource": {
-      "help": "When importing into a Pensieve TM, if an entry has the same source text as one or more existing TM entries, all matching existing entries are **replaced** by the new one.\n\nLeave disabled if you want to allow multiple different translations for the same source text.",
+      "help": "When importing into a Pensieve TM, if an entry has the same source text as one or more existing TM entries, all matching entries are replaced by the new one. Leave disabled to allow multiple different translations for the same source text.",
       "dependsOn": [
         {
           "property": "outputFormat",
           "condition": "only applicable when output format is Pensieve TM"
         }
       ]
+    },
+    "targetStyle": {
+      "help": "Controls what content is placed in the target side of the output. The integer value selects between different target content strategies (e.g., source copied to target, target translation, empty target)."
     }
   },
-  "processingNotes": [
-    "Output documents generated by this step are **not** designed for round-trip merging back into the original format. For round-trip workflows, use the Raw Document to Filter Events Step and Filter Events to Raw Document Step instead.",
-    "For **Pensieve TM** output, the `outputPath` must point to a directory, not a file.",
-    "**Tab-Delimited Table** output escapes literal tab characters as `\\t`.",
-    "**Parallel Corpus Files** output strips all inline codes and appends locale codes to filenames.",
-    "**Word Table** output shows match percentages in the Type column when the input is a TTX file."
+  "limitations": [
+    "None known (per Okapi wiki)."
   ],
-  "limitations": [],
+  "processingNotes": [
+    "Documents generated by this step are **not** round-trippable — they cannot be merged back into the original format. For round-trip conversion, use the **Raw Document to Filter Events** step followed by the **Filter Events to Raw Document** step.",
+    "Requires both source and target language to be set in the pipeline context.",
+    "For Pensieve TM output, the output path must point to a directory, not a file."
+  ],
   "examples": [
     {
-      "title": "Convert XLIFF to TMX (single output)",
-      "description": "Merge all input documents into a single TMX file, skipping empty and unapproved entries.",
-      "config": "```yaml\noutputFormat: tmx\nsingleOutput: true\noutputPath: ${rootDir}/output/translations.tmx\nskipEntriesWithoutText: true\napprovedEntriesOnly: true\n```"
+      "title": "Convert to single TMX file",
+      "description": "Merge all input documents into a single TMX output using `${rootDir}` variable for the output path.",
+      "config": "```yaml\nsingleOutput: true\noutputFormat: tmx\noutputPath: \"${rootDir}/output/combined.tmx\"\nskipEntriesWithoutText: true\n```"
     },
     {
-      "title": "Convert to PO files (per-input output)",
-      "description": "Generate one PO file per input document, with the `.po` extension appended to each input path.",
-      "config": "```yaml\noutputFormat: po\nsingleOutput: false\nautoExtensions: true\nskipEntriesWithoutText: true\n```"
+      "title": "Convert to PO with auto extensions",
+      "description": "Generate one PO file per input document, with `.po` appended to the original filename. Only approved entries are included.",
+      "config": "```yaml\nsingleOutput: false\nautoExtensions: true\noutputFormat: po\napprovedEntriesOnly: true\n```"
     },
     {
-      "title": "Export to Pensieve TM with deduplication",
-      "description": "Write entries to a Pensieve TM database directory, replacing existing entries that share the same source text.",
-      "config": "```yaml\noutputFormat: pensieve\nsingleOutput: true\noutputPath: ${rootDir}/pensieve-db/\noverwriteSameSource: true\n```"
+      "title": "Export to parallel corpus for MT training",
+      "description": "Create parallel corpus files suitable for Moses MT or similar systems. Inline codes are automatically stripped. Each entry appears on its own line with locale-specific filenames.",
+      "config": "```yaml\nsingleOutput: false\nautoExtensions: true\noutputFormat: corpus\nskipEntriesWithoutText: true\n```"
     }
   ],
+  "propertySuggestions": {
+    "singleOutput": {
+      "title": "Single Output Document",
+      "description": "Generates one combined output document for all input documents instead of one per input"
+    },
+    "autoExtensions": {
+      "title": "Append Format Extension",
+      "description": "Output paths are the input paths with the new format extension appended (e.g., .tmx, .po)"
+    },
+    "useGenericCodes": {
+      "title": "Generic Inline Codes",
+      "description": "Replaces original inline codes with generic placeholders like <N>, </N>, and <N/>"
+    },
+    "skipEntriesWithoutText": {
+      "title": "Skip Empty Entries",
+      "description": "Suppresses output of entries that contain no text (empty or inline-codes only)"
+    },
+    "approvedEntriesOnly": {
+      "title": "Approved Entries Only",
+      "description": "Restricts output to entries with the target approved property set to yes"
+    },
+    "overwriteSameSource": {
+      "title": "Overwrite Same Source",
+      "description": "For Pensieve TM output, replaces existing entries when the source text matches"
+    }
+  },
+  "fullDoc": "# Format Conversion Step\n\nConverts input documents from one format to another using extracted filter events. Supports output to PO, TMX, tab-delimited, Pensieve TM, parallel corpus files, and Word table (RTF) formats. The generated documents are not meant to be merged back into their original format — use the Raw Document to Filter Events / Filter Events to Raw Document step pair for round-trip scenarios.\n\nRequires both source and target language to be set in the pipeline context.\n\n## Parameters\n\n#### Output Format\n\nSelect the output file format. Available formats:\n\n- **PO File** — Gettext PO format, UTF-8 encoded\n- **TMX Document** — Translation Memory eXchange format\n- **Tab-Delimited Table** — UTF-8 tab-delimited text; source in first column, target in second; literal tabs escaped as `\\t`\n- **Pensieve TM** — Pensieve TM database (output path must be a directory)\n- **Parallel Corpus Files** — Two plain text files (inline codes stripped), one entry per line, locale code appended to filename. Used by systems like Moses MT\n- **Word Table** — RTF table with generic inline codes; one entry per row. For TTX input, match percentage appears in the Type column\n\n#### Target Content\n\nControls what content is placed in the target side of the output. The integer value selects between different target content strategies.\n\n#### Create a Single Output Document\n\nGenerates one combined output document for all input documents. When disabled, each input document produces its own separate output file.\n\n> **Note:** When enabled, the **Output path** field becomes active and must be specified.\n\n#### Output Path\n\nFull path of the single output document to generate. For a **Pensieve TM**, this must be a directory rather than a file path. The variable `${rootDir}` can be used in the path. Only active when **Create a single output document** is enabled.\n\nExamples: `${rootDir}/output/combined.tmx`, `${rootDir}/pensieve-db/`\n\n#### Output Paths with Format Extension\n\nOutput files use the same path as the input file with an additional format extension appended (e.g., `.po`, `.tmx`). When disabled, the output paths are determined by the calling application. Only available when **Create a single output document** is disabled.\n\n#### Output Generic Inline Codes\n\nReplaces original inline codes with generic placeholders in the form `<N>`, `</N>`, and `<N/>` where `N` is the code's numeric identifier. When disabled, inline codes are output in their original format (except for references).\n\n> **Note:** If the output format is **TMX**, this option is ignored — inline codes always use TMX format regardless of this setting.\n\n#### Do Not Output Entries Without Text\n\nSuppresses output of entries that have no actual text content — entries that are empty or contain only inline codes with no surrounding text.\n\n#### Output Only Approved Entries\n\nRestricts output to entries where the target `approved` property is set to `yes`. For example, \"fuzzy\" entries in a PO file have this property set to `no`.\n\n> **Note:** Entries that lack the `approved` property entirely are treated as **non-approved** and will be excluded.\n\n#### Overwrite if Source is the Same (Pensieve TM)\n\nWhen importing into a Pensieve TM, if an entry has the same source text as one or more existing TM entries, all matching entries are replaced by the new one. Leave disabled to allow multiple different translations for the same source text. Only applicable to Pensieve TM output.\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- Documents generated by this step are **not** round-trippable. For round-trip conversion, use the **Raw Document to Filter Events** step followed by the **Filter Events to Raw Document** step.\n- For Pensieve TM output, the output path must point to a directory, not a file.\n\n## Examples\n\n**Single TMX output:**\n```yaml\nsingleOutput: true\noutputFormat: tmx\noutputPath: \"${rootDir}/output/combined.tmx\"\nskipEntriesWithoutText: true\n```\n\n**PO per input file (approved only):**\n```yaml\nsingleOutput: false\nautoExtensions: true\noutputFormat: po\napprovedEntriesOnly: true\n```\n\n**Parallel corpus for MT training:**\n```yaml\nsingleOutput: false\nautoExtensions: true\noutputFormat: corpus\nskipEntriesWithoutText: true\n```",
   "stepId": "format-conversion",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/format_conversion_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Format_Conversion_Step"
 }

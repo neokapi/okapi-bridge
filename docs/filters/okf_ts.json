@@ -1,46 +1,58 @@
 {
   "filterName": "TS Filter",
-  "overview": "The TS Filter processes **Qt TS (Translation Source)** resource files, implementing the `IFilter` interface. It is based on the [TS specification](http://doc.trolltech.com/4.3/linguist-ts-file-format.html) from Qt/Trolltech. The filter handles extraction of translatable content from `<translation>` elements, mapping the `type` attribute to approval states, and supports inline code detection via configurable regular expressions.",
+  "overview": "The TS Filter processes **Qt TS (Translation Source)** resource files used in Qt Linguist localization workflows. It implements the `IFilter` interface in the class `net.sf.okapi.filters.ts.TsFilter`. The implementation follows the [TS File Format specification](http://doc.trolltech.com/4.3/linguist-ts-file-format.html). The filter handles translation state mapping from TS `type` attributes and supports `<byte/>` element conversion.",
   "parameters": {
-    "output.escapeGT": {
-      "help": "Controls whether the `>` character is escaped as `&gt;` in the output TS file. By default, XML only requires escaping `<` and `&`, but some tools or workflows may expect `>` to also be escaped."
-    },
-    "output.decodeByteValues": {
-      "help": "Converts `<byte value=\"[value]\"/>` elements in the TS document to their raw character equivalents.\n\nTS files use `<byte/>` elements to represent characters that are invalid in XML. If left disabled, these elements are preserved as **inline codes**.\n\n**Recommendation:** Keep disabled if your downstream workflow uses XML-based formats like XLIFF or TMX, since the raw characters may be invalid in those formats as well.",
+    "convertByteValues": {
+      "help": "Controls how `<byte value=\"[value]\"/>` elements in the TS document are handled.\n\n- **Enabled**: byte elements are converted to their raw character equivalents\n- **Disabled**: byte elements are preserved as inline codes\n\nThese characters are stored as special elements in TS because they are **invalid in XML**. If your downstream format is XML-based (XLIFF, TMX), it is generally safer to keep them as inline codes.",
       "notes": [
-        "Characters stored as `<byte/>` elements are invalid in XML — converting them to raw characters may cause issues in XML-based interchange formats like XLIFF or TMX."
+        "Characters stored as `<byte/>` elements are invalid XML characters. Converting them to raw characters may cause issues when working with XML-based exchange formats like XLIFF or TMX."
       ]
     },
-    "inlineCodes": {
-      "help": "Defines regular expressions to detect inline codes within extracted text. Any match is converted to an inline code placeholder.\n\nThe default expression captures:\n- **printf-style format specifiers**: `%d`, `%s`, `%2$s`, `%-10.2f`, etc.\n- **Escape sequences**: `\\n`, `\\r\\n`, `\\t`, `\\a`, `\\b`, `\\f`, `\\v`\n- **Numbered placeholders**: `{0}`, `{1 something}`, etc.",
+    "useCodeFinder": {
+      "help": "Enables pattern-based inline code detection using the regular expressions defined in the rules list. Any text matching a rule is converted to an inline code rather than translatable text.\n\nThe default pattern matches:\n- **printf-style placeholders**: `%d`, `%s`, `%2$s`, `%-10.2f`, etc.\n- **Escape sequences**: `\\n`, `\\r`, `\\t`, `\\a`, `\\b`, `\\f`, `\\v`, `\\r\\n`\n- **Numbered placeholders**: `{0}`, `{1}`, `{2 something}`, etc.",
+      "values": "Each rule is a Java regular expression (`java.util.regex.Pattern` syntax).",
       "examples": [
-        "`%d`, `%s`, `%2$s` — printf-style format specifiers",
-        "`\\n`, `\\r\\n`, `\\t` — escape sequences",
-        "`{0}`, `{1}` — numbered placeholders"
+        "`%d` — integer placeholder",
+        "`%2$s` — positional string placeholder",
+        "`\\\\n` — escaped newline",
+        "`\\{\\d.*?\\}` — numbered placeholder like `{0}` or `{1}`"
       ]
     }
   },
-  "processingNotes": [
-    "Line-break style in the output matches the original input file (no normalization).",
-    "The `<translation>` element's `type` attribute controls extraction behavior: no attribute → approved (`yes`), `unfinished` → not approved (`no`), `obsolete` → **not extracted** (treated as unused entries).",
-    "The `<translatorcomment>` element is stored as a `Property.TRANSNOTE` on the text unit, accessible by subsequent pipeline steps or editors."
-  ],
   "limitations": [
-    "There are sometimes issues with extracting and merging back `<numerusform>` elements. Perform a **round-trip test** before sending for translation."
+    "There are sometimes issues with extracting and merging back `<numerusform>` elements. Perform a round-trip test before sending for translation."
+  ],
+  "processingNotes": [
+    "Line-breaks in the output match the original input file's line-break style.",
+    "Entries with `<translation type=\"obsolete\">` are **not extracted** — Qt treats these as unused entries, not just obsolete translations.",
+    "Entries with `<translation type=\"unfinished\">` are extracted with the target `approved` property set to `no`.",
+    "Entries with no `type` attribute on `<translation>` are extracted with the target `approved` property set to `yes`.",
+    "The `<translatorcomment>` element is stored as text unit `Property.TRANSNOTE` and can be used by subsequent pipeline steps or editors."
   ],
   "examples": [
     {
-      "title": "Default inline code pattern",
-      "description": "The default regex pattern used for detecting inline codes in TS content. It matches printf-style placeholders, escape sequences, and numbered placeholders.",
-      "config": "```regex\n((%(([-0+#]?)[-0+#]?)((\\d\\$)?)([\\d\\*]*(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn])\n|((\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)\n|(\\{\\d.*?\\}))\n```"
+      "title": "TS translation state mapping",
+      "description": "Shows how the TS `type` attribute on `<translation>` maps to Okapi's `approved` property:\n\n| TS `type` attribute | Okapi behavior |\n|---|---|\n| *(none)* | Extracted, approved = `yes` |\n| `unfinished` | Extracted, approved = `no` |\n| `obsolete` | **Not extracted** |"
     },
     {
-      "title": "Translation type mapping",
-      "description": "Shows how the `type` attribute on `<translation>` elements maps to extraction behavior.",
-      "input": "```xml\n<message>\n  <source>Hello</source>\n  <translation>Bonjour</translation>\n</message>\n<message>\n  <source>World</source>\n  <translation type=\"unfinished\">Monde</translation>\n</message>\n<message>\n  <source>Old text</source>\n  <translation type=\"obsolete\">Ancien texte</translation>\n</message>\n```",
-      "output": "```text\nFirst message: extracted, target approved = yes\nSecond message: extracted, target approved = no\nThird message: NOT extracted (obsolete)\n```"
+      "title": "Default inline code pattern",
+      "description": "The default regular expression detects printf placeholders, escape sequences, and numbered placeholders in extracted text.",
+      "config": "```regex\n((%(([-0+#]?)[-0+#]?)((\\d\\$)?)([\\d\\*]*(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn])\n|((\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)\n|(\\{\\d.*?\\}))\n```",
+      "input": "```\nFile %s has %d errors\\nSee {0} for details\n```",
+      "output": "```\nFile <1> has <2> errors<3>See <4> for details\n```"
     }
   ],
+  "propertySuggestions": {
+    "convertByteValues": {
+      "title": "Convert Byte Elements",
+      "description": "Convert <byte value=\"[value]\"/> elements to raw characters instead of treating them as inline codes."
+    },
+    "useCodeFinder": {
+      "title": "Has Inline Codes",
+      "description": "Enable pattern-based inline code detection using the defined regular expressions."
+    }
+  },
+  "fullDoc": "# TS Filter\n\nThe TS Filter processes **Qt TS (Translation Source)** resource files used in Qt Linguist localization workflows. It implements the `IFilter` interface in the class `net.sf.okapi.filters.ts.TsFilter`. The implementation follows the [TS File Format specification](http://doc.trolltech.com/4.3/linguist-ts-file-format.html). The filter handles translation state mapping from TS `type` attributes and supports `<byte/>` element conversion.\n\n## Parameters\n\n### Options\n\n#### Convert Byte Elements\n\nControls how `<byte value=\"[value]\"/>` elements in the TS document are handled.\n\n- **Enabled**: byte elements are converted to their raw character equivalents\n- **Disabled**: byte elements are preserved as inline codes\n\nThese characters are stored as special elements in TS because they are **invalid in XML**. If your downstream format is XML-based (XLIFF, TMX), it is generally safer to keep them as inline codes.\n\n> **Note:** Converting byte elements to raw characters may cause issues when working with XML-based exchange formats like XLIFF or TMX, since those characters are invalid in XML.\n\n### Inline Codes\n\n#### Has Inline Codes\n\nEnables pattern-based inline code detection using regular expressions. Any text matching a rule is converted to an inline code rather than translatable text.\n\nThe default pattern matches:\n- **printf-style placeholders**: `%d`, `%s`, `%2$s`, `%-10.2f`, etc.\n- **Escape sequences**: `\\n`, `\\r`, `\\t`, `\\a`, `\\b`, `\\f`, `\\v`, `\\r\\n`\n- **Numbered placeholders**: `{0}`, `{1}`, `{2 something}`, etc.\n\nDefault expression:\n```regex\n((%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn])\n|((\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)\n|(\\{\\d.*?\\}))\n```\n\nEach rule must be a valid Java regular expression (`java.util.regex.Pattern` syntax).\n\n## Processing Details\n\n### Translation State Mapping\n\nThe `type` attribute on `<translation>` elements maps to Okapi properties:\n\n| TS `type` attribute | Okapi behavior |\n|---|---|\n| *(none)* | Extracted, approved = `yes` |\n| `unfinished` | Extracted, approved = `no` |\n| `obsolete` | **Not extracted** (treated as unused entries) |\n\n### Translator Comments\n\nThe `<translatorcomment>` element is stored as text unit `Property.TRANSNOTE` and can be used by subsequent pipeline steps or editors.\n\n### Line-Breaks\n\nThe type of line-breaks in the output matches the original input file.\n\n## Limitations\n\n- There are sometimes issues with extracting and merging back `<numerusform>` elements. Perform a round-trip test before sending for translation.\n\n## Examples\n\n### Translation State Mapping\n\nShows how the TS `type` attribute on `<translation>` maps to Okapi's `approved` property:\n\n| TS `type` attribute | Okapi behavior |\n|---|---|\n| *(none)* | Extracted, approved = `yes` |\n| `unfinished` | Extracted, approved = `no` |\n| `obsolete` | **Not extracted** |\n\n### Default Inline Code Pattern\n\nThe default regular expression detects printf placeholders, escape sequences, and numbered placeholders:\n\nInput:\n```\nFile %s has %d errors\\nSee {0} for details\n```\n\nOutput (inline codes shown in angle brackets):\n```\nFile <1> has <2> errors<3>See <4> for details\n```",
   "filterId": "okf_ts",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/TS_Filter"
 }

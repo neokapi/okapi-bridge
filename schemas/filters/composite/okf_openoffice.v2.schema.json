@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_openoffice.v2.schema.json",
   "version": 2,
-  "title": "OpenOffice.org Filter Filter",
-  "description": "Configuration for the Okapi OpenOffice.org Filter Filter",
+  "title": "OpenOffice.org Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_openoffice",
@@ -152,6 +151,6 @@
   "x-apiVersion": "v2",
   "x-baseVersion": 2,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "f757bd171c27",
-  "x-compositeHash": "4e40929e4ebb"
+  "x-baseHash": "f3b930f37a57",
+  "x-compositeHash": "b64ce9050ff7"
 }

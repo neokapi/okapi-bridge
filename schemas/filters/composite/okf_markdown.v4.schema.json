@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_markdown.v4.schema.json",
   "version": 4,
-  "title": "Markdown Filter Filter",
-  "description": "Configuration for the Okapi Markdown Filter Filter",
+  "title": "Markdown Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_markdown",
@@ -40,37 +39,43 @@
           "type": "boolean",
           "default": true,
           "x-flattenPath": "translateImageAltText",
-          "description": "Translate image alt text"
+          "description": "Extract image alt text from Markdown and HTML img tags for translation.",
+          "title": "Translate Image Alt Text"
         },
         "translateUrls": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "translateUrls",
-          "description": "Translate URLs"
+          "description": "Extract URLs in link and image statements as translatable subflows.",
+          "title": "Translate Hyperlink URLs"
         },
         "urlPattern": {
           "type": "string",
           "default": ".+",
           "x-flattenPath": "urlToTranslatePattern",
-          "description": "Regex for URLs to translate"
+          "description": "Regex pattern to filter which URLs are extracted when URL translation is enabled.",
+          "title": "Translatable URL Pattern"
         },
         "translateCodeBlocks": {
           "type": "boolean",
           "default": true,
           "x-flattenPath": "translateCodeBlocks",
-          "description": "Translate fenced code blocks"
+          "description": "Expose contents of fenced code blocks for translation.",
+          "title": "Translate Fenced Code Blocks"
         },
         "translateIndentedCodeBlocks": {
           "type": "boolean",
           "default": true,
           "x-flattenPath": "translateIndentedCodeBlocks",
-          "description": "Translate indented code blocks"
+          "description": "Expose contents of indented code blocks for translation.",
+          "title": "Translate Indented Code Blocks"
         },
         "translateInlineCodeBlocks": {
           "type": "boolean",
           "default": true,
           "x-flattenPath": "translateInlineCodeBlocks",
-          "description": "Translate inline code"
+          "description": "Expose contents of backtick-delimited inline code for translation.",
+          "title": "Translate Inline Code Blocks"
         },
         "translateHeaderMetadata": {
           "type": "boolean",
@@ -82,13 +87,15 @@
           "type": "string",
           "default": "",
           "x-flattenPath": "nonTranslateBlocks",
-          "description": "Regex for non-translatable blocks"
+          "description": "Comma-separated prefixes identifying block quotes to exclude from translation.",
+          "title": "Non-Translatable Block Quotes"
         },
         "parseMdx": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "parseMdx",
-          "description": "Parse MDX syntax"
+          "description": "Parse out multi-line MDX export blocks as non-translatable skeleton.",
+          "title": "Parse MDX Expressions"
         }
       }
     },
@@ -100,13 +107,15 @@
           "type": "boolean",
           "default": false,
           "x-flattenPath": "generateHeaderAnchors",
-          "description": "Generate header anchor IDs"
+          "description": "Automatically generate named anchors for headings to preserve link targets.",
+          "title": "Generate Header Anchors"
         },
         "charactersToEscape": {
           "type": "string",
           "default": "*_`{}[]<>()#+\\-.!|",
           "x-flattenPath": "charactersToEscape",
-          "description": "Characters to escape in output"
+          "description": "Punctuation characters to backslash-escape on export.",
+          "title": "Characters to Escape"
         },
         "htmlEntitiesToEscape": {
           "type": "string",
@@ -118,7 +127,8 @@
           "type": "boolean",
           "default": false,
           "x-flattenPath": "unescapeBackslashCharacters",
-          "description": "Unescape backslash characters"
+          "description": "Parse backslash-escaped punctuation in source documents.",
+          "title": "Support Backslash Escaping"
         }
       }
     },
@@ -130,13 +140,15 @@
           "type": "string",
           "default": "",
           "x-flattenPath": "htmlSubfilter",
-          "description": "HTML sub-filter configuration"
+          "description": "Custom HTML filter configuration ID for processing HTML within Markdown.",
+          "title": "HTML Subfilter Configuration"
         },
         "yamlSubfilter": {
           "type": "string",
           "default": "",
           "x-flattenPath": "yamlSubfilter",
-          "description": "YAML front matter sub-filter"
+          "description": "Custom YAML filter configuration ID for processing YAML metadata headers.",
+          "title": "YAML Subfilter Configuration"
         }
       }
     }
@@ -150,8 +162,9 @@
         "enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
-          "x-flattenPath": "useCodeFinder"
+          "description": "Enable the Inline Code Finder for identifying inline codes in translatable text.",
+          "x-flattenPath": "useCodeFinder",
+          "title": "Use Code Finder"
         },
         "rules": {
           "$ref": "#/$defs/codeFinderRules",
@@ -220,6 +233,6 @@
   "x-apiVersion": "v4",
   "x-baseVersion": 4,
   "x-introducedInOkapi": "1.45.0",
-  "x-baseHash": "dc74d17370ff",
-  "x-compositeHash": "a334f7dcbd9d"
+  "x-baseHash": "60fbbffcfd51",
+  "x-compositeHash": "3581cdf9d77c"
 }

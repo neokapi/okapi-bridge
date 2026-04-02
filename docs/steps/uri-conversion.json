@@ -1,13 +1,13 @@
 {
   "filterName": "URI Conversion Step",
-  "overview": "Converts translatable content of input documents to and from URI escape notation (percent-encoding). Can either decode URI escape sequences back to normal text, or encode characters into `%XX` escape sequences. The set of characters to escape is configurable, and the step operates on filter events in a pipeline.",
+  "overview": "Converts translatable content of input documents to and from [URI](http://en.wikipedia.org/wiki/URI) escape notation. Can either un-escape URI escape sequences back to normal text, or escape normal text characters into URI percent-encoded sequences. The set of characters to escape is configurable, with presets based on [RFC 2396](http://tools.ietf.org/html/rfc2396) mark and reserved character classes.",
   "parameters": {
     "conversionType": {
-      "help": "Controls the direction of URI conversion:\n\n- **0** — Un-escape: converts URI escape sequences (e.g. `%20`) back into normal characters.\n- **1** — Escape: converts characters into URI percent-encoded escape sequences (e.g. space → `%20`). Which characters get escaped is controlled by the **escapeList** and **updateAll** parameters.",
+      "help": "Controls the direction of URI conversion:\n\n- **0** — Un-escape URI escape sequences (e.g. `%20` → space). Converts percent-encoded sequences back into normal text.\n- **1** — Escape content to URI escape sequences (e.g. `&` → `%26`). Converts characters in the escape list into percent-encoded form.\n\nWhen escaping, which characters get converted is controlled by `escapeList` and `updateAll`.",
       "values": "`0` = un-escape (decode), `1` = escape (encode)"
     },
     "updateAll": {
-      "help": "Escapes **all non-ASCII characters** (extended characters) to URI escape sequences, in addition to the characters specified in the escape list.\n\nThis is useful when the target content must be pure ASCII with all Unicode characters percent-encoded.",
+      "help": "Escapes all non-ASCII (extended) characters to URI escape sequences using UTF-8 percent-encoding.\n\nThis applies in addition to the characters specified in the `escapeList`. Useful when the target system only supports ASCII and all extended characters must be percent-encoded.",
       "dependsOn": [
         {
           "property": "conversionType",
@@ -16,43 +16,59 @@
       ]
     },
     "escapeList": {
-      "help": "The set of characters that will be percent-encoded when escaping. Each character in the string is treated individually.\n\nThe `%` character is **always** escaped regardless of whether it appears in this list.\n\nTwo common presets based on [RFC 2396](http://tools.ietf.org/html/rfc2396):\n\n- **All But Marks** — escape everything except RFC 2396 \"marks\": `-`, `_`, `.`, `!`, `~`, `*`, `'`, `(`, `)`\n- **All But Marks And Reserved** — escape everything except marks AND RFC 2396 \"reserved\" characters: `;`, `/`, `?`, `:`, `@`, `&`, `=`, `+`, `$`, `,`",
-      "notes": [
-        "The `%` character is always escaped even if omitted from the list, to prevent double-encoding."
+      "help": "The set of characters that will be converted to URI escape sequences when escaping. Each character in the string is escaped individually.\n\nThe `%` character is **always** escaped regardless of whether it appears in this list.\n\nCommon presets based on [RFC 2396](http://tools.ietf.org/html/rfc2396):\n\n- **All But Marks** — escape everything except RFC 2396 \"marks\": `-`, `_`, `.`, `!`, `~`, `*`, `'`, `(`, `)`\n- **All But Marks And Reserved** — escape everything except marks and RFC 2396 \"reserved\" characters: `;`, `/`, `?`, `:`, `@`, `&`, `=`, `+`, `$`, `,`",
+      "values": "A string where each character represents a character to be escaped. The `%` character is always implicitly included.",
+      "examples": [
+        "`%{}[]()&` — default set, escapes braces, brackets, parentheses, ampersand, and percent",
+        "Include `<` and `>` to escape angle brackets for HTML-safe URIs"
       ],
       "dependsOn": [
         {
           "property": "conversionType",
           "condition": "only meaningful when conversionType is 1 (escape mode)"
         }
-      ],
-      "examples": [
-        "`%{}[]()&` — default set, escapes common URI-special characters",
-        "All printable ASCII minus RFC 2396 marks — for maximum encoding safety"
       ]
     }
   },
-  "processingNotes": [
-    "The `%` character is always escaped to prevent double-encoding issues, regardless of the escape list contents.",
-    "When un-escaping (conversionType=0), the escapeList and updateAll parameters have no effect — all valid `%XX` sequences are decoded."
+  "limitations": [
+    "None known."
   ],
+  "processingNotes": [
+    "The `%` character is always escaped when in escape mode, regardless of the escape list configuration.",
+    "Extended (non-ASCII) characters are encoded using UTF-8 percent-encoding when `updateAll` is enabled.",
+    "The step operates on translatable content within filter events — non-translatable content passes through unchanged."
+  ],
+  "propertySuggestions": {
+    "conversionType": {
+      "title": "Conversion Direction",
+      "description": "Whether to un-escape (decode) or escape (encode) URI sequences."
+    },
+    "updateAll": {
+      "title": "Escape All Extended Characters",
+      "description": "Convert all non-ASCII characters to URI escape sequences."
+    },
+    "escapeList": {
+      "title": "Characters to Escape",
+      "description": "The set of characters to convert to URI escape sequences."
+    }
+  },
   "examples": [
     {
       "title": "Decode URI-encoded content",
-      "description": "Un-escape URI sequences in translated content back to readable text.",
-      "config": "```json\n{\n  \"conversionType\": 0,\n  \"updateAll\": false,\n  \"escapeList\": \"%{}[]()&\"\n}\n```",
+      "description": "Un-escape percent-encoded sequences in translatable text back to readable characters.",
+      "config": "```yaml\nconversionType: 0\n```",
       "input": "```\nHello%20World%21\n```",
       "output": "```\nHello World!\n```"
     },
     {
-      "title": "Encode content for URI use",
-      "description": "Escape special characters in content so it can be safely embedded in URIs.",
-      "config": "```json\n{\n  \"conversionType\": 1,\n  \"updateAll\": false,\n  \"escapeList\": \"%{}[]()&\"\n}\n```",
-      "input": "```\nkey={value}&other\n```",
-      "output": "```\nkey=%7Bvalue%7D%26other\n```"
+      "title": "Encode content for URI safety",
+      "description": "Escape special characters in translatable text to URI percent-encoded form using the default escape list.",
+      "config": "```yaml\nconversionType: 1\nescapeList: \"%{}[]()&\"\nupdateAll: false\n```",
+      "input": "```\nkey={value}&other=(test)\n```",
+      "output": "```\nkey=%7Bvalue%7D%26other=%28test%29\n```"
     }
   ],
-  "limitations": [],
+  "fullDoc": "# URI Conversion Step\n\nConverts translatable content of input documents to and from [URI](http://en.wikipedia.org/wiki/URI) escape notation. Can either un-escape URI escape sequences back to normal text, or escape normal text characters into URI percent-encoded sequences. The set of characters to escape is configurable, with presets based on [RFC 2396](http://tools.ietf.org/html/rfc2396) mark and reserved character classes.\n\nTakes: Filter events. Sends: Filter events.\n\n## Parameters\n\n#### Conversion Direction\n\nControls the direction of URI conversion:\n\n- **0** — Un-escape URI escape sequences (e.g. `%20` → space). Converts percent-encoded sequences back into normal text.\n- **1** — Escape content to URI escape sequences (e.g. `&` → `%26`). Converts characters in the escape list into percent-encoded form.\n\nWhen escaping, which characters get converted is controlled by the escape list and the extended characters option.\n\n#### Escape All Extended Characters\n\nEscapes all non-ASCII (extended) characters to URI escape sequences using UTF-8 percent-encoding. This applies in addition to the characters specified in the escape list. Only meaningful when conversion direction is set to escape mode.\n\n#### Characters to Escape\n\nThe set of characters that will be converted to URI escape sequences when escaping. Each character in the string is escaped individually.\n\n> **Note:** The `%` character is **always** escaped regardless of whether it appears in this list.\n\nCommon presets based on RFC 2396:\n\n- **All But Marks** — escape everything except RFC 2396 \"marks\": `-`, `_`, `.`, `!`, `~`, `*`, `'`, `(`, `)`\n- **All But Marks And Reserved** — escape everything except marks and RFC 2396 \"reserved\" characters: `;`, `/`, `?`, `:`, `@`, `&`, `=`, `+`, `$`, `,`\n\nOnly meaningful when conversion direction is set to escape mode.\n\n## Limitations\n\n- None known.\n\n## Notes\n\n- The `%` character is always escaped when in escape mode, regardless of the escape list configuration.\n- Extended (non-ASCII) characters are encoded using UTF-8 percent-encoding when the extended characters option is enabled.\n- The step operates on translatable content within filter events — non-translatable content passes through unchanged.\n\n## Examples\n\n### Decode URI-encoded content\n\nUn-escape percent-encoded sequences in translatable text back to readable characters.\n\n```yaml\nconversionType: 0\n```\n\nInput: `Hello%20World%21` → Output: `Hello World!`\n\n### Encode content for URI safety\n\nEscape special characters in translatable text to URI percent-encoded form using the default escape list.\n\n```yaml\nconversionType: 1\nescapeList: \"%{}[]()&\"\nupdateAll: false\n```\n\nInput: `key={value}&other=(test)` → Output: `key=%7Bvalue%7D%26other=%28test%29`",
   "stepId": "uri-conversion",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/uri_conversion_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/URI_Conversion_Step"
 }

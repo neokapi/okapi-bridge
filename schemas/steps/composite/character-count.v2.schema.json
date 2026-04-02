@@ -47,32 +47,38 @@
     "countInBatch": {
       "type": "boolean",
       "default": true,
-      "title": "Batches"
+      "title": "Batches",
+      "description": "Add character count annotation aggregated per batch"
     },
     "countInBatchItems": {
       "type": "boolean",
       "default": true,
-      "title": "Batch items"
+      "title": "Batch items",
+      "description": "Add character count annotation for each batch item"
     },
     "countInDocuments": {
       "type": "boolean",
       "default": false,
-      "title": "Documents"
+      "title": "Documents",
+      "description": "Add character count annotation for each document"
     },
     "countInSubDocuments": {
       "type": "boolean",
       "default": false,
-      "title": "Sub-documents"
+      "title": "Sub-documents",
+      "description": "Add character count annotation for each sub-document"
     },
     "countInGroups": {
       "type": "boolean",
       "default": false,
-      "title": "Groups"
+      "title": "Groups",
+      "description": "Add character count annotation for each group"
     },
     "bufferSize": {
       "type": "integer",
       "default": 0,
-      "title": "Size of text buffer:"
+      "title": "Size of text buffer:",
+      "description": "Size of the internal text buffer used during counting (0 for default)"
     }
   }
 }

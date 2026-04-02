@@ -33,37 +33,44 @@
     "normalizeQuotes": {
       "type": "boolean",
       "default": true,
-      "title": "Normalize quotation marks"
+      "title": "Normalize quotation marks",
+      "description": "Replace all quotation marks with straight double quotes and apostrophes with single straight quotes."
     },
     "checkCharacters": {
       "type": "boolean",
       "default": true,
-      "title": "Check for corrupt or unexpected characters"
+      "title": "Check for corrupt or unexpected characters",
+      "description": "Detect and remove text units containing common corrupt character strings."
     },
     "matchRegexExpressions": {
       "type": "boolean",
       "default": true,
-      "title": "Mark segments matching default regular expressions for removal"
+      "title": "Mark segments matching default regular expressions for removal",
+      "description": "Mark segments matching built-in regular expressions for removal. This option is not currently used."
     },
     "matchUserRegex": {
       "type": "boolean",
       "default": true,
-      "title": "Mark segments matching user defined regular expressions for removal"
+      "title": "Mark segments matching user defined regular expressions for removal",
+      "description": "Remove text units containing text that matches user-defined regular expressions."
     },
     "pruneTextUnit": {
       "type": "boolean",
       "default": true,
-      "title": "Remove unnecessary segments from text unit"
+      "title": "Remove unnecessary segments from text unit",
+      "description": "Remove text units marked for removal or that have no target text."
     },
     "normalizePunctuations": {
       "type": "boolean",
       "default": false,
-      "title": "Standardize spaces before and after certain punctuation marks to English writing style."
+      "title": "Standardize spaces before and after certain punctuation marks to English writing style.",
+      "description": "Standardize spaces around punctuation marks to English writing style conventions."
     },
     "keepCrNlIntact": {
       "type": "boolean",
       "default": false,
-      "title": "Keep CR and NL characters intact. They are not normalized to an ASCII space with spaces and tabs."
+      "title": "Keep CR and NL characters intact. They are not normalized to an ASCII space with spaces and tabs.",
+      "description": "Preserve CR and NL characters instead of normalizing them to spaces."
     }
   }
 }

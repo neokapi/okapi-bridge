@@ -1,51 +1,46 @@
 {
   "filterName": "DTD Filter",
-  "overview": "Processes DTD (Document Type Definition) documents containing translatable text entity declarations. Primarily intended for XML-DTD files like Mozilla DTD files used with XUL documents for building user-interface parts. Extracts translatable text from `<!ENTITY>` declarations.",
+  "overview": "This filter processes DTD (Document Type Definition) documents containing translatable text entity declarations. It is primarily intended for XML-DTD files like Mozilla DTD files used with XUL documents for user-interface localization. The filter extracts text from `<!ENTITY>` declarations for translation.",
   "parameters": {
     "useCodeFinder": {
-      "help": "Activates pattern-based inline code detection using the rules defined in `simplifierRules`. When active, text spans matching the defined regular expressions are protected as inline codes (placeholders) rather than translatable text.\n\nFor example, variable placeholders like `VAR1` in entity values can be marked as codes so translators cannot accidentally modify them.",
-      "examples": [
-        "With rule `\\bVAR\\d\\b`, the text `VAR1` in `<!ENTITY dialog.fileCount \"Number of files = VAR1\">` becomes an inline code placeholder"
-      ]
+      "help": "Enables the inline code finder, which uses regular expressions to identify spans of extracted text that should be treated as inline codes rather than translatable content.\n\nUseful when entity values contain variables or placeholders (e.g. `VAR1`) that must be protected from modification during translation."
     },
-    "moveLeadingAndTrailingCodesToSkeleton": {
-      "help": "Inline codes that appear at the very beginning or end of a segment are moved out of the translatable content and into the non-translatable skeleton. This simplifies the translator's view when codes at boundaries don't need repositioning."
-    },
-    "mergeAdjacentCodes": {
-      "help": "When multiple inline codes appear next to each other with no translatable text between them, they are combined into a single placeholder. This reduces clutter in the translation unit."
-    },
-    "simplifierRules": {
-      "help": "Define regular expressions that identify spans of text to treat as inline codes (placeholders). Each matching span is protected from translation.\n\nRules use the Okapi CodeFinder `#v1` format. Back-slashes in regex patterns must be double-escaped when written in the serialized string format.\n\nExample rule to capture `VARn` placeholders:\n```\n#v1\ncount.i=1\nrule0=\\bVAR\\d\\b\n```",
-      "values": "Okapi CodeFinder `#v1` format: a header line `#v1`, a count line `count.i=N`, then `rule0` through `ruleN-1` each containing a Java regular expression.",
-      "examples": [
-        "`\\bVAR\\d\\b` — matches variable placeholders like `VAR1`, `VAR2` at word boundaries",
-        "`\\$\\{[^}]+\\}` — matches `${variableName}` style placeholders"
-      ],
+    "codeFinderRules": {
+      "help": "Regular expression rules in Okapi `#v1` format that define patterns to match as inline codes within extracted text.\n\nThe format starts with `#v1`, followed by `count.i=N` (number of rules), then `rule0=...`, `rule1=...`, etc.\n\n**Important:** When writing rules in YAML configuration, backslashes must be double-escaped (e.g., `\\\\b` for a word boundary `\\b`).",
+      "values": "Okapi `#v1` code finder format:\n```\n#v1\\ncount.i=<number_of_rules>\\nrule0=<regex>\\nrule1=<regex>...\n```\nEach rule is a Java regular expression.",
       "notes": [
-        "Back-slashes in regex patterns must be escaped again in YAML/string notation (e.g., `\\\\b` for the regex `\\b`)."
+        "Backslashes in regular expressions must be escaped for YAML notation — use `\\\\b` to represent `\\b` in the actual regex."
+      ],
+      "examples": [
+        "`#v1\\ncount.i=1\\nrule0=\\\\bVAR\\\\d\\\\b` — matches variable placeholders like `VAR1`, `VAR2`"
       ]
     }
   },
   "processingNotes": [
-    "**Encoding detection**: Uses Unicode BOM if present; otherwise falls back to the default encoding specified in filter options.",
-    "**BOM handling for UTF-8 output**: A BOM is written only if the input was UTF-8 *and* had a BOM. Converting from another encoding to UTF-8 produces no BOM.",
-    "**Line breaks**: Output preserves the same line-break style (CRLF/LF) as the original input."
+    "Input encoding is determined by BOM if present; otherwise falls back to the default encoding specified in filter options.",
+    "UTF-8 output includes a BOM only if the input was UTF-8 and had a BOM; otherwise no BOM is written.",
+    "Output line-break style matches the original input document."
   ],
   "limitations": [],
   "examples": [
     {
-      "title": "DTD entity extraction",
-      "description": "The filter extracts translatable text from `<!ENTITY>` declarations in DTD files. Comments are preserved as non-translatable skeleton.",
-      "input": "```xml\n<!--Comments-->\n<!ENTITY findWindow.title \"Find Files\">\n<!ENTITY fileMenu.label \"File\">\n<!ENTITY editMenu.label \"Edit\">\n```"
-    },
-    {
-      "title": "Protecting variable placeholders with inline codes",
-      "description": "Using code finder rules to protect `VARn` style placeholders from modification during translation.",
+      "title": "Mozilla DTD with variables",
+      "description": "Extracting translatable entity values from a Mozilla-style DTD file, with variable placeholders protected as inline codes using the code finder.",
       "config": "```yaml\nuseCodeFinder: true\ncodeFinderRules: \"#v1\\ncount.i=1\\nrule0=\\\\bVAR\\\\d\\\\b\"\n```",
-      "input": "```xml\n<!ENTITY dialog.fileCount \"Number of files = VAR1\">\n```",
-      "output": "```\nNumber of files = <code>VAR1</code>\n```"
+      "input": "```xml\n<!--Comments-->\n<!ENTITY findWindow.title \"Find Files\">\n<!ENTITY fileMenu.label \"File\">\n<!ENTITY dialog.fileCount \"Number of files = VAR1\">\n```"
     }
   ],
+  "fullDoc": "# DTD Filter\n\nThis filter processes DTD (Document Type Definition) documents containing translatable text entity declarations. It is primarily intended for XML-DTD files like Mozilla DTD files used with XUL documents for user-interface localization. The filter extracts text from `<!ENTITY>` declarations for translation.\n\n## Parameters\n\n### useCodeFinder\n\nEnables the inline code finder, which uses regular expressions to identify spans of extracted text that should be treated as inline codes rather than translatable content.\n\nUseful when entity values contain variables or placeholders (e.g. `VAR1`) that must be protected from modification during translation.\n\n### codeFinderRules\n\nRegular expression rules in Okapi `#v1` format that define patterns to match as inline codes within extracted text.\n\nThe format starts with `#v1`, followed by `count.i=N` (number of rules), then `rule0=...`, `rule1=...`, etc.\n\n**Important:** When writing rules in YAML configuration, backslashes must be double-escaped (e.g., `\\\\b` for a word boundary `\\b`).\n\n**Example:**\n\n```yaml\nuseCodeFinder: true\ncodeFinderRules: \"#v1\\ncount.i=1\\nrule0=\\\\bVAR\\\\d\\\\b\"\n```\n\nThis configuration marks `VAR1` as an inline code in:\n\n```xml\n<!ENTITY dialog.fileCount \"Number of files = VAR1\">\n```\n\n## Processing Notes\n\n- Input encoding is determined by BOM if present; otherwise falls back to the default encoding specified in filter options.\n- UTF-8 output includes a BOM only if the input was UTF-8 and had a BOM; otherwise no BOM is written.\n- Output line-break style matches the original input document.\n\n## Limitations\n\nNone known.\n\n## Examples\n\n### Mozilla DTD with variable placeholders\n\nInput DTD:\n\n```xml\n<!--Comments-->\n<!ENTITY findWindow.title \"Find Files\">\n<!ENTITY fileMenu.label \"File\">\n<!ENTITY editMenu.label \"Edit\">\n<!ENTITY dialog.fileCount \"Number of files = VAR1\">\n```\n\nConfiguration to protect variables as inline codes:\n\n```yaml\nuseCodeFinder: true\ncodeFinderRules: \"#v1\\ncount.i=1\\nrule0=\\\\bVAR\\\\d\\\\b\"\n```",
+  "propertySuggestions": {
+    "useCodeFinder": {
+      "title": "Use Code Finder",
+      "description": "Enable regular expression-based inline code detection in extracted text."
+    },
+    "codeFinderRules": {
+      "title": "Code Finder Rules",
+      "description": "Regular expressions in #v1 format defining patterns to treat as inline codes."
+    }
+  },
   "filterId": "okf_dtd",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/DTD_Filter"
 }

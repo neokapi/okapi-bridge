@@ -1,30 +1,33 @@
 {
-  "filterName": "Line-Break Conversion",
-  "overview": "Converts all line-breaks in a text-based input document to a specified type (DOS/Windows, Unix/Linux, or Macintosh). The input line-break type is detected automatically and may contain a mix of different types. Operates on raw documents and preserves encoding and Byte-Order-Marks.",
+  "filterName": "Line-Break Conversion Step",
+  "overview": "Converts all line-breaks in a text-based input document to a specified type (DOS/Windows, Unix/Linux, or Macintosh). The step auto-detects existing line-break types and handles mixed line-break styles within a single file. Input encoding is preserved in the output, and Byte-Order-Marks are kept if present.",
   "parameters": {
     "lineBreak": {
-      "help": "Controls which line-break sequence is written to the output file. The input file's line-break types are detected automatically and may be mixed — all are converted to the selected type regardless of their original form.\n\nAvailable values:\n- **DOS/Windows** — `\\r\\n` (CR+LF, `0x0D 0x0A`)\n- **Unix/Linux** — `\\n` (LF, `0x0A`)\n- **Macintosh** — `\\r` (CR, `0x0D`)",
-      "values": "Encoded line-break strings: `$0d$$0a$` for DOS/Windows (CR+LF), `$0a$` for Unix/Linux (LF), `$0d$` for Macintosh (CR).",
+      "help": "Controls which line-break style is written to the output file. The input file's line-break types are auto-detected, and mixed styles are supported — all are normalized to the chosen type.\n\n| Value | Line-Break | Hex | Escape |\n|---|---|---|---|\n| `$0d$$0a$` | DOS/Windows (CR+LF) | `0x0D 0x0A` | `\\r\\n` |\n| `$0a$` | Unix/Linux (LF) | `0x0A` | `\\n` |\n| `$0d$` | Macintosh (CR) | `0x0D` | `\\r` |",
+      "values": "Encoded line-break string using `$hex$` notation: `$0d$$0a$` for CR+LF, `$0a$` for LF, `$0d$` for CR.",
       "notes": [
-        "The input encoding must be specified explicitly, even for formats that usually auto-detect encoding (XML, HTML, etc.). The only exception is files with a Byte-Order-Mark (BOM).",
-        "Output encoding matches the input encoding. BOMs are preserved if present."
+        "The input encoding must be specified explicitly, even for formats that usually auto-detect encoding (XML, HTML, etc.). The only exception is files with a Byte-Order-Mark.",
+        "The output encoding always matches the input encoding — no transcoding occurs. BOMs are preserved if present."
       ]
     }
   },
   "processingNotes": [
-    "Input encoding must be specified explicitly even for self-describing formats (XML, HTML). Only BOM-prefixed files are exempt from this requirement.",
-    "Output is written in the same encoding as the input document.",
-    "Byte-Order-Marks are preserved if present in the input.",
-    "The step auto-detects the input line-break type and handles mixed line-break styles within a single file."
+    "Input encoding must be specified explicitly for all formats except BOM-prefixed files.",
+    "Output encoding always matches input encoding — no transcoding is performed.",
+    "Byte-Order-Marks are preserved if present in the input, but never added or removed.",
+    "Mixed line-break types within a single input file are handled correctly — all are converted to the target type."
   ],
-  "limitations": [],
+  "limitations": [
+    "None known."
+  ],
   "examples": [
     {
-      "title": "Convert a Windows file to Unix line endings",
-      "description": "Convert a DOS/Windows text file (`\\r\\n`) to Unix/Linux line endings (`\\n`) for use in Linux environments.",
+      "title": "Convert Windows line endings to Unix",
+      "description": "Normalize a Windows-formatted file to Unix line endings, commonly needed when moving files between platforms or preparing source files for version control.",
       "config": "```yaml\nlineBreak: \"$0a$\"\n```"
     }
   ],
+  "fullDoc": "# Line-Break Conversion Step\n\nConverts all line-breaks in a text-based input document to a specified type (DOS/Windows, Unix/Linux, or Macintosh). The step auto-detects existing line-break types and handles mixed line-break styles within a single file. Input encoding is preserved in the output, and Byte-Order-Marks are kept if present.\n\nTakes: Raw document. Sends: Raw document.\n\n## Parameters\n\n#### Convert line-breaks to the following type\n\nControls which line-break style is written to the output file. The input file's line-break types are auto-detected, and mixed styles are supported — all are normalized to the chosen type.\n\n| Value | Line-Break | Hex | Escape |\n|---|---|---|---|\n| `$0d$$0a$` | DOS/Windows (CR+LF) | `0x0D 0x0A` | `\\r\\n` |\n| `$0a$` | Unix/Linux (LF) | `0x0A` | `\\n` |\n| `$0d$` | Macintosh (CR) | `0x0D` | `\\r` |\n\n> **Note:** The input encoding must be specified explicitly, even for formats that usually auto-detect encoding (XML, HTML, etc.). The only exception is files with a Byte-Order-Mark.\n\n> **Note:** The output encoding always matches the input encoding — no transcoding occurs. BOMs are preserved if present.\n\n## Limitations\n\n- None known.\n\n## Notes\n\n- Input encoding must be specified explicitly for all formats except BOM-prefixed files.\n- Output encoding always matches input encoding — no transcoding is performed.\n- Byte-Order-Marks are preserved if present in the input, but never added or removed.\n- Mixed line-break types within a single input file are handled correctly — all are converted to the target type.\n\n## Examples\n\n### Convert Windows line endings to Unix\n\nNormalize a Windows-formatted file to Unix line endings:\n\n```yaml\nlineBreak: \"$0a$\"\n```",
   "stepId": "line-break-conversion",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/line_break_conversion_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Line-Break_Conversion_Step"
 }

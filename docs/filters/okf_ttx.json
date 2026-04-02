@@ -1,42 +1,49 @@
 {
   "filterName": "TTX Filter",
-  "overview": "The TTX Filter processes Trados TTX documents, an XML-based bilingual format used by some versions of Trados tools and supported by several other translation tools. It extracts source and target text from segmented and unsegmented content, handles existing translations with match-type annotations, and preserves TTX structure on output. There are no official public specifications for the TTX format.",
+  "overview": "The TTX Filter processes **Trados TTX documents**, an XML-based bilingual format used by some versions of Trados tools and supported by several other translation tools. There are no official public specifications for TTX. The filter handles extraction of source and target text, respects existing segmentation, and carries over match percentages and translation annotations.",
   "parameters": {
-    "mode.segmentMode": {
-      "help": "Controls how text is extracted based on the segmentation state of the TTX file.\n\n- **Auto-detect** (default): The filter scans for at least one existing `<Tu>` segment. If found, behaves like \"extract only existing\"; if none found, behaves like \"extract all\".\n- **Extract only existing segments**: Only text inside `<Tu>`/`<Tuv>` elements is extracted. If the file has no segments, **nothing is extracted**.\n- **Extract all**: Both segmented and unsegmented text within `<Raw>` elements is extracted. Unsegmented text parts become separate segments alongside existing ones.",
+    "extractionMode": {
+      "help": "Controls how existing TTX segments affect extraction:\n\n- **Auto-detect**: Scans the file for existing `<Tu>` segments. If at least one is found, only segmented text is extracted. If none are found, all text is extracted.\n- **Extract only existing segments**: Skips all non-segmented text. If the file has no pre-segmented content, nothing is extracted.\n- **Extract all**: Extracts everything regardless of segmentation, wrapping unsegmented text into segments.\n\nFor best compatibility with the tool that created the TTX files, work with **pre-segmented documents** and use auto-detect or existing-segments-only mode.",
       "notes": [
-        "Segmentation is often a cause for interoperability issues. For better compatibility with the tool that created the TTX files, it is recommended to work with **pre-segmented** documents."
+        "Segmentation is often a cause for interoperability issues. For better compatibility with the tool that created the TTX files, it is recommended to work with pre-segmented documents.",
+        "In extract-all mode, contiguous text across segment boundaries is merged into a single text unit with multiple segments."
       ],
       "seeAlso": "TTX_Filter#Segmentation"
     },
-    "output.escapeGT": {
-      "help": "Escapes all `>` characters as `&gt;` in the output document. By default, only `<`, `&`, and quotes are escaped in XML output — the greater-than sign is left unescaped since it is valid in XML text content. Enable this if downstream tools require strict escaping of `>`."
+    "escapeGT": {
+      "help": "Escapes all `>` characters as `&gt;` in the output document. By default, XML does not require `>` to be escaped, but some downstream tools may expect it."
     }
   },
-  "processingNotes": [
-    "**Encoding detection**: Uses the document's XML encoding declaration if present; otherwise defaults to UTF-8 regardless of any encoding specified when opening the document.",
-    "**BOM handling**: When output is UTF-8 and input was also UTF-8, a BOM is written only if one was detected in the input. When converting from a non-UTF-8 input to UTF-8 output, no BOM is added.",
-    "**Line breaks**: Output preserves the same line-break style (CR, LF, or CRLF) as the original input.",
-    "**Existing translations**: Segmented entries with translations are extracted with both source and target. Match types are derived from the `MatchPercent` attribute: >100 with `Origin=xtranslate` → `EXACT_LOCAL_CONTEXT` (XU matches in TagEditor), >99 → `EXACT`, 1–99 → `FUZZY`. The `Origin` attribute value is carried over to the annotation.",
-    "TTX requires segmentation for target text representation — the filter automatically generates `<Tu>` and `<Tuv>` elements as needed in the output."
-  ],
   "limitations": [
-    "The TTX `<df>` element may cause problems when it spans across external tag boundaries — for example, when a `<df>` for bold formatting crosses paragraph boundaries (`<p>`) that are external tags in TTX. These cases should be rare."
+    "The TTX `<df>` element may cause problems when it spans across external tag boundaries (e.g., bold formatting spanning across paragraph boundaries in extracted HTML).",
+    "No official public specifications exist for the TTX format."
+  ],
+  "processingNotes": [
+    "Input encoding is determined from the document's encoding declaration; falls back to **UTF-8** if none is present.",
+    "Output BOM handling: if input was UTF-8 with a BOM, the output preserves the BOM; if input was not UTF-8, no BOM is written.",
+    "Line-break style from the original input is preserved in the output.",
+    "Segmented entries with translations extract both source and target text. Match types are mapped: `MatchPercent > 100` with `Origin=xtranslate` → `EXACT_LOCAL_CONTEXT` (XU matches in TagEditor), `> 99` → `EXACT`, `1–99` → `FUZZY`.",
+    "The `Origin` attribute from translated segments is carried over to translation annotations."
   ],
   "examples": [
     {
-      "title": "Extract All mode — segmented and unsegmented text",
-      "description": "In **Extract All** mode, text from both `<Raw>` content outside segments and inside existing `<Tu>` segments is extracted as a single text unit with multiple segments.",
+      "title": "Extract-all mode (mode 2) vs existing-segments-only (mode 1)",
+      "description": "Demonstrates how extraction mode affects which text is extracted from a TTX file containing mixed segmented and unsegmented content.",
       "input": "```xml\n<Raw>\nPart 1 <Tu MatchPercent=\"0\">\n<Tuv Lang=\"EN\">Part 2</Tuv></Tu> Part 3.\n</Raw>\n```",
-      "output": "```\n[Part 1 ][Part 2][ Part 3]\n```"
-    },
-    {
-      "title": "Extract Existing Segments mode — only segmented text",
-      "description": "In **Extract Only Existing Segments** mode, only the content inside `<Tu>`/`<Tuv>` elements is extracted. Unsegmented text outside those elements is ignored.",
-      "input": "```xml\n<Raw>\nPart 1 <Tu MatchPercent=\"0\">\n<Tuv Lang=\"EN\">Part 2</Tuv></Tu> Part 3.\n</Raw>\n```",
-      "output": "```\n[Part 2]\n```"
+      "output": "```\nMode 2 (extract all): [Part 1 ][Part 2][ Part 3]  — single text unit, three segments\nMode 1 (existing only): [Part 2]  — only the pre-segmented part\n```"
     }
   ],
+  "propertySuggestions": {
+    "extractionMode": {
+      "title": "Extraction Mode",
+      "description": "Controls how existing segments affect text extraction — auto-detect, existing only, or extract all."
+    },
+    "escapeGT": {
+      "title": "Escape Greater-Than Characters",
+      "description": "Escape all > characters as &gt; in the output."
+    }
+  },
+  "fullDoc": "# TTX Filter\n\nThe TTX Filter processes **Trados TTX documents**, an XML-based bilingual format used by some versions of Trados tools and supported by several other translation tools. There are no official public specifications for TTX. The filter handles extraction of source and target text, respects existing segmentation, and carries over match percentages and translation annotations.\n\n## Parameters\n\n### Extraction Mode\n\nControls how existing TTX segments affect extraction:\n\n- **Auto-detect existing segments**: Scans the file for existing `<Tu>` segments. If at least one is found, only segmented text is extracted. If none are found, all text is extracted.\n- **Extract only existing segments**: Only existing segments are extracted. If the file has no pre-segmented content, nothing is extracted.\n- **Extract all**: Extracts all text, whether it is in existing segments or not. Unsegmented text is wrapped into new segments.\n\n> **Note:** Segmentation is often a cause for interoperability issues. For better compatibility with the tool that created the TTX files, it is recommended to work with pre-segmented documents.\n\nIn extract-all mode, contiguous text across segment boundaries is merged into a single text unit with multiple segments. For example:\n\n```xml\n<Raw>\nPart 1 <Tu MatchPercent=\"0\">\n<Tuv Lang=\"EN\">Part 2</Tuv></Tu> Part 3.\n</Raw>\n```\n\nExtract all produces: `[Part 1 ][Part 2][ Part 3]` (one text unit, three segments)\nExisting segments only produces: `[Part 2]`\n\n### Escape Greater-Than Characters\n\nEscapes all `>` characters as `&gt;` in the output document. By default, XML does not require `>` to be escaped, but some downstream tools may expect it.\n\n## Processing Details\n\n- **Input encoding**: Determined from the document's encoding declaration; falls back to UTF-8 if none is present.\n- **Output BOM**: If input was UTF-8 with a BOM, the output preserves the BOM. If input was not UTF-8, no BOM is written.\n- **Line-breaks**: Line-break style from the original input is preserved in the output.\n- **Existing translations**: Segmented entries with translations extract both source and target. Match types are mapped based on `MatchPercent`: >100 with `Origin=xtranslate` → `EXACT_LOCAL_CONTEXT` (XU matches), >99 → `EXACT`, 1–99 → `FUZZY`. The `Origin` attribute is carried over to annotations.\n\n## Limitations\n\n- The TTX `<df>` element may cause problems when it spans across external tag boundaries (e.g., bold formatting spanning across paragraph boundaries in extracted HTML).\n- No official public specifications exist for the TTX format.\n\n## Examples\n\n### Extract-all vs existing-segments-only\n\nGiven this TTX content:\n\n```xml\n<Raw>\nPart 1 <Tu MatchPercent=\"0\">\n<Tuv Lang=\"EN\">Part 2</Tuv></Tu> Part 3.\n</Raw>\n```\n\n- **Extract all**: `[Part 1 ][Part 2][ Part 3]` — single text unit with three segments\n- **Existing only**: `[Part 2]` — only the pre-segmented part",
   "filterId": "okf_ttx",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/TTX_Filter"
 }

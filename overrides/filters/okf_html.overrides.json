@@ -12,6 +12,8 @@
       "description": "Extract text outside of HTML body tags."
     },
     "codeFinderRules": {
+      "title": "Code Finder Rules",
+      "description": "Regular expression rules in Okapi #v1 format for identifying inline codes.",
       "widget": "codeFinderRules",
       "presets": {
         "entities": {
@@ -55,6 +57,30 @@
       "widget": "tagList",
       "placeholder": "id,name",
       "description": "Comma-separated list of attributes to use as IDs."
+    },
+    "useCodeFinder": {
+      "title": "Use Code Finder",
+      "description": "Enable regular expression-based inline code detection in extracted text."
+    },
+    "escapeCharacters": {
+      "title": "Escape Characters as Entities",
+      "description": "Characters to output as HTML named character entity references."
+    },
+    "inlineCdata": {
+      "title": "Inline CDATA",
+      "description": "Treat CDATA sections as inline elements instead of breaking text flow."
+    },
+    "quoteModeDefined": {
+      "title": "Custom Quote Mode Enabled",
+      "description": "Enable the custom quoteMode setting for quote/apostrophe escaping."
+    },
+    "quoteMode": {
+      "title": "Quote Escape Mode",
+      "description": "Controls how quote and apostrophe characters are escaped in output."
+    },
+    "cleanupHtml": {
+      "title": "Clean Up HTML",
+      "description": "Automatically fix common HTML syntax errors such as unquoted attributes."
     }
   }
 }

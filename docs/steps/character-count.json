@@ -1,39 +1,60 @@
 {
   "filterName": "Character Count Step",
-  "overview": "Performs character counts on different parts of a set of documents, following the [GMX-V 2.0 standard](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html). Character counts are saved as annotations on resources at various levels (text unit, batch, document, etc.) and can be consumed by downstream steps such as the Scoping Report Step to generate reports.",
+  "overview": "Performs character counts on different parts of a set of documents, following the [GMX-V 2.0 standard](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html). Character counts are saved as annotations on text units and optionally on higher-level resources (batches, documents, groups). These annotations can be consumed by other steps such as the Scoping Report Step to generate reports.",
   "parameters": {
     "countInBatch": {
-      "help": "Adds a character count annotation aggregated across the entire batch. This annotation accumulates counts from all batch items, documents, and text units within the batch.\n\nA character count annotation is **always** set on each individual text unit regardless of this setting — this option controls whether an additional roll-up annotation is created at the batch level."
+      "help": "Adds a character count annotation aggregated across the entire batch. Useful for getting a total count across all documents processed in a pipeline run."
     },
     "countInBatchItems": {
-      "help": "Adds a character count annotation for each batch item. The count aggregates all documents and text units within that batch item.\n\nA character count annotation is **always** set on each individual text unit regardless of this setting — this option controls whether an additional roll-up annotation is created at the batch-item level."
+      "help": "Adds a character count annotation for each batch item. A batch item typically corresponds to a single input/output document pair in the pipeline."
     },
     "countInDocuments": {
-      "help": "Adds a character count annotation for each document. The count aggregates all text units within that document.\n\nUseful when processing multiple documents and you need per-document character totals for reporting or scoping."
+      "help": "Adds a character count annotation for each document. Enable this when you need per-document character counts, e.g. for per-file reporting."
     },
     "countInSubDocuments": {
-      "help": "Adds a character count annotation for each sub-document. Sub-documents are logical subdivisions within a document (e.g., embedded content or document parts).\n\nOnly meaningful when the input filter produces sub-document boundaries."
+      "help": "Adds a character count annotation for each sub-document. Sub-documents occur when a filter extracts embedded content (e.g. HTML inside an XML file)."
     },
     "countInGroups": {
-      "help": "Adds a character count annotation for each group. Groups are structural containers within a document (e.g., table rows, list items).\n\nOnly meaningful when the input filter produces group boundaries."
+      "help": "Adds a character count annotation for each group resource. Groups are logical collections of text units defined by the filter (e.g. table rows, list items)."
     },
     "bufferSize": {
-      "help": "Controls the size of the internal text buffer used during character counting.\n\nA value of `0` means no explicit buffer size limit (default behavior).",
-      "values": "`0` = default (no explicit limit). Positive integers set the buffer size in characters."
+      "help": "Controls the size of the internal text buffer used during counting. A value of `0` uses the default buffer size. Increase for very large documents if memory permits.",
+      "values": "`0` for default size, or a positive integer specifying the buffer size in characters."
+    }
+  },
+  "propertySuggestions": {
+    "countInBatch": {
+      "description": "Add character count annotation aggregated per batch"
+    },
+    "countInBatchItems": {
+      "description": "Add character count annotation for each batch item"
+    },
+    "countInDocuments": {
+      "description": "Add character count annotation for each document"
+    },
+    "countInSubDocuments": {
+      "description": "Add character count annotation for each sub-document"
+    },
+    "countInGroups": {
+      "description": "Add character count annotation for each group"
+    },
+    "bufferSize": {
+      "description": "Size of the internal text buffer used during counting (0 for default)"
     }
   },
   "processingNotes": [
-    "Character count annotations are **always** created at the text unit level — the boolean options control whether *additional* roll-up annotations are created at higher structural levels (batch, document, group, etc.).",
-    "Counts follow the [GMX-V 2.0 standard](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html) (Global Information Management Metrics eXchange — Volume).",
-    "The generated annotations can be consumed by downstream steps such as the **Scoping Report Step** to produce character count reports."
+    "Character counts always include a per-text-unit annotation regardless of parameter settings; the boolean options control additional aggregation levels.",
+    "Counts follow the [GMX-V 2.0 standard](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html).",
+    "Count annotations are stored as resource-level annotations consumable by downstream steps such as the Scoping Report Step."
   ],
   "limitations": [],
   "examples": [
     {
-      "title": "Scoping report with per-document counts",
-      "description": "Enable `countInDocuments` to get per-document character count annotations, then pipe the output to the Scoping Report Step to generate a report showing character counts broken down by document."
+      "title": "Character count for scoping report",
+      "description": "Enable batch and document-level counts, then feed the results into the Scoping Report Step to generate a per-document word/character count report."
     }
   ],
+  "fullDoc": "# Character Count Step\n\nPerforms character counts on different parts of a set of documents, following the [GMX-V 2.0 standard](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html). Character counts are saved as annotations on text units and optionally on higher-level resources (batches, documents, groups). These annotations can be consumed by other steps such as the Scoping Report Step to generate reports.\n\nTakes: Filter events. Sends: Filter events.\n\n## Parameters\n\nA character count annotation is always set on each text unit. The following options control additional aggregation levels:\n\n#### Batches\nAdds a character count annotation aggregated across the entire batch. Useful for getting a total count across all documents processed in a pipeline run. Enabled by default.\n\n#### Batch Items\nAdds a character count annotation for each batch item. A batch item typically corresponds to a single input/output document pair in the pipeline. Enabled by default.\n\n#### Documents\nAdds a character count annotation for each document. Enable this when you need per-document character counts, e.g. for per-file reporting. Disabled by default.\n\n#### Sub-documents\nAdds a character count annotation for each sub-document. Sub-documents occur when a filter extracts embedded content (e.g. HTML inside an XML file). Disabled by default.\n\n#### Groups\nAdds a character count annotation for each group resource. Groups are logical collections of text units defined by the filter (e.g. table rows, list items). Disabled by default.\n\n#### Size of Text Buffer\nControls the size of the internal text buffer used during counting. A value of `0` uses the default buffer size. Increase for very large documents if memory permits.\n\n## Notes\n\n- Counts follow the GMX-V 2.0 standard.\n- Count annotations are stored as resource-level annotations consumable by downstream steps such as the Scoping Report Step.\n- A per-text-unit annotation is always generated regardless of parameter settings.\n\n## Limitations\n\nNone known.\n\n## Examples\n\nEnable batch and document-level counts, then feed the results into the Scoping Report Step to generate a per-document word/character count report.",
   "stepId": "character-count",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/character_count_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Character_Count_Step"
 }

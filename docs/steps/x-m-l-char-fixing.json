@@ -1,40 +1,48 @@
 {
   "filterName": "XML Characters Fixing",
-  "overview": "Replaces characters that are invalid in XML by a configurable marker string. The step processes raw documents, recognizing both raw invalid characters and numeric character references (NCRs) such as `&#000B;` or `&#11;`. Output encoding matches the input encoding, and Byte-Order-Marks are preserved if present.",
+  "overview": "Replaces characters that are invalid in XML documents with a configurable marker string. The step processes raw documents, recognizing both raw invalid characters and numeric character references (NCRs) such as `&#000B;` or `&#11;`. Output preserves the input encoding, and Byte-Order-Marks are maintained if present.",
   "parameters": {
     "replacement": {
-      "help": "The string used to replace each invalid XML character. Must be a valid [Java Formatter string](http://download.oracle.com/javase/6/docs/api/java/util/Formatter.html). The formatter always receives the **integer value of the Unicode code-point** as its argument.\n\nTo **remove** invalid characters entirely, leave this field empty.\n\nSome characters have special meaning in Java Formatter syntax and may need escaping — for example, literal `%` must be written as `%%`.",
-      "values": "A Java `Formatter` pattern string. The single format argument is the integer Unicode code-point value. Use `%X` for uppercase hex, `%d` for decimal, `%03X` for zero-padded hex, etc. Literal `%` must be escaped as `%%`.",
+      "help": "The replacement string uses [Java Formatter syntax](http://download.oracle.com/javase/6/docs/api/java/util/Formatter.html). The parameter passed to the formatter is always the **integer value** of the Unicode code-point of the invalid character.\n\nTo **remove** invalid characters entirely, leave this field empty.\n\nSpecial characters like `%` must be escaped (e.g., `%%` to produce a literal `%`).",
+      "values": "A [Java Formatter string](http://download.oracle.com/javase/6/docs/api/java/util/Formatter.html). Common format specifiers:\n- `%X` — uppercase hexadecimal\n- `%03X` — zero-padded 3-digit hex\n- `%d` — decimal integer\n- `%%` — literal percent sign",
       "examples": [
-        "`_#x%X;` — replaces U+000B with `_#xB;` (XML-like NCR with underscore prefix)",
-        "`x%03X` — replaces U+000B with `x00B` (zero-padded 3-digit hex)",
-        "`?` — replaces any invalid character with a literal question mark",
-        "`&#xFFFD;` — replaces with the Unicode replacement character NCR",
-        "`%%%d%%` — replaces U+000B with `%11%` (decimal value wrapped in literal percent signs)",
-        "*(empty string)* — removes invalid characters entirely"
+        "`_#x%X;` — replaces U+000B with `_#xB;` (default)",
+        "`x%03X` — replaces U+000B with `x0B` (zero-padded hex)",
+        "`?` — replaces any invalid character with a literal `?`",
+        "`&#xFFFD;` — replaces with the Unicode replacement character reference",
+        "`%%%d%%` — replaces U+000B with `%11%` (escaped percent signs around decimal value)",
+        "Empty string — removes invalid characters entirely"
       ]
     }
   },
   "processingNotes": [
-    "Input encoding must be specified unless the file has a Byte-Order-Mark (BOM).",
-    "Output is written in the same encoding as the input document.",
-    "Byte-Order-Marks are preserved if present in the input.",
-    "The step recognizes both raw invalid characters and numeric character references (NCRs) such as `&#000B;` or `&#11;`."
+    "Input encoding must be specified unless the document has a Byte-Order-Mark (BOM).",
+    "Output encoding matches the input encoding; BOMs are preserved if present.",
+    "The step recognizes both raw invalid characters and numeric character references (NCRs) like `&#000B;` or `&#11;`."
   ],
-  "limitations": [],
+  "limitations": [
+    "None known."
+  ],
   "examples": [
     {
-      "title": "Replace invalid characters with XML-style NCR markers",
-      "description": "Uses the default replacement string to convert invalid XML characters into underscore-prefixed hex NCRs, making them visible and parseable.",
+      "title": "Replace invalid characters with hex reference markers",
+      "description": "Using the default replacement string to convert invalid XML characters into hex-based markers that are visually identifiable in the output.",
       "config": "```yaml\nreplacement: \"_#x%X;\"\n```",
-      "output": "```\nU+000B → _#xB;\n```"
+      "input": "```xml\n<text>Hello\\u000bWorld</text>\n```",
+      "output": "```xml\n<text>Hello_#xB;World</text>\n```"
     },
     {
       "title": "Remove invalid characters",
-      "description": "Leaving the replacement string empty causes all invalid XML characters to be silently removed from the document.",
+      "description": "Leave the replacement string empty to silently strip all invalid XML characters from the document.",
       "config": "```yaml\nreplacement: \"\"\n```"
+    },
+    {
+      "title": "Replace with Unicode replacement character",
+      "description": "Replace invalid characters with an NCR for U+FFFD (the standard Unicode replacement character).",
+      "config": "```yaml\nreplacement: \"&#xFFFD;\"\n```"
     }
   ],
+  "fullDoc": "# XML Characters Fixing\n\nReplaces characters that are invalid in XML documents with a configurable marker string. The step processes raw documents, recognizing both raw invalid characters and numeric character references (NCRs) such as `&#000B;` or `&#11;`. Output preserves the input encoding, and Byte-Order-Marks are maintained if present.\n\n## Parameters\n\n#### Replacement String\n\nThe replacement string uses [Java Formatter syntax](http://download.oracle.com/javase/6/docs/api/java/util/Formatter.html). The parameter passed to the formatter is always the **integer value** of the Unicode code-point of the invalid character.\n\nTo **remove** invalid characters entirely, leave this field empty.\n\nSpecial characters like `%` must be escaped (e.g., `%%` to produce a literal `%`).\n\n**Examples:**\n\n| Invalid Character | Replacement String | Result |\n|---|---|---|\n| U+000B | `x%03X` | x0B |\n| U+000B | `_#x%X;` | _#xB; |\n| U+000B | `?` | ? |\n| U+000B | `&#xFFFD;` | &#xFFFD; |\n| U+000B | `%%%d%%` | %11% |\n\n## Notes\n\n- Input encoding must be specified unless the document has a Byte-Order-Mark (BOM).\n- Output encoding matches the input encoding; BOMs are preserved if present.\n- The step recognizes both raw invalid characters and numeric character references (NCRs) like `&#000B;` or `&#11;`.\n\n## Limitations\n\nNone known.",
   "stepId": "x-m-l-char-fixing",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/xml_characters_fixing_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/XML_Characters_Fixing_Step"
 }

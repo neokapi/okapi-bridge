@@ -1,6 +1,6 @@
 {
-  "filterName": "Inline Codes Removal",
-  "overview": "Removes inline codes (or parts of inline codes) from the text units of a document. Inline codes are spans of data that should be left untouched inside translatable text, such as `<b>` tags in HTML paragraphs. The step offers three removal modes: stripping markers only, stripping content only, or stripping both entirely.",
+  "filterName": "Inline Codes Removal Step",
+  "overview": "Removes inline codes or content of inline codes from text units in a document. Inline codes are spans of data that should normally be left untouched inside translatable text (e.g., `<b>` tags in HTML). The step offers three removal modes: removing just the markers, just the content, or both. It operates on filter events and can selectively target source text, target text, and non-translatable units.",
   "parameters": {
     "stripSource": {
       "help": "Applies the selected removal action to the **source** text of each text unit. When disabled, source inline codes are left intact regardless of the removal mode chosen."
@@ -9,42 +9,66 @@
       "help": "Applies the selected removal action to the **target** text of each text unit. When disabled, target inline codes are left intact regardless of the removal mode chosen."
     },
     "mode": {
-      "help": "An inline code has two parts: **markers** (always present) and **content** (optional). For example, in XLIFF:\n\n```xml\n<bpt id=\"1\">&lt;b&gt;</bpt>\n```\n\n- `<bpt id=\"1\">...</bpt>` = marker\n- `&lt;b&gt;` = content\n\nThe three modes control which parts are stripped.",
-      "values": "Integer selecting the removal mode:\n- **0** — Remove code **marker**, but keep code content (content becomes part of the text)\n- **1** — Remove code **content**, but keep code marker (code is generalized; original format data is lost)\n- **2** — Remove code **marker and content** (entire inline code is removed with no trace)"
+      "help": "An inline code has two parts: **markers** (always present) and **content** (optional).\n\nFor example, in XLIFF: `<bpt id=\"1\">&lt;b&gt;</bpt>` — the `<bpt>` / `</bpt>` tags are the **marker**, and `&lt;b&gt;` is the **content**.\n\n- **Remove code marker, but keep code content** — The content becomes part of the regular text (e.g., the literal `<b>` appears as text).\n- **Remove code content, but keep code marker** — The inline code still exists structurally but is generalized; original format data cannot be recovered.\n- **Remove code marker and code content** — The entire inline code is removed with no trace left.",
+      "values": "Integer values mapping to removal modes:\n- `0` — Remove marker only, keep content\n- `1` — Remove content only, keep marker\n- `2` — Remove both marker and content"
     },
     "includeNonTranslatable": {
-      "help": "Controls whether the removal action is also applied to text units marked as non-translatable. If disabled, all non-translatable text units are left completely untouched."
+      "help": "Controls whether the removal action is also applied to text units marked as **non-translatable**. When disabled, all non-translatable text units are left completely untouched."
     },
     "replaceWithSpace": {
-      "help": "Replaces line-break inline codes with a space character instead of removing them entirely. A code qualifies as a line-break code if its type is `Code.TYPE_LB` or its content contains any of these expressions (case-insensitive):\n\n`<br>`, `<br />`, `<br/>`, `\\n`, `\\r`, `\\u0085`, `\\u2028`, `\\u2029`",
+      "help": "Replaces line-break inline codes with a space character instead of simply removing them. A code is treated as a line break if its type is `Code.TYPE_LB` or its content contains any of the following (case-insensitive):\n\n- `<br>`, `<br />`, `<br/>`\n- `\\n`, `\\r`\n- `\\u0085`, `\\u2028`, `\\u2029`\n\nThis prevents words on adjacent lines from being concatenated when codes are stripped.",
       "notes": [
-        "This option **only applies** when `mode` is set to **2** (Remove code marker and code content). It has no effect in other modes."
+        "This option only applies when the **Remove code marker and code content** mode is selected (mode = 2)."
       ],
       "dependsOn": [
         {
           "property": "mode",
-          "condition": "Only effective when mode = 2 (remove marker and content)"
+          "condition": "only applies when mode is set to remove both marker and content (mode = 2)"
         }
       ]
     }
   },
-  "examples": [
-    {
-      "title": "Strip all inline codes from XLIFF source",
-      "description": "Completely removes inline codes (markers + content) from the source text, replacing line-break codes with spaces to preserve word boundaries.",
-      "config": "```yaml\nstripSource: true\nstripTarget: false\nmode: 2\nreplaceWithSpace: true\nincludeNonTranslatable: true\n```"
+  "propertySuggestions": {
+    "stripSource": {
+      "description": "Apply the selected removal action to the source text of each text unit"
     },
-    {
-      "title": "Generalize inline codes (strip content only)",
-      "description": "Removes the format-specific content from inline codes while preserving their markers. This generalizes the codes so they no longer carry original format data, which can be useful for format-neutral processing.",
-      "config": "```yaml\nstripSource: true\nstripTarget: true\nmode: 1\nincludeNonTranslatable: false\n```"
+    "stripTarget": {
+      "description": "Apply the selected removal action to the target text of each text unit"
+    },
+    "includeNonTranslatable": {
+      "description": "Apply the removal action even to text units marked as non-translatable"
+    },
+    "replaceWithSpace": {
+      "description": "Replace line-break inline codes with spaces instead of removing them entirely (only when removing both marker and content)"
     }
+  },
+  "limitations": [
+    "None known."
   ],
   "processingNotes": [
-    "The step operates on filter events and passes modified filter events downstream.",
-    "Both source and target stripping are enabled by default — disable explicitly if you only want to strip one side."
+    "The step operates on filter events — it must be placed after a filter in the pipeline.",
+    "Both source and target stripping are enabled by default, so the step processes both sides unless explicitly disabled."
   ],
-  "limitations": [],
+  "examples": [
+    {
+      "title": "Strip all inline codes from XLIFF source and target",
+      "description": "Removes both markers and content from all text units, including non-translatable ones. This is the default configuration.",
+      "config": "```yaml\nstripSource: true\nstripTarget: true\nmode: 2\nincludeNonTranslatable: true\nreplaceWithSpace: false\n```",
+      "input": "```xml\n<source>Click <bpt id=\"1\">&lt;b&gt;</bpt>here<ept id=\"1\">&lt;/b&gt;</ept> to continue</source>\n```",
+      "output": "```xml\n<source>Click here to continue</source>\n```"
+    },
+    {
+      "title": "Generalize codes by removing content only",
+      "description": "Keeps the inline code structure but strips the original format data. Useful when you want to preserve code positioning but don't need the underlying markup.",
+      "config": "```yaml\nstripSource: true\nstripTarget: true\nmode: 1\n```"
+    },
+    {
+      "title": "Replace line-break codes with spaces",
+      "description": "When removing all code parts, line-break codes (e.g., `<br>` tags) are replaced with spaces to prevent words from merging.",
+      "config": "```yaml\nmode: 2\nreplaceWithSpace: true\nstripSource: true\nstripTarget: true\n```"
+    }
+  ],
+  "fullDoc": "# Inline Codes Removal Step\n\nRemoves inline codes or content of inline codes from text units in a document. Inline codes are spans of data that should normally be left untouched inside translatable text (e.g., `<b>` tags in HTML). The step offers three removal modes: removing just the markers, just the content, or both. It operates on filter events and can selectively target source text, target text, and non-translatable units.\n\n## Parameters\n\n#### What to remove (`mode`)\n\nAn inline code has two parts: **markers** (always present) and **content** (optional).\n\nFor example, in XLIFF: `<bpt id=\"1\">&lt;b&gt;</bpt>` — the `<bpt>` / `</bpt>` tags are the **marker**, and `&lt;b&gt;` is the **content**.\n\nAvailable modes:\n- **Remove code marker, but keep code content** (0) — The content becomes part of the regular text (e.g., the literal `<b>` appears as text).\n- **Remove code content, but keep code marker** (1) — The inline code still exists structurally but is generalized; original format data cannot be recovered.\n- **Remove code marker and code content** (2) — The entire inline code is removed with no trace left.\n\nDefault: 2 (remove both).\n\n#### Strip codes in the source text (`stripSource`)\n\nApplies the selected removal action to the **source** text of each text unit. When disabled, source inline codes are left intact regardless of the removal mode chosen.\n\nDefault: true.\n\n#### Strip codes in the target text (`stripTarget`)\n\nApplies the selected removal action to the **target** text of each text unit. When disabled, target inline codes are left intact regardless of the removal mode chosen.\n\nDefault: true.\n\n#### Apply to non-translatable text units (`includeNonTranslatable`)\n\nControls whether the removal action is also applied to text units marked as **non-translatable**. When disabled, all non-translatable text units are left completely untouched.\n\nDefault: true.\n\n#### Replace line break codes with spaces (`replaceWithSpace`)\n\nReplaces line-break inline codes with a space character instead of simply removing them. A code is treated as a line break if its type is `Code.TYPE_LB` or its content contains any of the following (case-insensitive):\n\n- `<br>`, `<br />`, `<br/>`\n- `\\n`, `\\r`\n- `\\u0085`, `\\u2028`, `\\u2029`\n\nThis prevents words on adjacent lines from being concatenated when codes are stripped.\n\n> **Note:** This option only applies when the **Remove code marker and code content** mode is selected (mode = 2).\n\nDefault: false.\n\n## Limitations\n\n- None known.\n\n## Notes\n\n- The step operates on filter events — it must be placed after a filter in the pipeline.\n- Both source and target stripping are enabled by default, so the step processes both sides unless explicitly disabled.\n\n## Examples\n\n### Strip all inline codes from XLIFF\n\nRemoves both markers and content from all text units (default configuration):\n\n```yaml\nstripSource: true\nstripTarget: true\nmode: 2\nincludeNonTranslatable: true\nreplaceWithSpace: false\n```\n\nInput:\n```xml\n<source>Click <bpt id=\"1\">&lt;b&gt;</bpt>here<ept id=\"1\">&lt;/b&gt;</ept> to continue</source>\n```\n\nOutput:\n```xml\n<source>Click here to continue</source>\n```\n\n### Replace line-break codes with spaces\n\nWhen removing all code parts, line-break codes (e.g., `<br>` tags) are replaced with spaces to prevent words from merging:\n\n```yaml\nmode: 2\nreplaceWithSpace: true\nstripSource: true\nstripTarget: true\n```",
   "stepId": "codes-removal",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/inline_codes_removal_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Inline_Codes_Removal_Step"
 }

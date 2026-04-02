@@ -4,6 +4,14 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "path": {}
+    "path": {},
+    "preserveWhitespace": {
+      "title": "Preserve Whitespace",
+      "description": "Prevents collapsing of consecutive whitespace characters in extracted text."
+    },
+    "customCodes": {
+      "title": "Custom Inline Codes",
+      "description": "Defines custom regex patterns to be treated as inline codes during extraction."
+    }
   }
 }

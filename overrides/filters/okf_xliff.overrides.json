@@ -30,6 +30,10 @@
     },
     "useApprovedOnly": {
       "description": "Only use approved translations in output."
+    },
+    "xtmAttributes": {
+      "title": "XTM Attributes",
+      "description": "Process XTM-specific attributes in the XLIFF document."
     }
   }
 }

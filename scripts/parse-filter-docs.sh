@@ -301,13 +301,11 @@ for wiki_file in "$RAW_DIR"/*.wiki; do
     # Read wiki content
     wiki_content=$(cat "$wiki_file")
     
-    # Construct the wiki URL by looking up the actual page name from index.html
-    index_file="$RAW_DIR/index.html"
-    # Match the basename (with hyphens→underscores, case-insensitive) against real wiki page names
-    basename_pattern=$(echo "$basename" | sed 's/-/_/g')
-    wiki_page=$(grep -oi "wiki/index\.php/${basename_pattern}[^\"]*" "$index_file" 2>/dev/null | head -1 | sed 's|wiki/index.php/||')
+    # Construct the wiki URL from the manifest (has canonical Title_Case page names)
+    wiki_page=$(jq -r --arg b "$basename" '
+        .filters[] | select((. | ascii_downcase | gsub("_"; "-")) == $b)
+    ' "$DOCS_DIR/manifest.json" 2>/dev/null | head -1)
     if [ -z "$wiki_page" ]; then
-        # Fallback: underscores only (title-casing via sed \u is not portable)
         wiki_page=$(echo "$basename" | sed 's/-/_/g')
     fi
     wiki_url="https://okapiframework.org/wiki/index.php/${wiki_page}"
@@ -519,12 +517,11 @@ else
         # Read wiki content
         wiki_content=$(cat "$wiki_file")
 
-        # Construct the wiki URL by looking up the actual page name from index.html
-        index_file="$RAW_DIR/index.html"
-        basename_pattern=$(echo "$basename" | sed 's/-/_/g')
-        wiki_page=$(grep -oi "wiki/index\.php/${basename_pattern}[^\"]*" "$index_file" 2>/dev/null | head -1 | sed 's|wiki/index.php/||')
+        # Construct the wiki URL from the manifest (has canonical Title_Case page names)
+        wiki_page=$(jq -r --arg b "$basename" '
+            .steps[] | select((. | ascii_downcase | gsub("_"; "-")) == $b)
+        ' "$DOCS_DIR/manifest.json" 2>/dev/null | head -1)
         if [ -z "$wiki_page" ]; then
-            # Fallback: underscores only (title-casing via sed \u is not portable)
             wiki_page=$(echo "$basename" | sed 's/-/_/g')
         fi
         wiki_url="https://okapiframework.org/wiki/index.php/${wiki_page}"

@@ -44,68 +44,107 @@
   "properties": {
     "leverage": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Leverage Text Units",
+      "description": "Enable leveraging of text units with existing translations."
     },
     "resourceClassName": {
       "type": "string",
-      "default": "net.sf.okapi.connectors.pensieve.PensieveTMConnector"
+      "default": "net.sf.okapi.connectors.pensieve.PensieveTMConnector",
+      "title": "Translation Resource",
+      "description": "Java class name of the translation resource connector (TM or MT engine)."
     },
     "noQueryThreshold": {
       "type": "integer",
-      "default": 101
+      "default": 101,
+      "title": "No-Query Threshold",
+      "description": "Skip query if an existing candidate scores at or above this value (101 = always query)."
     },
     "threshold": {
       "type": "integer",
-      "default": 95
+      "default": 95,
+      "title": "Minimum Match Score",
+      "description": "Accept only matches with a score equal to or above this threshold."
     },
     "fillTarget": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Fill Target with Translation",
+      "description": "Copy the best translation candidate into the target content."
     },
     "fillTargetThreshold": {
       "type": "integer",
-      "default": 95
+      "default": 95,
+      "title": "Fill Target Threshold",
+      "description": "Minimum match score required to copy the best candidate into the target."
     },
     "fillIfTargetIsEmpty": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Only If Target Is Empty",
+      "description": "Fill the target only when it has no existing content."
     },
     "fillIfTargetIsSameAsSource": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Also If Target Equals Source",
+      "description": "Also fill the target when its content is identical to the source."
     },
     "downgradeIdenticalBestMatches": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Downgrade Identical Exact Matches",
+      "description": "Reduce score by 1% when multiple identical exact matches are returned."
     },
     "makeTMX": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Generate TMX Document",
+      "description": "Create a TMX file with all leveraged matches."
     },
     "tmxPath": {
       "type": "string",
       "default": "",
-      "x-path": { "type": "file", "role": "output", "resourceKind": "tm", "accepts": ["tmx"] }
+      "x-path": {
+        "type": "file",
+        "role": "output",
+        "resourceKind": "tm",
+        "accepts": [
+          "tmx"
+        ]
+      },
+      "title": "TMX Output Path",
+      "description": "File path for the generated TMX document."
     },
     "useMTPrefix": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Add MT Prefix to Source",
+      "description": "Add an MT-specific prefix to the source text for MT-origin entries."
     },
     "useTargetPrefix": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Add Prefix to Translation",
+      "description": "Add a prefix to leveraged translations based on match score."
     },
     "targetPrefix": {
       "type": "string",
-      "default": "FUZZY__"
+      "default": "FUZZY__",
+      "title": "Target Prefix Text",
+      "description": "Prefix string to prepend to leveraged translations."
     },
     "targetPrefixThreshold": {
       "type": "integer",
-      "default": 99
+      "default": 99,
+      "title": "Prefix Score Threshold",
+      "description": "Add the prefix when the match score is equal to or below this value."
     },
     "copySourceOnNoText": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Copy Source If No Text",
+      "description": "Copy source into target when the source has no translatable text."
     }
   }
 }

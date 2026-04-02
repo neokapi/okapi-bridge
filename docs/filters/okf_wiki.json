@@ -1,19 +1,22 @@
 {
   "filterName": "Wiki Filter",
-  "overview": "The Wiki Filter extracts translatable text from wiki markup. Currently the only supported markup style is [DokuWiki](https://www.dokuwiki.org/dokuwiki). It extracts text from headers, paragraphs, list items, image captions, and table cells/headers, treating wiki formatting syntax as inline codes.",
+  "overview": "The Wiki Filter extracts translatable text from wiki markup. Currently the only supported markup style is [Dokuwiki](https://www.dokuwiki.org/dokuwiki). It extracts text from headers, paragraphs, list items, image captions, and table cells/headers. All Dokuwiki syntax described in the [Dokuwiki syntax reference](https://www.dokuwiki.org/syntax) is supported for inline codes.",
   "parameters": {
-    "preserve_whitespace": {
-      "help": "Prevents the filter from collapsing whitespace in the extracted content. Set to `true` to keep all original whitespace intact.\n\nConfigure in YAML as:\n```yaml\npreserve_whitespace: true\n```"
+    "preserveWhitespace": {
+      "help": "Prevents the filter from collapsing whitespace in extracted text. By default, consecutive whitespace characters are collapsed into a single space. Set to `true` to preserve the original whitespace as-is.",
+      "notes": [],
+      "examples": [
+        "`preserve_whitespace: true` — keeps all original spacing intact"
+      ]
     },
-    "simplifierRules": {
-      "help": "Defines rules for simplifying how inline codes are represented in extracted segments. Use to reduce complexity of inline code placeholders for translators.",
-      "seeAlso": "Simplifier_Rules"
-    },
-    "moveLeadingAndTrailingCodesToSkeleton": {
-      "help": "Inline codes that appear at the very beginning or end of a segment are moved out of the translatable content and into the skeleton. This simplifies segments for translators when boundary codes don't affect the translatable text."
-    },
-    "mergeAdjacentCodes": {
-      "help": "When multiple inline codes appear next to each other with no translatable text between them, they are combined into a single placeholder code. This reduces clutter in segments that have consecutive formatting or markup tags."
+    "customCodes": {
+      "help": "Defines custom inline codes beyond the built-in Dokuwiki syntax. Each entry can be either:\n\n- A **placeholder** (self-closing code) using `pattern` — a single regex matching the entire inline element\n- An **opening/closing pair** using `start_pattern` and `end_pattern` — two regexes matching the start and end tags respectively\n\nMatches are converted into inline codes within translation units.",
+      "values": "Array of objects. Each object has either:\n- `pattern`: a regex string for placeholder codes\n- `start_pattern` + `end_pattern`: two regex strings for paired codes\n\nRegex patterns must match non-zero-width runs of text.",
+      "notes": [],
+      "examples": [
+        "Placeholder code: `{pattern: \"\\\\[(path|menu)[^\\\\]]*\\\\]\"}`",
+        "Paired code: `{start_pattern: \"<custom>\", end_pattern: \"</custom>\"}`"
+      ]
     }
   },
   "limitations": [
@@ -21,21 +24,29 @@
     "Embedded HTML, PHP, etc., is not extracted."
   ],
   "processingNotes": [
-    "If the file has a Unicode Byte-Order-Mark, the corresponding encoding (UTF-8, UTF-16, etc.) is used; otherwise the default encoding specified when opening the document is used.",
-    "All DokuWiki syntax as described at dokuwiki.org/syntax is supported for inline codes."
+    "If the file has a Unicode Byte-Order-Mark, the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically.",
+    "If no BOM is present, the default encoding specified when opening the document is used.",
+    "All standard Dokuwiki syntax is recognized for inline codes."
   ],
   "examples": [
     {
-      "title": "DokuWiki markup extraction",
-      "description": "The filter extracts translatable text (highlighted below) from standard DokuWiki structures: headers, paragraphs, list items, image captions, and table cells.",
-      "input": "```wiki\n=== Header ===\nParagraph\n * List item\n  * List item\n\n{{image.jpg|Image caption}}\n\n^ Table header 1 ^ Table header 2 |\n| Table cell 1 | Table cell 2 |\n```"
-    },
-    {
       "title": "Custom inline codes configuration",
-      "description": "Define custom inline codes using regex patterns. Use `pattern` for standalone placeholders, or `start_pattern`/`end_pattern` for paired opening/closing tags.",
-      "config": "```yaml\ncustom_codes:\n  - pattern: \"\\\\[(path|menu)[^\\\\]]*\\\\]\"\n  - {start_pattern: \"<custom>\", end_pattern: \"</custom>\"}\n```"
+      "description": "Defines a placeholder code for `[path:...]` and `[menu:...]` markup, plus a paired code for custom tags.",
+      "config": "```yaml\npreserve_whitespace: false\ncustom_codes:\n  - pattern: \"\\\\[(path|menu)[^\\\\]]*\\\\]\"\n  - start_pattern: \"<custom>\"\n    end_pattern: \"</custom>\"\n```",
+      "input": "```\n=== Page Title ===\nClick [menu:File > Save] to save.\n\n^ Header 1 ^ Header 2 |\n| Cell 1   | Cell 2   |\n```"
     }
   ],
+  "propertySuggestions": {
+    "preserveWhitespace": {
+      "title": "Preserve Whitespace",
+      "description": "Prevents collapsing of consecutive whitespace characters in extracted text."
+    },
+    "customCodes": {
+      "title": "Custom Inline Codes",
+      "description": "Defines custom regex patterns to be treated as inline codes during extraction."
+    }
+  },
+  "fullDoc": "# Wiki Filter\n\nThe Wiki Filter extracts translatable text from wiki markup. Currently the only supported markup style is [Dokuwiki](https://www.dokuwiki.org/dokuwiki). It extracts text from headers, paragraphs, list items, image captions, and table cells/headers. All Dokuwiki syntax described in the [Dokuwiki syntax reference](https://www.dokuwiki.org/syntax) is supported for inline codes.\n\n## Parameters\n\n### Preserve Whitespace\n\nPrevents the filter from collapsing whitespace in extracted text. By default, consecutive whitespace characters are collapsed into a single space. Set to `true` to preserve the original whitespace as-is.\n\nUsage: `preserve_whitespace: true`\n\n### Custom Inline Codes\n\nDefines custom inline codes beyond the built-in Dokuwiki syntax. Each entry can be either:\n\n- A **placeholder** (self-closing code) using `pattern` — a single regex matching the entire inline element\n- An **opening/closing pair** using `start_pattern` and `end_pattern` — two regexes matching the start and end tags respectively\n\nMatches are converted into inline codes within translation units. Regex patterns must match non-zero-width runs of text.\n\nExample configuration:\n\n```yaml\ncustom_codes:\n  - pattern: \"\\\\[(path|menu)[^\\\\]]*\\\\]\"\n  - start_pattern: \"<custom>\"\n    end_pattern: \"</custom>\"\n```\n\n## Limitations\n\n- Attributes of inline codes (link and image URLs, etc.) are not exposed for translation or special processing.\n- Embedded HTML, PHP, etc., is not extracted.\n\n## Notes\n\n- If the file has a Unicode Byte-Order-Mark, the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically.\n- If no BOM is present, the default encoding specified when opening the document is used.\n- All standard Dokuwiki syntax is recognized for inline codes.\n\n## Examples\n\n### Dokuwiki input with extractable text\n\n```\n=== Page Title ===\nParagraph text here.\n  * List item 1\n    * Nested list item\n\n{{image.jpg|Image caption}}\n\n^ Table header 1 ^ Table header 2 |\n| Table cell 1   | Table cell 2   |\n```\n\nThe filter extracts: \"Page Title\", \"Paragraph text here.\", \"List item 1\", \"Nested list item\", \"Image caption\", \"Table header 1\", \"Table header 2\", \"Table cell 1\", and \"Table cell 2\".",
   "filterId": "okf_wiki",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Wiki_Filter"
 }

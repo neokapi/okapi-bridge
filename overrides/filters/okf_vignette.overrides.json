@@ -10,7 +10,26 @@
     "localeId": {},
     "quoteModeDefined": {},
     "quoteMode": {},
-    "monolingual": {},
-    "useCDATA": {}
+    "monolingual": {
+      "title": "Monolingual Mode",
+      "description": "Process all importContentInstance elements without requiring source/target pairing."
+    },
+    "useCDATA": {},
+    "elementNames": {
+      "title": "Attribute Elements to Extract",
+      "description": "Comma-separated list of name attribute values for the <attribute> elements to extract."
+    },
+    "filterConfigurations": {
+      "title": "Filter Configurations",
+      "description": "Comma-separated list of filter configurations corresponding to each extractable element."
+    },
+    "sourceIdName": {
+      "title": "Source ID Element Name",
+      "description": "Name attribute value of the element containing the source ID that pairs source and target blocks."
+    },
+    "localeIdName": {
+      "title": "Locale ID Element Name",
+      "description": "Name attribute value of the element containing the locale identifier for a content block."
+    }
   }
 }

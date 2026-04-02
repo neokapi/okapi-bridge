@@ -1,100 +1,154 @@
 {
   "filterName": "Properties Filter",
-  "overview": "The Properties Filter processes Java `.properties` and `.lang` files based on the `java.util.Properties` specification, with additional compatibility features for other property file variants. Each entry's key becomes the text unit name, the value becomes the source content, and preceding comments optionally become translator notes. Note that XML-based Java properties should be processed with the XML Filter or XML Stream Filter instead.",
+  "overview": "The Properties Filter processes Java `.properties` files, extracting key-value pairs as translatable text units. It is based on the `java.util.Properties` specification and supports additional comment styles for compatibility with other properties-like formats. The filter supports localization directives, key-based filtering, sub-filters for embedded content (e.g., HTML), and inline code detection via regex patterns.",
   "parameters": {
     "identification.useLd": {
-      "help": "Enables recognition of localization directives — special comments that override default extraction behavior per-entry. Directives take precedence over key conditions.\n\nIf not set, any localization directives in the input file are silently ignored.",
-      "seeAlso": "Properties_Filter#Localization_directives"
+      "help": "Enables recognition of localization directives — special comments that override default extraction behavior. When disabled, any directives in the input are ignored.\n\nLocalization directives have **precedence over key conditions**. Their syntax is shared across all Okapi filters.",
+      "notes": [
+        "Directives override key conditions when both are active."
+      ]
     },
     "extraction.localizeOutside": {
-      "help": "Controls whether items **outside** the scope of any localization directive are extracted.\n\nSelecting to extract or not outside directives lets you mark up fewer parts of the source document — you only need directives for the exceptions.",
+      "help": "Controls whether items **not** within the scope of a localization directive are extracted.\n\n- **Enabled**: items outside directive scope are extracted (use directives only to *exclude*)\n- **Disabled**: only items explicitly within directive scope are extracted (use directives to *include*)\n\nThis lets you mark up fewer parts of the source — choose the minority case for your directives.",
       "dependsOn": [
         {
           "property": "identification.useLd",
-          "condition": "must be enabled for this setting to have effect"
+          "condition": "only meaningful when localization directives are enabled"
         }
       ]
     },
     "extraction.useKeyCondition": {
-      "help": "Enables key-based filtering of which entries to extract. When set, only entries whose key matches (or doesn't match) the regex pattern are extracted.\n\n**Note:** Localization directives have precedence over key conditions.",
+      "help": "Enables filtering of entries based on their property key. When enabled, only entries whose keys match (or don't match) the `keyCondition` regex are extracted.\n\nLocalization directives take precedence over key conditions.",
+      "notes": [
+        "Localization directives have precedence over key conditions."
+      ]
+    },
+    "extraction.extractOnlyMatchingKey": {
+      "help": "Controls the key filtering behavior:\n\n- **true** — Extract **only** items with keys matching the pattern\n- **false** — Extract all items **except** those with keys matching the pattern",
       "dependsOn": [
         {
-          "property": "identification.useLd",
-          "condition": "directives override key conditions when both are active"
+          "property": "extraction.useKeyCondition",
+          "condition": "only meaningful when key condition is enabled"
         }
       ]
     },
     "extraction.keyCondition": {
-      "help": "A regular expression tested against each entry's key. Only entries whose key matches (or doesn't match, depending on `extractOnlyMatchingKey`) are extracted.",
-      "values": "A valid Java regular expression pattern.",
+      "help": "Java regular expression tested against property keys to determine extraction.\n\nThe pattern uses `java.util.regex.Pattern` syntax.",
+      "values": "Java regular expression (e.g., `.*text.*`, `^msg\\\\..*`, `label\\\\w+`)",
       "examples": [
-        "`.*text.*` — matches keys containing \"text\" anywhere (e.g. `text.err1`, `menu_text_file`)",
-        "`^msg\\..*` — matches keys starting with `msg.`",
-        "`.*` — matches all keys"
+        "`.*text.*` — matches keys containing \"text\" (e.g., `text.err1`, `menu_text_file`)",
+        "`^msg\\.` — matches keys starting with \"msg.\"",
+        "`^(?!internal\\.).*` — matches all keys except those starting with \"internal.\""
+      ],
+      "dependsOn": [
+        {
+          "property": "extraction.useKeyCondition",
+          "condition": "only meaningful when key condition is enabled"
+        }
       ]
     },
-    "extraction.extractOnlyMatchingKey": {
-      "help": "Controls the action taken when a key matches the regex pattern:\n\n- **Enabled** — extract **only** items with keys matching the pattern\n- **Disabled** — extract all items **except** those with keys matching the pattern"
-    },
     "extraction.extraComments": {
-      "help": "Recognizes additional comment styles beyond strict Java property comments (`#` and `!`).\n\nWhen enabled, also recognizes:\n- Lines starting with `;`\n- Lines where `//` is the first non-whitespace sequence\n\n**Note:** `//` after a `=` is considered part of the entry value, not a comment."
+      "help": "Recognizes additional comment styles beyond strict Java properties comments (`#` and `!`):\n\n- Lines starting with `;`\n- Lines where `//` is the first non-whitespace sequence\n\n`//` after a `=` is treated as part of the value, not a comment."
     },
     "notes.commentsAreNotes": {
-      "help": "Includes comments preceding each entry as a note property on the corresponding text unit. All comment lines before an entry are grouped into a single note."
-    },
-    "output.convertLFandTab": {
-      "help": "Converts the escaped sequences `\\n` and `\\t` in extracted text to actual line-break and tab characters. All other escaped characters remain escaped."
+      "help": "Attaches comments preceding each entry as a **note** property on the corresponding text unit. All comment lines before an entry are grouped into a single note.\n\nUseful for providing translators with context about the purpose of each string."
     },
     "identification.idLikeResname": {
-      "help": "Uses the property key as the text-unit ID value. The key is already available as the `resname` (name property) — this option copies it to the ID as well.\n\n**Caution:** Key values may not be valid identifiers in all output formats. For example, XLIFF 2 requires the unit ID to be a NMTOKEN value.",
+      "help": "Uses the property key as the text unit ID. Note that the key is **already** extracted into the `name` property (`resname` in XLIFF) regardless of this setting.\n\nSome output formats have restrictions on ID values — for example, XLIFF 2.0 requires IDs to be NMTOKEN values, which property keys may not satisfy.",
       "notes": [
-        "The key value may not be a valid string for some output formats — e.g., in XLIFF2 the unit ID must be a NMTOKEN value."
+        "The key is always available as `resname` regardless of this setting.",
+        "Property keys may not be valid IDs for all output formats (e.g., XLIFF2 requires NMTOKEN)."
       ],
       "introducedIn": "M31"
     },
     "output.escapeExtendedChars": {
-      "help": "Converts all characters above U+007F into `\\uHHHH` Unicode escape sequences in the output.\n\nWhen disabled, only characters not supported by the output encoding are escaped."
+      "help": "Converts all characters above U+007F to Unicode escape sequences (`\\uHHHH`) in the output.\n\nWhen disabled, only characters not supported by the output encoding are escaped. Enable this for strict Java properties compatibility where the file must be ASCII-safe."
     },
     "output.useJavaEscapes": {
-      "help": "Retains Java property escape conventions (e.g. `\\uHHHH`) in extracted text rather than converting them to their character equivalents."
+      "help": "Retains Java property escape sequences in extracted text rather than converting them. When disabled (default), escapes are resolved to their actual characters during extraction."
+    },
+    "output.convertLFandTab": {
+      "help": "Converts `\\n` and `\\t` escape sequences to actual line-breaks and tabs during processing. All other escaped characters (e.g., `\\\\`, `\\:`, `\\=`) remain escaped.\n\nDisable this if your properties values use `\\n` and `\\t` as literal text rather than control characters."
     },
     "inlineCodes.enabled": {
-      "help": "Applies the specified regular expressions to extracted text, converting matches into inline codes.\n\nThe default pattern matches:\n- `printf`-style format specifiers (`%d`, `%s`, `%1$s`, etc.)\n- Escaped whitespace sequences (`\\n`, `\\r\\n`, `\\t`, etc.)\n- Java `MessageFormat` placeholders (`{0}`, `{1,date}`, etc.)"
-    },
-    "inlineCodes.rules": {
-      "help": "Regular expressions defining which text patterns to treat as inline codes. Each rule is a regex tested against extracted content — matches become non-translatable inline codes.\n\nThe default expression covers three common patterns:\n\n```regex\n((%(([-0+#]?)[-0+#]?)((\\ d\\$)?)(([\\d\\*]*(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn])\n|((\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)\n|(\\{\\d.*?\\}))\n```",
-      "examples": [
-        "`%s`, `%d`, `%1$s` — printf-style format specifiers",
-        "`\\\\n`, `\\\\t`, `\\\\r\\\\n` — escaped whitespace",
-        "`{0}`, `{1,date}` — Java MessageFormat placeholders"
-      ]
+      "help": "Enables pattern-based detection of inline codes in extracted text. Matches are converted to inline code placeholders, protecting them from translation.\n\nThe default patterns detect:\n- `printf`-style format specifiers (`%s`, `%d`, `%2$s`)\n- Escape sequences (`\\n`, `\\r`, `\\t`, etc.)\n- Java `MessageFormat` placeholders (`{0}`, `{1,date}`)"
     }
   },
   "processingNotes": [
-    "**Input encoding:** If the file has a Unicode BOM, that encoding is used; otherwise the default encoding specified in filter options applies.",
-    "**Output BOM handling:** For UTF-8 output, a BOM is written only if the input was also UTF-8 *and* had a BOM. Transcoding from non-UTF-8 to UTF-8 never produces a BOM.",
-    "**Line breaks** in the output match the original input line-break style.",
-    "Each property entry maps to a text unit: key → name (`resname`), value → source content, preceding comments → note (if enabled)."
+    "BOM handling: if the input has a Unicode BOM, the corresponding encoding is used. Output BOM is only preserved for UTF-8 → UTF-8 conversions where the input had a BOM.",
+    "Line-breaks in the output match the original input format.",
+    "Each property entry maps to one text unit: key → name (`resname`), value → source content, preceding comments → note (if enabled).",
+    "Java properties in XML format should be processed with the XML Filter or XML Stream Filter, not this filter."
   ],
-  "limitations": [],
+  "limitations": [
+    "None known."
+  ],
   "examples": [
     {
       "title": "Basic properties file",
-      "description": "A simple Java properties file showing key-value entries with comments. Both `=` and `:` separators are supported.",
-      "input": "```properties\n# Example of Java properties\n\nlabelOK= OK\nmsgBadFile: Invalid input file\n```"
+      "description": "A simple Java properties file showing the two key-value separator styles. Both `=` and `:` are supported.",
+      "input": "```properties\n# This is a comment\n\nlabelOK= OK\nmsgBadFile: Invalid input file\n```"
     },
     {
-      "title": "Key condition filtering",
-      "description": "Using the key condition `.*text.*` with **Extract only matching keys** enabled. Only entries whose key contains \"text\" are extracted — `key1` is skipped.",
-      "config": "```yaml\nextraction:\n  useKeyCondition: true\n  extractOnlyMatchingKey: true\n  keyCondition: \".*text.*\"\n```",
+      "title": "Key-based filtering",
+      "description": "Using the key condition `.*text.*` with **Extract only matching keys** enabled. Only keys containing \"text\" are extracted for translation.",
+      "config": "```json\n{\n  \"extraction\": {\n    \"useKeyCondition\": true,\n    \"extractOnlyMatchingKey\": true,\n    \"keyCondition\": \".*text.*\"\n  }\n}\n```",
       "input": "```properties\nkey1 = Text for key1\ntext.err1 = Text for text.err1\nmenu_text_file = Text for menu_text_file\n```",
-      "output": "```\nExtracted: \"Text for text.err1\", \"Text for menu_text_file\"\nSkipped:   \"Text for key1\"\n```"
+      "output": "```\nExtracted: text.err1, menu_text_file\nSkipped: key1\n```"
     },
     {
       "title": "HTML sub-filter configuration",
-      "description": "Use the `okf_properties-html-subfilter` configuration (or set the sub-filter to `okf_html`) to process HTML markup embedded within property values through the HTML Filter."
+      "description": "Using the `okf_properties-html-subfilter` configuration to process property values containing HTML markup through the HTML filter.",
+      "config": "```json\n{\n  \"extraction\": {\n    \"subfilter\": \"okf_html\"\n  }\n}\n```"
     }
   ],
+  "propertySuggestions": {
+    "useLd": {
+      "title": "Use Localization Directives",
+      "description": "Enable recognition of localization directives in comments to override default extraction behavior."
+    },
+    "localizeOutside": {
+      "title": "Extract Outside Directives",
+      "description": "Extract translatable items that are not within the scope of a localization directive."
+    },
+    "useKeyCondition": {
+      "title": "Enable Key Condition",
+      "description": "Filter entries for extraction based on a regex condition applied to their keys."
+    },
+    "extractOnlyMatchingKey": {
+      "title": "Extract Only Matching Keys",
+      "description": "When enabled, extract only entries whose keys match the condition; otherwise exclude matching keys."
+    },
+    "keyCondition": {
+      "title": "Key Condition Pattern",
+      "description": "Regular expression pattern to test against property keys for extraction filtering."
+    },
+    "extraComments": {
+      "title": "Additional Comment Markers",
+      "description": "Recognize semicolon and double-slash comment styles in addition to standard # and ! markers."
+    },
+    "commentsAreNotes": {
+      "title": "Comments as Notes",
+      "description": "Attach preceding comments to each entry as translator notes."
+    },
+    "idLikeResname": {
+      "title": "Use Key as Text Unit ID",
+      "description": "Use the property key value as the text unit ID in addition to the resource name."
+    },
+    "escapeExtendedChars": {
+      "title": "Escape Extended Characters",
+      "description": "Convert all characters above U+007F to \\uHHHH escape sequences in the output."
+    },
+    "useJavaEscapes": {
+      "title": "Retain Java Escapes",
+      "description": "Keep Java property escape sequences in extracted text instead of resolving them."
+    },
+    "convertLFandTab": {
+      "title": "Convert \\n and \\t",
+      "description": "Convert \\n and \\t escape sequences to actual line-breaks and tabs during processing."
+    }
+  },
+  "fullDoc": "# Properties Filter\n\nThe Properties Filter processes Java `.properties` files, extracting key-value pairs as translatable text units. It is based on the `java.util.Properties` specification and supports additional comment styles for compatibility with other properties-like formats. The filter supports localization directives, key-based filtering, sub-filters for embedded content (e.g., HTML), and inline code detection via regex patterns.\n\nJava properties can also be represented in XML — use the XML Filter or XML Stream Filter for those.\n\n## Parameters\n\n### Extraction\n\n#### Enable Key Condition (`useKeyCondition`)\nEnables filtering of entries based on their property key. When enabled, only entries whose keys match (or don't match) the `keyCondition` regex are extracted. Localization directives take precedence over key conditions.\n\n#### Extract Only Matching Keys (`extractOnlyMatchingKey`)\nControls the key filtering behavior:\n- **true** — Extract **only** items with keys matching the pattern\n- **false** — Extract all items **except** those with keys matching the pattern\n\nOnly meaningful when the key condition is enabled.\n\n#### Key Condition Pattern (`keyCondition`)\nJava regular expression tested against property keys. Uses `java.util.regex.Pattern` syntax.\n\nExamples:\n- `.*text.*` — matches keys containing \"text\"\n- `^msg\\.` — matches keys starting with \"msg.\"\n\n#### Extract Outside Directives (`localizeOutside`)\nControls whether items not within the scope of a localization directive are extracted. Only meaningful when localization directives are enabled.\n\n#### Additional Comment Markers (`extraComments`)\nRecognizes comment styles beyond `#` and `!`:\n- Lines starting with `;`\n- Lines where `//` is the first non-whitespace sequence\n\nNote: `//` after `=` is treated as part of the value, not a comment.\n\n### Notes\n\n#### Comments as Notes (`commentsAreNotes`)\nAttaches comments preceding each entry as a note on the corresponding text unit. All comment lines before an entry are grouped into a single note.\n\n### Identification\n\n#### Use Key as Text Unit ID (`idLikeResname`)\nUses the property key as the text unit ID. The key is already extracted into the `name` property (`resname` in XLIFF) regardless. Property keys may not be valid IDs for all output formats (e.g., XLIFF2 requires NMTOKEN). Available since M31.\n\n#### Use Localization Directives (`useLd`)\nEnables recognition of localization directives — special comments that override default extraction behavior. Directives override key conditions when both are active.\n\n### Output\n\n#### Escape Extended Characters (`escapeExtendedChars`)\nConverts all characters above U+007F to `\\uHHHH` escape sequences. When disabled, only characters unsupported by the output encoding are escaped.\n\n#### Retain Java Escapes (`useJavaEscapes`)\nRetains Java property escape sequences in extracted text rather than converting them to actual characters.\n\n#### Convert \\\\n and \\\\t (`convertLFandTab`)\nConverts `\\n` and `\\t` escape sequences to actual line-breaks and tabs. All other escaped characters remain escaped.\n\n### Inline Codes\n\n#### Enable Inline Codes (`inlineCodes.enabled`)\nEnables pattern-based detection of inline codes. Matches are converted to placeholders protected from translation. Default patterns detect printf-style specifiers, escape sequences, and MessageFormat placeholders.\n\n#### Code Finder Rules (`inlineCodes.rules`)\nRegex patterns identifying inline codes in translatable text.\n\n#### Merge Adjacent (`inlineCodes.mergeAdjacent`)\nMerge consecutive inline codes into a single placeholder.\n\n#### Move Boundary Codes (`inlineCodes.moveBoundaryCodes`)\nMove inline codes at segment boundaries to the skeleton (non-translatable portion).\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- BOM handling: if the input has a Unicode BOM, the corresponding encoding is used. Output BOM is only preserved for UTF-8 → UTF-8 conversions where the input had a BOM.\n- Line-breaks in the output match the original input format.\n- Each property entry maps to one text unit: key → name (`resname`), value → source content, preceding comments → note (if enabled).\n\n## Examples\n\n### Basic properties file\n\n```properties\n# This is a comment\n\nlabelOK= OK\nmsgBadFile: Invalid input file\n```\n\n### Key-based filtering\n\nUsing `keyCondition: \".*text.*\"` with extract-only-matching enabled:\n\n```properties\nkey1 = Text for key1\ntext.err1 = Text for text.err1\nmenu_text_file = Text for menu_text_file\n```\n\nResult: only `text.err1` and `menu_text_file` are extracted.",
   "filterId": "okf_properties",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Properties_Filter"
 }

@@ -1,15 +1,22 @@
 {
-  "filterName": "Simple Word Count Step",
-  "overview": "Performs word counts on the source content of text units across a set of documents. Intended for fast, simple word counts — for more sophisticated counting, use the **Word Count Step**. Word counts are saved as annotations that can be consumed by other steps, such as the Translation Comparison Step for its report.",
+  "filterName": "Simple Word Count",
+  "overview": "Performs word counts on the source content of text units across a set of documents. Designed for fast, simple counting — for more sophisticated counts, see the Word Count Step. Word counts are saved as annotations that can be consumed by downstream steps such as the Translation Comparison Step.",
   "parameters": {},
-  "processingNotes": [
-    "Word counts are stored as **annotations** on each text unit, making them available to downstream steps (e.g., Translation Comparison Step).",
-    "Counts are performed on **source content only**."
-  ],
   "limitations": [
-    "None known."
+    "No known limitations."
   ],
-  "examples": [],
+  "processingNotes": [
+    "Word counts are stored as **annotations** on each text unit, making them available to downstream steps (e.g., Translation Comparison Step can include word counts in its report).",
+    "Only counts **source** content — target content is not counted.",
+    "This is a lightweight counting step; for locale-aware or customizable counting logic, use the **Word Count Step** instead."
+  ],
+  "examples": [
+    {
+      "title": "Using word count annotations in a pipeline",
+      "description": "Place the Simple Word Count step before the Translation Comparison Step so that word count annotations are available for the comparison report.\n\n```\nRaw Document → Filter → Simple Word Count → Translation Comparison\n```\n\nThe Translation Comparison Step will automatically pick up the word count annotations produced by Simple Word Count."
+    }
+  ],
+  "fullDoc": "# Simple Word Count\n\nPerforms word counts on the source content of text units across a set of documents. Designed for fast, simple counting — for more sophisticated counts, see the **Word Count Step**. Word counts are saved as annotations that can be consumed by downstream steps such as the **Translation Comparison Step**.\n\n## Parameters\n\nThis step has no parameters.\n\n## Limitations\n\n- No known limitations.\n\n## Notes\n\n- Word counts are stored as **annotations** on each text unit, making them available to downstream steps (e.g., Translation Comparison Step can include word counts in its report).\n- Only counts **source** content — target content is not counted.\n- This is a lightweight counting step; for locale-aware or customizable counting logic, use the **Word Count Step** instead.\n\n## Examples\n\n### Using word count annotations in a pipeline\n\nPlace the Simple Word Count step before the Translation Comparison Step so that word count annotations are available for the comparison report.\n\n```\nRaw Document → Filter → Simple Word Count → Translation Comparison\n```\n\nThe Translation Comparison Step will automatically pick up the word count annotations produced by Simple Word Count.",
   "stepId": "simple-word-count",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/simple_word_count_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Simple_Word_Count_Step"
 }

@@ -1,6 +1,6 @@
 {
   "$id": "general-checker",
-  "title": "General Quality Check",
+  "title": "General Checker",
   "type": "object",
   "x-step": {
     "class": "net.sf.okapi.steps.generalchecker.GeneralCheckerStep",
@@ -38,39 +38,48 @@
   "properties": {
     "leadingWS": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn if a target entry has a difference in leading white spaces"
     },
     "trailingWS": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn if a target entry has a difference in trailing white spaces"
     },
     "emptyTarget": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn if a target segment is empty when its source is not empty"
     },
     "emptySource": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn if a target segment is not empty when its source is empty"
     },
     "targetSameAsSource": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn if a target segment is the same as its source (for segments with text)"
     },
     "targetSameAsSourceForSameLanguage": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Verify for same language family (i.e. en vs. en-GB, or fr-FR vs. fr-CA)"
     },
     "targetSameAsSourceWithCodes": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Include the codes in the comparison"
     },
     "doubledWord": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn on doubled words (e.g. \"is is\" in \"This is is an example\")"
     },
     "doubledWordExceptions": {
       "type": "string",
-      "default": "sie;vous;nous"
+      "default": "sie;vous;nous",
+      "title": "Exceptions (words separated by ';' e.g. \"vous;nous\")"
     }
   }
 }

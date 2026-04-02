@@ -1,40 +1,60 @@
 {
   "filterName": "PHP Content Filter",
-  "overview": "The PHP Content Filter processes the content within PHP tags (`<?php ... ?>`), extracting translatable strings from PHP language constructs like variable assignments, heredoc/nowdoc syntax, and echo statements. It is based on the PHP language reference and handles string literals, heredoc blocks, and array values. **This filter is not for HTML files containing PHP** — it processes pure PHP content only, even though many `.php` files are actually HTML with embedded PHP tags.",
+  "overview": "The PHP Content Filter processes PHP source code files, extracting translatable strings from PHP string literals (single-quoted, double-quoted, heredoc, and nowdoc syntax). It is based on the PHP language reference syntax specification. **This filter is not for HTML files with embedded PHP** — it processes only the content within `<?php ... ?>` tags. Many `.php` files are actually HTML with PHP tags and should use the HTML filter instead.",
   "parameters": {
     "extraction.useDirectives": {
-      "help": "Enables recognition of localization directives — special comments in the PHP source that override the filter's default extraction behavior. Directives let you selectively include or exclude specific strings from extraction.\n\nIf disabled, **all** localization directives in the file are ignored and every extractable string is extracted.\n\nNote that directives also override key conditions.",
-      "seeAlso": "Localization_Directives"
+      "help": "Enables recognition of localization directives — special comments in the PHP source that override which strings are extracted.\n\nLocalization directives let you selectively mark parts of the source for extraction or non-extraction. The directive syntax is shared across all Okapi filters.\n\nIf disabled, all directives in the input are ignored and every extractable string is extracted.",
+      "seeAlso": "PHP_Content_Filter#Localization_directives"
     },
     "extraction.extractOutsideDirectives": {
-      "help": "Controls whether translatable strings **outside** any localization directive scope are extracted.\n\n- **Enabled**: all translatable strings are extracted; directives only override behavior within their scope\n- **Disabled**: **only** strings within directive scope are extracted — everything else is skipped\n\nChoosing the right setting lets you minimize markup: if most content should be extracted, enable this and use directives only to *exclude* specific items. If most content should be skipped, disable this and use directives to *include* specific items."
+      "help": "Controls whether translatable strings **outside** the scope of any localization directive are extracted.\n\n- **Enabled**: Strings not covered by a directive are extracted (use directives to *exclude* specific strings)\n- **Disabled**: Only strings explicitly within a directive scope are extracted (use directives to *include* specific strings)\n\nThis lets you choose the most efficient markup strategy — mark up the minority of strings that differ from the default behavior.",
+      "notes": [
+        "Only takes effect when **Use localization directives** is enabled."
+      ],
+      "seeAlso": "PHP_Content_Filter#Localization_directives"
     },
-    "inlineCodes": {
-      "help": "Defines regex patterns to identify inline codes within extracted text. Any match is converted to an inline code (placeholder) in the extracted segment.\n\nThe default expression matches:\n- Partial HTML tags at start/end of strings: `(\\A[^<]*?>)|(<[\\w!?/].*?(>|\\Z))`\n- Escape sequences: `\\a`, `\\b`, `\\f`, `\\n`, `\\r`, `\\t`, `\\v`\n- Email addresses: `\\w[-._\\w]*\\w@\\w[-._\\w]*\\w\\.\\w{2,3}`\n- Variable placeholders in brackets: `[{\\w_$}]` patterns",
+    "inlineCodes.enabled": {
+      "help": "Activates pattern-based detection of inline codes within extracted text. Matches from the regex rules are converted to inline code placeholders (similar to XLIFF `<ph>` elements), protecting them from translation.\n\nThe default patterns detect:\n- Partial HTML/XML tags at string boundaries\n- Escape sequences (`\\n`, `\\t`, `\\a`, etc.)\n- Email addresses\n- Template variables in brackets (`[var]`, `{var}`)"
+    },
+    "inlineCodes.rules": {
+      "help": "Regex patterns that identify inline codes in translatable text. Each match is replaced with a placeholder code in the extracted segment.\n\nDefault patterns for PHP content:\n```\n(\\A[^<]*?>)|(<[\\w!?/].*?(>|\\Z))\n|(\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)\n|(\\w[-._\\w]*\\w@\\w[-._\\w]*\\w\\.\\w{2,3})\n|([\\[{][\\w_$]+?[}\\]])\n```",
       "examples": [
-        "`(\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)` — matches PHP escape sequences",
-        "`([\\[{][\\w_$]+?[}\\]])` — matches placeholder variables like `{$name}` or `[$key]`"
-      ]
+        "`(\\\\n|\\\\t)` — matches escape sequences like `\\n`, `\\t`",
+        "`(\\w[-._\\w]*\\w@\\w[-._\\w]*\\w\\.\\w{2,3})` — matches email addresses",
+        "`([\\[{][\\w_$]+?[}\\]])` — matches template variables like `{name}` or `[$var]`"
+      ],
+      "seeAlso": "PHP_Content_Filter#Inline_Codes"
     }
   },
   "limitations": [
-    "The `define()` statement is not supported — constants defined with `define` are not extracted.",
-    "In array declarations, **both** the string key and string value are extracted (keys may not need translation)."
+    "The `define` statement is not supported — `define('KEY', 'value')` constructs are not extracted.",
+    "In array declarations, **both** the string key and string value are extracted, which may result in unwanted items being sent for translation."
   ],
   "processingNotes": [
-    "**Encoding detection priority**: BOM → `charset` declaration in first 1000 chars → default encoding. If BOM and charset disagree, BOM wins with a warning.",
-    "If the charset declaration value is literally `charset` (a template placeholder), the auto-detected or default encoding is used instead.",
-    "Output encoding: charset declarations in output are automatically updated to match the selected output encoding.",
-    "UTF-8 BOM in output is preserved only if the input was also UTF-8 *and* had a BOM. Cross-encoding conversion to UTF-8 never adds a BOM.",
-    "Line-break style (CRLF/LF) in output matches the original input."
+    "**Encoding detection priority**: BOM → `charset` declaration in first 1000 chars → default encoding. If both BOM and `charset` are present but disagree, the BOM encoding wins and a warning is generated.",
+    "If the `charset` declaration value is literally the string `charset` (case-insensitive), the file is treated as a template with no encoding declared, and the auto-detected or default encoding is used.",
+    "Output `charset` declarations are automatically updated to reflect the selected output encoding.",
+    "**UTF-8 BOM handling**: A BOM is included in UTF-8 output only if the input was also UTF-8 *and* had a BOM. Converting from non-UTF-8 to UTF-8 never produces a BOM.",
+    "Line-break style (CRLF, LF) is preserved from input to output."
   ],
   "examples": [
     {
       "title": "PHP content with extractable strings",
       "description": "Shows which parts of a PHP file are extracted for translation. String literals in assignments, heredoc blocks, and array values are all extractable.",
-      "input": "```php\n<?php\n$str = <<<EOD\nExample of string\nspanning multiple lines\nusing heredoc syntax.\nEOD;\n\nclass foo\n{\n    var $foo;\n    var $bar;\n\n    function foo()\n    {\n        $this->foo = 'Foo';\n        $this->bar = array('Bar1', 'Bar2', 'Bar3');\n    }\n}\n\n$foo = new foo();\n$name = 'MyName';\n\necho <<<EOT\nMy name is \"$name\". I am printing some $foo->foo.\nNow, I am printing some {$foo->bar[1]}.\nThis should print a capital 'A': \\x41\nEOT;\n?>\n```"
+      "input": "```php\n<?php\n$str = <<<EOD\nExample of string\nspanning multiple lines\nusing heredoc syntax.\nEOD;\n\nclass foo\n{\n    function foo()\n    {\n        $this->foo = 'Foo';\n        $this->bar = array('Bar1', 'Bar2', 'Bar3');\n    }\n}\n\n$name = 'MyName';\n\necho <<<EOT\nMy name is \"$name\". I am printing some $foo->foo.\nNow, I am printing some {$foo->bar[1]}.\nThis should print a capital 'A': \\x41\nEOT;\n?>\n```"
     }
   ],
+  "propertySuggestions": {
+    "inlineCodes.mergeAdjacent": {
+      "title": "Merge Adjacent Codes",
+      "description": "Merge consecutive inline codes into a single placeholder to simplify translatable segments."
+    },
+    "inlineCodes.moveBoundaryCodes": {
+      "title": "Move Boundary Codes to Skeleton",
+      "description": "Move inline codes at segment boundaries out of the translatable text into the non-translatable skeleton."
+    }
+  },
+  "fullDoc": "# PHP Content Filter\n\nThe PHP Content Filter processes PHP source code files, extracting translatable strings from PHP string literals (single-quoted, double-quoted, heredoc, and nowdoc syntax). It is based on the PHP language reference syntax specification. **This filter is not for HTML files with embedded PHP** — it processes only the content within `<?php ... ?>` tags. Many `.php` files are actually HTML with PHP tags and should use the HTML filter instead.\n\n## Parameters\n\n### Extraction\n\n#### Use Localization Directives\n\nEnables recognition of localization directives — special comments in the PHP source that override which strings are extracted. The directive syntax is shared across all Okapi filters.\n\nIf disabled, all directives in the input are ignored and every extractable string is extracted.\n\n#### Extract Outside the Scope of the Directives\n\nControls whether translatable strings **outside** the scope of any localization directive are extracted.\n\n- **Enabled**: Strings not covered by a directive are extracted (use directives to *exclude* specific strings)\n- **Disabled**: Only strings explicitly within a directive scope are extracted (use directives to *include* specific strings)\n\nThis lets you choose the most efficient markup strategy — mark up the minority of strings that differ from the default behavior.\n\n> **Note:** Only takes effect when **Use localization directives** is enabled.\n\n### Inline Codes\n\n#### Enable Inline Code Detection\n\nActivates pattern-based detection of inline codes within extracted text. Matches from the regex rules are converted to inline code placeholders, protecting them from translation.\n\nThe default patterns detect:\n- Partial HTML/XML tags at string boundaries\n- Escape sequences (`\\n`, `\\t`, `\\a`, etc.)\n- Email addresses\n- Template variables in brackets (`[var]`, `{var}`)\n\n#### Inline Code Rules\n\nRegex patterns that identify inline codes in translatable text. Each match is replaced with a placeholder code in the extracted segment.\n\nDefault patterns for PHP content:\n```\n(\\A[^<]*?>)|(<[\\w!?/].*?(>|\\Z))\n|(\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v)\n|(\\w[-._\\w]*\\w@\\w[-._\\w]*\\w\\.\\w{2,3})\n|([\\[{][\\w_$]+?[}\\]])\n```\n\n#### Merge Adjacent Codes\n\nMerge consecutive inline codes into a single placeholder to simplify translatable segments.\n\n#### Move Boundary Codes to Skeleton\n\nMove inline codes at segment boundaries out of the translatable text into the non-translatable skeleton.\n\n#### Simplifier Rules\n\nRules for simplifying inline code representation.\n\n## Limitations\n\n- The `define` statement is not supported — `define('KEY', 'value')` constructs are not extracted.\n- In array declarations, **both** the string key and string value are extracted, which may result in unwanted items being sent for translation.\n\n## Notes\n\n- **Encoding detection priority**: BOM → `charset` declaration in first 1000 chars → default encoding. If both BOM and `charset` are present but disagree, the BOM encoding wins and a warning is generated.\n- If the `charset` declaration value is literally the string `charset`, the file is treated as a template with no encoding declared.\n- Output `charset` declarations are automatically updated to reflect the selected output encoding.\n- **UTF-8 BOM handling**: A BOM is included in UTF-8 output only if the input was also UTF-8 *and* had a BOM.\n- Line-break style (CRLF, LF) is preserved from input to output.\n\n## Examples\n\n### PHP content with extractable strings\n\nString literals in assignments, heredoc blocks, and array values are all extractable:\n\n```php\n<?php\n$str = <<<EOD\nExample of string\nspanning multiple lines\nusing heredoc syntax.\nEOD;\n\nclass foo\n{\n    function foo()\n    {\n        $this->foo = 'Foo';\n        $this->bar = array('Bar1', 'Bar2', 'Bar3');\n    }\n}\n\n$name = 'MyName';\n\necho <<<EOT\nMy name is \"$name\". I am printing some $foo->foo.\nNow, I am printing some {$foo->bar[1]}.\nThis should print a capital 'A': \\x41\nEOT;\n?>\n```",
   "filterId": "okf_phpcontent",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/PHP_Content_Filter"
 }

@@ -1,6 +1,10 @@
 {
   "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
   "fields": {
-    "openManifest": {}
+    "openManifest": {},
+    "openManifestBeforeProcessing": {
+      "title": "Open Manifest Before Processing",
+      "description": "Open the manifest file for review or modification before processing the translation kit."
+    }
   }
 }

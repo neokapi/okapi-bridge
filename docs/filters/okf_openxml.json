@@ -1,40 +1,15 @@
 {
-  "filterName": "OpenXML Filter",
-  "overview": "Processes Microsoft Office documents from Office 2007 and later, including DOCX (Word), XLSX (Excel), and PPTX (PowerPoint). These documents use the OpenXML format, as opposed to the binary formats used by pre-2007 versions of Office. The filter supports extraction and merging of translatable content with format-specific options for each document type.",
+  "filterName": "OpenXML (Microsoft Office) Filter",
+  "overview": "Processes Microsoft Office documents from Office 2007 and later, including DOCX (Word), XLSX (Excel), and PPTX (PowerPoint). These documents use the OpenXML (ZIP-based) format, as opposed to the binary formats used by pre-2007 versions of Office. The filter provides format-specific extraction options for each document type, with support for comments, hidden content, document properties, charts, diagrams, and color-based exclusion.",
   "parameters": {
-    "general.aggressiveCleanup": {
-      "help": "Strips additional formatting tags related to text spacing. Improves filtering quality when Office documents were **converted from other formats** (particularly PDF), where imperfect conversion adds extra formatting noise."
-    },
-    "ignoreWhitespaceStyles": {
-      "help": "Whitespace character styles (formatting) are ignored and considered equal to the consequential ones during tag cleanup.",
-      "dependsOn": [
-        {
-          "property": "general.aggressiveCleanup",
-          "condition": "must be enabled for this option to take effect"
-        }
-      ]
-    },
-    "preserveAsciiAndHighAnsiFontCategoriesOnDetection": {
-      "help": "Preserves the ASCII and HighAnsi run font categories when merging consequential runs. Relevant when `aggressiveCleanup` is used and font category preservation matters for output fidelity."
-    },
-    "removeEmbeddedExcel": {
-      "help": "Removes the embedded Excel package from the document, along with any references to it in chart parts and related relationships. Only relevant when cached chart strings or numbers are also set for extraction.",
-      "dependsOn": [
-        {
-          "property": "translatePowerpointCachedChartStrings",
-          "condition": "at least one of cachedChartStrings or cachedChartNumbers must be enabled"
-        },
-        {
-          "property": "translatePowerpointCachedChartNumbers",
-          "condition": "at least one of cachedChartStrings or cachedChartNumbers must be enabled"
-        }
-      ]
-    },
     "word.translateHeadersFooters": {
       "help": "Exposes header and footer content from Word documents for translation."
     },
     "word.translateHidden": {
-      "help": "Exposes hidden text in Word documents for translation. Also extracts text that was excluded via highlight color settings."
+      "help": "Exposes hidden text in Word documents for translation. Also extracts text that was excluded via highlight color settings when this is enabled.",
+      "notes": [
+        "Text excluded using the highlight color mechanism is treated as hidden — this option will extract it."
+      ]
     },
     "word.translateComments": {
       "help": "Exposes document comments in Word for translation."
@@ -43,16 +18,22 @@
       "help": "Exposes the following document properties for translation: **title**, **subject**, **creator**, **description**, **category**, **keywords**, **content status**."
     },
     "word.excludeGraphicMetaData": {
-      "help": "Excludes metadata associated with graphics and drawings from extraction."
+      "help": "When enabled, `@name` and `@descr` attribute values associated with drawings and word art are **not** exposed for translation. The individual `translateWordGraphicName` and `translateWordGraphicDescription` options provide finer-grained control."
+    },
+    "word.excludeColors": {
+      "help": "Enables font colour-based exclusion for Word content. Text using any selected colours will not be exposed for translation."
     },
     "word.allowStyleOptimisation": {
-      "help": "Allows optimization of styles — common formatting of all runs in a paragraph is moved to the styles part of the document."
+      "help": "Allows optimization of styles — common formatting of all runs in a paragraph is moved to the styles part of the document. This can simplify the tag structure of extracted segments."
     },
     "word.translateNumberingLevelText": {
       "help": "Exposes numbering-level text (e.g., list bullet/number format strings) for translation."
     },
     "word.ignoreFontColors": {
-      "help": "Ignores font colours during processing. When combined with **Clean Tags Aggressively** and empty ignorance thresholds, font colour run properties are **removed from the document structure** on filtering — meaning font colour information will also be absent on merge.",
+      "help": "Ignores font colours during processing. When combined with **Clean Tags Aggressively** and empty ignorance thresholds, font colour run properties are **permanently removed from the document structure** on filtering — meaning font colour information will also be absent on merge.",
+      "notes": [
+        "If both `aggressiveCleanup` and this option are enabled with empty thresholds, font colour properties are removed from the document. This removal is irreversible on merge."
+      ],
       "dependsOn": [
         {
           "property": "general.aggressiveCleanup",
@@ -92,10 +73,10 @@
       "help": "Automatically accepts tracked changes (revisions) in Word documents before processing."
     },
     "translateWordGraphicName": {
-      "help": "Exposes `@name` attribute values associated with drawings and word art for translation."
+      "help": "Exposes `@name` attribute values associated with drawings and word art in Word documents for translation."
     },
     "translateWordGraphicDescription": {
-      "help": "Exposes `@descr` attribute values associated with drawings and word art for translation."
+      "help": "Exposes `@descr` attribute values associated with drawings and word art in Word documents for translation."
     },
     "excel.translateHidden": {
       "help": "Exposes hidden rows and columns in Excel spreadsheets for translation."
@@ -106,8 +87,11 @@
     "excel.translateDrawings": {
       "help": "Exposes text content from shapes and drawings in Excel for translation."
     },
+    "excel.translateDiagramData": {
+      "help": "Exposes SmartArt and other diagram data in Excel for translation."
+    },
     "excel.excludeColors": {
-      "help": "Excludes cells with a foreground or background color matching any selected colors from translation. The named colors correspond to the **standard Excel 2010 color palette**. Additional RGB colors can be specified by editing the `.fprm` file directly.",
+      "help": "Excludes cells with a foreground or background color matching any selected colors from translation. The named colors available in the UI correspond to the **standard Excel 2010 color palette**.",
       "notes": [
         "Colors not listed in the UI can be excluded by modifying the `tsExcelExcludedColors` section of the configuration file with RGB hex values in `RRGGBB` format."
       ],
@@ -146,22 +130,40 @@
       "help": "Exposes chart text content in PowerPoint for translation."
     },
     "powerpoint.translateComments": {
-      "help": "Exposes slide comments for translation. Both this option and the General **Translate Comments** option must be enabled.",
+      "help": "Exposes slide comments for translation. Both this option **and** the General Options **Translate Comments** must be enabled.",
       "notes": [
         "Currently coupled with the General Options comment setting — both must be checked. These will be separated in a future release."
+      ],
+      "dependsOn": [
+        {
+          "property": "word.translateComments",
+          "condition": "currently coupled — both must be enabled for PowerPoint comments to be extracted"
+        }
       ]
     },
     "powerpoint.translateDocProperties": {
-      "help": "Exposes PowerPoint document properties (title, subject, creator, description, category, keywords, content status) for translation. Both this option and the General **Translate Document Properties** option must be enabled.",
+      "help": "Exposes PowerPoint document properties (title, subject, creator, description, category, keywords, content status) for translation. Both this option **and** the General Options **Translate Document Properties** must be enabled.",
       "notes": [
         "Currently coupled with the General Options doc properties setting — both must be checked. These will be separated in a future release."
+      ],
+      "dependsOn": [
+        {
+          "property": "word.translateDocProperties",
+          "condition": "currently coupled — both must be enabled for PowerPoint doc properties to be extracted"
+        }
       ]
     },
     "powerpoint.translateDiagramData": {
       "help": "Exposes SmartArt and other diagram data in PowerPoint for translation."
     },
+    "powerpoint.includedSlideNumbersOnly": {
+      "help": "Restricts extraction to only specific slide numbers rather than all slides in the presentation."
+    },
+    "powerpoint.ignorePlaceholdersInMasters": {
+      "help": "Ignores placeholder elements in slide masters, preventing their content from being extracted for translation."
+    },
     "powerpoint.reorderNotes": {
-      "help": "Reorders note parts to be placed **after the related slide part** and after its chart parts. Useful for controlling the order of extracted content."
+      "help": "Reorders note parts to be placed **after the related slide part** and after its chart parts. Useful for controlling the order of parts in the output ZIP archive."
     },
     "powerpoint.reorderCharts": {
       "help": "Reorders chart parts to be placed **after the related slide/layout/master part** and after their diagram data parts."
@@ -181,12 +183,6 @@
     "powerpoint.reorderNotesAndComments": {
       "help": "Reorders both notes and comments together, placing them after their related slide parts."
     },
-    "powerpoint.includedSlideNumbersOnly": {
-      "help": "Restricts extraction to only specific slide numbers rather than all slides in the presentation."
-    },
-    "powerpoint.ignorePlaceholdersInMasters": {
-      "help": "Ignores placeholder elements in slide masters, preventing their content from being extracted for translation."
-    },
     "translatePowerpointGraphicName": {
       "help": "Exposes `@name` attribute values associated with drawings and word art in PowerPoint for translation."
     },
@@ -199,14 +195,42 @@
     "translatePowerpointCachedChartNumbers": {
       "help": "Exposes cached chart numbers and format codes in PowerPoint for translation."
     },
+    "removeEmbeddedExcel": {
+      "help": "Removes the embedded Excel package from the document, along with any references to it in chart parts and related relationships.",
+      "dependsOn": [
+        {
+          "property": "translatePowerpointCachedChartStrings",
+          "condition": "at least one of cachedChartStrings or cachedChartNumbers must be enabled"
+        },
+        {
+          "property": "translatePowerpointCachedChartNumbers",
+          "condition": "at least one of cachedChartStrings or cachedChartNumbers must be enabled"
+        }
+      ]
+    },
+    "general.aggressiveCleanup": {
+      "help": "Strips additional formatting tags related to text spacing. Improves filtering quality when Office documents were **converted from other formats** (particularly PDF), where imperfect conversion adds extra formatting noise."
+    },
+    "ignoreWhitespaceStyles": {
+      "help": "Whitespace character styles (formatting) are ignored and considered equal to the consequential ones during tag cleanup.",
+      "dependsOn": [
+        {
+          "property": "general.aggressiveCleanup",
+          "condition": "must be enabled for this option to take effect"
+        }
+      ]
+    },
+    "preserveAsciiAndHighAnsiFontCategoriesOnDetection": {
+      "help": "Preserves the ASCII and HighAnsi run font categories when merging consequential runs. Relevant when aggressive cleanup is used and font category preservation matters for output fidelity."
+    },
     "general.extractExternalHyperlinks": {
       "help": "Exposes external hyperlink URLs for translation."
     },
     "general.inExcludeMode": {
-      "help": "Enables the style-based include/exclude mechanism for controlling which text is extracted. When set to **Include** mode, only text with specified styles is extracted. When set to **Exclude** mode, text with specified styles is skipped."
+      "help": "Controls the style-based include/exclude mechanism.\n- **Exclude** mode: text with specified styles is skipped\n- **Include** mode: only text with specified styles is extracted"
     },
     "general.inExcludeHighlightMode": {
-      "help": "Enables the highlight-color-based include/exclude mechanism.\n- **Include**: only text with specified highlight colors is extracted\n- **Exclude**: all content except text with specified highlight colors is extracted\n\nDefault: Exclude with no colors selected (all visible content extracted).",
+      "help": "Controls the highlight-color-based include/exclude mechanism.\n- **Include**: only text with specified highlight colors is extracted\n- **Exclude**: all content except text with specified highlight colors is extracted\n\nDefault: Exclude with no colors selected (all visible content extracted).",
       "notes": [
         "Text excluded via highlight colors is treated as **hidden** — enabling \"Translate Hidden\" options will still extract it.",
         "Starting in 1.48.0, this option also applies to PowerPoint content in addition to Word."
@@ -241,19 +265,21 @@
     }
   },
   "limitations": [
-    "Various known issues tracked in the [Okapi Bitbucket issue tracker](https://bitbucket.org/okapiframework/okapi/issues?status=new&title=~OpenXML)."
+    "Various known issues tracked in the [Okapi Bitbucket issue tracker](https://bitbucket.org/okapiframework/okapi/issues?status=new&title=~OpenXML).",
+    "Pre-2007 binary Office formats (`.doc`, `.xls`, `.ppt`) are **not** supported — only OpenXML (`.docx`, `.xlsx`, `.pptx`, etc.).",
+    "PowerPoint `translateComments` and `translateDocProperties` are currently coupled with the General Options equivalents — both must be enabled to extract these elements."
   ],
   "processingNotes": [
-    "All logging output goes to stderr; stdout is reserved for gRPC communication.",
-    "The filter processes OpenXML (ZIP-based) Office documents — pre-2007 binary formats (.doc, .xls, .ppt) are **not** supported.",
-    "PowerPoint `translateComments` and `translateDocProperties` are currently coupled with the General Options equivalents — both must be enabled. This coupling will be removed in a future release.",
-    "The highlight-color include/exclude mechanism treats excluded text as hidden, so \"Translate Hidden\" options can override exclusions.",
-    "Starting in 1.48.0, Word highlight color exclusion/inclusion also applies to PowerPoint content."
+    "The filter processes OpenXML (ZIP-based) Office documents by extracting and processing individual XML parts within the archive.",
+    "The highlight-color include/exclude mechanism treats excluded text as hidden, so \"Translate Hidden\" options can override highlight-based exclusions.",
+    "Starting in 1.48.0, Word highlight color exclusion/inclusion also applies to PowerPoint content.",
+    "Excel worksheet configurations use `java.util.regex.Pattern` syntax for name patterns, and ALPHA-26 notation (A, B, C…) for column references.",
+    "Colors in Excel exclusion support both named UI colors (standard Excel 2010 palette) and custom RGB hex values (`RRGGBB` format) via manual config file editing."
   ],
   "examples": [
     {
       "title": "Excel worksheet configuration with source/target columns",
-      "description": "Configure extraction to translate column A into column B, excluding rows 1-2 (headers) and columns C-D from a specific worksheet.",
+      "description": "Configure extraction to translate column A into column B, excluding header rows 1-2 and columns C-D from a specific worksheet named `Sheet1`.",
       "config": "```\nworksheetConfigurations.number.i=1\nworksheetConfigurations.0.namePattern=Sheet1\nworksheetConfigurations.0.sourceColumns=A\nworksheetConfigurations.0.targetColumns=B\nworksheetConfigurations.0.excludedRows=1,2\nworksheetConfigurations.0.excludedColumns=C,D\n```"
     },
     {
@@ -263,10 +289,65 @@
     },
     {
       "title": "Excluding custom Excel colors by RGB",
-      "description": "Exclude a specific color (Pantone 292 / #69b3e7) not available in the UI by editing the configuration file directly.",
+      "description": "Exclude a specific color (Pantone 292 / #69b3e7) not available in the standard UI palette by editing the configuration file directly.",
       "config": "```\ntsExcelExcludedColors.i=1\nccc0=69b3e7\n```"
     }
   ],
+  "propertySuggestions": {
+    "ignoreWhitespaceStyles": {
+      "title": "Ignore Whitespace Styles",
+      "description": "Ignore whitespace character formatting and treat it as equivalent to consequential styles during aggressive tag cleanup."
+    },
+    "preserveAsciiAndHighAnsiFontCategoriesOnDetection": {
+      "title": "Preserve Font Categories on Detection",
+      "description": "Preserve ASCII and HighAnsi run font categories when merging consequential runs."
+    },
+    "removeEmbeddedExcel": {
+      "title": "Remove Embedded Excel Package",
+      "description": "Remove the embedded Excel data package and its references from chart parts when extracting cached chart values."
+    },
+    "translateWordGraphicName": {
+      "title": "Translate Word Graphic Names",
+      "description": "Expose @name attributes of drawings and word art in Word documents for translation."
+    },
+    "translateWordGraphicDescription": {
+      "title": "Translate Word Graphic Descriptions",
+      "description": "Expose @descr attributes of drawings and word art in Word documents for translation."
+    },
+    "translatePowerpointGraphicName": {
+      "title": "Translate PowerPoint Graphic Names",
+      "description": "Expose @name attributes of drawings and word art in PowerPoint presentations for translation."
+    },
+    "translatePowerpointGraphicDescription": {
+      "title": "Translate PowerPoint Graphic Descriptions",
+      "description": "Expose @descr attributes of drawings and word art in PowerPoint presentations for translation."
+    },
+    "translatePowerpointCachedChartStrings": {
+      "title": "Translate Cached Chart Strings",
+      "description": "Expose pre-rendered chart string values stored in PowerPoint chart XML for translation."
+    },
+    "translatePowerpointCachedChartNumbers": {
+      "title": "Translate Cached Chart Numbers",
+      "description": "Expose cached chart numbers and format codes in PowerPoint for translation."
+    },
+    "treatExcelSourceColumnStylesForExclusion": {
+      "title": "Apply Source Column Styles for Exclusion",
+      "description": "Use source column cell styles when evaluating color-based exclusion rules in Excel."
+    },
+    "extractExcelSourceAndTargetColumnsJoined": {
+      "title": "Join Source and Target Columns",
+      "description": "Join source and target columns in a row during extraction rather than extracting them separately."
+    },
+    "extractExcelWorksheetsExplicitlySpecified": {
+      "title": "Extract Only Specified Worksheets",
+      "description": "Only extract worksheets whose names match patterns defined in the Worksheet Configurations."
+    },
+    "extractExcelCellsExplicitlySpecified": {
+      "title": "Extract Only Specified Cells",
+      "description": "Only extract cells explicitly specified in the Worksheet Configurations."
+    }
+  },
+  "fullDoc": "# OpenXML (Microsoft Office) Filter\n\nProcesses Microsoft Office documents from Office 2007 and later, including DOCX (Word), XLSX (Excel), and PPTX (PowerPoint). These documents use the OpenXML (ZIP-based) format, as opposed to the binary formats used by pre-2007 versions of Office. The filter provides format-specific extraction options for each document type, with support for comments, hidden content, document properties, charts, diagrams, and color-based exclusion.\n\nSupported extensions: `.docx`, `.docm`, `.dotx`, `.dotm`, `.pptx`, `.pptm`, `.ppsx`, `.ppsm`, `.potx`, `.potm`, `.xlsx`, `.xlsm`, `.xltx`, `.xltm`, `.vsdx`, `.vsdm`\n\n## Parameters\n\n### General Options\n\n#### Aggressive Cleanup\nStrips additional formatting tags related to text spacing. Improves filtering quality when Office documents were **converted from other formats** (particularly PDF), where imperfect conversion adds extra formatting noise.\n\n#### Ignore Whitespace Styles\nWhitespace character styles (formatting) are ignored and considered equal to the consequential ones during tag cleanup. Requires **Aggressive Cleanup** to be enabled.\n\n#### Preserve Font Categories on Detection\nPreserves the ASCII and HighAnsi run font categories when merging consequential runs.\n\n#### Remove Embedded Excel Package\nRemoves the embedded Excel data package and its references from chart parts. Only relevant when cached chart strings or numbers are set for extraction.\n\n#### Extract External Hyperlinks\nExposes external hyperlink URLs for translation.\n\n#### Include/Exclude Mode (Styles)\nControls the style-based include/exclude mechanism. In **Exclude** mode, text with specified styles is skipped. In **Include** mode, only text with specified styles is extracted.\n\n#### Include/Exclude Mode (Highlight Colors)\nControls the highlight-color-based include/exclude mechanism. In **Include** mode, only text with specified highlight colors is extracted. In **Exclude** mode, all content except highlighted text is extracted.\n\n> **Note:** Text excluded via highlight colors is treated as hidden — enabling \"Translate Hidden\" options will still extract it.\n> **Note:** Starting in 1.48.0, this option also applies to PowerPoint content.\n\n#### Add Line Separator as Character\nAdds line separator characters (instead of inline codes) for line breaks within paragraphs.\n\n#### Add Tab as Character\nAdds tab characters (instead of inline codes) for tabs within text runs.\n\n#### Allow Empty Targets\nAllows empty target segments during merge. Without this, empty targets may be skipped or filled with source text.\n\n#### Ignore Soft Hyphen Tags\nIgnores soft hyphen tags in the document, removing them from extracted content.\n\n#### Replace No-Break Hyphen Tags\nReplaces no-break hyphen tags with actual no-break hyphen characters.\n\n#### Line Separator Replacement\nThe string used to replace line separator elements. Default: `\\n`.\n\n#### Max Attribute Size\nMaximum size in bytes for XML attributes. Default: 4194304 (4 MB). Increase for documents with very large embedded attribute data.\n\n#### File Type\nIdentifies the document type being processed: `MSWORD`, `MSEXCEL`, `MSWORDDOCPROPERTIES`, `MSPOWERPOINTCOMMENTS`. Normally set automatically by file extension.\n\n### Word Options\n\n#### Translate Headers and Footers\nExposes header and footer content for translation. Default: on.\n\n#### Translate Hidden Text\nExposes hidden text for translation. Also extracts text excluded via highlight colors. Default: on.\n\n#### Translate Comments\nExposes document comments for translation. Default: on.\n\n#### Translate Document Properties\nExposes title, subject, creator, description, category, keywords, and content status for translation. Default: on.\n\n#### Exclude Graphic Metadata\nExcludes `@name` and `@descr` attributes of drawings and word art from extraction.\n\n#### Translate Graphic Name\nExposes `@name` attribute values of drawings and word art for translation. Default: on.\n\n#### Translate Graphic Description\nExposes `@descr` attribute values of drawings and word art for translation. Default: off.\n\n#### Ignore Font Colors\nIgnores font colours during processing. When combined with aggressive cleanup and empty thresholds, font colour properties are **permanently removed** from the document.\n\n#### Font Colors Min Threshold\nFont colours are ignored starting from this value. Accepts preset names (`black`) or RGB hex (`000000`). Empty defaults to white.\n\n#### Font Colors Max Threshold\nFont colours are ignored up to this value. Accepts preset names (`white`) or RGB hex (`FFFFFF`). Empty defaults to white.\n\n#### Translate Numbering Level Text\nExposes numbering-level text (list format strings) for translation. Default: off.\n\n#### Allow Style Optimisation\nCommon formatting of all runs in a paragraph is moved to the styles part. Default: on.\n\n#### Automatically Accept Revisions\nAccepts tracked changes before processing. Default: on.\n\n### Excel Options\n\n#### Translate Hidden\nExposes hidden rows and columns for translation. Default: off.\n\n#### Translate Sheet Names\nExposes worksheet tab names for translation. Default: off.\n\n#### Translate Drawings\nExposes text from shapes and drawings for translation. Default: off.\n\n#### Translate Diagram Data\nExposes SmartArt and diagram data for translation. Default: off.\n\n#### Exclude Colors\nExcludes cells matching selected foreground/background colors. UI shows the standard Excel 2010 palette. Custom RGB values (`RRGGBB`) can be added by editing the `.fprm` config file.\n\n#### Translate Cells Copied\nCopies cell data on extraction for contextualised, independent translations. Default: on.\n\n#### Preserve Styles in Target Columns\nPreserves existing cell styles in target columns. Default: off.\n\n#### Join Source and Target Columns\nJoins source and target columns during extraction. Default: off.\n\n#### Extract Only Specified Worksheets\nOnly extracts worksheets matching Worksheet Configuration name patterns. Default: off.\n\n#### Extract Only Specified Cells\nOnly extracts cells specified in Worksheet Configurations. Default: off.\n\n#### Apply Source Column Styles for Exclusion\nUses source column styles when evaluating color-based exclusion rules. Default: off.\n\n### PowerPoint Options\n\n#### Translate Hidden Slides\nExposes hidden slides for translation. Default: off.\n\n#### Translate Masters\nExposes slide masters, notes masters, and layouts in use by at least one slide. Default: on.\n\n#### Translate Notes\nExposes speaker notes for translation. Default: off.\n\n#### Translate Charts\nExposes chart text for translation. Default: on.\n\n#### Translate Comments\nExposes slide comments for translation. Currently coupled with the General Options comment setting — both must be enabled. Default: on.\n\n#### Translate Document Properties\nExposes document properties for translation. Currently coupled with the General Options setting — both must be enabled. Default: on.\n\n#### Translate Diagram Data\nExposes SmartArt and diagram data for translation. Default: on.\n\n#### Translate Graphic Name / Description\nExposes `@name` and `@descr` attributes of drawings and word art. Name default: on, Description default: off.\n\n#### Translate Cached Chart Strings\nExposes pre-rendered chart string values. Default: off.\n\n#### Translate Cached Chart Numbers\nExposes cached chart numbers and format codes. Default: off.\n\n#### Only Included Slide Numbers\nRestricts extraction to specific slide numbers. Default: off.\n\n#### Ignore Placeholders in Masters\nPrevents placeholder content in masters from being extracted. Default: off.\n\n#### Reorder Options\nMultiple reorder options control the ordering of parts within the output ZIP archive:\n- **Reorder Notes** — after slide and chart parts\n- **Reorder Charts** — after slide/layout/master and diagram parts\n- **Reorder Comments** — after slide and note parts\n- **Reorder Diagram Data** — after slide/layout/master and relationship parts\n- **Reorder Document Properties** — after `_rels/.rels`\n- **Reorder Relationships** — after related slide/layout/master\n- **Reorder Notes and Comments** — both after slide parts\n\n### Inline Codes\n\n#### Enabled\nEnable pattern-based detection of inline codes (placeholders, tags, etc.).\n\n#### Rules\nRegex patterns for detecting inline codes within text. Presets available for merge fields (`«FirstName»`) and placeholders (`{name}`).\n\n#### Merge Adjacent\nMerge consecutive inline codes into a single placeholder.\n\n#### Move Boundary Codes\nMove inline codes at segment boundaries to the skeleton (non-translatable).\n\n## Limitations\n\n- Various known issues tracked in the [Okapi Bitbucket issue tracker](https://bitbucket.org/okapiframework/okapi/issues?status=new&title=~OpenXML).\n- Pre-2007 binary Office formats (`.doc`, `.xls`, `.ppt`) are **not** supported.\n- PowerPoint comments and document properties extraction is currently coupled with the General Options equivalents.\n\n## Notes\n\n- The highlight-color include/exclude mechanism treats excluded text as hidden, so \"Translate Hidden\" options can override highlight-based exclusions.\n- Starting in 1.48.0, Word highlight color exclusion/inclusion also applies to PowerPoint content.\n- Excel worksheet configurations use `java.util.regex.Pattern` syntax for name patterns and ALPHA-26 notation (A, B, C…) for columns.\n- Custom Excel exclusion colors can use RGB hex format (`RRGGBB`) via manual config editing.\n\n## Examples\n\n### Excel worksheet with source/target columns\n\nConfigure extraction to translate column A into column B, excluding header rows 1-2 and columns C-D:\n\n```\nworksheetConfigurations.number.i=1\nworksheetConfigurations.0.namePattern=Sheet1\nworksheetConfigurations.0.sourceColumns=A\nworksheetConfigurations.0.targetColumns=B\nworksheetConfigurations.0.excludedRows=1,2\nworksheetConfigurations.0.excludedColumns=C,D\n```\n\n### Excel worksheet with metadata columns\n\nTranslate columns A and B, treat column D as row metadata, rows 1-2 as column headers, exclude row 5 and column C:\n\n```\nworksheetConfigurations.number.i=1\nworksheetConfigurations.0.namePattern=Sheet1\nworksheetConfigurations.0.excludedRows=5\nworksheetConfigurations.0.excludedColumns=C\nworksheetConfigurations.0.metadataRows=1,2\nworksheetConfigurations.0.metadataColumns=D\n```\n\n### Excluding custom Excel colors\n\nExclude Pantone 292 (#69b3e7) by editing the config file:\n\n```\ntsExcelExcludedColors.i=1\nccc0=69b3e7\n```",
   "filterId": "okf_openxml",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/OpenXML_Filter"
 }

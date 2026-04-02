@@ -3,13 +3,456 @@
   "title": "Quality Check",
   "fields": {
     "leadingWS": {
+      "title": "Check Leading Whitespace",
       "description": "Flag text units where leading whitespace differs between source and target."
     },
     "trailingWS": {
+      "title": "Check Trailing Whitespace",
       "description": "Flag text units where trailing whitespace differs between source and target."
     },
     "emptyTarget": {
+      "title": "Check Empty Target",
       "description": "Flag segments where the target translation is empty while the source is not."
+    },
+    "includeTextContainers": {
+      "title": "Include Text Containers",
+      "description": "Include non-segment text parts (inter-segment content) in quality checks."
+    },
+    "useGenericCodes": {
+      "title": "Use Generic Codes",
+      "description": "Replace specific inline code content with generic placeholders before comparison."
+    },
+    "outputPath": {
+      "title": "Report Output Path",
+      "description": "Path of the HTML report file to generate."
+    },
+    "outputType": {
+      "title": "Report Output Type",
+      "description": "Format of the generated quality check report."
+    },
+    "autoOpen": {
+      "title": "Open Report After Completion",
+      "description": "Automatically open the report file after processing."
+    },
+    "emptySource": {
+      "title": "Check Empty Source",
+      "description": "Flag segments where the source is empty but the target is not."
+    },
+    "targetSameAsSource": {
+      "title": "Check Target Same as Source",
+      "description": "Flag segments where the target translation is identical to the source."
+    },
+    "targetSameAsSourceForSameLanguage": {
+      "title": "Check Same-as-Source for Same Language",
+      "description": "Apply the target-same-as-source check even when source and target languages match."
+    },
+    "targetSameAsSourceWithCodes": {
+      "title": "Include Codes in Comparison",
+      "description": "Include inline codes when comparing source and target for identity."
+    },
+    "targetSameAsSourceWithNumbers": {
+      "title": "Include Numbers in Comparison",
+      "description": "Include numeric values when comparing source and target for identity."
+    },
+    "codeDifference": {
+      "title": "Check Code Differences",
+      "description": "Verify that target segments have the same inline codes as source segments."
+    },
+    "guessOpenClose": {
+      "title": "Guess Open/Close Codes",
+      "description": "Infer whether inline codes are opening or closing when not explicitly marked."
+    },
+    "strictCodeOrder": {
+      "title": "Strict Code Order",
+      "description": "Also flag code differences when codes appear in a different order."
+    },
+    "checkXliffSchema": {
+      "title": "Validate XLIFF Schema",
+      "description": "Validate input against an XLIFF schema."
+    },
+    "xliffSchemaType": {
+      "title": "XLIFF Schema Type",
+      "description": "XLIFF schema validation level: Transitional or Strict."
+    },
+    "checkPatterns": {
+      "title": "Check Patterns",
+      "description": "Verify that source patterns have expected corresponding content in the target."
+    },
+    "checkWithLT": {
+      "title": "Check with LanguageTool",
+      "description": "Run additional grammar/style checks using a LanguageTool server."
+    },
+    "serverURL": {
+      "title": "LanguageTool Server URL",
+      "description": "URL of the LanguageTool server instance."
+    },
+    "ltBilingualMode": {
+      "title": "Bilingual Mode",
+      "description": "Auto-translate LanguageTool error messages into another language."
+    },
+    "saveSession": {
+      "title": "Save Session",
+      "description": "Save the QA session to a file for later review in CheckMate."
+    },
+    "sessionPath": {
+      "title": "Session File Path",
+      "description": "Path for the saved QA session file."
+    },
+    "doubledWord": {
+      "title": "Check Doubled Words",
+      "description": "Flag target segments with consecutive repeated words."
+    },
+    "doubledWordExceptions": {
+      "title": "Doubled Word Exceptions",
+      "description": "Semicolon-separated words allowed to be repeated."
+    },
+    "corruptedCharacters": {
+      "title": "Check Corrupted Characters",
+      "description": "Detect patterns indicating encoding corruption in target text."
+    },
+    "scope": {
+      "title": "Processing Scope",
+      "description": "Which entries to process: all, approved only, or non-approved only."
+    },
+    "checkMaxCharLength": {
+      "title": "Check Maximum Length",
+      "description": "Flag targets longer than a percentage of source character length."
+    },
+    "maxCharLengthBreak": {
+      "title": "Max Length Short Text %",
+      "description": "Maximum length percentage for short text."
+    },
+    "maxCharLengthAbove": {
+      "title": "Max Length Short/Long Threshold",
+      "description": "Character count above which text is considered long for max length check."
+    },
+    "maxCharLengthBelow": {
+      "title": "Max Length Long Text %",
+      "description": "Maximum length percentage for long text."
+    },
+    "checkMinCharLength": {
+      "title": "Check Minimum Length",
+      "description": "Flag targets shorter than a percentage of source character length."
+    },
+    "minCharLengthBreak": {
+      "title": "Min Length Short Text %",
+      "description": "Minimum length percentage for short text."
+    },
+    "minCharLengthAbove": {
+      "title": "Min Length Short/Long Threshold",
+      "description": "Character count above which text is considered long for min length check."
+    },
+    "minCharLengthBelow": {
+      "title": "Min Length Long Text %",
+      "description": "Minimum length percentage for long text."
+    },
+    "checkStorageSize": {
+      "title": "Check Storage Size",
+      "description": "Verify target fits within the storage size defined by the document format."
+    },
+    "checkAbsoluteMaxCharLength": {
+      "title": "Check Absolute Max Length",
+      "description": "Flag targets exceeding an absolute character count limit."
+    },
+    "absoluteMaxCharLength": {
+      "title": "Absolute Max Characters",
+      "description": "Maximum number of characters allowed in any target segment."
+    },
+    "checkAllowedCharacters": {
+      "title": "Check Allowed Characters",
+      "description": "Enable character-level validation of target text."
+    },
+    "checkCharacters": {
+      "title": "Check Against Charset",
+      "description": "Validate target characters against a specific charset encoding."
+    },
+    "charset": {
+      "title": "Character Set Encoding",
+      "description": "Charset encoding to validate target text against."
+    },
+    "extraCharsAllowed": {
+      "title": "Extra Allowed Characters",
+      "description": "Regex matching additional characters to allow beyond the charset."
+    },
+    "checkTerms": {
+      "title": "Check Terminology",
+      "description": "Verify terminology using a glossary or termbase file."
+    },
+    "termsPath": {
+      "title": "Termbase Path",
+      "description": "Path to the termbase file for terminology verification."
+    },
+    "stringMode": {
+      "title": "String Match Mode",
+      "description": "Use string-based matching instead of word-boundary matching for terms."
+    },
+    "betweenCodes": {
+      "title": "Check Between Codes Only",
+      "description": "Restrict terminology checking to text between inline codes."
+    },
+    "showFullPath": {
+      "title": "Show Full File Path",
+      "description": "Display full file paths in the report instead of filenames only."
+    },
+    "checkBlacklist": {
+      "title": "Check Blacklist",
+      "description": "Check target text against a list of forbidden terms."
+    },
+    "allowBlacklistSub": {
+      "title": "Allow Substring Matching",
+      "description": "Allow substring matches when checking blacklisted terms."
+    },
+    "blacklistSrc": {
+      "title": "Check Source Blacklist",
+      "description": "Also check the source text against the blacklist."
+    },
+    "blacklistPath": {
+      "title": "Blacklist File Path",
+      "description": "Path to the file containing forbidden terms."
+    },
+    "showOnlyPatternDescription": {
+      "title": "Show Pattern Description Only",
+      "description": "Show only the pattern description in reports instead of full match details."
+    },
+    "typesToIgnore": {
+      "title": "Code Types to Ignore",
+      "description": "Semicolon-separated list of inline code types to skip during verification."
+    },
+    "patternCount": {
+      "title": "Pattern Count",
+      "description": "Number of pattern rules defined."
+    },
+    "usePattern0": {
+      "title": "Enable Pattern 0",
+      "description": "Enable pattern rule #0 (opening parenthesis)."
+    },
+    "fromSourcePattern0": {
+      "title": "Pattern 0 Direction",
+      "description": "Search source first then verify target (true) or vice versa (false)."
+    },
+    "singlePattern0": {
+      "title": "Pattern 0 Single Match",
+      "description": "Expect only a single occurrence for pattern #0."
+    },
+    "severityPattern0": {
+      "title": "Pattern 0 Severity",
+      "description": "Warning severity level for pattern rule #0."
+    },
+    "sourcePattern0": {
+      "title": "Pattern 0 Source Regex",
+      "description": "Regular expression to match in source for pattern #0."
+    },
+    "targetPattern0": {
+      "title": "Pattern 0 Target Regex",
+      "description": "Expected pattern in target for pattern #0, or <same>."
+    },
+    "descPattern0": {
+      "title": "Pattern 0 Description",
+      "description": "Human-readable description of pattern rule #0."
+    },
+    "usePattern1": {
+      "title": "Enable Pattern 1",
+      "description": "Enable pattern rule #1 (closing parenthesis)."
+    },
+    "fromSourcePattern1": {
+      "title": "Pattern 1 Direction",
+      "description": "Search source first then verify target (true) or vice versa (false)."
+    },
+    "singlePattern1": {
+      "title": "Pattern 1 Single Match",
+      "description": "Expect only a single occurrence for pattern #1."
+    },
+    "severityPattern1": {
+      "title": "Pattern 1 Severity",
+      "description": "Warning severity level for pattern rule #1."
+    },
+    "sourcePattern1": {
+      "title": "Pattern 1 Source Regex",
+      "description": "Regular expression to match in source for pattern #1."
+    },
+    "targetPattern1": {
+      "title": "Pattern 1 Target Regex",
+      "description": "Expected pattern in target for pattern #1, or <same>."
+    },
+    "descPattern1": {
+      "title": "Pattern 1 Description",
+      "description": "Human-readable description of pattern rule #1."
+    },
+    "usePattern2": {
+      "title": "Enable Pattern 2",
+      "description": "Enable pattern rule #2 (bracketing characters)."
+    },
+    "fromSourcePattern2": {
+      "title": "Pattern 2 Direction",
+      "description": "Search source first then verify target (true) or vice versa (false)."
+    },
+    "singlePattern2": {
+      "title": "Pattern 2 Single Match",
+      "description": "Expect only a single occurrence for pattern #2."
+    },
+    "severityPattern2": {
+      "title": "Pattern 2 Severity",
+      "description": "Warning severity level for pattern rule #2."
+    },
+    "sourcePattern2": {
+      "title": "Pattern 2 Source Regex",
+      "description": "Regular expression to match in source for pattern #2."
+    },
+    "targetPattern2": {
+      "title": "Pattern 2 Target Regex",
+      "description": "Expected pattern in target for pattern #2, or <same>."
+    },
+    "descPattern2": {
+      "title": "Pattern 2 Description",
+      "description": "Human-readable description of pattern rule #2."
+    },
+    "usePattern3": {
+      "title": "Enable Pattern 3",
+      "description": "Enable pattern rule #3 (email addresses)."
+    },
+    "fromSourcePattern3": {
+      "title": "Pattern 3 Direction",
+      "description": "Search source first then verify target (true) or vice versa (false)."
+    },
+    "singlePattern3": {
+      "title": "Pattern 3 Single Match",
+      "description": "Expect only a single occurrence for pattern #3."
+    },
+    "severityPattern3": {
+      "title": "Pattern 3 Severity",
+      "description": "Warning severity level for pattern rule #3."
+    },
+    "sourcePattern3": {
+      "title": "Pattern 3 Source Regex",
+      "description": "Regular expression to match in source for pattern #3."
+    },
+    "targetPattern3": {
+      "title": "Pattern 3 Target Regex",
+      "description": "Expected pattern in target for pattern #3, or <same>."
+    },
+    "descPattern3": {
+      "title": "Pattern 3 Description",
+      "description": "Human-readable description of pattern rule #3."
+    },
+    "usePattern4": {
+      "title": "Enable Pattern 4",
+      "description": "Enable pattern rule #4 (URLs)."
+    },
+    "fromSourcePattern4": {
+      "title": "Pattern 4 Direction",
+      "description": "Search source first then verify target (true) or vice versa (false)."
+    },
+    "singlePattern4": {
+      "title": "Pattern 4 Single Match",
+      "description": "Expect only a single occurrence for pattern #4."
+    },
+    "severityPattern4": {
+      "title": "Pattern 4 Severity",
+      "description": "Warning severity level for pattern rule #4."
+    },
+    "sourcePattern4": {
+      "title": "Pattern 4 Source Regex",
+      "description": "Regular expression to match in source for pattern #4."
+    },
+    "targetPattern4": {
+      "title": "Pattern 4 Target Regex",
+      "description": "Expected pattern in target for pattern #4, or <same>."
+    },
+    "descPattern4": {
+      "title": "Pattern 4 Description",
+      "description": "Human-readable description of pattern rule #4."
+    },
+    "usePattern5": {
+      "title": "Enable Pattern 5",
+      "description": "Enable pattern rule #5 (IP addresses)."
+    },
+    "fromSourcePattern5": {
+      "title": "Pattern 5 Direction",
+      "description": "Search source first then verify target (true) or vice versa (false)."
+    },
+    "singlePattern5": {
+      "title": "Pattern 5 Single Match",
+      "description": "Expect only a single occurrence for pattern #5."
+    },
+    "severityPattern5": {
+      "title": "Pattern 5 Severity",
+      "description": "Warning severity level for pattern rule #5."
+    },
+    "sourcePattern5": {
+      "title": "Pattern 5 Source Regex",
+      "description": "Regular expression to match in source for pattern #5."
+    },
+    "targetPattern5": {
+      "title": "Pattern 5 Target Regex",
+      "description": "Expected pattern in target for pattern #5, or <same>."
+    },
+    "descPattern5": {
+      "title": "Pattern 5 Description",
+      "description": "Human-readable description of pattern rule #5."
+    },
+    "usePattern6": {
+      "title": "Enable Pattern 6",
+      "description": "Enable pattern rule #6 (printf codes)."
+    },
+    "fromSourcePattern6": {
+      "title": "Pattern 6 Direction",
+      "description": "Search source first then verify target (true) or vice versa (false)."
+    },
+    "singlePattern6": {
+      "title": "Pattern 6 Single Match",
+      "description": "Expect only a single occurrence for pattern #6."
+    },
+    "severityPattern6": {
+      "title": "Pattern 6 Severity",
+      "description": "Warning severity level for pattern rule #6."
+    },
+    "sourcePattern6": {
+      "title": "Pattern 6 Source Regex",
+      "description": "Regular expression to match in source for pattern #6."
+    },
+    "targetPattern6": {
+      "title": "Pattern 6 Target Regex",
+      "description": "Expected pattern in target for pattern #6, or <same>."
+    },
+    "descPattern6": {
+      "title": "Pattern 6 Description",
+      "description": "Human-readable description of pattern rule #6."
+    },
+    "usePattern7": {
+      "title": "Enable Pattern 7",
+      "description": "Enable pattern rule #7 (tripled letters)."
+    },
+    "fromSourcePattern7": {
+      "title": "Pattern 7 Direction",
+      "description": "Search source first then verify target (true) or vice versa (false)."
+    },
+    "singlePattern7": {
+      "title": "Pattern 7 Single Match",
+      "description": "Expect only a single occurrence for pattern #7."
+    },
+    "severityPattern7": {
+      "title": "Pattern 7 Severity",
+      "description": "Warning severity level for pattern rule #7."
+    },
+    "sourcePattern7": {
+      "title": "Pattern 7 Source Regex",
+      "description": "Regular expression to match in source for pattern #7."
+    },
+    "targetPattern7": {
+      "title": "Pattern 7 Target Regex",
+      "description": "Expected pattern in target for pattern #7, or <same>."
+    },
+    "descPattern7": {
+      "title": "Pattern 7 Description",
+      "description": "Human-readable description of pattern rule #7."
+    },
+    "extraCodesAllowed": {
+      "title": "Extra Codes Allowed",
+      "description": "Number of extra inline codes allowed in target without warning."
+    },
+    "missingCodesAllowed": {
+      "title": "Missing Codes Allowed",
+      "description": "Number of missing inline codes allowed from target without warning."
     }
   }
 }

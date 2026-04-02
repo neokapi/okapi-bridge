@@ -81,6 +81,10 @@
     },
     "escapeForwardSlashes": {
       "description": "Escape forward slashes in output JSON (\\/)."
+    },
+    "maxwidthSizeUnit": {
+      "title": "Max Width Size Unit",
+      "description": "The size-unit attribute value used for XLIFF length restriction elements."
     }
   }
 }

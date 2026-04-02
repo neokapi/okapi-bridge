@@ -1,57 +1,87 @@
 {
   "filterName": "MIF Filter",
-  "overview": "Processes Adobe FrameMaker MIF (Maker Interchange Format) documents. MIF is generated and read by Adobe FrameMaker; the filter supports MIF v8.0 and above. Encoding is automatically detected based on the file version, with MIF v8+ using UTF-8.",
+  "overview": "The MIF Filter processes Adobe FrameMaker Interchange Format (MIF) documents. It supports MIF v8.0 and above, with automatic encoding detection based on file version. The filter extracts translatable text from body, hidden, master, and reference pages, and supports extraction of variables, index markers, and hypertext links. The MIF 9.0 specification is available from Adobe.",
   "parameters": {
-    "extraction.extractBodyPages": {
-      "help": "Controls whether text from the main document body pages is extracted for translation."
+    "extractVariables": {
+      "help": "Extracts the **definitions** of FrameMaker variables so they can be translated. This covers all variable definitions in the document's variable catalog."
     },
-    "extraction.extractMasterPages": {
-      "help": "Controls whether text from master pages is extracted. Master pages define repeating page layouts (headers, footers, background text)."
+    "extractIndexMarkers": {
+      "help": "Extracts index markers from extractable pages. Each index entry's text is extracted as a **separate text unit** placed *before* the text unit containing the index marker.\n\nThis only applies to pages that are enabled for extraction (body, hidden, master, or reference pages)."
     },
-    "extraction.extractReferencePages": {
-      "help": "Controls whether text from reference pages is extracted. Note that FrameMaker creates new documents with several reference pages that already contain text by default, so disabling this avoids extracting that boilerplate content.",
+    "extractLinks": {
+      "help": "Extracts URLs from hypertext links in extractable pages. Each URL is extracted as a **separate text unit** placed *before* the text unit containing the hypertext marker.\n\nThis only applies to pages that are enabled for extraction."
+    },
+    "extractBodyPages": {
+      "help": "Extracts translatable text from the **body pages** — the main content area of the FrameMaker document."
+    },
+    "extractHiddenPages": {
+      "help": "Extracts translatable text from **hidden pages** in the document."
+    },
+    "extractMasterPages": {
+      "help": "Extracts translatable text from **master pages**, which define page layouts, headers, and footers."
+    },
+    "extractReferencePages": {
+      "help": "Extracts translatable text from **reference pages**. Note that FrameMaker creates new documents with several reference pages that already contain text, so enabling this may produce unexpected text units from default template content.",
       "notes": [
-        "By default FrameMaker creates new documents with several reference pages that contain text — review whether this content actually needs translation."
+        "By default, FrameMaker creates new documents with several reference pages that contain text — be aware of extra content when enabling this option."
       ]
     },
-    "extraction.extractHiddenPages": {
-      "help": "Controls whether text from hidden pages is extracted for translation."
-    },
-    "extraction.extractVariables": {
-      "help": "Extracts the **definitions** of FrameMaker variables. Variable definitions are the source text that gets expanded wherever the variable is used in the document."
-    },
-    "extraction.extractIndexMarkers": {
-      "help": "Extracts index markers from the extractable pages. Each index entry's text is extracted as a **separate text unit**, placed before the text unit containing the index marker itself."
-    },
-    "extraction.extractLinks": {
-      "help": "Extracts URLs from hypertext links in the extractable pages. Each URL is extracted as a **separate text unit**, placed before the text unit containing the hypertext marker."
-    },
-    "extraction.extractHardReturnsAsText": {
-      "help": "Treats hard returns (manual line breaks) in MIF paragraphs as translatable text rather than structural formatting."
-    },
-    "extraction.extractPgfNumFormatsInline": {
-      "help": "Extracts paragraph autonumber formats as inline content within the paragraph text."
-    },
-    "extraction.extractReferenceFormats": {
-      "help": "Extracts cross-reference format definitions for translation."
-    },
-    "inlineCodes": {
-      "help": "Define regular expressions to match inline codes within extracted text. Any match is converted to an inline code (placeholder) in the extracted segments.\n\nThe default pattern for MIF is:\n```\n<\\$.*?>\n```\nThis matches FrameMaker variable references like `<$dayname>`, `<$monthnum>`, `<$year>` that appear inline in text.",
-      "examples": [
-        "`<\\$.*?>` — matches FrameMaker variable references such as `<$dayname>`, `<$fullfilename>`"
-      ]
+    "useCodeFinder": {
+      "help": "Enables inline code detection using regular expressions. Any match in extracted text is converted to an inline code.\n\nThe default expression matches FrameMaker building-block tags:\n```\n<\\$.*?>\n```\nThis matches patterns like `<$daynum>`, `<$monthname>`, `<$year>` commonly found in FrameMaker variable definitions."
     }
   },
   "limitations": [
     "MIF versions below 8.0 are **not supported**.",
-    "Very large embedded insets (e.g. images) may cause Java heap memory issues. The workaround is to link to external objects rather than embed them.",
-    "The filter does not perform font mapping — if the target language requires different fonts, you must manually update the paragraph and character catalogs to use fonts with proper glyph support."
+    "Very large embedded insets (e.g. images) may cause **Java heap memory issues**. The workaround is to link to external objects rather than embed them.",
+    "The filter does not perform **font mapping** — if the translated file uses a language not supported by the source fonts, you must manually update the paragraph and character catalogs to use appropriate fonts."
   ],
   "processingNotes": [
     "Input encoding is **automatically detected** based on the MIF file version and document metadata.",
-    "MIF v8 and above are always read and written as **UTF-8**."
+    "MIF v8 and above use **UTF-8** for both input and output.",
+    "Index entries and link URLs are extracted as separate text units placed **before** the text unit containing their respective markers."
   ],
-  "examples": [],
+  "propertySuggestions": {
+    "extractVariables": {
+      "title": "Extract Variables",
+      "description": "Extract the definitions of FrameMaker variables for translation."
+    },
+    "extractIndexMarkers": {
+      "title": "Extract Index Markers",
+      "description": "Extract index marker text from extractable pages as separate text units."
+    },
+    "extractLinks": {
+      "title": "Extract Links",
+      "description": "Extract hypertext link URLs from extractable pages as separate text units."
+    },
+    "extractBodyPages": {
+      "title": "Body Pages",
+      "description": "Extract translatable text from body pages."
+    },
+    "extractHiddenPages": {
+      "title": "Hidden Pages",
+      "description": "Extract translatable text from hidden pages."
+    },
+    "extractMasterPages": {
+      "title": "Master Pages",
+      "description": "Extract translatable text from master pages."
+    },
+    "extractReferencePages": {
+      "title": "Reference Pages",
+      "description": "Extract translatable text from reference pages."
+    },
+    "useCodeFinder": {
+      "title": "Use Inline Code Rules",
+      "description": "Apply regular expressions to convert matched text patterns into inline codes."
+    }
+  },
+  "examples": [
+    {
+      "title": "Default inline code pattern",
+      "description": "The default code finder expression matches FrameMaker building-block variable tags like `<$daynum>`, `<$monthname>`, `<$year>`. These are converted to inline codes so translators see them as placeholders rather than translatable text.",
+      "config": "```\n<\\$.*?>\n```"
+    }
+  ],
+  "fullDoc": "# MIF Filter\n\nThe MIF Filter processes Adobe FrameMaker Interchange Format (MIF) documents. It supports MIF v8.0 and above, with automatic encoding detection based on file version. The filter extracts translatable text from body, hidden, master, and reference pages, and supports extraction of variables, index markers, and hypertext links.\n\nThe MIF 9.0 specification is available from Adobe.\n\n## Parameters\n\n### Options\n\n#### Extract Variables\nExtracts the **definitions** of FrameMaker variables so they can be translated. This covers all variable definitions in the document's variable catalog.\n\n#### Extract Index Markers\nExtracts index markers from extractable pages. Each index entry's text is extracted as a **separate text unit** placed *before* the text unit containing the index marker.\n\nThis only applies to pages that are enabled for extraction (body, hidden, master, or reference pages).\n\n#### Extract Links\nExtracts URLs from hypertext links in extractable pages. Each URL is extracted as a **separate text unit** placed *before* the text unit containing the hypertext marker.\n\nThis only applies to pages that are enabled for extraction.\n\n#### Type of Page to Extract\n\n##### Body Pages\nExtracts translatable text from the **body pages** — the main content area of the FrameMaker document.\n\n##### Hidden Pages\nExtracts translatable text from **hidden pages** in the document.\n\n##### Master Pages\nExtracts translatable text from **master pages**, which define page layouts, headers, and footers.\n\n##### Reference Pages\nExtracts translatable text from **reference pages**.\n\n> **Note:** By default, FrameMaker creates new documents with several reference pages that contain text — be aware of extra content when enabling this option.\n\n### Inline Codes\n\n#### Use Inline Code Rules\nEnables inline code detection using regular expressions. Any match in extracted text is converted to an inline code.\n\nThe default expression matches FrameMaker building-block tags:\n```\n<\\$.*?>\n```\nThis matches patterns like `<$daynum>`, `<$monthname>`, `<$year>` commonly found in FrameMaker variable definitions.\n\n## Limitations\n\n- MIF versions below 8.0 are **not supported**.\n- Very large embedded insets (e.g. images) may cause **Java heap memory issues**. The workaround is to link to external objects rather than embed them.\n- The filter does not perform **font mapping** — if the translated file uses a language not supported by the source fonts, you must manually update the paragraph and character catalogs to use appropriate fonts.\n\n## Notes\n\n- Input encoding is **automatically detected** based on the MIF file version and document metadata.\n- MIF v8 and above use **UTF-8** for both input and output.\n- Index entries and link URLs are extracted as separate text units placed **before** the text unit containing their respective markers.\n\n## Examples\n\n### Default inline code pattern\nThe default code finder expression matches FrameMaker building-block variable tags like `<$daynum>`, `<$monthname>`, `<$year>`. These are converted to inline codes so translators see them as placeholders rather than translatable text.\n\n```\n<\\$.*?>\n```",
   "filterId": "okf_mif",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/MIF_Filter"
 }

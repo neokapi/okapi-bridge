@@ -2,6 +2,15 @@
   "$schema": "https://neokapi.dev/schemas/editorHints.schema.json",
   "title": "CSV (Comma-Separated Values)",
   "$include": [
-    "_fragments/inlineCodes.fragment.json"
-  ]
+    "_fragments/inlineCodes.fragment.json",
+    "_fragments/tableColumns.fragment.json"
+  ],
+  "fields": {
+    "inlineCodes": {
+      "title": "Inline codes"
+    },
+    "format": {
+      "title": "Table type"
+    }
+  }
 }

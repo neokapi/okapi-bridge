@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_mif.v5.schema.json",
   "version": 5,
-  "title": "MIF Filter Filter",
-  "description": "Configuration for the Okapi MIF Filter Filter",
+  "title": "MIF Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_mif",
@@ -39,43 +38,50 @@
           "type": "boolean",
           "default": true,
           "x-flattenPath": "extractBodyPages",
-          "description": "Extract body pages"
+          "description": "Extract translatable text from body pages.",
+          "title": "Body Pages"
         },
         "extractMasterPages": {
           "type": "boolean",
           "default": true,
           "x-flattenPath": "extractMasterPages",
-          "description": "Extract master pages"
+          "description": "Extract translatable text from master pages.",
+          "title": "Master Pages"
         },
         "extractReferencePages": {
           "type": "boolean",
           "default": true,
           "x-flattenPath": "extractReferencePages",
-          "description": "Extract reference pages"
+          "description": "Extract translatable text from reference pages.",
+          "title": "Reference Pages"
         },
         "extractHiddenPages": {
           "type": "boolean",
           "default": true,
           "x-flattenPath": "extractHiddenPages",
-          "description": "Extract hidden pages"
+          "description": "Extract translatable text from hidden pages.",
+          "title": "Hidden Pages"
         },
         "extractVariables": {
           "type": "boolean",
           "default": true,
           "x-flattenPath": "extractVariables",
-          "description": "Extract variables"
+          "description": "Extract the definitions of FrameMaker variables for translation.",
+          "title": "Extract Variables"
         },
         "extractIndexMarkers": {
           "type": "boolean",
           "default": true,
           "x-flattenPath": "extractIndexMarkers",
-          "description": "Extract index markers"
+          "description": "Extract index marker text from extractable pages as separate text units.",
+          "title": "Extract Index Markers"
         },
         "extractLinks": {
           "type": "boolean",
           "default": false,
           "x-flattenPath": "extractLinks",
-          "description": "Extract cross-reference links"
+          "description": "Extract hypertext link URLs from extractable pages as separate text units.",
+          "title": "Extract Links"
         },
         "extractHardReturnsAsText": {
           "type": "boolean",
@@ -107,8 +113,9 @@
         "enabled": {
           "type": "boolean",
           "default": false,
-          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
-          "x-flattenPath": "useCodeFinder"
+          "description": "Apply regular expressions to convert matched text patterns into inline codes.",
+          "x-flattenPath": "useCodeFinder",
+          "title": "Use Inline Code Rules"
         },
         "rules": {
           "$ref": "#/$defs/codeFinderRules",
@@ -177,6 +184,6 @@
   "x-apiVersion": "v5",
   "x-baseVersion": 5,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "318e03eab0be",
-  "x-compositeHash": "313e01e7a78b"
+  "x-baseHash": "1c507962cfb3",
+  "x-compositeHash": "e7af8a8a3b8a"
 }

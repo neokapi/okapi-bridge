@@ -4,8 +4,17 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "taggedConfig": {},
-    "editorTitle": {},
-    "path": {}
+    "taggedConfig": {
+      "title": "Tagged Configuration",
+      "description": "Internal parsed configuration object for element and attribute rules"
+    },
+    "editorTitle": {
+      "title": "Editor Title",
+      "description": "Title displayed in the parameters editor UI"
+    },
+    "path": {
+      "title": "Configuration File Path",
+      "description": "Path to an external YAML configuration file"
+    }
   }
 }

@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_openxml.v7.schema.json",
   "version": 7,
-  "title": "OpenXML Filter Filter",
-  "description": "Configuration for the Okapi OpenXML Filter Filter",
+  "title": "OpenXML Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_openxml",
@@ -44,7 +43,8 @@
   },
   "properties": {
     "inlineCodes": {
-      "$ref": "#/$defs/inlineCodes"
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline codes"
     },
     "word": {
       "type": "object",
@@ -122,7 +122,8 @@
           "x-flattenPath": "bPreferenceAutomaticallyAcceptRevisions",
           "description": "Accept revisions automatically"
         }
-      }
+      },
+      "title": "Word Options"
     },
     "excel": {
       "type": "object",
@@ -170,7 +171,8 @@
           "x-flattenPath": "translateExcelCellsCopied",
           "description": "Translate copied cells"
         }
-      }
+      },
+      "title": "Excel Options"
     },
     "powerpoint": {
       "type": "object",
@@ -272,7 +274,8 @@
           "x-flattenPath": "translatePowerpointDocProperties",
           "description": "Translate doc properties"
         }
-      }
+      },
+      "title": "PowerPoint Options"
     },
     "general": {
       "type": "object",
@@ -356,59 +359,86 @@
           "x-flattenPath": "nFileType",
           "description": "File type identifier"
         }
-      }
+      },
+      "title": "General Options"
     },
     "ignoreWhitespaceStyles": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Ignore Whitespace Styles",
+      "description": "Ignore whitespace character formatting and treat it as equivalent to consequential styles during aggressive tag cleanup."
     },
     "preserveAsciiAndHighAnsiFontCategoriesOnDetection": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Preserve Font Categories on Detection",
+      "description": "Preserve ASCII and HighAnsi run font categories when merging consequential runs."
     },
     "removeEmbeddedExcel": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Remove Embedded Excel Package",
+      "description": "Remove the embedded Excel data package and its references from chart parts when extracting cached chart values."
     },
     "translateWordGraphicName": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Translate Word Graphic Names",
+      "description": "Expose @name attributes of drawings and word art in Word documents for translation."
     },
     "translateWordGraphicDescription": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Translate Word Graphic Descriptions",
+      "description": "Expose @descr attributes of drawings and word art in Word documents for translation."
     },
     "translatePowerpointGraphicName": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Translate PowerPoint Graphic Names",
+      "description": "Expose @name attributes of drawings and word art in PowerPoint presentations for translation."
     },
     "translatePowerpointGraphicDescription": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Translate PowerPoint Graphic Descriptions",
+      "description": "Expose @descr attributes of drawings and word art in PowerPoint presentations for translation."
     },
     "translatePowerpointCachedChartStrings": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Translate Cached Chart Strings",
+      "description": "Expose pre-rendered chart string values stored in PowerPoint chart XML for translation."
     },
     "translatePowerpointCachedChartNumbers": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Translate Cached Chart Numbers",
+      "description": "Expose cached chart numbers and format codes in PowerPoint for translation."
     },
     "treatExcelSourceColumnStylesForExclusion": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Apply Source Column Styles for Exclusion",
+      "description": "Use source column cell styles when evaluating color-based exclusion rules in Excel."
     },
     "extractExcelSourceAndTargetColumnsJoined": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Join Source and Target Columns",
+      "description": "Join source and target columns in a row during extraction rather than extracting them separately."
     },
     "extractExcelWorksheetsExplicitlySpecified": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Extract Only Specified Worksheets",
+      "description": "Only extract worksheets whose names match patterns defined in the Worksheet Configurations."
     },
     "extractExcelCellsExplicitlySpecified": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Extract Only Specified Cells",
+      "description": "Only extract cells explicitly specified in the Worksheet Configurations."
     }
   },
   "additionalProperties": false,
@@ -507,6 +537,6 @@
   "x-apiVersion": "v7",
   "x-baseVersion": 7,
   "x-introducedInOkapi": "1.48.0",
-  "x-baseHash": "7f92b39ab673",
-  "x-compositeHash": "0ab960648871"
+  "x-baseHash": "c0a4cf68d9e4",
+  "x-compositeHash": "9c6f43d4aa02"
 }

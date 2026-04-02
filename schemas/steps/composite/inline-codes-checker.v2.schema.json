@@ -1,6 +1,6 @@
 {
   "$id": "inline-codes-checker",
-  "title": "Inline Codes Quality Check",
+  "title": "Inline Codes Checker",
   "type": "object",
   "x-step": {
     "class": "net.sf.okapi.steps.inlinescodeschecker.InlineCodesCheckerStep",
@@ -38,23 +38,28 @@
   "properties": {
     "codeDifference": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn if there is a code difference between source and target segments"
     },
     "guessOpenClose": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Try to guess opening/closing types for placeholder codes"
     },
     "typesToIgnore": {
       "type": "string",
-      "default": "mrk;x-df-s;"
+      "default": "mrk;x-df-s;",
+      "title": "List of the inline code types to ignore"
     },
     "extraCodesAllowed": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Codes allowed to be extra in the target"
     },
     "missingCodesAllowed": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Codes allowed to be missing from the target"
     }
   }
 }

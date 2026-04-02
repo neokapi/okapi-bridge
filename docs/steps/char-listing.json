@@ -1,36 +1,39 @@
 {
-  "filterName": "Used Characters Listing",
-  "overview": "Generates a list of all characters used in the translatable text of a given set of documents. The output is a tab-delimited file listing each character's Unicode code point, representation, and occurrence count. Useful for creating minimal bitmap fonts (e.g., Japanese game interfaces) by including only characters actually present in the text. Text units marked as non-translatable are ignored.",
+  "filterName": "Used Characters Listing Step",
+  "overview": "Generates a list of all characters used in the translatable text of a given set of documents. The output is a tab-delimited text file listing each character's Unicode code point, its visual representation, and occurrence count. Useful for creating minimal bitmap fonts (e.g., Japanese game interfaces) by including only the characters actually present in the source content.",
   "parameters": {
     "outputPath": {
-      "help": "Full path where the tab-delimited character listing will be written. The file contains three columns: Unicode code point (e.g., `U+0079`), character representation (e.g., `'y'`), and occurrence count.",
-      "values": "A file system path. The file will be created or overwritten. Default filename is `charlist.txt`.",
+      "help": "Full path where the tab-delimited character listing file will be written.\n\nThe output file contains three tab-separated columns per line:\n1. Unicode code point (e.g., `U+2192`)\n2. Character representation (e.g., `'→'`)\n3. Number of occurrences\n\nThe file is always UTF-8 encoded.",
       "examples": [
-        "`charlist.txt` — relative path, written to the working directory",
-        "`/output/fonts/used-chars.txt` — absolute path"
+        "`charlist.txt` — default, writes to working directory",
+        "`/output/project-chars.txt` — absolute path"
       ]
     },
     "autoOpen": {
-      "help": "Automatically opens the result file in the system's default text editor/viewer after the step completes. Convenient for interactive use; disable for batch/automated pipelines."
+      "help": "Automatically opens the result file in the system's default text editor after processing completes. Convenient for quick inspection of the character list during interactive use; disable for batch/automated pipelines."
     }
   },
   "processingNotes": [
-    "Only translatable text units are scanned — text units marked as non-translatable are skipped.",
+    "Text units marked as non-translatable are ignored — only translatable content is scanned.",
     "The output list is **not in any specific order**.",
-    "The result file is **tab-delimited** with three columns: Unicode code point, character representation, and occurrence count."
+    "The step passes filter events through unchanged — it can be inserted into a pipeline without affecting downstream steps."
   ],
-  "limitations": [],
+  "limitations": [
+    "None known."
+  ],
   "examples": [
     {
       "title": "Character listing output format",
-      "description": "Example of the tab-delimited output file produced by the step. Each line shows the Unicode code point, the character in quotes, and how many times it appeared across all translatable text.",
+      "description": "Example of the tab-delimited output file showing Unicode code points, character representations, and occurrence counts.",
       "output": "```\nU+2192 '→' 50\nU+00AE '®' 1\nU+00A0 ' ' 3\nU+007A 'z' 10\nU+0079 'y' 320\n```"
-    },
-    {
-      "title": "Bitmap font optimization",
-      "description": "Use this step when building a bitmap font for a game interface (e.g., Japanese characters). By feeding your localized game strings through this step, you get the exact set of characters needed, allowing you to exclude unused glyphs and reduce font file size."
     }
   ],
+  "propertySuggestions": {
+    "autoOpen": {
+      "description": "Automatically open the result file in the default editor after processing completes."
+    }
+  },
+  "fullDoc": "# Used Characters Listing Step\n\nGenerates a list of all characters used in the translatable text of a given set of documents. The output is a tab-delimited text file listing each character's Unicode code point, its visual representation, and occurrence count. Useful for creating minimal bitmap fonts (e.g., Japanese game interfaces) by including only the characters actually present in the source content.\n\nTakes: Filter events. Sends: Filter events.\n\n## Parameters\n\n#### Path of the result file\n\nFull path where the tab-delimited character listing file will be written.\n\nThe output file contains three tab-separated columns per line:\n1. Unicode code point (e.g., `U+2192`)\n2. Character representation (e.g., `'→'`)\n3. Number of occurrences\n\nDefault: `charlist.txt`\n\n#### Open the result file after completion\n\nAutomatically opens the result file in the system's default text editor after processing completes. Convenient for quick inspection of the character list during interactive use; disable for batch/automated pipelines.\n\nDefault: `true`\n\n## Output Format\n\nThe result file is a tab-delimited text file. Example:\n\n```\nU+2192 '→' 50\nU+00AE '®' 1\nU+00A0 ' ' 3\nU+007A 'z' 10\nU+0079 'y' 320\n```\n\nThe output list is not in any specific order.\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- Text units marked as non-translatable are ignored — only translatable content is scanned.\n- The step passes filter events through unchanged, so it can be inserted into a pipeline without affecting downstream processing.\n- This step is particularly useful when creating bitmap fonts for game interfaces, where including only used characters significantly reduces font file size.",
   "stepId": "char-listing",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/used_characters_listing_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Used_Characters_Listing_Step"
 }

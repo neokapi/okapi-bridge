@@ -1,49 +1,16 @@
 {
   "filterName": "Multi-Parsers Filter",
-  "overview": "The Multi-Parsers Filter extracts translatable text from **two-level complex formats** — documents where the outer format contains embedded inner formats. The primary use case is CSV files where individual columns may contain Markdown, HTML, or plain text. By default, the filter processes CSV files treating all columns as translatable plain text.",
-  "parameters": {
-    "extraction.csvAutoDetectColumnTypes": {
-      "help": "Enables auto-detection of column types from a **special configuration row** embedded in each input CSV file, rather than specifying column formats manually.\n\nWhen enabled, the filter reads column type information from a designated row in the file itself. The manual column settings (`csvFormatCols`, `csvNoExtractCols`, `csvStartingRow`) are ignored in favor of the embedded configuration."
-    },
-    "extraction.csvAutoDetectColumnTypesRow": {
-      "help": "Specifies which row in the CSV file contains the column type configuration. This row is consumed by the filter for configuration and is **not extracted** as translatable content.\n\nRow numbering starts at **1** (first row in the file).",
-      "values": "Integer ≥ 1. Typically row 2 if the first row contains headers."
-    },
-    "extraction.csvFormatCols": {
-      "help": "Defines which columns contain non-plain-text content and which sub-filter to apply to them. Columns not listed here are treated as **plain text** by default.\n\nFormat: comma-separated list of `column:filter_id` pairs. Column numbering starts at **0**.",
-      "values": "Comma-separated `column:filter_id` pairs. Column index is zero-based.",
-      "examples": [
-        "`3:okf_markdown` — column 3 contains Markdown",
-        "`1:okf_html,3:okf_markdown` — column 1 is HTML, column 3 is Markdown"
-      ]
-    },
-    "extraction.csvNoExtractCols": {
-      "help": "Lists columns that should be **skipped entirely** during extraction — their content will not be treated as translatable.\n\nUseful for columns containing IDs, timestamps, or other non-translatable data. Column numbering starts at **0**.",
-      "values": "Comma-separated zero-based column indices (e.g. `0,2,5`).",
-      "examples": [
-        "`0` — skip the first column",
-        "`0,2,5` — skip columns 0, 2, and 5"
-      ]
-    },
-    "extraction.csvStartingRow": {
-      "help": "Sets the first row to extract content from. Rows before this are skipped (e.g., header rows).\n\nRow numbering starts at **1**.",
-      "values": "Integer ≥ 1. Use `2` to skip a single header row."
-    }
-  },
+  "overview": "The Multi-Parsers Filter extracts translatable text from two-level complex formats, where an outer format contains inner formats. A typical use case is a CSV file where some columns contain Markdown, some HTML, and some plain text. By default, the filter is configured to process a CSV file where all columns are translatable and treated as plain text.",
+  "parameters": {},
   "limitations": [
-    "This filter is **BETA** — behavior may change in future releases."
+    "This filter is **BETA** — behavior and parameters may change in future releases."
   ],
   "processingNotes": [
-    "**Encoding detection**: If the file has a Unicode BOM (Byte-Order-Mark), the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically. Otherwise, the default encoding specified in the filter options is applied."
+    "If the input file has a Unicode Byte-Order-Mark (BOM), the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically.",
+    "If no BOM is present, the default encoding specified in the filter options is used."
   ],
-  "examples": [
-    {
-      "title": "CSV with mixed Markdown and plain-text columns",
-      "description": "A CSV file where column 0 is an ID (not extracted), column 1 is plain text, and column 2 contains Markdown content. The first row is a header.",
-      "config": "```yaml\nextraction:\n  csvAutoDetectColumnTypes: false\n  csvFormatCols: \"2:okf_markdown\"\n  csvNoExtractCols: \"0\"\n  csvStartingRow: 2\n```",
-      "input": "```csv\nid,title,description\n1,Hello,\"## Welcome\\nThis is **bold** text\"\n```"
-    }
-  ],
+  "examples": [],
+  "fullDoc": "# Multi-Parsers Filter\n\nThe Multi-Parsers Filter extracts translatable text from two-level complex formats, where an outer format contains inner formats. A typical use case is a CSV file where some columns contain Markdown, some HTML, and some plain text. By default, the filter is configured to process a CSV file where all columns are translatable and treated as plain text.\n\n## Parameters\n\nParameters are not yet documented for this filter.\n\n## Limitations\n\n- This filter is **BETA** — behavior and parameters may change in future releases.\n\n## Notes\n\n- If the input file has a Unicode Byte-Order-Mark (BOM), the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically.\n- If no BOM is present, the default encoding specified in the filter options is used.\n\n## Examples\n\nNo examples are available for this filter.",
   "filterId": "okf_multiparsers",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/multi_parsers_filter"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Multi-Parsers_Filter"
 }

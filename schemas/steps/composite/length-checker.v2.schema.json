@@ -1,6 +1,6 @@
 {
   "$id": "length-checker",
-  "title": "Length Quality Check",
+  "title": "Length Checker",
   "type": "object",
   "x-step": {
     "class": "net.sf.okapi.steps.lengthchecker.LengthCheckerStep",
@@ -38,43 +38,53 @@
   "properties": {
     "checkMaxCharLength": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn if a target is longer than the given percentage of the character length of its source"
     },
     "maxCharLengthBreak": {
       "type": "integer",
-      "default": 20
+      "default": 20,
+      "title": "Character length above which a text is considered \"long\""
     },
     "maxCharLengthAbove": {
       "type": "integer",
-      "default": 200
+      "default": 200,
+      "title": "Percentage for \"long\" text"
     },
     "maxCharLengthBelow": {
       "type": "integer",
-      "default": 350
+      "default": 350,
+      "title": "Percentage for \"short\" text"
     },
     "checkMinCharLength": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn if a target is shorter than the given percentage of the character length of its source"
     },
     "minCharLengthBreak": {
       "type": "integer",
-      "default": 20
+      "default": 20,
+      "title": "Character length above which a text is considered \"long\""
     },
     "minCharLengthAbove": {
       "type": "integer",
-      "default": 45
+      "default": 45,
+      "title": "Percentage for \"long\" text"
     },
     "minCharLengthBelow": {
       "type": "integer",
-      "default": 30
+      "default": 30,
+      "title": "Percentage for \"short\" text"
     },
     "checkStorageSize": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Warn if a source or target text unit does not fit its ITS Storage Size property"
     },
     "checkAbsoluteMaxCharLength": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Warn if a target is longer than"
     },
     "absoluteMaxCharLength": {
       "type": "integer",

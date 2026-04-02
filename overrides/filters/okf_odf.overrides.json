@@ -5,7 +5,22 @@
     "_fragments/extraction.fragment.json"
   ],
   "fields": {
-    "extractReferences": {},
-    "encodeCharacterEntityReferenceGlyphs": {}
+    "extractReferences": {
+      "title": "Extract References",
+      "description": "Extract the content of bookmark reference elements as translatable text"
+    },
+    "encodeCharacterEntityReferenceGlyphs": {},
+    "extractNotes": {
+      "title": "Extract Notes",
+      "description": "Extract the content of annotation elements as translatable text"
+    },
+    "extractMetadata": {
+      "title": "Extract Metadata",
+      "description": "Extract translatable metadata from meta.xml"
+    },
+    "encodeCharEntityReferenceGlyphs": {
+      "title": "Encode Character Entity Reference Glyphs",
+      "description": "Encode special glyphs as character entity references in the output"
+    }
   }
 }

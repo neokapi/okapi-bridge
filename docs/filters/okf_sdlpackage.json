@@ -1,37 +1,18 @@
 {
   "filterName": "SDL Trados Package Filter",
-  "overview": "The SDL Trados Package Filter processes SDL Trados **SDLPPX** (project package) and **SDLRPX** (return package) files. It extends the Archive Filter, reading the input package, detecting SDLXLIFF files for the specified language pair, and using the XLIFF Filter (with the `okf_xliff-sdl` configuration) to process the content. Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events.",
-  "parameters": {
-    "identification.fileNames": {
-      "help": "Comma-separated glob patterns specifying which files inside the archive should be extracted and processed by their respective sub-filters.\n\nEach pattern is matched against the file names within the SDL package. The number of patterns must match the number of entries in **Filter configuration IDs** — they are paired positionally.",
-      "values": "Comma-separated glob patterns (e.g., `*.tmx,*.xlf,*.xlff`). Wildcards: `*` matches any sequence of characters.",
-      "examples": [
-        "`*.tmx,*.xlf,*.xlff` — process TMX and XLIFF files inside the package"
-      ]
-    },
-    "identification.mimeType": {
-      "help": "The MIME type assigned to the package container format itself. This identifies the overall archive format, not the content inside it. Typically does not need to be changed from the default."
-    },
-    "identification.configIds": {
-      "help": "Comma-separated list of Okapi filter configuration IDs, one for each file name pattern in **File names**. Each configuration ID tells Okapi which sub-filter to use for the matching files.\n\nThe SDL Package Filter automatically uses `okf_xliff-sdl` for SDLXLIFF content, but this field controls the mapping for all file types found in the package.",
-      "values": "Comma-separated Okapi filter configuration IDs (e.g., `okf_tmx,okf_xliff,okf_xliff`). Must have the same number of entries as **File names**.",
-      "examples": [
-        "`okf_tmx,okf_xliff-sdl` — use TMX filter for .tmx files and SDL-specific XLIFF filter for XLIFF files"
-      ],
-      "notes": [
-        "The number of configuration IDs must match the number of file name patterns exactly — they are paired by position."
-      ]
-    }
-  },
+  "overview": "The SDL Trados Package Filter processes SDL Trados SDLPPX (project package) and SDLRPX (return package) files. It extends the Archive Filter, detecting SDLXLIFF files for the specified language pair within the package and processing them using the XLIFF Filter with the `okf_xliff-sdl` configuration. Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events.",
+  "parameters": {},
   "limitations": [
-    "Reading an SDLPPX file and writing it back produces another SDLPPX file, **not** an SDLRPX file.",
-    "All limitations of the XLIFF Filter also apply, since SDLXLIFF content is processed via the XLIFF Filter with `okf_xliff-sdl` configuration."
+    "Reading an SDLPPX file and writing it back produces another SDLPPX file, not an SDLRPX file.",
+    "All limitations of the XLIFF Filter also apply, since SDLXLIFF content is processed via the `okf_xliff-sdl` configuration."
   ],
   "processingNotes": [
-    "This filter extends the Archive Filter — the package is treated as a ZIP archive with sub-filter processing.",
-    "SDLXLIFF files inside the package are automatically detected for the specified language pair and processed using the XLIFF Filter with the `okf_xliff-sdl` configuration.",
-    "Each SDLXLIFF file inside the package corresponds to a separate sub-document in the Okapi filter events."
+    "Extends the Archive Filter — the package is treated as an archive containing SDLXLIFF sub-documents.",
+    "SDLXLIFF files are processed using the XLIFF Filter with the `okf_xliff-sdl` configuration.",
+    "Each SDLXLIFF file inside the package maps to a separate sub-document in the filter event stream.",
+    "Only SDLXLIFF files matching the specified language pair are detected and processed."
   ],
+  "fullDoc": "# SDL Trados Package Filter\n\nThe SDL Trados Package Filter processes SDL Trados SDLPPX (project package) and SDLRPX (return package) files. It extends the Archive Filter, detecting SDLXLIFF files for the specified language pair within the package and processing them using the XLIFF Filter with the `okf_xliff-sdl` configuration. Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events.\n\n## Processing Details\n\nThis filter is an extension of the Archive Filter. It reads the input package, detects the SDLXLIFF files for the specified language pair, and uses the XLIFF Filter (with `okf_xliff-sdl`) to process the content. Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events.\n\n## Parameters\n\nThis filter has no configurable parameters. It uses the Archive Filter infrastructure with built-in SDLXLIFF detection and the `okf_xliff-sdl` XLIFF Filter configuration.\n\n## Limitations\n\n- Reading an SDLPPX file and writing it back produces another SDLPPX file, not an SDLRPX file.\n- All limitations of the XLIFF Filter also apply, since SDLXLIFF content is processed via the `okf_xliff-sdl` configuration.\n\n## Notes\n\n- The filter implementation class is `net.sf.okapi.filters.sdlpackage.SdlPackageFilter`.\n- For XLIFF-level configuration details, see the XLIFF Filter documentation.",
   "examples": [],
   "filterId": "okf_sdlpackage",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/SDL_Trados_Package_Filter"

@@ -1,5 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_paraplaintext.v2.schema.json",
+  "version": 2,
   "title": "Plain Text (Paragraph-Based)",
   "type": "object",
   "x-filter": {
@@ -174,5 +176,11 @@
       "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
     }
-  }
+  },
+  "x-kind": "OkfParaplaintextFilterConfig",
+  "x-apiVersion": "v2",
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.46.0",
+  "x-baseHash": "e4edba83f846",
+  "x-compositeHash": "efc5aae346f0"
 }

@@ -35,51 +35,75 @@
   "properties": {
     "type": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Type of Change",
+      "description": "Select the kind of text modification to apply to each text unit."
     },
     "addPrefix": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Add Prefix",
+      "description": "Add a prefix string at the start of each text unit."
     },
     "prefix": {
       "type": "string",
-      "default": "{START_"
+      "default": "{START_",
+      "title": "Prefix Text",
+      "description": "The prefix text to prepend to each text unit."
     },
     "addSuffix": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Add Suffix",
+      "description": "Add a suffix string at the end of each text unit."
     },
     "suffix": {
       "type": "string",
-      "default": "_END}"
+      "default": "_END}",
+      "title": "Suffix Text",
+      "description": "The suffix text to append to each text unit."
     },
     "applyToExistingTarget": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Modify Existing Translations",
+      "description": "Apply modifications also to text units that already have a translation."
     },
     "addName": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Append Item Name",
+      "description": "Append the name of each text unit at the end of its value."
     },
     "addID": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Append Extraction ID",
+      "description": "Append the extraction ID of each text unit at the end of its value."
     },
     "markSegments": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Mark Segment Boundaries",
+      "description": "Add '[' and ']' delimiters around segments within each text unit."
     },
     "applyToBlankEntries": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Modify Blank Entries",
+      "description": "Apply modifications also to text units without text content."
     },
     "expand": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Expand Text",
+      "description": "Expand text length to simulate translation growth for UI testing."
     },
     "script": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Replacement Script",
+      "description": "Script variant used for character replacement modes."
     }
   }
 }

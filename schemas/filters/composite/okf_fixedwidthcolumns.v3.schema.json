@@ -1,5 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_fixedwidthcolumns.v3.schema.json",
+  "version": 3,
   "title": "Fixed-Width Columns",
   "type": "object",
   "x-filter": {
@@ -54,7 +56,8 @@
   },
   "properties": {
     "inlineCodes": {
-      "$ref": "#/$defs/inlineCodes"
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline codes"
     },
     "columns": {
       "type": "object",
@@ -72,19 +75,23 @@
           "x-flattenPath": "columnEndPositions",
           "description": "Column end positions"
         }
-      }
+      },
+      "title": "Column definitions"
     },
     "columnNamesLineNum": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Line with column names (0 if none)"
     },
     "valuesStartLineNum": {
       "type": "integer",
-      "default": 1
+      "default": 1,
+      "title": "Values start at line"
     },
     "detectColumnsMode": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Number of columns"
     },
     "numColumns": {
       "type": "integer",
@@ -92,75 +99,93 @@
     },
     "sendHeaderMode": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Extract header lines"
     },
     "trimMode": {
       "type": "integer",
-      "default": 2
+      "default": 2,
+      "title": "Exclude leading/trailing white spaces from extracted text"
     },
     "sendColumnsMode": {
       "type": "integer",
-      "default": 1
+      "default": 1,
+      "title": "Extract table data"
     },
     "recordIdColumn": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Record ID"
     },
     "exposeCommentsAsMetadata": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Expose comments as metadata"
     },
     "sourceColumns": {
       "type": "string",
-      "default": "1"
+      "default": "1",
+      "title": "Source"
     },
     "sourceIdColumns": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Source ID"
     },
     "sourceIdSuffixes": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "ID suffix"
     },
     "sourceIdSourceRefs": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Source column"
     },
     "targetColumns": {
       "type": "string",
-      "default": "2"
+      "default": "2",
+      "title": "Target"
     },
     "targetSourceRefs": {
       "type": "string",
-      "default": "1"
+      "default": "1",
+      "title": "Source column"
     },
     "targetLanguages": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Language"
     },
     "commentColumns": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Comment"
     },
     "commentSourceRefs": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Source column"
     },
     "unescapeSource": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Convert \\t, \\n, \\\\, \\uXXXX into characters"
     },
     "trimLeading": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Trim leading spaces and tabs"
     },
     "trimTrailing": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Trim trailing spaces and tabs"
     },
     "preserveWS": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Allow trimming"
     },
     "wrapMode": {
       "type": "string",
@@ -169,7 +194,8 @@
         "NONE",
         "SPACES",
         "PLACEHOLDERS"
-      ]
+      ],
+      "title": "Multi-line text units"
     }
   },
   "additionalProperties": false,
@@ -246,5 +272,11 @@
       "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
     }
-  }
+  },
+  "x-kind": "OkfFixedwidthcolumnsFilterConfig",
+  "x-apiVersion": "v3",
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "908746df89d7",
+  "x-compositeHash": "22f3d5f4a0fb"
 }

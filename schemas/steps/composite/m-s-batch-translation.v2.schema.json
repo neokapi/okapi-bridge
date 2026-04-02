@@ -53,7 +53,8 @@
     "tmxPath": {
       "type": "string",
       "default": "${rootDir}/tmFromMS.tmx",
-      "description": "Full path of the new TMX document to create"
+      "description": "Full path of the new TMX document to create",
+      "title": "TMX Output Path"
     },
     "configPath": {
       "type": "string",
@@ -64,7 +65,8 @@
     "markAsMT": {
       "type": "boolean",
       "default": true,
-      "title": "Mark the generated translation as machine translation results"
+      "title": "Mark the generated translation as machine translation results",
+      "description": "Marks generated TM entries with a machine translation origin indicator (e.g., creationId=\"MT!\")"
     },
     "maxEvents": {
       "type": "integer",
@@ -87,17 +89,20 @@
     "makeTmx": {
       "type": "boolean",
       "default": false,
-      "title": "Generate a TMX document"
+      "title": "Generate a TMX document",
+      "description": "Creates a TMX translation memory document from the translation results"
     },
     "annotate": {
       "type": "boolean",
       "default": true,
-      "title": "Annotate the text units with the translations"
+      "title": "Annotate the text units with the translations",
+      "description": "Adds translation match annotations to text units for use by subsequent steps"
     },
     "fillTarget": {
       "type": "boolean",
       "default": true,
-      "title": "Fill the target with the best translation candidate"
+      "title": "Fill the target with the best translation candidate",
+      "description": "Copies the best-scoring translation candidate into empty target segments"
     },
     "fillTargetThreshold": {
       "type": "integer",
@@ -108,17 +113,20 @@
     "onlyWhenWithoutCandidate": {
       "type": "boolean",
       "default": true,
-      "title": "Query only entries without existing candidate"
+      "title": "Query only entries without existing candidate",
+      "description": "Sends only text units without existing translation candidates to the MT engine"
     },
     "sendTmx": {
       "type": "boolean",
       "default": false,
-      "title": "Send the TMX document to the next step"
+      "title": "Send the TMX document to the next step",
+      "description": "Passes the generated TMX document as input to the next pipeline step instead of filter events"
     },
     "useTargetPrefix": {
       "type": "boolean",
       "default": false,
-      "title": "Add a prefix to the translation candidate copied in the target"
+      "title": "Add a prefix to the translation candidate copied in the target",
+      "description": "Prepends a prefix string to translation candidates copied into the target"
     },
     "targetPrefix": {
       "type": "string",

@@ -1,38 +1,38 @@
 {
-  "filterName": "External Command",
-  "overview": "Runs an external command-line program on a raw document during pipeline processing. The step provides the input document path and expects the command to produce an output document at a specified path. Variable substitution is available for paths, source/target language information, and the project root directory.",
+  "filterName": "External Command Step",
+  "overview": "This step runs a given external command on a raw document. It takes a raw document as input, executes the specified command line (with variable substitution for paths and locale information), and sends the resulting raw document downstream. The command must reference `${inputPath}` and `${outputPath}` to read and write the document.",
   "parameters": {
     "command": {
-      "help": "The command line to execute. Must use `${inputPath}` and `${outputPath}` variables to read the input document and write the output document.\n\nAvailable variables (case-sensitive):\n\n| Variable | Description | Example |\n|---|---|---|\n| `${inputPath}` | Full path of the input document | |\n| `${outputPath}` | Full path of the output document | |\n| `${srcLangName}` | English name of source language | `\"German\"` for `de-ch` |\n| `${trgLangName}` | English name of target language | `\"Japanese\"` for `ja-jp` |\n| `${srcLang}` | Source language code | `\"de\"` for `de-ch` |\n| `${trgLang}` | Target language code | `\"ja\"` for `ja-jp` |\n| `${srcBCP47}` | Source BCP-47 tag | `\"de-CH\"` for `de-CH` |\n| `${trgBCP47}` | Target BCP-47 tag | `\"ja-JP\"` for `ja-JP` |\n| `${rootDir}` | Project/batch root directory | In Rainbow: the parameters folder |",
+      "help": "The command line to execute. Must reference `${inputPath}` and `${outputPath}` so the step knows where to read and write the document.\n\nAvailable variables (case-sensitive):\n\n| Variable | Description | Example |\n|---|---|---|\n| `${inputPath}` | Full path of the input document | |\n| `${outputPath}` | Full path of the output document | |\n| `${srcLangName}` | English name of source language | `de-ch` → `German` |\n| `${trgLangName}` | English name of target language | `ja-jp` → `Japanese` |\n| `${srcLang}` | Language code of source locale | `de-ch` → `de` |\n| `${trgLang}` | Language code of target locale | `ja-jp` → `ja` |\n| `${srcBCP47}` | BCP-47 tag of source locale | `de-CH` → `de-CH` |\n| `${trgBCP47}` | BCP-47 tag of target locale | `ja-JP` → `ja-JP` |\n| `${rootDir}` | Root directory for the project/batch | In Rainbow: the parameters folder |",
       "values": "A shell command string with `${variable}` placeholders. Variable names are **case-sensitive**.",
       "notes": [
-        "`${srcBCP47}` and `${trgBCP47}` are available from **M37** onwards.",
-        "Variable names are case-sensitive — `${inputpath}` will **not** work."
+        "The command **must** use `${inputPath}` and `${outputPath}` to correctly read input and produce output.",
+        "Variable names are case-sensitive — `${inputpath}` will not work."
       ],
       "examples": [
-        "Windows sort: `cmd /C \"sort ${inputPath} /O ${outputPath}\"`",
-        "Unix example: `cat ${inputPath} | sed 's/foo/bar/g' > ${outputPath}`"
+        "`cmd /C \"sort ${inputPath} /O ${outputPath}\"` — Windows command that sorts the input file and writes the result to the output path"
       ]
     },
     "timeout": {
-      "help": "Maximum number of seconds the external command is allowed to run before being forcibly cancelled. Use `-1` to allow the command to run indefinitely.\n\nSet an appropriate timeout to prevent the pipeline from hanging on commands that may stall or run longer than expected.",
+      "help": "Number of seconds to wait for the command to complete before cancelling it. Use `-1` to let the command run indefinitely.",
       "values": "Integer seconds, or `-1` for no timeout."
     }
   },
   "limitations": [
-    "None known per the Okapi wiki."
+    "None known."
   ],
   "processingNotes": [
-    "Takes a **raw document** as input and sends a **raw document** as output — the step operates on the file-level, not on extracted text units.",
-    "The step requires both source and target languages to be set in the pipeline for the language variables to resolve."
+    "The step operates on **raw documents** — it does not parse or segment content. The external command receives the file as-is and must produce a complete output file.",
+    "The `${srcBCP47}` and `${trgBCP47}` variables were introduced in milestone M37."
   ],
   "examples": [
     {
       "title": "Sort file contents (Windows)",
-      "description": "Uses the Windows `sort` command to sort lines in the input file and write the result to the output path.",
-      "config": "```yaml\ncommand: 'cmd /C \"sort ${inputPath} /O ${outputPath}\"'\ntimeout: 30\n```"
+      "description": "Uses the Windows `sort` command to sort the lines of the input document and write the sorted result to the output path.",
+      "config": "```yaml\ncommand: 'cmd /C \"sort ${inputPath} /O ${outputPath}\"'\ntimeout: -1\n```"
     }
   ],
+  "fullDoc": "# External Command Step\n\nThis step runs a given external command on a raw document. It takes a raw document as input, executes the specified command line (with variable substitution for paths and locale information), and sends the resulting raw document downstream. The command must reference `${inputPath}` and `${outputPath}` to read and write the document.\n\n## Parameters\n\n#### Command Line\n\nThe command line to execute. Must reference `${inputPath}` and `${outputPath}` so the step knows where to read and write the document.\n\nAvailable variables (case-sensitive):\n\n| Variable | Description | Example |\n|---|---|---|\n| `${inputPath}` | Full path of the input document | |\n| `${outputPath}` | Full path of the output document | |\n| `${srcLangName}` | English name of source language | `de-ch` → `German` |\n| `${trgLangName}` | English name of target language | `ja-jp` → `Japanese` |\n| `${srcLang}` | Language code of source locale | `de-ch` → `de` |\n| `${trgLang}` | Language code of target locale | `ja-jp` → `ja` |\n| `${srcBCP47}` | BCP-47 tag of source locale (from M37) | `de-CH` → `de-CH` |\n| `${trgBCP47}` | BCP-47 tag of target locale (from M37) | `ja-JP` → `ja-JP` |\n| `${rootDir}` | Root directory for the project/batch | In Rainbow: the parameters folder |\n\n> **Note:** The command **must** use `${inputPath}` and `${outputPath}` to correctly read input and produce output. Variable names are case-sensitive.\n\nExample:\n```\ncmd /C \"sort ${inputPath} /O ${outputPath}\"\n```\n\n#### Timeout\n\nNumber of seconds to wait for the command to complete before cancelling it. Use `-1` to let the command run indefinitely.\n\n## Limitations\n\n- None known.\n\n## Notes\n\n- The step operates on **raw documents** — it does not parse or segment content. The external command receives the file as-is and must produce a complete output file.\n- The `${srcBCP47}` and `${trgBCP47}` variables were introduced in milestone M37.\n\n## Examples\n\n### Sort file contents (Windows)\n\nUses the Windows `sort` command to sort the lines of the input document and write the sorted result to the output path.\n\n```yaml\ncommand: 'cmd /C \"sort ${inputPath} /O ${outputPath}\"'\ntimeout: -1\n```",
   "stepId": "external-command",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/external_command_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/External_Command_Step"
 }

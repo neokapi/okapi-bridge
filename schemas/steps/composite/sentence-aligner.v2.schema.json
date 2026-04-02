@@ -45,7 +45,13 @@
       "default": "aligned.tmx",
       "description": "Full path of the output TMX file",
       "title": "TMX output path",
-      "x-path": { "type": "file", "role": "output", "accepts": ["tmx"] }
+      "x-path": {
+        "type": "file",
+        "role": "output",
+        "accepts": [
+          "tmx"
+        ]
+      }
     },
     "generateTMX": {
       "type": "boolean",
@@ -56,36 +62,54 @@
     "segmentSource": {
       "type": "boolean",
       "default": true,
-      "title": "Segment the source content (overriding possible existing segmentation)"
+      "title": "Segment Source Content",
+      "description": "Segment the source content before alignment, overriding any existing segmentation"
     },
     "useCustomSourceRules": {
       "type": "boolean",
       "default": false,
-      "title": "Use custom source segmentation rules (instead of the default ones)"
+      "title": "Custom Source Segmentation Rules",
+      "description": "Use a custom SRX file for source segmentation instead of the built-in default rules"
     },
     "customSourceRulesPath": {
       "type": "string",
       "default": "",
       "description": "Full path of the SRX document to use for the source",
       "title": "SRX path for the source",
-      "x-path": { "type": "file", "role": "input", "resourceKind": "srx", "accepts": ["srx"] }
+      "x-path": {
+        "type": "file",
+        "role": "input",
+        "resourceKind": "srx",
+        "accepts": [
+          "srx"
+        ]
+      }
     },
     "segmentTarget": {
       "type": "boolean",
       "default": true,
-      "title": "Segment the target content (overriding possible existing segmentation)"
+      "title": "Segment Target Content",
+      "description": "Segment the target content before alignment, overriding any existing segmentation"
     },
     "useCustomTargetRules": {
       "type": "boolean",
       "default": false,
-      "title": "Use custom target segmentation rules (instead of the default ones)"
+      "title": "Custom Target Segmentation Rules",
+      "description": "Use a custom SRX file for target segmentation instead of the built-in default rules"
     },
     "customTargetRulesPath": {
       "type": "string",
       "default": "",
       "description": "Full path of the SRX document to use for the target",
       "title": "SRX path for the target",
-      "x-path": { "type": "file", "role": "input", "resourceKind": "srx", "accepts": ["srx"] }
+      "x-path": {
+        "type": "file",
+        "role": "input",
+        "resourceKind": "srx",
+        "accepts": [
+          "srx"
+        ]
+      }
     },
     "collapseWhitespace": {
       "type": "boolean",

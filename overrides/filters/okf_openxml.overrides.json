@@ -4,6 +4,21 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
+    "inlineCodes": {
+      "title": "Inline codes"
+    },
+    "general": {
+      "title": "General Options"
+    },
+    "word": {
+      "title": "Word Options"
+    },
+    "excel": {
+      "title": "Excel Options"
+    },
+    "powerpoint": {
+      "title": "PowerPoint Options"
+    },
     "bPreferenceTranslateWordHeadersFooters": {
       "description": "Extract text from headers and footers in Word documents."
     },
@@ -67,6 +82,58 @@
           "sample": "Hello {name}"
         }
       }
+    },
+    "ignoreWhitespaceStyles": {
+      "title": "Ignore Whitespace Styles",
+      "description": "Ignore whitespace character formatting and treat it as equivalent to consequential styles during aggressive tag cleanup."
+    },
+    "preserveAsciiAndHighAnsiFontCategoriesOnDetection": {
+      "title": "Preserve Font Categories on Detection",
+      "description": "Preserve ASCII and HighAnsi run font categories when merging consequential runs."
+    },
+    "removeEmbeddedExcel": {
+      "title": "Remove Embedded Excel Package",
+      "description": "Remove the embedded Excel data package and its references from chart parts when extracting cached chart values."
+    },
+    "translateWordGraphicName": {
+      "title": "Translate Word Graphic Names",
+      "description": "Expose @name attributes of drawings and word art in Word documents for translation."
+    },
+    "translateWordGraphicDescription": {
+      "title": "Translate Word Graphic Descriptions",
+      "description": "Expose @descr attributes of drawings and word art in Word documents for translation."
+    },
+    "translatePowerpointGraphicName": {
+      "title": "Translate PowerPoint Graphic Names",
+      "description": "Expose @name attributes of drawings and word art in PowerPoint presentations for translation."
+    },
+    "translatePowerpointGraphicDescription": {
+      "title": "Translate PowerPoint Graphic Descriptions",
+      "description": "Expose @descr attributes of drawings and word art in PowerPoint presentations for translation."
+    },
+    "translatePowerpointCachedChartStrings": {
+      "title": "Translate Cached Chart Strings",
+      "description": "Expose pre-rendered chart string values stored in PowerPoint chart XML for translation."
+    },
+    "translatePowerpointCachedChartNumbers": {
+      "title": "Translate Cached Chart Numbers",
+      "description": "Expose cached chart numbers and format codes in PowerPoint for translation."
+    },
+    "treatExcelSourceColumnStylesForExclusion": {
+      "title": "Apply Source Column Styles for Exclusion",
+      "description": "Use source column cell styles when evaluating color-based exclusion rules in Excel."
+    },
+    "extractExcelSourceAndTargetColumnsJoined": {
+      "title": "Join Source and Target Columns",
+      "description": "Join source and target columns in a row during extraction rather than extracting them separately."
+    },
+    "extractExcelWorksheetsExplicitlySpecified": {
+      "title": "Extract Only Specified Worksheets",
+      "description": "Only extract worksheets whose names match patterns defined in the Worksheet Configurations."
+    },
+    "extractExcelCellsExplicitlySpecified": {
+      "title": "Extract Only Specified Cells",
+      "description": "Only extract cells explicitly specified in the Worksheet Configurations."
     }
   }
 }

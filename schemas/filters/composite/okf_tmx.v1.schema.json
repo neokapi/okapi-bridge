@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_tmx.v1.schema.json",
   "version": 1,
-  "title": "TMX Filter Filter",
-  "description": "Configuration for the Okapi TMX Filter Filter",
+  "title": "TMX Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_tmx",
@@ -59,9 +58,9 @@
         "consolidateDpSkeleton": {
           "type": "boolean",
           "default": true,
-          "title": "Group all document parts skeleton into one",
+          "title": "Consolidate Document Part Skeleton",
           "x-flattenPath": "consolidateDpSkeleton",
-          "description": "Consolidate document part skeleton"
+          "description": "Group all document part skeleton into a single resource to reduce pipeline events."
         },
         "propValueSep": {
           "type": "string",
@@ -165,6 +164,6 @@
   "x-apiVersion": "v1",
   "x-baseVersion": 1,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "1b58da42875f",
-  "x-compositeHash": "a4db7a61f16b"
+  "x-baseHash": "76837a4f719e",
+  "x-compositeHash": "8e1e386ee157"
 }

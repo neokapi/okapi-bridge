@@ -39,12 +39,19 @@
       "default": "${rootDir}/terms.txt",
       "description": "Full path of the output file",
       "title": "Output path",
-      "x-path": { "type": "file", "role": "output", "accepts": ["txt"] }
+      "x-path": {
+        "type": "file",
+        "role": "output",
+        "accepts": [
+          "txt"
+        ]
+      }
     },
     "autoOpen": {
       "type": "boolean",
       "default": false,
-      "title": "Open the result file after completion"
+      "title": "Open the result file after completion",
+      "description": "Automatically open the result file in the default application after completion"
     },
     "minWordsPerTerm": {
       "type": "integer",
@@ -69,51 +76,66 @@
       "default": "",
       "description": "Full path of the file containing stop words",
       "title": "Path of the file with stop words (leave empty for default)",
-      "x-path": { "type": "file", "role": "input" }
+      "x-path": {
+        "type": "file",
+        "role": "input"
+      }
     },
     "notStartWordsPath": {
       "type": "string",
       "default": "",
       "description": "Full path of the file containing not-start words",
       "title": "Path of the file with not-start words (leave empty for default)",
-      "x-path": { "type": "file", "role": "input" }
+      "x-path": {
+        "type": "file",
+        "role": "input"
+      }
     },
     "notEndWordsPath": {
       "type": "string",
       "default": "",
       "description": "Full path of the file containing not-end words",
       "title": "Path of the file with not-end words (leave empty for default)",
-      "x-path": { "type": "file", "role": "input" }
+      "x-path": {
+        "type": "file",
+        "role": "input"
+      }
     },
     "keepCase": {
       "type": "boolean",
       "default": false,
-      "title": "Preserve case differences"
+      "title": "Preserve case differences",
+      "description": "Treat words with different casing as distinct tokens (e.g. 'Term' vs 'term')"
     },
     "removeSubTerms": {
       "type": "boolean",
       "default": false,
-      "title": "Remove entries that seem to be sub-strings of longer entries"
+      "title": "Remove entries that seem to be sub-strings of longer entries",
+      "description": "Remove candidate terms that are sub-sequences of longer retained terms"
     },
     "sortByOccurrence": {
       "type": "boolean",
       "default": false,
-      "title": "Sort the results by the number of occurrences"
+      "title": "Sort the results by the number of occurrences",
+      "description": "Sort output by occurrence count instead of alphabetically"
     },
     "useTerminologyAnnotations": {
       "type": "boolean",
       "default": true,
-      "title": "Use Terminology annotations"
+      "title": "Use Terminology annotations",
+      "description": "Include terms from ITS Terminology annotations attached to text units"
     },
     "useTextAnalysisAnnotations": {
       "type": "boolean",
       "default": true,
-      "title": "Use Text Analysis annotations"
+      "title": "Use Text Analysis annotations",
+      "description": "Include terms from Text Analysis annotation spans on source content"
     },
     "useStatistics": {
       "type": "boolean",
       "default": true,
-      "title": "Use tokens-grouping statistics"
+      "title": "Use tokens-grouping statistics",
+      "description": "Find term candidates using frequency-based statistical analysis of word sequences"
     }
   }
 }

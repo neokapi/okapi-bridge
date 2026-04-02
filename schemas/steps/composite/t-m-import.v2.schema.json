@@ -38,12 +38,17 @@
       "default": "",
       "description": "Full path of directory of the TM where to import",
       "title": "Directory of the TM where to import",
-      "x-path": { "type": "directory", "role": "input", "resourceKind": "tm" }
+      "x-path": {
+        "type": "directory",
+        "role": "input",
+        "resourceKind": "tm"
+      }
     },
     "overwriteSameSource": {
       "type": "boolean",
       "default": false,
-      "title": "Overwrite if source is the same"
+      "title": "Overwrite if source is the same",
+      "description": "Replace all existing TM entries that have the same source text as the imported entry"
     }
   }
 }

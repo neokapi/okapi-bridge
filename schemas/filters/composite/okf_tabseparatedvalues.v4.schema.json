@@ -1,5 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_tabseparatedvalues.v4.schema.json",
+  "version": 4,
   "title": "TSV (Tab-Separated Values)",
   "type": "object",
   "x-filter": {
@@ -53,15 +55,18 @@
   "properties": {
     "columnNamesLineNum": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Line with column names (0 if none)"
     },
     "valuesStartLineNum": {
       "type": "integer",
-      "default": 1
+      "default": 1,
+      "title": "Values start at line"
     },
     "detectColumnsMode": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Number of columns"
     },
     "numColumns": {
       "type": "integer",
@@ -69,80 +74,98 @@
     },
     "sendHeaderMode": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Extract header lines"
     },
     "trimMode": {
       "type": "integer",
-      "default": 1
+      "default": 1,
+      "title": "Exclude leading/trailing white spaces from extracted text"
     },
     "sendColumnsMode": {
       "type": "integer",
-      "default": 1
+      "default": 1,
+      "title": "Extract table data"
     },
     "recordIdColumn": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Record ID"
     },
     "exposeCommentsAsMetadata": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Expose comments as metadata"
     },
     "sourceColumns": {
       "type": "string",
-      "default": "1"
+      "default": "1",
+      "title": "Source"
     },
     "sourceIdColumns": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Source ID"
     },
     "sourceIdSuffixes": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "ID suffix"
     },
     "sourceIdSourceRefs": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Source column"
     },
     "targetColumns": {
       "type": "string",
-      "default": "2"
+      "default": "2",
+      "title": "Target"
     },
     "targetSourceRefs": {
       "type": "string",
-      "default": "1"
+      "default": "1",
+      "title": "Source column"
     },
     "targetLanguages": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Language"
     },
     "commentColumns": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Comment"
     },
     "commentSourceRefs": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Source column"
     },
     "unescapeSource": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Convert \\t, \\n, \\\\, \\uXXXX into characters"
     },
     "trimLeading": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Trim leading spaces and tabs"
     },
     "trimTrailing": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Trim trailing spaces and tabs"
     },
     "preserveWS": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Allow trimming"
     },
     "useCodeFinder": {
       "type": "boolean",
       "default": false,
-      "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)"
+      "title": "Has inline codes as defined below"
     },
     "codeFinderRules": {
       "type": "string",
@@ -159,7 +182,8 @@
         "NONE",
         "SPACES",
         "PLACEHOLDERS"
-      ]
+      ],
+      "title": "Multi-line text units"
     },
     "simplifierRules": {
       "type": "string",
@@ -177,5 +201,11 @@
       "description": "Merge consecutive inline codes into a single placeholder"
     }
   },
-  "additionalProperties": false
+  "additionalProperties": false,
+  "x-kind": "OkfTabseparatedvaluesFilterConfig",
+  "x-apiVersion": "v4",
+  "x-baseVersion": 4,
+  "x-introducedInOkapi": "1.48.0",
+  "x-baseHash": "b6205c53db90",
+  "x-compositeHash": "75ae96495e9f"
 }

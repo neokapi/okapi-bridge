@@ -1,109 +1,177 @@
 {
   "filterName": "IDML Filter",
-  "overview": "Processes **IDML** (InDesign Markup Language) documents, the XML-based format introduced in Adobe InDesign CS4 for representing InDesign content. IDML is used in several InDesign and InCopy file types. The filter extracts text by spread, processing stories from `<TextFrame>` and `<TextPath>` elements in spread order.",
+  "overview": "The IDML Filter processes Adobe InDesign IDML documents (InDesign Markup Language), an XML-based format introduced in InDesign CS4. The filter extracts text by spread, gathering stories from `<TextFrame>` and `<TextPath>` elements in spread order. IDML documents are ZIP packages (UCF) containing multiple sub-documents, each treated as a separate sub-document by the filter. The [IDML specification](http://www.adobe.com/content/dam/Adobe/en/devnet/indesign/cs5_docs/idml/idml-specification.pdf) is available on the Adobe Web site.",
   "parameters": {
-    "extraction.extractNotes": {
-      "help": "Extracts the content of `<Note>` elements embedded in the IDML document, making them available as translator notes."
+    "maxAttributeSize": {
+      "help": "Controls the attribute buffer size in MB. Increase this if processing IDML documents with very large XML attributes that exceed the default 4 MB limit.",
+      "values": "Integer value in MB. Default is `4` (4 × 1024 × 1024 bytes)."
     },
-    "extraction.extractMasterSpreads": {
-      "help": "Extracts content from master spreads in addition to normal spreads. Disable this if master spread content does not require translation (e.g., page numbers, decorative elements)."
+    "specialCharacterPattern": {
+      "help": "Regex pattern matching characters that should be treated as **inline codes** rather than translatable text. The default pattern matches various Unicode special characters including zero-width spaces, zero-width non-joiners, soft hyphens, non-breaking hyphens, and BOM characters.",
+      "values": "Pipe-delimited character pattern. Default: `\" | | | | | | | | | |\\u200B|\\u200C|\\u00AD|\\u2011|\\uFEFF\"`"
     },
-    "extraction.extractCustomTextVariables": {
-      "help": "Extracts custom text variables defined in the InDesign document for translation."
+    "untagXmlStructures": {
+      "help": "Strips embedded XML structural information from the extracted content. Use this when the IDML document contains XML tagging that is not relevant for translation and would clutter the translatable segments."
     },
-    "extraction.extractExternalHyperlinks": {
-      "help": "Extracts external hyperlink URLs for translation. Useful when hyperlinks contain locale-specific URLs that need to be adapted per target language."
+    "mergeAdjacentCodes": {
+      "help": "Combines consecutive inline codes into a single code. This reduces the number of inline tags translators need to manage, making segments cleaner and easier to translate."
     },
-    "extraction.extractHiddenLayers": {
-      "help": "Includes content from hidden layers in extraction. By default, only visible layers are processed."
+    "extractNotes": {
+      "help": "Includes content from `<Note>` elements in the extraction. By default, notes are skipped during extraction."
     },
-    "extraction.extractHiddenPasteboardItems": {
-      "help": "Includes content from hidden pasteboard items in extraction."
+    "extractMasterSpreads": {
+      "help": "Includes content from master spreads in the extraction. By default, only normal spreads are processed. Enable this if master spreads contain translatable text (e.g., headers, footers, or recurring labels)."
     },
-    "extraction.extractHyperlinkTextSourcesInline": {
-      "help": "Controls how hyperlink text sources are represented:\n- **Enabled**: hyperlink text sources are extracted inline within the surrounding text\n- **Disabled**: they are represented as separate referencing groups of textual units"
+    "extractHiddenLayers": {
+      "help": "Includes content from hidden layers in the extraction. By default, only visible layers are extracted."
     },
-    "extraction.extractIndexTopics": {
-      "help": "Extracts index topic entries for translation."
+    "extractHiddenPasteboardItems": {
+      "help": "Includes content from items on the pasteboard (outside the visible page area) that are hidden. These are typically elements placed outside the page bounds during layout editing."
     },
-    "extraction.extractBreaksInline": {
-      "help": "Extracts break elements inline within the text flow rather than treating them as segment boundaries."
+    "skipDiscretionaryHyphens": {
+      "help": "Omits discretionary (soft) hyphens from the extracted text. Discretionary hyphens are hints for line-breaking that may not be appropriate in translated text with different word lengths."
     },
-    "extraction.untagXmlStructures": {
-      "help": "Skips embedded XML structural information when extracting translatable content. This prevents XML structure tags from appearing as inline codes in the extracted text."
+    "extractBreaksInline": {
+      "help": "Treats break elements as inline codes within text units rather than creating separate segments at break boundaries."
     },
-    "extraction.skipDiscretionaryHyphens": {
-      "help": "Skips discretionary (soft) hyphens during extraction. Discretionary hyphens are optional line-break hints inserted by InDesign."
+    "extractHyperlinkTextSourcesInline": {
+      "help": "Controls how hyperlink text sources are represented in the extraction.\n\n- **Enabled**: Hyperlink text sources are extracted as inline elements within the surrounding text.\n- **Disabled** (default): Hyperlink text sources are represented as referencing groups of separate textual units."
     },
-    "extraction.specialCharacterPattern": {
-      "help": "Matches special characters that should be treated as inline codes rather than translatable content. The default pattern covers various Unicode special characters including zero-width spaces, zero-width non-joiners, soft hyphens, non-breaking hyphens, and BOM characters.",
-      "values": "A pipe-delimited (`|`) pattern of Unicode characters. Default: `\" | | | | | | | | | |\\u200B|\\u200C|\\u00AD|\\u2011|\\uFEFF\"`"
+    "extractCustomTextVariables": {
+      "help": "Includes custom text variables defined in the InDesign document in the extraction for translation."
     },
-    "extraction.maxAttributeSize": {
-      "help": "Sets the size limit for the XML attribute buffer. Increase this if processing IDML files with very large embedded attributes (e.g., heavy graphics data in attributes).",
-      "values": "Size in bytes. Default is 4194304 (4 MB = 4 × 1024 × 1024)."
+    "extractIndexTopics": {
+      "help": "Includes index topic entries in the extraction for translation."
     },
-    "formatting.ignoreCharacterKerning": {
-      "help": "Ignores kerning differences between adjacent characters when determining formatting runs. This reduces the number of inline codes by merging runs that differ only in kerning values.\n\nWhen enabled, use the **min** and **max** threshold fields to define the range of kerning values to ignore."
-    },
-    "formatting.kerningMin": {
-      "help": "Minimum kerning value threshold. Kerning differences below this value are ignored.",
-      "values": "Numeric string representing a kerning value."
-    },
-    "formatting.kerningMax": {
-      "help": "Maximum kerning value threshold. Kerning differences above this value are ignored.",
-      "values": "Numeric string representing a kerning value."
-    },
-    "formatting.ignoreCharacterTracking": {
-      "help": "Ignores tracking (letter-spacing) differences when determining formatting runs. Reduces inline code clutter from minor tracking variations.\n\nWhen enabled, use the **min** and **max** threshold fields to define the range of tracking values to ignore."
-    },
-    "formatting.trackingMin": {
-      "help": "Minimum tracking value threshold.",
-      "values": "Numeric string representing a tracking value."
-    },
-    "formatting.trackingMax": {
-      "help": "Maximum tracking value threshold.",
-      "values": "Numeric string representing a tracking value."
-    },
-    "formatting.ignoreCharacterLeading": {
-      "help": "Ignores leading (line-spacing) differences when determining formatting runs. Useful when InDesign applies per-character leading overrides that create unnecessary inline codes.\n\nWhen enabled, use the **min** and **max** threshold fields to define the range of leading values to ignore."
-    },
-    "formatting.leadingMin": {
-      "help": "Minimum leading value threshold.",
-      "values": "Numeric string representing a leading value."
-    },
-    "formatting.leadingMax": {
-      "help": "Maximum leading value threshold.",
-      "values": "Numeric string representing a leading value."
-    },
-    "formatting.ignoreCharacterBaselineShift": {
-      "help": "Ignores baseline shift differences when determining formatting runs. Baseline shift moves characters up or down relative to the baseline — minor shifts (e.g., for superscript/subscript fine-tuning) can create excessive inline codes.\n\nWhen enabled, use the **min** and **max** threshold fields to define the range of baseline shift values to ignore."
-    },
-    "formatting.baselineShiftMin": {
-      "help": "Minimum baseline shift value threshold.",
-      "values": "Numeric string representing a baseline shift value."
-    },
-    "formatting.baselineShiftMax": {
-      "help": "Maximum baseline shift value threshold.",
-      "values": "Numeric string representing a baseline shift value."
+    "extractExternalHyperlinks": {
+      "help": "Includes external hyperlink URLs/text in the extraction for translation. Enable this when hyperlink destinations need to be localized (e.g., region-specific URLs)."
     },
     "extractMathZones": {
-      "help": "Extracts math zones (MathML or equation content) for translation."
+      "help": "Includes math zone content in the extraction for translation. Enabled by default. Disable this if math expressions should be left untranslated."
     },
-    "excludedStyleConfigurations": {
-      "help": "Enables style-based exclusion. Content with the specified paragraph or character styles is excluded from extraction. Use this to skip non-translatable content such as code listings, product identifiers, or boilerplate styled with specific InDesign styles."
+    "excludedStyles": {
+      "help": "Specifies paragraph or character style names whose content should be **excluded** from extraction. Use this to skip non-translatable styled content such as code listings, product IDs, or other fixed-text styles.",
+      "values": "List of InDesign style names to exclude from extraction."
+    },
+    "ignoreCharacterKerning": {
+      "help": "Prevents character kerning differences from creating separate inline codes. When characters differ only in kerning values, they are treated as the same run of text, reducing unnecessary inline code segmentation."
+    },
+    "ignoreCharacterTracking": {
+      "help": "Prevents character tracking (letter-spacing) differences from creating separate inline codes. Reduces inline code clutter when tracking varies across a text run."
+    },
+    "ignoreCharacterLeading": {
+      "help": "Prevents character leading (line-spacing) differences from creating separate inline codes. Reduces inline code clutter when leading varies within a paragraph."
+    },
+    "ignoreCharacterBaselineShift": {
+      "help": "Prevents baseline shift differences from creating separate inline codes. Useful when characters have varying baseline offsets (e.g., for visual alignment) that should not affect segmentation."
     }
   },
   "processingNotes": [
-    "The filter processes text **by spread** — for each spread, it gathers stories used in `<TextFrame>` and `<TextPath>` elements, extracting them in the order they appear in the spread.",
-    "Stories embedded inside other stories that are not declared at a spread level are extracted in a special group.",
-    "The formatting tolerance parameters (kerning, tracking, leading, baseline shift) reduce inline code clutter by merging adjacent formatting runs that differ only within the specified thresholds."
+    "The input encoding is **automatically detected**; any user-specified encoding is ignored. The filter always uses UTF-8.",
+    "Output line-breaks are always set to simple linefeed (LF).",
+    "An IDML document is a ZIP package (UCF — Universal Container Format) containing multiple embedded documents. Each embedded file is treated as a **sub-document** — e.g., in XLIFF output, a single IDML produces multiple `<file>` elements.",
+    "Text is extracted **by spread**: for each spread, stories from `<TextFrame>` and `<TextPath>` elements are gathered and extracted in the order they appear.",
+    "Stories embedded inside other stories and not declared at a spread level are extracted in a special group.",
+    "The filter is actually a wrapper around `IDMLContentFilter` — the inner filter handles raw IDML XML (Story XML) files directly, while the outer `IDMLFilter` handles the full IDML package."
   ],
   "limitations": [
-    "Requires Adobe InDesign CS4 or later IDML format — older `.indd` binary files are not supported.",
-    "The deprecated `Maximum spread size` parameter (removed in M34) previously allowed skipping large spread files that contained only graphics; current versions process all spreads."
+    "IDML filter is marked as **ALPHA** in the Okapi help documentation."
   ],
-  "examples": [],
+  "examples": [
+    {
+      "title": "Extract with hidden layers and master spreads",
+      "description": "Configuration to extract all content including hidden layers and master spreads, useful for comprehensive translation of an InDesign document.",
+      "config": "```yaml\nextractMasterSpreads: true\nextractHiddenLayers: true\nextractNotes: true\n```"
+    },
+    {
+      "title": "Clean extraction with reduced inline codes",
+      "description": "Configuration that minimizes inline code clutter by merging adjacent codes and ignoring formatting-only differences.",
+      "config": "```yaml\nmergeAdjacentCodes: true\nignoreCharacterKerning: true\nignoreCharacterTracking: true\nignoreCharacterLeading: true\nignoreCharacterBaselineShift: true\n```"
+    }
+  ],
+  "propertySuggestions": {
+    "maxAttributeSize": {
+      "title": "Maximum Attribute Size",
+      "description": "Size in MB for the attribute buffer (default 4 MB)."
+    },
+    "specialCharacterPattern": {
+      "title": "Special Character Pattern",
+      "description": "Pattern matching characters treated as inline codes."
+    },
+    "untagXmlStructures": {
+      "title": "Untag XML Structures",
+      "description": "Skip embedded XML structural information when extracting."
+    },
+    "mergeAdjacentCodes": {
+      "title": "Merge Adjacent Codes",
+      "description": "Merge consecutive inline codes into a single code."
+    },
+    "extractNotes": {
+      "title": "Extract Notes",
+      "description": "Extract the content of Note elements."
+    },
+    "extractMasterSpreads": {
+      "title": "Extract Master Spreads",
+      "description": "Extract content from master spreads if they exist."
+    },
+    "extractHiddenLayers": {
+      "title": "Extract Hidden Layers",
+      "description": "Include hidden layers in the extraction."
+    },
+    "extractHiddenPasteboardItems": {
+      "title": "Extract Hidden Pasteboard Items",
+      "description": "Include hidden pasteboard items in the extraction."
+    },
+    "skipDiscretionaryHyphens": {
+      "title": "Skip Discretionary Hyphens",
+      "description": "Omit discretionary (soft) hyphens from extracted text."
+    },
+    "extractBreaksInline": {
+      "title": "Extract Breaks Inline",
+      "description": "Treat break elements as inline codes within text units."
+    },
+    "extractHyperlinkTextSourcesInline": {
+      "title": "Extract Hyperlink Sources Inline",
+      "description": "Extract hyperlink text sources as inline elements."
+    },
+    "extractCustomTextVariables": {
+      "title": "Extract Custom Text Variables",
+      "description": "Include custom text variables in the extraction."
+    },
+    "extractIndexTopics": {
+      "title": "Extract Index Topics",
+      "description": "Include index topic entries in the extraction."
+    },
+    "extractExternalHyperlinks": {
+      "title": "Extract External Hyperlinks",
+      "description": "Extract external hyperlink URLs for translation."
+    },
+    "extractMathZones": {
+      "title": "Extract Math Zones",
+      "description": "Include math zone content in the extraction."
+    },
+    "excludedStyles": {
+      "title": "Excluded Styles",
+      "description": "Styles whose content is excluded from extraction."
+    },
+    "ignoreCharacterKerning": {
+      "title": "Ignore Character Kerning",
+      "description": "Prevent kerning differences from creating separate inline codes."
+    },
+    "ignoreCharacterTracking": {
+      "title": "Ignore Character Tracking",
+      "description": "Prevent tracking differences from creating separate inline codes."
+    },
+    "ignoreCharacterLeading": {
+      "title": "Ignore Character Leading",
+      "description": "Prevent leading differences from creating separate inline codes."
+    },
+    "ignoreCharacterBaselineShift": {
+      "title": "Ignore Character Baseline Shift",
+      "description": "Prevent baseline shift differences from creating separate inline codes."
+    }
+  },
+  "fullDoc": "# IDML Filter\n\nThe IDML Filter processes Adobe InDesign IDML documents (InDesign Markup Language), an XML-based format introduced in InDesign CS4. The filter extracts text by spread, gathering stories from `<TextFrame>` and `<TextPath>` elements in spread order. IDML documents are ZIP packages (UCF) containing multiple sub-documents, each treated as a separate sub-document by the filter.\n\n## Parameters\n\n### General\n\n#### Maximum Attribute Size\nControls the attribute buffer size in MB. Increase this if processing IDML documents with very large XML attributes that exceed the default 4 MB limit. Default: **4 MB**.\n\n#### Special Character Pattern\nRegex pattern matching characters that should be treated as **inline codes** rather than translatable text. The default pattern matches various Unicode special characters including zero-width spaces, zero-width non-joiners, soft hyphens, non-breaking hyphens, and BOM characters.\n\n#### Untag XML Structures\nStrips embedded XML structural information from the extracted content. Use this when the IDML document contains XML tagging that is not relevant for translation.\n\n#### Merge Adjacent Codes\nCombines consecutive inline codes into a single code, reducing tag clutter for translators. Default: **false**.\n\n### Extraction\n\n#### Extract Notes\nIncludes content from `<Note>` elements in the extraction. Default: **false**.\n\n#### Extract Master Spreads\nIncludes content from master spreads in the extraction. Enable this if master spreads contain translatable text (e.g., headers, footers, recurring labels). Default: **false**.\n\n#### Extract Hidden Layers\nIncludes content from hidden layers in the extraction. Default: **false**.\n\n#### Extract Hidden Pasteboard Items\nIncludes content from items on the pasteboard (outside the visible page area) that are hidden. Default: **false**.\n\n#### Extract Breaks Inline\nTreats break elements as inline codes within text units rather than creating separate segments. Default: **false**.\n\n#### Extract Hyperlink Text Sources Inline\nControls how hyperlink text sources are represented:\n- **Enabled**: Hyperlink text sources are extracted as inline elements within the surrounding text.\n- **Disabled** (default): Hyperlink text sources are represented as referencing groups of separate textual units.\n\n#### Extract Custom Text Variables\nIncludes custom text variables defined in the InDesign document. Default: **false**.\n\n#### Extract Index Topics\nIncludes index topic entries in the extraction. Default: **false**.\n\n#### Extract External Hyperlinks\nIncludes external hyperlink URLs/text for translation. Enable when hyperlink destinations need to be localized. Default: **false**.\n\n#### Extract Math Zones\nIncludes math zone content for translation. Default: **true**.\n\n#### Excluded Styles\nSpecifies paragraph or character style names whose content should be excluded from extraction. Use this to skip non-translatable styled content such as code listings or product IDs.\n\n### Formatting\n\n#### Skip Discretionary Hyphens\nOmits discretionary (soft) hyphens from extracted text. Default: **false**.\n\n#### Ignore Character Kerning\nPrevents kerning differences from creating separate inline codes. Default: **false**.\n\n#### Ignore Character Tracking\nPrevents tracking (letter-spacing) differences from creating separate inline codes. Default: **false**.\n\n#### Ignore Character Leading\nPrevents leading (line-spacing) differences from creating separate inline codes. Default: **false**.\n\n#### Ignore Character Baseline Shift\nPrevents baseline shift differences from creating separate inline codes. Default: **false**.\n\n## Processing Notes\n\n- Input encoding is **automatically detected**; user-specified encoding is ignored. Always uses UTF-8.\n- Output line-breaks are always simple linefeed (LF).\n- IDML documents are ZIP packages (UCF). Each embedded file is treated as a sub-document.\n- Text is extracted by spread, with stories gathered from `<TextFrame>` and `<TextPath>` elements.\n- Stories embedded inside other stories and not declared at spread level are extracted in a special group.\n- The filter wraps `IDMLContentFilter` — the inner filter handles raw Story XML files directly.\n\n## Limitations\n\n- The IDML filter is marked as **ALPHA** in the Okapi help documentation.\n\n## Examples\n\n### Clean extraction with reduced inline codes\n\nMinimize inline code clutter by merging adjacent codes and ignoring formatting-only differences:\n\n```yaml\nmergeAdjacentCodes: true\nignoreCharacterKerning: true\nignoreCharacterTracking: true\nignoreCharacterLeading: true\nignoreCharacterBaselineShift: true\n```\n\n### Full content extraction\n\nExtract all content including hidden layers, master spreads, and notes:\n\n```yaml\nextractMasterSpreads: true\nextractHiddenLayers: true\nextractNotes: true\nextractCustomTextVariables: true\nextractIndexTopics: true\n```",
   "filterId": "okf_idml",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/IDML_Filter"
 }

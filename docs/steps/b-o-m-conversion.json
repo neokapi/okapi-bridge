@@ -3,15 +3,15 @@
   "overview": "Adds or removes the Unicode Byte-Order-Mark (BOM) to or from UTF-8 and UTF-16 input files. The BOM is a special Unicode mark indicating byte order: little-endian (U+FFFE) or big-endian (U+FEFF). This step operates on raw documents and passes them through as raw documents.",
   "parameters": {
     "removeBOM": {
-      "help": "Controls the direction of BOM conversion:\n\n- **Enabled**: Removes the BOM from input files if one is detected. By default only UTF-8 BOMs are removed.\n- **Disabled**: Adds a BOM to input files if one is not already present. The input files must already be in UTF-8 or UTF-16, and you must specify the encoding of each file so the correct type of BOM is added.",
+      "help": "Controls whether the step **removes** or **adds** the BOM:\n\n- **Enabled**: Removes the BOM from input files if one is detected. By default, only UTF-8 BOMs are removed.\n- **Disabled**: Adds a BOM to input files if one is not already present. The input files must already be in UTF-8 or UTF-16, and you must specify the encoding of each file so the correct type of BOM is added.",
       "notes": [
-        "When adding BOMs (option disabled), you **must** specify the encoding of each file so the utility can add the proper type of BOM."
+        "When adding a BOM (option disabled), you must specify the encoding of each file so the utility can add the proper type of BOM."
       ]
     },
     "alsoNonUTF8": {
-      "help": "Extends BOM removal to also cover UTF-16 files. Without this, only UTF-8 BOMs are removed.",
+      "help": "Extends BOM removal to also cover UTF-16 files. By default, only UTF-8 BOMs are removed when `removeBOM` is enabled.",
       "notes": [
-        "**Warning:** Removing the BOM from UTF-16 files is **not recommended** — the UTF-16 specification requires a BOM to indicate byte order."
+        "**Warning:** Removing the BOM from UTF-16 files is not recommended. UTF-16 files must have a BOM to indicate byte order."
       ],
       "dependsOn": [
         {
@@ -21,26 +21,36 @@
       ]
     }
   },
+  "propertySuggestions": {
+    "removeBOM": {
+      "title": "Remove BOM If Present",
+      "description": "Remove the Byte-Order-Mark from input files if detected; when disabled, adds a BOM if not already present."
+    },
+    "alsoNonUTF8": {
+      "title": "Remove UTF-16 BOMs Also",
+      "description": "Also remove the BOM from UTF-16 files, not just UTF-8."
+    }
+  },
   "limitations": [
-    "Only UTF-8 and UTF-16 files are supported — UTF-32 is **not** supported.",
-    "When adding BOMs, input files must already be encoded in UTF-8 or UTF-16."
+    "Only UTF-8 and UTF-16 files are supported — UTF-32 is not currently handled."
   ],
   "processingNotes": [
-    "Takes and sends **raw documents** — this step does not parse or segment content.",
-    "For background on the BOM, see the [Unicode BOM FAQ](http://www.unicode.org/faq/utf_bom.html)."
+    "The step operates on raw documents — it does not parse or segment content.",
+    "When adding BOMs, the correct BOM type (UTF-8 vs UTF-16 LE/BE) is determined from the file's encoding setting."
   ],
   "examples": [
     {
       "title": "Remove UTF-8 BOM",
-      "description": "Remove the BOM from UTF-8 files only (the most common use case, e.g. fixing files that cause issues with tools that don't expect a UTF-8 BOM).",
-      "config": "```json\n{\n  \"removeBOM\": true,\n  \"alsoNonUTF8\": false\n}\n```"
+      "description": "Remove the BOM from UTF-8 files only (the default removal behavior).",
+      "config": "```yaml\nremoveBOM: true\nalsoNonUTF8: false\n```"
     },
     {
       "title": "Add BOM to files missing one",
-      "description": "Add a BOM to UTF-8 or UTF-16 files that don't already have one. Ensure each file's encoding is specified so the correct BOM type is inserted.",
-      "config": "```json\n{\n  \"removeBOM\": false,\n  \"alsoNonUTF8\": false\n}\n```"
+      "description": "Add a BOM to UTF-8 or UTF-16 input files that do not already have one. Ensure the encoding is specified for each file.",
+      "config": "```yaml\nremoveBOM: false\n```"
     }
   ],
+  "fullDoc": "# BOM Conversion\n\nAdds or removes the Unicode Byte-Order-Mark (BOM) to or from UTF-8 and UTF-16 input files. The BOM is a special Unicode mark indicating byte order: little-endian (U+FFFE) or big-endian (U+FEFF). For more information, see the [Unicode BOM FAQ](http://www.unicode.org/faq/utf_bom.html).\n\nTakes: Raw document. Sends: Raw document.\n\n## Parameters\n\n#### Remove BOM If Present\n\nControls whether the step **removes** or **adds** the BOM:\n\n- **Enabled**: Removes the BOM from input files if one is detected. By default, only UTF-8 BOMs are removed.\n- **Disabled**: Adds a BOM to input files if one is not already present. The input files must already be in UTF-8 or UTF-16, and you must specify the encoding of each file so the correct type of BOM is added.\n\n> **Note:** When adding a BOM, you must specify the encoding of each file so the utility can add the proper type of BOM.\n\n#### Remove UTF-16 BOMs Also\n\nExtends BOM removal to also cover UTF-16 files. By default, only UTF-8 BOMs are removed when removal is enabled.\n\nOnly meaningful when **Remove BOM If Present** is enabled.\n\n> **Warning:** Removing the BOM from UTF-16 files is not recommended. UTF-16 files must have a BOM to indicate byte order.\n\n## Limitations\n\n- Only UTF-8 and UTF-16 files are supported — UTF-32 is not currently handled.\n\n## Notes\n\n- The step operates on raw documents — it does not parse or segment content.\n- When adding BOMs, the correct BOM type (UTF-8 vs UTF-16 LE/BE) is determined from the file's encoding setting.\n\n## Examples\n\n### Remove UTF-8 BOM\n\nRemove the BOM from UTF-8 files only (the default removal behavior):\n\n```yaml\nremoveBOM: true\nalsoNonUTF8: false\n```\n\n### Add BOM to files missing one\n\nAdd a BOM to UTF-8 or UTF-16 input files that do not already have one. Ensure the encoding is specified for each file:\n\n```yaml\nremoveBOM: false\n```",
   "stepId": "b-o-m-conversion",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/bom_conversion_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/BOM_Conversion_Step"
 }

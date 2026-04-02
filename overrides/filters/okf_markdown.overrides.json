@@ -4,20 +4,67 @@
     "_fragments/inlineCodes.fragment.json"
   ],
   "fields": {
-    "htmlSubfilter": {},
-    "yamlSubfilter": {},
-    "translateUrls": {},
-    "translateCodeBlocks": {},
-    "translateIndentedCodeBlocks": {},
-    "translateInlineCodeBlocks": {},
+    "htmlSubfilter": {
+      "title": "HTML Subfilter Configuration",
+      "description": "Custom HTML filter configuration ID for processing HTML within Markdown."
+    },
+    "yamlSubfilter": {
+      "title": "YAML Subfilter Configuration",
+      "description": "Custom YAML filter configuration ID for processing YAML metadata headers."
+    },
+    "translateUrls": {
+      "title": "Translate Hyperlink URLs",
+      "description": "Extract URLs in link and image statements as translatable subflows."
+    },
+    "translateCodeBlocks": {
+      "title": "Translate Fenced Code Blocks",
+      "description": "Expose contents of fenced code blocks for translation."
+    },
+    "translateIndentedCodeBlocks": {
+      "title": "Translate Indented Code Blocks",
+      "description": "Expose contents of indented code blocks for translation."
+    },
+    "translateInlineCodeBlocks": {
+      "title": "Translate Inline Code Blocks",
+      "description": "Expose contents of backtick-delimited inline code for translation."
+    },
     "translateHeaderMetadata": {},
-    "translateImageAltText": {},
-    "urlToTranslatePattern": {},
+    "translateImageAltText": {
+      "title": "Translate Image Alt Text",
+      "description": "Extract image alt text from Markdown and HTML img tags for translation."
+    },
+    "urlToTranslatePattern": {
+      "title": "Translatable URL Pattern",
+      "description": "Regex pattern to filter which URLs are extracted when URL translation is enabled."
+    },
     "htmlEntitiesToEscape": {},
-    "nonTranslateBlocks": {},
-    "unescapeBackslashCharacters": {},
-    "charactersToEscape": {},
-    "generateHeaderAnchors": {},
-    "parseMdx": {}
+    "nonTranslateBlocks": {
+      "title": "Non-Translatable Block Quotes",
+      "description": "Comma-separated prefixes identifying block quotes to exclude from translation."
+    },
+    "unescapeBackslashCharacters": {
+      "title": "Support Backslash Escaping",
+      "description": "Parse backslash-escaped punctuation in source documents."
+    },
+    "charactersToEscape": {
+      "title": "Characters to Escape",
+      "description": "Punctuation characters to backslash-escape on export."
+    },
+    "generateHeaderAnchors": {
+      "title": "Generate Header Anchors",
+      "description": "Automatically generate named anchors for headings to preserve link targets."
+    },
+    "parseMdx": {
+      "title": "Parse MDX Expressions",
+      "description": "Parse out multi-line MDX export blocks as non-translatable skeleton."
+    },
+    "htmlEntitesToEscape": {
+      "title": "HTML Entities to Escape",
+      "description": "Characters to encode as HTML entities on export."
+    },
+    "useCodeFinder": {
+      "title": "Use Code Finder",
+      "description": "Enable the Inline Code Finder for identifying inline codes in translatable text."
+    }
   }
 }

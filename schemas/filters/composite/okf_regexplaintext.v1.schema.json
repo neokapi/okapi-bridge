@@ -3,7 +3,6 @@
   "$id": "https://neokapi.github.io/schemas/filters/okf_regexplaintext.v1.schema.json",
   "version": 1,
   "title": "okf_plaintext_regex Filter",
-  "description": "Configuration for the Okapi okf_plaintext_regex Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_regexplaintext",
@@ -230,6 +229,6 @@
   "x-apiVersion": "v1",
   "x-baseVersion": 1,
   "x-introducedInOkapi": "0.38",
-  "x-baseHash": "076335fad69c",
-  "x-compositeHash": "e10f503aa6fc"
+  "x-baseHash": "60129d938f86",
+  "x-compositeHash": "df11af9d9784"
 }

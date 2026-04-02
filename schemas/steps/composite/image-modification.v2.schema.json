@@ -53,7 +53,8 @@
     "makeGray": {
       "type": "boolean",
       "default": false,
-      "title": "Convert to gray scale"
+      "title": "Convert to gray scale",
+      "description": "Convert the image colors into a set of grays."
     }
   }
 }

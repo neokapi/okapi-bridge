@@ -1,26 +1,38 @@
 {
-  "filterName": "Enrycher",
-  "overview": "Invokes the [Enrycher Web service](http://enrycher.ijs.si/) to provide ITS disambiguation annotations in the source text content. The step sends groups of source entries to the Enrycher service, receives ITS-annotated results, and maps them back to Okapi inline annotations usable by downstream steps. For more information on the ITS Text Analysis data category, see the [ITS Version 2.0 Disambiguation specification](http://www.w3.org/TR/its20/#Disambiguation).",
+  "filterName": "Enrycher Step",
+  "overview": "Invokes the [Enrycher Web service](http://enrycher.ijs.si/) to provide ITS disambiguation annotations in the source text content. The step sends groups of source entries to the Enrycher service, receives ITS-annotated results, and maps them back to Okapi inline annotations usable by downstream steps. Implements the [ITS 2.0 Text Analysis data category](http://www.w3.org/TR/its20/#Disambiguation).",
   "parameters": {
     "baseUrl": {
-      "help": "The URL of the Enrycher Web service endpoint to use for disambiguation annotation."
+      "help": "The endpoint URL of the Enrycher Web service instance to use for disambiguation annotations. The default points to the public demo service hosted at IJS (`http://aidemo.ijs.si/mlw/`).",
+      "notes": [
+        "The public Enrycher service (as of Aug-18-2013) supports only **English** and **Slovenian**."
+      ]
     },
     "maxEvents": {
-      "help": "Controls how many events are buffered before sending a batch query to the Web service. Higher values send more segments at once, which generally **improves speed**, but requires **more memory**.",
+      "help": "Controls how many filter events are buffered before sending a batch query to the Enrycher Web service. Higher values send more segments at once, which generally **improves speed** but increases **memory usage**. Tune this based on document size and available memory.",
+      "values": "Positive integer. Default `20`. Larger values improve throughput at the cost of higher memory consumption.",
       "notes": [
-        "The greater the buffer size, the more memory is consumed. Adjust based on available resources and document size."
+        "The more events are buffered, the more memory is required. For large documents, consider reducing this value if you encounter memory issues."
       ]
     }
   },
   "limitations": [
     "This step is **BETA**.",
-    "The Enrycher Web service (as of Aug 2013) supports only **English** and **Slovenian**.",
+    "The Enrycher Web service (as of Aug-18-2013) supports only **English** and **Slovenian**.",
     "The amount of annotations added to the content can be very high depending on the type of text."
   ],
   "processingNotes": [
-    "Events are buffered and sent in batches to the Web service rather than individually, controlled by the `maxEvents` parameter.",
-    "Results from the Enrycher service are mapped back to Okapi inline annotations compatible with other pipeline steps."
+    "Events are buffered and sent in batches to the Web service rather than one at a time, controlled by the `maxEvents` parameter.",
+    "Annotations are mapped back to Okapi inline annotations that can be consumed by any downstream pipeline steps.",
+    "Requires both `source-language` and `target-language` to be set in the pipeline."
   ],
+  "examples": [],
+  "propertySuggestions": {
+    "baseUrl": {
+      "description": "Endpoint URL of the Enrycher Web service to use for disambiguation annotations"
+    }
+  },
+  "fullDoc": "# Enrycher Step\n\nInvokes the [Enrycher Web service](http://enrycher.ijs.si/) to provide ITS disambiguation annotations in the source text content. The step sends groups of source entries to the Enrycher service, receives ITS-annotated results, and maps them back to Okapi inline annotations usable by downstream steps. Implements the [ITS 2.0 Text Analysis data category](http://www.w3.org/TR/its20/#Disambiguation).\n\n> **Note:** The amount of annotations added to the content can be very high depending on the type of text.\n\n## Parameters\n\n#### URL of the Enrycher Web service\n\nThe endpoint URL of the Enrycher Web service instance to use for disambiguation annotations. The default points to the public demo service hosted at IJS (`http://aidemo.ijs.si/mlw/`).\n\n> **Note:** The public Enrycher service (as of Aug-18-2013) supports only **English** and **Slovenian**.\n\n#### Events buffer\n\nControls how many filter events are buffered before sending a batch query to the Enrycher Web service. Higher values send more segments at once, which generally **improves speed** but increases **memory usage**. Tune this based on document size and available memory.\n\nValid values: Positive integer. Default `20`. Larger values improve throughput at the cost of higher memory consumption.\n\n> **Note:** The more events are buffered, the more memory is required. For large documents, consider reducing this value if you encounter memory issues.\n\n## Limitations\n\n- This step is **BETA**.\n- The Enrycher Web service (as of Aug-18-2013) supports only **English** and **Slovenian**.\n- The amount of annotations added to the content can be very high depending on the type of text.\n\n## Notes\n\n- Events are buffered and sent in batches to the Web service rather than one at a time, controlled by the `maxEvents` parameter.\n- Annotations are mapped back to Okapi inline annotations that can be consumed by any downstream pipeline steps.\n- Requires both `source-language` and `target-language` to be set in the pipeline.",
   "stepId": "enrycher",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/enrycher_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Enrycher_Step"
 }

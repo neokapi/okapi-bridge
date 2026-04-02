@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_json.v4.schema.json",
   "version": 4,
-  "title": "Json Filter Filter",
-  "description": "Configuration for the Okapi Json Filter Filter",
+  "title": "Json Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_json",
@@ -163,7 +162,9 @@
     },
     "maxwidthSizeUnit": {
       "type": "string",
-      "default": ""
+      "default": "",
+      "title": "Max Width Size Unit",
+      "description": "The size-unit attribute value used for XLIFF length restriction elements."
     }
   },
   "additionalProperties": false,
@@ -270,6 +271,6 @@
   "x-apiVersion": "v4",
   "x-baseVersion": 4,
   "x-introducedInOkapi": "1.48.0",
-  "x-baseHash": "b26df29d13ec",
-  "x-compositeHash": "90428b55e45b"
+  "x-baseHash": "4d830ffd6615",
+  "x-compositeHash": "52e65a424fce"
 }

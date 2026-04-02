@@ -283,6 +283,13 @@ bundle-docs:
 bundle-filter-docs:
 	@./scripts/bundle-filter-docs.sh $(FILTER_DOCS_DIR)
 
+# Extract parameter labels from Okapi Java UI source code
+extract-java-labels:
+ifndef OKAPI_SOURCE
+	$(error OKAPI_SOURCE is required. Usage: make extract-java-labels OKAPI_SOURCE=/path/to/Okapi)
+endif
+	@./scripts/extract-java-labels.sh $(OKAPI_SOURCE)
+
 # Apply property suggestions from docs to overrides (review diff before committing)
 apply-suggestions:
 	@./scripts/apply-property-suggestions.sh $(FILTER_DOCS_DIR)

@@ -44,28 +44,39 @@
     "checkInconststencies": {
       "type": "boolean",
       "default": true,
-      "title": "Check inconsistencies"
+      "title": "Check Inconsistencies",
+      "description": "Enable or disable inconsistency checking; allows the step to be toggled off without removing it from the pipeline."
     },
     "checkPerFile": {
       "type": "boolean",
       "default": false,
-      "title": "Check for inconsistencies on a file-by-file basis"
+      "title": "Per-File Checking",
+      "description": "Process each input file individually instead of comparing segments across all documents, reducing memory usage."
     },
     "outputPath": {
       "type": "string",
       "default": "${rootDir}/inconsistency-report.xml",
-      "title": "Path of the report file:",
-      "x-path": { "type": "file", "role": "output", "accepts": ["xml"] }
+      "title": "Report File Path",
+      "x-path": {
+        "type": "file",
+        "role": "output",
+        "accepts": [
+          "xml"
+        ]
+      },
+      "description": "Full path of the XML report file to generate; supports ${rootDir} and ${inputRootDir} variables."
     },
     "displayOption": {
       "type": "string",
       "default": "generic",
-      "title": "Representation of the inline codes in the report"
+      "title": "Inline Code Display",
+      "description": "Controls how inline codes are represented in the report: original codes, generic markers, or plain text."
     },
     "autoOpen": {
       "type": "boolean",
       "default": true,
-      "title": "Open the report file after completion"
+      "title": "Auto-Open Report",
+      "description": "Automatically open the generated report file in the default application after processing completes."
     }
   }
 }

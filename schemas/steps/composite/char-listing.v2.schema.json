@@ -44,7 +44,8 @@
     "autoOpen": {
       "type": "boolean",
       "default": true,
-      "title": "Open the result file after completion"
+      "title": "Open the result file after completion",
+      "description": "Automatically open the result file in the default editor after processing completes."
     }
   }
 }

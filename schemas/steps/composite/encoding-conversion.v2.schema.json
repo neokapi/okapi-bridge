@@ -39,39 +39,57 @@
   "properties": {
     "unescapeNCR": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Unescape Numeric Character References",
+      "description": "Un-escape numeric character references (e.g., &#xE1;) when reading the input document."
     },
     "unescapeCER": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Unescape Character Entity References",
+      "description": "Un-escape HTML character entity references (e.g., &aacute;) when reading the input document."
     },
     "unescapeJava": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Unescape Java-style Notation",
+      "description": "Un-escape Java-style \\uXXXX escape sequences when reading the input document."
     },
     "escapeAll": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Escape All Extended Characters",
+      "description": "Escape all extended (non-ASCII) characters, not just those unsupported by the output encoding."
     },
     "escapeNotation": {
       "type": "integer",
-      "default": 0
+      "default": 0,
+      "title": "Escape Notation",
+      "description": "Select the notation format used when escaping characters in the output (NCR, CER, Java-style, or user-defined)."
     },
     "userFormat": {
       "type": "string",
-      "default": "%d"
+      "default": "%d",
+      "title": "User-Defined Format",
+      "description": "Java format expression (e.g., %d, %x) used for escaping when user-defined notation is selected."
     },
     "useBytes": {
       "type": "boolean",
-      "default": false
+      "default": false,
+      "title": "Use Byte Values",
+      "description": "Use byte values of the output encoding instead of Unicode code points in the user-defined format."
     },
     "BOMonUTF8": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "BOM on UTF-8 Output",
+      "description": "Add a Byte-Order-Mark (BOM) at the beginning of UTF-8 output files."
     },
     "reportUnsupported": {
       "type": "boolean",
-      "default": true
+      "default": true,
+      "title": "Report Unsupported Characters",
+      "description": "Log all characters not supported by the output encoding."
     }
   }
 }

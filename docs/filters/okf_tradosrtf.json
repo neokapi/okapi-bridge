@@ -1,19 +1,19 @@
 {
   "filterName": "Trados-Tagged RTF Filter",
-  "overview": "The Trados-Tagged RTF Filter reads RTF files prepared with the Trados translation layer of styles. It processes documents where HTML/XML tags are visible and marked with Trados styles like `tw4wInternal` (red) and `tw4wExternal` (gray), rather than \"normal\" RTF files with true RTF formatting codes. **This is a read-only filter** — it cannot generate translated output documents.",
+  "overview": "The Trados-Tagged RTF Filter reads RTF files prepared with the Trados translation layer of styles. It extracts segmented text from Trados-Tagged RTF documents where HTML/XML tags are visible and marked with `tw4wInternal` (red) or `tw4wExternal` (gray) styles. **This is a read-only filter** — it cannot merge translations back into the original document. Note that \"normal\" RTF files translated with Trados (where formatting uses true RTF codes rather than tagged styles) are not supported.",
   "parameters": {},
   "limitations": [
     "**Read-only filter** — does not generate output corresponding to the input. Must be used for input/extraction only.",
     "Only understands inline codes represented with Trados styles (`tw4wInternal`, `tw4wExternal`), not RTF with \"normal\" formatting.",
-    "Only text within Trados segmentation markers is extracted — any text outside segment markers is ignored and treated as non-translatable.",
-    "\"Normal\" RTF files translated with Trados (showing segments with true RTF formatting) are **not** Trados-Tagged RTF and cannot be processed by this filter."
+    "Any text outside Trados segmentation markers is ignored and treated as non-translatable."
   ],
   "processingNotes": [
-    "Encoding is determined from font encoding information declared in the RTF document. If no default encoding is declared, the user-specified encoding is used as fallback.",
-    "Only text marked by Trados segmentation markers is extracted. All text outside segment markers is ignored and considered non-translatable.",
-    "A valid Trados-Tagged RTF file has HTML/XML tags visible in the text marked with `tw4wInternal` or `tw4wExternal` styles, rather than rendered as actual RTF formatting."
+    "Encoding is determined from the RTF document's font encoding declarations. If no default encoding is declared in the document, the user-specified encoding is used as fallback.",
+    "Only text within Trados segmentation markers is extracted — all other content is considered non-translatable.",
+    "A Trados-Tagged RTF is distinguished from a normal Trados RTF by having visible HTML/XML tags marked with `tw4wInternal` or `tw4wExternal` styles, rather than using native RTF formatting codes."
   ],
   "examples": [],
+  "fullDoc": "# Trados-Tagged RTF Filter\n\nThe Trados-Tagged RTF Filter reads RTF files prepared with the Trados translation layer of styles. It extracts segmented text from Trados-Tagged RTF documents where HTML/XML tags are visible and marked with `tw4wInternal` (red) or `tw4wExternal` (gray) styles. **This is a read-only filter** — it cannot merge translations back into the original document.\n\nA Trados-Tagged RTF document is an RTF file that has special styles associated to different parts of the content and has segmentation markers. Note that a \"normal\" RTF file translated with Trados (showing segments with native RTF formatting like bold) is **not** a full Trados-Tagged RTF. A true Trados-Tagged RTF shows the actual tags (e.g., `<b>` and `</b>`) marked with the `tw4wInternal` style.\n\n## Parameters\n\nThis filter has no configurable parameters.\n\n## Encoding\n\nThe filter determines the input encoding using the following logic:\n\n1. The document declares encoding information for each font, including a default encoding.\n2. If no default encoding is declared in the document, the user-specified encoding is used as the fallback.\n\n## Limitations\n\n- **Read-only filter** — does not generate output corresponding to the input. Must be used for input/extraction only.\n- Only understands inline codes represented with Trados styles (`tw4wInternal`, `tw4wExternal`), not RTF with \"normal\" formatting.\n- Any text outside Trados segmentation markers is ignored and treated as non-translatable.\n\n## Notes\n\n- Use this filter only in extraction/reading pipelines — do not expect merged output.\n- Ensure your RTF files are true Trados-Tagged RTF (with visible tagged styles), not standard Trados-translated RTF with native formatting.",
   "filterId": "okf_tradosrtf",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/trados_tagged_rtf_filter"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Trados-Tagged_RTF_Filter"
 }

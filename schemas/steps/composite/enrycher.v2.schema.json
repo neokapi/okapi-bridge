@@ -33,7 +33,8 @@
     "baseUrl": {
       "type": "string",
       "default": "http://aidemo.ijs.si/mlw/",
-      "title": "URL of the Enrycher Web service"
+      "title": "URL of the Enrycher Web service",
+      "description": "Endpoint URL of the Enrycher Web service to use for disambiguation annotations"
     },
     "maxEvents": {
       "type": "integer",

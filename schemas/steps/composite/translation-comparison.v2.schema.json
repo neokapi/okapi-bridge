@@ -65,12 +65,14 @@
     "autoOpen": {
       "type": "boolean",
       "default": true,
-      "title": "Opens the first HTML output after completion"
+      "title": "Opens the first HTML output after completion",
+      "description": "Opens the first HTML result file in the default browser after completion"
     },
     "genericCodes": {
       "type": "boolean",
       "default": true,
-      "title": "Use generic representation (e.g. <1>...</1>) for the inline codes"
+      "title": "Use generic representation (e.g. <1>...</1>) for the inline codes",
+      "description": "Uses generic numbered tags (e.g. <1>...</1>) instead of original inline codes in the HTML report"
     },
     "caseSensitive": {
       "type": "boolean",
@@ -93,32 +95,38 @@
     "target2Suffix": {
       "type": "string",
       "default": "-t2",
-      "title": "Suffix for target language code of document 2"
+      "title": "Suffix for target language code of document 2",
+      "description": "Suffix appended to the target language code for document 2 entries in TMX output"
     },
     "target3Suffix": {
       "type": "string",
       "default": "-t3",
-      "title": "Suffix for target language code of document 3"
+      "title": "Suffix for target language code of document 3",
+      "description": "Suffix appended to the target language code for document 3 entries in TMX output"
     },
     "document1Label": {
       "type": "string",
       "default": "Trans1",
-      "title": "Label for the document 1"
+      "title": "Label for the document 1",
+      "description": "Label used in reports to identify the base translation"
     },
     "document2Label": {
       "type": "string",
       "default": "Trans2",
-      "title": "Label for the document 2"
+      "title": "Label for the document 2",
+      "description": "Label used in reports to identify the second translation"
     },
     "document3Label": {
       "type": "string",
       "default": "Trans3",
-      "title": "Label for the document 3"
+      "title": "Label for the document 3",
+      "description": "Label used in reports to identify the optional third translation"
     },
     "useDataLog": {
       "type": "boolean",
       "default": false,
-      "title": "Append the average results to a log"
+      "title": "Append the average results to a log",
+      "description": "Appends average comparison scores to a tab-delimited log file after each run"
     },
     "dataLogPath": {
       "type": "string",

@@ -2,8 +2,7 @@
   "$schema": "http://json-schema.org/draft-07/schema#",
   "$id": "https://neokapi.github.io/schemas/filters/okf_doxygen.v2.schema.json",
   "version": 2,
-  "title": "Doxygen Filter Filter",
-  "description": "Configuration for the Okapi Doxygen Filter Filter",
+  "title": "Doxygen Filter",
   "type": "object",
   "x-filter": {
     "id": "okf_doxygen",
@@ -1684,6 +1683,6 @@
   "x-apiVersion": "v2",
   "x-baseVersion": 2,
   "x-introducedInOkapi": "1.46.0",
-  "x-baseHash": "3cd3025cfc09",
-  "x-compositeHash": "549b8b445cc2"
+  "x-baseHash": "de9a091d7fb1",
+  "x-compositeHash": "97f6a4bda0b4"
 }

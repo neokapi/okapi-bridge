@@ -1,24 +1,23 @@
 {
   "filterName": "Moses Text Filter",
-  "overview": "The Moses Text Filter processes InlineText files used by the [Moses MT system](http://www.statmt.org/moses/). Each line in a Moses InlineText file is read as a separate text unit containing translatable text with inline codes represented by XLIFF-like elements (`<g>`, `<x>`, `<bx>`, `<ex>`) and line-breaks represented by `<lb/>`. Moses InlineText files are typically created from other document formats using the Moses InlineText Extraction Step.",
+  "overview": "The Moses Text Filter processes InlineText files used by the [Moses MT system](http://www.statmt.org/moses/). Each line in the file is read as a separate text unit. Inline codes are represented using `<g>`, `<x>`, `<bx>`, and `<ex>` elements with numeric identifiers, and line-breaks within entries are represented by `<lb/>`.",
   "parameters": {},
+  "limitations": [],
   "processingNotes": [
-    "**Input encoding**: Uses BOM if present; otherwise defaults to **UTF-8** regardless of any specified default encoding.",
-    "**Output encoding**: Always forced to **UTF-8**.",
-    "**Line-breaks**: Output preserves the same line-break type as the original input.",
-    "Reading a Moses InlineText file may yield **more text units** than the original document, because each segment of a multi-segment text unit becomes a separate entry in the Moses file.",
-    "To map Moses entries back to their original text units, process both the original file and the Moses file together (as done by the Moses InlineText Leveraging Step)."
-  ],
-  "limitations": [
-    "None known."
+    "If the document has a BOM, it is used to determine the input encoding; otherwise **UTF-8** is used regardless of any specified default encoding.",
+    "Output encoding is always forced to **UTF-8**.",
+    "Output line-break style matches the original input.",
+    "Reading a Moses InlineText file may produce more text units than the original document because each segment is extracted as a single entry, and the Moses format has no way to mark that multiple entries belong to the same text unit.",
+    "Use the **Moses InlineText Extraction Step** to create Moses files from other formats, and the **Moses InlineText Leveraging Step** to re-group entries back into their original text units."
   ],
   "examples": [
     {
-      "title": "Moses InlineText file format",
-      "description": "A Moses InlineText file with four text units. Each line is a separate entry. Inline codes use XLIFF-like elements (`<g>`, `<x>`, `<bx>`, `<ex>`) and line-breaks use `<lb/>`.",
+      "title": "Moses InlineText format",
+      "description": "Example of a Moses InlineText file with four text units. Inline codes use `<g>`, `<x>`, `<bx>`, `<ex>` elements; line-breaks within entries use `<lb/>`.",
       "input": "```\nText in the first entry.\nText of the second entry<lb/>which spans<lb/>several lines\nThird entry.\nFourth entry with <g id=\"1\">bold words</g> and some code:<x id=\"2\"/>\n```"
     }
   ],
+  "fullDoc": "# Moses Text Filter\n\nThe Moses Text Filter processes InlineText files used by the [Moses MT system](http://www.statmt.org/moses/). Each line in the file is read as a separate text unit. Inline codes are represented using `<g>`, `<x>`, `<bx>`, and `<ex>` elements with numeric identifiers, and line-breaks within entries are represented by `<lb/>`.\n\n## Parameters\n\nThis filter has no parameters.\n\n## Processing Notes\n\n- If the document has a BOM, it is used to determine the input encoding; otherwise **UTF-8** is used regardless of any specified default encoding.\n- Output encoding is always forced to **UTF-8**.\n- Output line-break style matches the original input.\n- Reading a Moses InlineText file may produce more text units than the original document because each segment is extracted as a single entry, and the Moses format has no way to mark that multiple entries belong to the same text unit.\n- Use the **Moses InlineText Extraction Step** to create Moses files from other formats (including XLIFF), and the **Moses InlineText Leveraging Step** to re-group entries back into their original text units.\n\n## Inline Code Format\n\nInline codes use the following elements:\n\n| Element | Description |\n|---------|-------------|\n| `<g id=\"N\">...</g>` | Paired inline code (e.g., bold, italic) |\n| `<x id=\"N\"/>` | Standalone inline code |\n| `<bx id=\"N\"/>` | Beginning of paired code |\n| `<ex id=\"N\"/>` | End of paired code |\n| `<lb/>` | Line-break within an entry |\n\n## Limitations\n\nNone known.\n\n## Examples\n\n### Moses InlineText file\n\n```\nText in the first entry.\nText of the second entry<lb/>which spans<lb/>several lines\nThird entry.\nFourth entry with <g id=\"1\">bold words</g> and some code:<x id=\"2\"/>\n```\n\nEach line is read as a separate text unit. The second entry spans multiple lines in the original document, joined by `<lb/>` codes.",
   "filterId": "okf_mosestext",
   "wikiUrl": "https://okapiframework.org/wiki/index.php/Moses_Text_Filter"
 }

@@ -41,7 +41,8 @@
     "autoOpen": {
       "type": "boolean",
       "default": true,
-      "title": "Open the result file after completion"
+      "title": "Open the result file after completion",
+      "description": "Automatically open the result file after the process is complete."
     }
   }
 }

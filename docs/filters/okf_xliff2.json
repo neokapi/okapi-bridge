@@ -2,44 +2,39 @@
   "filterName": "XLIFF-2 Filter",
   "overview": "The XLIFF-2 Filter implements the `IFilter` interface for **XLIFF 2.x** (XML Localisation Interchange File Format) documents. XLIFF v2 is an OASIS Standard for transporting translatable text and localization-related information across translation and localization tool chains. The filter provides basic support for XLIFF 2.x core including extended attributes/namespaces, segments and ignorables, inline codes, notes, groups, and the XLIFF 2.x Metadata Module.",
   "parameters": {
-    "extraction.needsSegmentation": {
-      "help": "Resegments any unit marked with `canSegment=\"yes\"` in the XLIFF file. Units that already have an existing `<target>` element **cannot** be segmented — only source-only units are eligible."
+    "maxValidation": {
+      "help": "Ensures the XLIFF-2 parser performs the **maximum verification** of the format during parsing. Useful for catching malformed or non-compliant XLIFF 2.x files early in the pipeline."
     },
-    "extraction.forceUniqueIds": {
-      "help": "Ensures that inline tag IDs (e.g., `<pc id=\"...\">`, `<ph id=\"...\">`) are unique within each `<unit>`. Useful when source XLIFF files have duplicate tag IDs that could cause issues in downstream tools."
-    },
-    "extraction.simplifyTags": {
-      "help": "Reduces the complexity of inline codes by merging adjacent tags and simplifying nested structures where possible. Can make segments easier to work with in translation tools."
-    },
-    "extraction.ignoreTagTypeMatch": {
-      "help": "Normally the filter validates that inline tag types in `<target>` match those in `<source>` (e.g., a `<pc>` in source must correspond to a `<pc>` in target). Enabling this skips that validation, which can be useful when processing files from tools that use different tag types for equivalent markup."
-    },
-    "states.discardInvalidTargets": {
-      "help": "When a `<target>` element fails validation (e.g., mismatched inline codes), discard it silently instead of rejecting the entire file with an error. The unit will be treated as untranslated rather than causing a processing failure."
-    },
-    "states.subfilterOverwriteTarget": {
-      "help": "When a sub-filter is used to process embedded content, always overwrite the existing `<target>` with the sub-filter's output, even if a target already exists."
-    },
-    "output.writeOriginalData": {
-      "help": "Includes `<originalData>` elements in the output when they are present in the source XLIFF. These elements store the original representation of inline codes (e.g., HTML tags) that were abstracted into XLIFF inline elements."
-    },
-    "output.maxValidation": {
-      "help": "Enables the strictest validation mode in the XLIFF-2 parser. Performs thorough verification of the XLIFF format during parsing, catching malformed or non-conformant content early. Disable only if you need to process files that don't strictly conform to the XLIFF 2.x specification."
+    "needsSegmentation": {
+      "help": "Resegments any unit that is marked with `canSegment=\"yes\"` in the XLIFF source. Units that already have a `<target>` element **cannot** be segmented, even if `canSegment=\"yes\"` is set.",
+      "notes": [
+        "Units with an existing target cannot be segmented, regardless of this setting."
+      ]
     }
   },
   "limitations": [
-    "Skeleton is not supported.",
+    "Skeleton not supported.",
     "Comments are lost in the merged document.",
     "Original XML formatting is lost in the merged document.",
-    "Attributes can be reordered in the output.",
-    "Attributes may be removed or added compared to the original, depending on default values and logic in the XLIFF 2 Toolkit."
+    "Attributes can be reordered.",
+    "Attributes may be removed or added compared to the original depending on default values and logic in the XLIFF 2 Toolkit."
   ],
   "processingNotes": [
-    "The filter provides basic support for XLIFF 2.x core: extended attributes and namespaces, segments and ignorables, inline codes, notes, groups, and the XLIFF 2.x Metadata Module.",
-    "Units with an existing `<target>` element cannot be resegmented even when `canSegment=\"yes\"` is set.",
-    "The XLIFF 2.0 specification is defined by the OASIS Standard at `docs.oasis-open.org/xliff/xliff-core/v2.0/`."
+    "Supports XLIFF 2.x core features: extended attributes and namespaces, segments and ignorables, inline codes, notes, groups, and the XLIFF 2.x Metadata Module.",
+    "Merged documents will not preserve original XML formatting, comments, or attribute ordering."
   ],
+  "propertySuggestions": {
+    "maxValidation": {
+      "title": "Maximum Validation",
+      "description": "Perform maximum validation of the XLIFF 2.x format when parsing."
+    },
+    "needsSegmentation": {
+      "title": "Needs Segmentation",
+      "description": "Resegment units marked with canSegment=\"yes\" that do not already have a target."
+    }
+  },
+  "fullDoc": "# XLIFF-2 Filter\n\nThe XLIFF-2 Filter implements the `IFilter` interface for **XLIFF 2.x** (XML Localisation Interchange File Format) documents. XLIFF v2 is an OASIS Standard for transporting translatable text and localization-related information across translation and localization tool chains. The filter provides basic support for XLIFF 2.x core including extended attributes/namespaces, segments and ignorables, inline codes, notes, groups, and the XLIFF 2.x Metadata Module.\n\n## Parameters\n\n#### Maximum Validation\nEnsures the XLIFF-2 parser performs the **maximum verification** of the format during parsing. Useful for catching malformed or non-compliant XLIFF 2.x files early in the pipeline.\n\n#### Needs Segmentation\nResegments any unit that is marked with `canSegment=\"yes\"` in the XLIFF source.\n\n> **Note:** Units that already have a `<target>` element **cannot** be segmented, even if `canSegment=\"yes\"` is set.\n\n## Limitations\n\n- Skeleton not supported.\n- Comments are lost in the merged document.\n- Original XML formatting is lost in the merged document.\n- Attributes can be reordered.\n- Attributes may be removed or added compared to the original depending on default values and logic in the XLIFF 2 Toolkit.\n\n## Notes\n\n- The filter supports XLIFF 2.x core features: extended attributes and namespaces, segments and ignorables, inline codes, notes, groups, and the XLIFF 2.x Metadata Module.\n- Merged documents will not preserve original XML formatting, comments, or attribute ordering.\n- The XLIFF 2.0 specification is available at the OASIS website.",
   "examples": [],
   "filterId": "okf_xliff2",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/xliff_2_filter"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/XLIFF-2_Filter"
 }

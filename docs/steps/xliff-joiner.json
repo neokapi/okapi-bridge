@@ -1,39 +1,58 @@
 {
-  "filterName": "XLIFF Joiner",
-  "overview": "Re-joins multiple XLIFF documents that were previously split (e.g., by the **XLIFF Splitter Step**) back into one or more consolidated documents. Files are grouped by a naming pattern based on a configurable marker string; the first document in each group provides the skeleton (content before the first `<file>` and after the last `<file>`), while subsequent documents contribute their `<file>` elements. Takes raw documents and sends back raw documents.",
+  "filterName": "XLIFF Joiner Step",
+  "overview": "Re-joins multiple XLIFF documents that were previously split (e.g., by the XLIFF Splitter Step) back into one or more combined documents based on filename patterns. Files sharing the same naming pattern (differing only by an index after the marker) are merged by collecting their `<file>` elements into a single output document. The first document in each group provides the surrounding XLIFF structure, while subsequent documents contribute only their `<file>` elements.",
   "parameters": {
     "inputFileMarker": {
-      "help": "The marker string used to identify and group files that belong together. Files whose names contain this marker followed by a numeric index (e.g., `File1_PART001.xlf`, `File1_PART002.xlf`) are treated as parts of the same document and joined together.\n\nFiles whose names do **not** contain this marker are skipped entirely.",
+      "help": "A text marker used to identify which input files belong to the same group and should be joined together. The step looks for this marker in each input filename — files whose names match the pattern `{basename}{marker}{index}.xlf` are grouped by `{basename}` and merged.\n\nFiles whose names do **not** contain this marker are skipped entirely.",
+      "values": "Any string that appears in the filenames before the numeric index. Common values: `_PART` (default, matches XLIFF Splitter output).",
+      "notes": [
+        "Files are joined in the order they arrive in the pipeline, **not** by their index number. Ensure the pipeline processes files in the desired order.",
+        "Files without the marker in their filename are skipped silently."
+      ],
       "examples": [
-        "`_PART` — matches `File1_PART001.xlf`, `File1_PART002.xlf`, etc."
+        "With marker `_PART`: files `File1_PART001.xlf`, `File1_PART002.xlf` are grouped as `File1`",
+        "With marker `-chunk`: files `Doc-chunk1.xlf`, `Doc-chunk2.xlf` are grouped as `Doc`"
       ]
     },
     "outputFileMarker": {
-      "help": "The marker string that replaces the input file marker (and its numeric index) in the output filename. For example, if the input marker is `_PART` and the output marker is `_CONCAT`, then `File1_PART001.xlf` and `File1_PART002.xlf` produce `File1_CONCAT.xlf`.",
+      "help": "The text that replaces the input marker (and its trailing index) in the output filename. Each group of joined files produces a single output file named `{basename}{outputMarker}.xlf`.\n\nIf an output file with the same name already exists in the output directory, it will be **overwritten without warning**.",
+      "values": "Any string to use as the replacement marker in the output filename. Default: `_CONCAT`.",
       "notes": [
-        "If files with the generated output names already exist in the output directory, they will be **overwritten without warning**."
+        "**Warning:** Existing files with the same output name are overridden without any confirmation or warning."
       ],
       "examples": [
-        "`_CONCAT` — `File1_PART001.xlf` + `File1_PART002.xlf` → `File1_CONCAT.xlf`"
+        "Input marker `_PART` + output marker `_CONCAT`: `File1_PART001.xlf` + `File1_PART002.xlf` → `File1_CONCAT.xlf`",
+        "Input marker `_PART` + output marker (empty string): `File1_PART001.xlf` + `File1_PART002.xlf` → `File1.xlf`"
       ]
     }
   },
   "processingNotes": [
-    "Files are joined in the order they arrive in the pipeline, **regardless of the index number** added by the XLIFF Splitter Step. Pipeline processing is sequential.",
-    "The first document in a naming-pattern group provides the XML skeleton — content before the first `<file>` element and after the last `<file>` element.",
-    "Subsequent documents in the same group contribute only their `<file>` elements (and any content between multiple `<file>` elements). Content before their first `<file>` and after their last `<file>` is ignored, since the XLIFF Splitter Step duplicates this content into every part.",
-    "Files whose names do not contain the input file marker are skipped."
+    "The first document in each naming-pattern group provides the XLIFF structure (content before the first `<file>` and after the last `<file>` element). Subsequent documents in the group contribute only their `<file>` elements and any content between multiple `<file>` elements.",
+    "Content before the first `<file>` and after the last `<file>` in subsequent documents of the same group is discarded, since the XLIFF Splitter Step duplicates this structural content into every split file.",
+    "Files are joined in pipeline arrival order, regardless of the numeric index appended by the XLIFF Splitter Step.",
+    "Files whose names do not contain the input file marker are skipped — they pass through unchanged."
   ],
-  "limitations": [],
+  "limitations": [
+    "None known."
+  ],
   "examples": [
     {
-      "title": "Joining split XLIFF files",
-      "description": "Two groups of split files are joined back together. `File3.xlf` is skipped because it lacks the `_PART` marker.",
+      "title": "Rejoin split XLIFF files",
+      "description": "Joining files previously split by the XLIFF Splitter Step using default markers. Two groups (`File1` and `File2`) are each merged into a single output file, while `File3.xlf` is skipped because it lacks the `_PART` marker.",
       "config": "```yaml\ninputFileMarker: _PART\noutputFileMarker: _CONCAT\n```",
       "input": "```\nC:\\Project\\FolderABC\\File1_PART001.xlf\nC:\\Project\\FolderABC\\File1_PART002.xlf\nC:\\Project\\FolderABC\\File2_PART001.xlf\nC:\\Project\\FolderABC\\File2_PART002.xlf\nC:\\Project\\FolderABC\\File3.xlf\n```",
-      "output": "```\nC:\\Project\\FolderABC\\File1_CONCAT.xlf\nC:\\Project\\FolderABC\\File2_CONCAT.xlf\n\nFile3.xlf → Skipped (filename does not contain \"_PART\")\n```"
+      "output": "```\nC:\\Project\\FolderABC\\File1_CONCAT.xlf   (joined from File1_PART001 + File1_PART002)\nC:\\Project\\FolderABC\\File2_CONCAT.xlf   (joined from File2_PART001 + File2_PART002)\nC:\\Project\\FolderABC\\File3.xlf          (skipped — no \"_PART\" marker)\n```"
     }
   ],
+  "propertySuggestions": {
+    "inputFileMarker": {
+      "description": "Marker text in input filenames used to identify and group split XLIFF files for joining."
+    },
+    "outputFileMarker": {
+      "description": "Marker text used to generate the output filename(s) by replacing the input marker and index."
+    }
+  },
+  "fullDoc": "# XLIFF Joiner Step\n\nRe-joins multiple XLIFF documents that were previously split (e.g., by the XLIFF Splitter Step) back into one or more combined documents based on filename patterns. Files sharing the same naming pattern (differing only by an index after the marker) are grouped and merged by collecting their `<file>` elements into a single output document. The first document in each group provides the surrounding XLIFF structure, while subsequent documents contribute only their `<file>` elements.\n\nTakes: Raw documents. Sends: Raw document.\n\n## Parameters\n\n#### Input File Marker\n\nA text marker used to identify which input files belong to the same group and should be joined together. The step looks for this marker in each input filename — files whose names match the pattern `{basename}{marker}{index}.xlf` are grouped by `{basename}` and merged.\n\nFiles whose names do **not** contain this marker are skipped entirely.\n\nDefault: `_PART`\n\n**Examples:**\n- With marker `_PART`: files `File1_PART001.xlf`, `File1_PART002.xlf` are grouped as `File1`\n- With marker `-chunk`: files `Doc-chunk1.xlf`, `Doc-chunk2.xlf` are grouped as `Doc`\n\n> **Note:** Files are joined in the order they arrive in the pipeline, **not** by their index number.\n\n#### Output File Marker\n\nThe text that replaces the input marker (and its trailing index) in the output filename. Each group of joined files produces a single output file named `{basename}{outputMarker}.xlf`.\n\nDefault: `_CONCAT`\n\n> **Warning:** If files with the same names already exist in the output directory, they will be overridden without warning.\n\n**Examples:**\n- Input marker `_PART` + output marker `_CONCAT`: `File1_PART001.xlf` → `File1_CONCAT.xlf`\n- Input marker `_PART` + output marker (empty): `File1_PART001.xlf` → `File1.xlf`\n\n## Notes\n\n- The first document in each naming-pattern group provides the XLIFF structure (content before the first `<file>` and after the last `<file>` element). Subsequent documents contribute only their `<file>` elements.\n- Content before the first `<file>` and after the last `<file>` in subsequent documents is discarded, since the XLIFF Splitter Step duplicates this structural content into every split file.\n- Files are joined in pipeline arrival order, regardless of the numeric index appended by the XLIFF Splitter Step.\n- To split a single XLIFF document into several ones, use the XLIFF Splitter Step.\n\n## Limitations\n\nNone known.\n\n## Examples\n\n### Rejoin split XLIFF files\n\nWith default parameters:\n\n```yaml\ninputFileMarker: _PART\noutputFileMarker: _CONCAT\n```\n\n**Input files:**\n```\nC:\\Project\\FolderABC\\File1_PART001.xlf\nC:\\Project\\FolderABC\\File1_PART002.xlf\nC:\\Project\\FolderABC\\File2_PART001.xlf\nC:\\Project\\FolderABC\\File2_PART002.xlf\nC:\\Project\\FolderABC\\File3.xlf\n```\n\n**Output files:**\n```\nC:\\Project\\FolderABC\\File1_CONCAT.xlf   (joined from File1_PART001 + File1_PART002)\nC:\\Project\\FolderABC\\File2_CONCAT.xlf   (joined from File2_PART001 + File2_PART002)\nC:\\Project\\FolderABC\\File3.xlf          (skipped — no \"_PART\" marker)\n```",
   "stepId": "xliff-joiner",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/xliff_joiner_step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/XLIFF_Joiner_Step"
 }
