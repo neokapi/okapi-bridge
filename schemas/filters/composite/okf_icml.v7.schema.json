@@ -1,0 +1,217 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_icml.v7.schema.json",
+  "version": 7,
+  "title": "ICML Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_icml",
+    "class": "net.sf.okapi.filters.icml.ICMLFilter",
+    "extensions": [
+      ".wcml",
+      ".icml"
+    ],
+    "mimeTypes": [
+      "application/x-icml+xml"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_icml",
+        "name": "ICML",
+        "description": "Adobe InDesign ICML documents",
+        "mimeType": "application/x-icml+xml",
+        "extensions": ".wcml;.icml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.icml.ICMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "extraction": {
+      "type": "object",
+      "title": "Extraction settings",
+      "properties": {
+        "extractNotes": {
+          "type": "boolean",
+          "default": false,
+          "title": "Extract notes",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "extractNotes",
+          "description": "Extract notes/comments as translator notes"
+        },
+        "extractMasterSpreads": {
+          "type": "boolean",
+          "default": true,
+          "title": "Extract master spreads",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "extractMasterSpreads"
+        },
+        "newTuOnBr": {
+          "type": "boolean",
+          "default": false,
+          "title": "Create new paragraphs on hard returns (<Br/> elements)",
+          "x-flattenPath": "newTuOnBr"
+        },
+        "simplifyCodes": {
+          "type": "boolean",
+          "default": true,
+          "title": "Simplify inline codes when possible",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "simplifyCodes"
+        },
+        "skipThreshold": {
+          "type": "integer",
+          "default": 1000,
+          "title": "Maximum spread size",
+          "description": "Skip any spread larger than the given value (in Kbytes)",
+          "minimum": 1,
+          "maximum": 32000,
+          "x-editor": {
+            "widget": "spin",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "skipThreshold"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "extraction",
+      "label": "Extraction settings",
+      "fields": [
+        "extraction"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfIcmlFilterConfig",
+  "x-apiVersion": "v7",
+  "x-baseVersion": 13,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "ede2379c9536",
+  "x-compositeHash": "1c3d555a5d7b"
+}

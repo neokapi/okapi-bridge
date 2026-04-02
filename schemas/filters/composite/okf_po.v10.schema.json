@@ -1,0 +1,280 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_po.v10.schema.json",
+  "version": 10,
+  "title": "PO Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_po",
+    "class": "net.sf.okapi.filters.po.POFilter",
+    "extensions": [
+      ".po"
+    ],
+    "mimeTypes": [
+      "application/x-gettext"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_po",
+        "name": "PO (Standard)",
+        "description": "Standard bilingual PO files",
+        "mimeType": "application/x-gettext",
+        "extensions": ".po;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.po.POFilter"
+      },
+      {
+        "configId": "okf_po-monolingual",
+        "name": "PO (Monolingual)",
+        "description": "Monolingual PO files (msgid is a real ID, not the source text).",
+        "mimeType": "application/x-gettext",
+        "extensions": ".po;",
+        "parametersLocation": "monolingual.fprm",
+        "parametersRaw": "#v1\nbilingualMode.b=false\nmakeID.b=true\nuseLD.b=true\nlocalizeOutside.b=true\nuseCodeFinder.b=true\ncodeFinderRules.count.i=2\ncodeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\ncodeFinderRules.rule1=\\{\\d[^\\\\]*?\\}\ncodeFinderRules.sample=%s, %d, {1}, \\n, \\r, \\t, etc.\ncodeFinderRules.useAllRulesWhenTesting.b=true\n",
+        "parameters": {
+          "bilingualMode": false,
+          "makeID": true,
+          "protectApproved": false,
+          "useCodeFinder": true,
+          "allowEmptyOutputTarget": false,
+          "subfilter": "",
+          "useLD": true,
+          "localizeOutside": true,
+          "codeFinderRules.count": 2,
+          "codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
+          "codeFinderRules.rule1": "\\{\\d[^\\\\]*?\\}",
+          "codeFinderRules.sample": "%s, %d, {1}, \\n, \\r, \\t, etc.",
+          "codeFinderRules.useAllRulesWhenTesting": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.po.POFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "mode": {
+      "type": "object",
+      "title": "Processing mode",
+      "properties": {
+        "bilingualMode": {
+          "type": "boolean",
+          "default": true,
+          "title": "Bilingual mode (msgid is the source text)",
+          "x-editor": {
+            "widget": "radio"
+          },
+          "x-enables": [
+            "makeID"
+          ],
+          "x-options": [
+            {
+              "value": true,
+              "label": "Bilingual mode (msgid is the source text)"
+            },
+            {
+              "value": false,
+              "label": "Monolingual mode (msgid is an ID)"
+            }
+          ],
+          "x-flattenPath": "bilingualMode",
+          "description": "Process file in bilingual mode (source and target)."
+        },
+        "protectApproved": {
+          "type": "boolean",
+          "default": false,
+          "title": "Protect approved entries (not empty and not fuzzy)",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "protectApproved",
+          "description": "Protect approved translations from changes."
+        },
+        "wrapContent": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "wrapContent",
+          "title": "Wrap long content lines"
+        }
+      }
+    },
+    "identification": {
+      "type": "object",
+      "title": "ID and naming",
+      "properties": {
+        "makeID": {
+          "type": "boolean",
+          "default": true,
+          "title": "Generate identifiers from the source text",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "makeID"
+        },
+        "includeMsgContextInNote": {
+          "type": "boolean",
+          "default": false,
+          "title": "Include 'msgctxt' value in note data",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "includeMsgContextInNote"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "title": "Output formatting",
+      "properties": {
+        "outputGeneric": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "outputGeneric",
+          "title": "Output in generic format"
+        },
+        "allowEmptyOutputTarget": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "allowEmptyOutputTarget",
+          "title": "Allow empty target output",
+          "description": "Allow empty target in output when no translation."
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "mode",
+      "label": "Processing mode",
+      "fields": [
+        "mode"
+      ]
+    },
+    {
+      "id": "identification",
+      "label": "ID and naming",
+      "fields": [
+        "identification"
+      ]
+    },
+    {
+      "id": "output",
+      "label": "Output formatting",
+      "fields": [
+        "output"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfPoFilterConfig",
+  "x-apiVersion": "v10",
+  "x-baseVersion": 10,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "0c4c7e764832",
+  "x-compositeHash": "d113385b3482"
+}

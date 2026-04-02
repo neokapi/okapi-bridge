@@ -151,6 +151,13 @@ def rename_ui_extensions:
       if .["ui:layout"] == {} then del(.["ui:layout"]) else . end
     elif has("layout") then del(.layout)
     else . end) |
+    # Convert x-enabledBy → ui:enabled (for $defs properties)
+    (if has("x-enabledBy") and (has("ui:enabled") | not) then
+      .["ui:enabled"] = {field: .["x-enabledBy"], eq: true} | del(.["x-enabledBy"])
+    elif has("x-enabledBy") then del(.["x-enabledBy"])
+    else . end) |
+    # Remove x-enables (consumed by the schema-level enables resolution)
+    del(.["x-enables"]) |
     # Merge path browse metadata into x-path (if both exist)
     (if has("path") and has("x-path") then
       .["x-path"] = .["x-path"] + .path | del(.path)

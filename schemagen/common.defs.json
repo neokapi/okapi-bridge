@@ -13,12 +13,14 @@
           "default": false,
           "title": "Enable Inline Code Detection",
           "description": "Enable pattern-based detection of inline codes",
-          "x-flattenPath": "useCodeFinder"
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": ["rules", "mergeAdjacent", "moveBoundaryCodes", "simplifierRules"]
         },
         "rules": {
           "$ref": "#/$defs/codeFinderRules",
           "title": "Code Finder Rules",
-          "x-flattenPath": "codeFinderRules"
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled"
         },
         "mergeAdjacent": {
           "type": "boolean",

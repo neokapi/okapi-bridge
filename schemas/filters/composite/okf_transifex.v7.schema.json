@@ -1,0 +1,183 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_transifex.v7.schema.json",
+  "version": 7,
+  "title": "Transifex Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_transifex",
+    "class": "net.sf.okapi.filters.transifex.TransifexFilter",
+    "extensions": [
+      ".txp"
+    ],
+    "mimeTypes": [
+      "application/x-transifex"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_transifex",
+        "name": "Transifex Project",
+        "description": "Transifex project with prompt when starting",
+        "mimeType": "application/x-transifex",
+        "extensions": ".txp;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.transifex.TransifexFilter"
+      },
+      {
+        "configId": "okf_transifex-noPrompt",
+        "name": "Transifex Project (without prompt)",
+        "description": "Transifex project without prompt when starting",
+        "mimeType": "application/x-transifex",
+        "parametersLocation": "noPrompt.fprm",
+        "parametersRaw": "#v1\nopenProject.b=false\n",
+        "parameters": {
+          "openProject": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.transifex.TransifexFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "general": {
+      "type": "object",
+      "title": "General settings",
+      "properties": {
+        "openProject": {
+          "type": "boolean",
+          "default": true,
+          "title": "Open the project file before processing",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "openProject"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "general",
+      "label": "General settings",
+      "fields": [
+        "general"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfTransifexFilterConfig",
+  "x-apiVersion": "v7",
+  "x-baseVersion": 9,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "ea66d3aaa231",
+  "x-compositeHash": "7a910d49a8f6"
+}
