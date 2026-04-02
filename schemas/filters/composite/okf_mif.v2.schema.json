@@ -1,0 +1,179 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_mif.v2.schema.json",
+  "version": 2,
+  "title": "MIF Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_mif",
+    "class": "net.sf.okapi.filters.mif.MIFFilter",
+    "extensions": [
+      ".mif"
+    ],
+    "mimeTypes": [
+      "application/vnd.mif"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_mif",
+        "name": "MIF (BETA)",
+        "description": "Adobe FrameMaker MIF documents",
+        "mimeType": "application/vnd.mif",
+        "extensions": ".mif;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.mif.MIFFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "extraction": {
+      "type": "object",
+      "description": "Extraction settings",
+      "properties": {
+        "extractBodyPages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractBodyPages",
+          "description": "Extract translatable text from body pages.",
+          "title": "Body Pages"
+        },
+        "extractMasterPages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractMasterPages",
+          "description": "Extract translatable text from master pages.",
+          "title": "Master Pages"
+        },
+        "extractReferencePages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractReferencePages",
+          "description": "Extract translatable text from reference pages.",
+          "title": "Reference Pages"
+        },
+        "extractHiddenPages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractHiddenPages",
+          "description": "Extract translatable text from hidden pages.",
+          "title": "Hidden Pages"
+        },
+        "extractVariables": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractVariables",
+          "description": "Extract the definitions of FrameMaker variables for translation.",
+          "title": "Extract Variables"
+        },
+        "extractIndexMarkers": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractIndexMarkers",
+          "description": "Extract index marker text from extractable pages as separate text units.",
+          "title": "Extract Index Markers"
+        },
+        "extractLinks": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractLinks",
+          "description": "Extract hypertext link URLs from extractable pages as separate text units.",
+          "title": "Extract Links"
+        },
+        "extractPgfNumFormatsInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractPgfNumFormatsInline",
+          "description": "Extract paragraph number formats inline"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Apply regular expressions to convert matched text patterns into inline codes.",
+          "x-flattenPath": "useCodeFinder",
+          "title": "Use Inline Code Rules"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfMifFilterConfig",
+  "x-apiVersion": "v2",
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.39.0",
+  "x-baseHash": "fed673c71b25",
+  "x-compositeHash": "d927334a211e"
+}

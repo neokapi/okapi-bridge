@@ -1,0 +1,197 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_tabseparatedvalues.v2.schema.json",
+  "version": 2,
+  "title": "TSV (Tab-Separated Values)",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_tabseparatedvalues",
+    "class": "net.sf.okapi.filters.table.tsv.TabSeparatedValuesFilter",
+    "extensions": [],
+    "mimeTypes": [
+      "text/csv"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_table_tsv",
+        "name": "Table (Tab-Separated Values)",
+        "description": "Columns, separated by one or more tabs.",
+        "mimeType": "text/csv",
+        "parametersLocation": "okf_table_tsv.fprm",
+        "parametersRaw": "#v1\nunescapeSource.b=true\ntrimLeading.b=false\ntrimTrailing.b=false\npreserveWS.b=true\nuseCodeFinder.b=false\ncodeFinderRules=#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false\nwrapMode.i=0\ncolumnNamesLineNum.i=1\nvaluesStartLineNum.i=2\ndetectColumnsMode.i=0\nnumColumns.i=1\nsendHeaderMode.i=0\ntrimMode.i=1\nsendColumnsMode.i=2\nsourceIdColumns=\nsourceColumns=\ntargetColumns=\ncommentColumns=\ncommentSourceRefs=\nrecordIdColumn.i=0\nsourceIdSourceRefs=\nsourceIdSuffixes=\ntargetLanguages=\ntargetSourceRefs=\nparametersClass=net.sf.okapi.filters.table.tsv.Parameters\n",
+        "parameters": {
+          "unescapeSource": true,
+          "trimLeading": true,
+          "trimTrailing": true,
+          "preserveWS": true,
+          "useCodeFinder": false,
+          "codeFinderRules": "#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false",
+          "wrapMode": 0,
+          "columnNamesLineNum": 1,
+          "valuesStartLineNum": 2,
+          "detectColumnsMode": 0,
+          "numColumns": 1,
+          "sendHeaderMode": 0,
+          "trimMode": 1,
+          "sendColumnsMode": 2,
+          "sourceIdColumns": "",
+          "sourceColumns": "",
+          "targetColumns": "",
+          "commentColumns": "",
+          "commentSourceRefs": "",
+          "recordIdColumn": 0,
+          "sourceIdSourceRefs": "",
+          "sourceIdSuffixes": "",
+          "targetLanguages": "",
+          "targetSourceRefs": ""
+        },
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.table.tsv.TabSeparatedValuesFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "columnNamesLineNum": {
+      "type": "integer",
+      "default": 0,
+      "title": "Line with column names (0 if none)"
+    },
+    "valuesStartLineNum": {
+      "type": "integer",
+      "default": 1,
+      "title": "Values start at line"
+    },
+    "detectColumnsMode": {
+      "type": "integer",
+      "default": 0,
+      "title": "Number of columns"
+    },
+    "numColumns": {
+      "type": "integer",
+      "default": 2,
+      "title": "Number of Columns",
+      "description": "Fixed number of columns when column detection mode is set to fixed."
+    },
+    "sendHeaderMode": {
+      "type": "integer",
+      "default": 0,
+      "title": "Extract header lines"
+    },
+    "trimMode": {
+      "type": "integer",
+      "default": 1,
+      "title": "Exclude leading/trailing white spaces from extracted text"
+    },
+    "sendColumnsMode": {
+      "type": "integer",
+      "default": 1,
+      "title": "Extract table data"
+    },
+    "recordIdColumn": {
+      "type": "integer",
+      "default": 0,
+      "title": "Record ID"
+    },
+    "sourceColumns": {
+      "type": "string",
+      "default": "1",
+      "title": "Source"
+    },
+    "sourceIdColumns": {
+      "type": "string",
+      "default": "",
+      "title": "Source ID"
+    },
+    "sourceIdSuffixes": {
+      "type": "string",
+      "default": "",
+      "title": "ID suffix"
+    },
+    "sourceIdSourceRefs": {
+      "type": "string",
+      "default": "",
+      "title": "Source column"
+    },
+    "targetColumns": {
+      "type": "string",
+      "default": "2",
+      "title": "Target"
+    },
+    "targetSourceRefs": {
+      "type": "string",
+      "default": "1",
+      "title": "Source column"
+    },
+    "targetLanguages": {
+      "type": "string",
+      "default": "",
+      "title": "Language"
+    },
+    "commentColumns": {
+      "type": "string",
+      "default": "",
+      "title": "Comment"
+    },
+    "commentSourceRefs": {
+      "type": "string",
+      "default": "",
+      "title": "Source column"
+    },
+    "unescapeSource": {
+      "type": "boolean",
+      "default": true,
+      "title": "Convert \\t, \\n, \\\\, \\uXXXX into characters"
+    },
+    "trimLeading": {
+      "type": "boolean",
+      "default": true,
+      "title": "Trim leading spaces and tabs"
+    },
+    "trimTrailing": {
+      "type": "boolean",
+      "default": true,
+      "title": "Trim trailing spaces and tabs"
+    },
+    "preserveWS": {
+      "type": "boolean",
+      "default": true,
+      "title": "Allow trimming"
+    },
+    "useCodeFinder": {
+      "type": "boolean",
+      "default": false,
+      "title": "Has inline codes as defined below"
+    },
+    "codeFinderRules": {
+      "type": "string",
+      "default": "#v1\ncount.i=2\nrule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\nrule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nsample=\nuseAllRulesWhenTesting.b=false",
+      "description": "Regex patterns to identify inline codes in translatable text",
+      "x-editor": {
+        "widget": "codeFinderRules"
+      }
+    },
+    "wrapMode": {
+      "type": "string",
+      "default": "NONE",
+      "enum": [
+        "NONE",
+        "SPACES",
+        "PLACEHOLDERS"
+      ],
+      "title": "Multi-line text units"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "additionalProperties": false,
+  "x-kind": "OkfTabseparatedvaluesFilterConfig",
+  "x-apiVersion": "v2",
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "1.46.0",
+  "x-baseHash": "9ee21ee41eeb",
+  "x-compositeHash": "6540929b5d89"
+}

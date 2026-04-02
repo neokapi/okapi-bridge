@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_wiki.v1.schema.json",
+  "version": 1,
+  "title": "Wiki Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_wiki",
+    "class": "net.sf.okapi.filters.wiki.WikiFilter",
+    "extensions": [
+      ".txt"
+    ],
+    "mimeTypes": [
+      "text/x-wiki-txt"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_wiki",
+        "name": "Wiki Markup",
+        "description": "Text with wiki-style markup",
+        "mimeType": "text/x-wiki-txt",
+        "extensions": ".txt;",
+        "parametersLocation": "wikiConfiguration.yml",
+        "parametersRaw": "preserve_whitespace: false\n",
+        "parameters": {
+          "preserve_whitespace": false
+        },
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.wiki.WikiFilter"
+      }
+    ],
+    "serializationFormat": "yaml"
+  },
+  "properties": {
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    },
+    "path": {
+      "type": "string",
+      "title": "Wiki Path Rules",
+      "description": "Path expressions controlling which wiki elements to extract for translation."
+    },
+    "preserve_whitespace": {
+      "type": "boolean",
+      "default": false,
+      "title": "Preserve Whitespace",
+      "description": "Preserve original whitespace in wiki markup instead of normalizing it."
+    }
+  },
+  "additionalProperties": false,
+  "x-kind": "OkfWikiFilterConfig",
+  "x-apiVersion": "v1",
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "2abe9933b1c0",
+  "x-compositeHash": "64db751e6b9c"
+}

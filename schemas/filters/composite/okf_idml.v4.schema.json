@@ -1,0 +1,196 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_idml.v4.schema.json",
+  "version": 4,
+  "title": "IDML Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_idml",
+    "class": "net.sf.okapi.filters.idml.IDMLFilter",
+    "extensions": [
+      ".idml"
+    ],
+    "mimeTypes": [
+      "application/vnd.adobe.indesign-idml-package"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_idml",
+        "name": "IDML",
+        "description": "Adobe InDesign IDML documents",
+        "mimeType": "application/vnd.adobe.indesign-idml-package",
+        "extensions": ".idml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.idml.IDMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "extraction": {
+      "type": "object",
+      "description": "Extraction settings",
+      "properties": {
+        "extractNotes": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractNotes",
+          "description": "Extract the content of Note elements.",
+          "title": "Extract Notes"
+        },
+        "extractMasterSpreads": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractMasterSpreads",
+          "description": "Extract content from master spreads if they exist.",
+          "title": "Extract Master Spreads"
+        },
+        "extractCustomTextVariables": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractCustomTextVariables",
+          "description": "Include custom text variables in the extraction.",
+          "title": "Extract Custom Text Variables"
+        },
+        "extractHiddenLayers": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHiddenLayers",
+          "description": "Include hidden layers in the extraction.",
+          "title": "Extract Hidden Layers"
+        },
+        "extractHiddenPasteboardItems": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHiddenPasteboardItems",
+          "description": "Include hidden pasteboard items in the extraction.",
+          "title": "Extract Hidden Pasteboard Items"
+        },
+        "extractIndexTopics": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractIndexTopics",
+          "description": "Include index topic entries in the extraction.",
+          "title": "Extract Index Topics"
+        },
+        "extractBreaksInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractBreaksInline",
+          "description": "Treat break elements as inline codes within text units.",
+          "title": "Extract Breaks Inline"
+        },
+        "untagXmlStructures": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "untagXmlStructures",
+          "description": "Skip embedded XML structural information when extracting.",
+          "title": "Untag XML Structures"
+        },
+        "skipDiscretionaryHyphens": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "skipDiscretionaryHyphens",
+          "description": "Omit discretionary (soft) hyphens from extracted text.",
+          "title": "Skip Discretionary Hyphens"
+        },
+        "maxAttributeSize": {
+          "type": "integer",
+          "default": 4194304,
+          "x-flattenPath": "maxAttributeSize",
+          "description": "Size in MB for the attribute buffer (default 4 MB).",
+          "title": "Maximum Attribute Size"
+        }
+      }
+    },
+    "formatting": {
+      "type": "object",
+      "description": "Formatting tolerance thresholds",
+      "properties": {
+        "ignoreCharacterKerning": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterKerning",
+          "description": "Prevent kerning differences from creating separate inline codes.",
+          "title": "Ignore Character Kerning"
+        },
+        "kerningMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterKerningMinIgnoranceThreshold",
+          "description": "Kerning min threshold"
+        },
+        "kerningMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterKerningMaxIgnoranceThreshold",
+          "description": "Kerning max threshold"
+        },
+        "ignoreCharacterTracking": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterTracking",
+          "description": "Prevent tracking differences from creating separate inline codes.",
+          "title": "Ignore Character Tracking"
+        },
+        "trackingMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterTrackingMinIgnoranceThreshold",
+          "description": "Tracking min threshold"
+        },
+        "trackingMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterTrackingMaxIgnoranceThreshold",
+          "description": "Tracking max threshold"
+        },
+        "ignoreCharacterLeading": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterLeading",
+          "description": "Prevent leading differences from creating separate inline codes.",
+          "title": "Ignore Character Leading"
+        },
+        "leadingMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterLeadingMinIgnoranceThreshold",
+          "description": "Leading min threshold"
+        },
+        "leadingMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterLeadingMaxIgnoranceThreshold",
+          "description": "Leading max threshold"
+        },
+        "ignoreCharacterBaselineShift": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterBaselineShift",
+          "description": "Prevent baseline shift differences from creating separate inline codes.",
+          "title": "Ignore Character Baseline Shift"
+        },
+        "baselineShiftMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterBaselineShiftMinIgnoranceThreshold",
+          "description": "Baseline shift min"
+        },
+        "baselineShiftMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterBaselineShiftMaxIgnoranceThreshold",
+          "description": "Baseline shift max"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-kind": "OkfIdmlFilterConfig",
+  "x-apiVersion": "v4",
+  "x-baseVersion": 4,
+  "x-introducedInOkapi": "1.44.0",
+  "x-baseHash": "ee1b0bc0c85f",
+  "x-compositeHash": "86aa5d5a4eb7"
+}

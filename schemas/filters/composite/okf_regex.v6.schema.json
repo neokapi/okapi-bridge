@@ -1,0 +1,495 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_regex.v6.schema.json",
+  "version": 6,
+  "title": "Regex Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_regex",
+    "class": "net.sf.okapi.filters.regex.RegexFilter",
+    "extensions": [
+      ".srt",
+      ".strings"
+    ],
+    "mimeTypes": [
+      "text/x-regex"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_regex",
+        "name": "Regex Default",
+        "description": "Default Regex configuration.",
+        "mimeType": "text/x-regex",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.regex.RegexFilter"
+      },
+      {
+        "configId": "okf_regex-srt",
+        "name": "SRT Sub-Titles",
+        "description": "Configuration for SRT (Sub-Rip Text) sub-titles files.",
+        "mimeType": "text/x-regex",
+        "extensions": ".srt;",
+        "parametersLocation": "srt.fprm",
+        "parametersRaw": "#v1\nuseLd.b=true\nlocalizeOutside.b=true\nstartString=\"\nendString=\"\nextractOuterStrings.b=false\nuseBSlashEscape.b=true\nuseDoubleCharEscape.b=false\noneLevelGroups.b=false\nregexOptions.i=40\nmimeType=text/plain\nruleCount.i=1\nrule0.ruleName=Rule\nrule0.ruleType.i=1\nrule0.expr=^(\\d+:\\d+:\\d+.*?)\\n(.*?)(\\n\\n+|\\z)\nrule0.groupSource.i=2\nrule0.groupTarget.i=-1\nrule0.groupName.i=-1\nrule0.groupNote.i=1\nrule0.preserveWS.b=true\nrule0.useCodeFinder.b=true\nrule0.sample=1$0a$00:00:06,020 --> 00:00:07,020$0a$Hi, everyone.$0a$this is more$0a$$0a$2$0a$00:00:07,020 --> 00:00:08,020$0a$My name is Randy Becker.$0a$$0a$3$0a$00:00:08,020 --> 00:00:11,000$0a$I'm an application engineer at Keysight Technologies.\nrule0.codeFinderRules.count.i=1\nrule0.codeFinderRules.rule0=<\\w+.*?>|</\\w+.*?>\nrule0.codeFinderRules.sample=test <b>bold</b>, <a href='link' more=\"&lt;value&gt;\"/> test\nrule0.codeFinderRules.useAllRulesWhenTesting.b=false\nmetaRuleCount.i=2\nmetaRule0.ruleName=subtitle_start_display\nmetaRule0.expr=\\d+:\\S+(?=\\s+-->)\nmetaRule1.ruleName=subtitle_end_display\nmetaRule1.expr=(?<=-->\\s{1,50})\\d+:\\S+\n",
+        "parameters": {
+          "regexOptions": 40,
+          "startString": "\"",
+          "endString": "\"",
+          "extractOuterStrings": false,
+          "useBSlashEscape": true,
+          "useDoubleCharEscape": false,
+          "removeBSlashEscape": false,
+          "mimeType": "text/plain",
+          "oneLevelGroups": false,
+          "subFilter": "",
+          "useLd": true,
+          "localizeOutside": true,
+          "ruleCount": 1,
+          "rule0.ruleName": "Rule",
+          "rule0.ruleType": 1,
+          "rule0.expr": "^(\\d+:\\d+:\\d+.*?)\\n(.*?)(\\n\\n+|\\z)",
+          "rule0.groupSource": 2,
+          "rule0.groupTarget": -1,
+          "rule0.groupName": -1,
+          "rule0.groupNote": 1,
+          "rule0.preserveWS": true,
+          "rule0.useCodeFinder": true,
+          "rule0.sample": "1$0a$00:00:06,020 --> 00:00:07,020$0a$Hi, everyone.$0a$this is more$0a$$0a$2$0a$00:00:07,020 --> 00:00:08,020$0a$My name is Randy Becker.$0a$$0a$3$0a$00:00:08,020 --> 00:00:11,000$0a$I'm an application engineer at Keysight Technologies.",
+          "rule0.codeFinderRules.count": 1,
+          "rule0.codeFinderRules.rule0": "<\\w+.*?>|</\\w+.*?>",
+          "rule0.codeFinderRules.sample": "test <b>bold</b>, <a href='link' more=\"&lt;value&gt;\"/> test",
+          "rule0.codeFinderRules.useAllRulesWhenTesting": false,
+          "metaRuleCount": 2,
+          "metaRule0.ruleName": "subtitle_start_display",
+          "metaRule0.expr": "\\d+:\\S+(?=\\s+-->)",
+          "metaRule1.ruleName": "subtitle_end_display",
+          "metaRule1.expr": "(?<=-->\\s{1,50})\\d+:\\S+",
+          "rule0.collapseNewline": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.regex.RegexFilter"
+      },
+      {
+        "configId": "okf_regex-textLine",
+        "name": "Text (Line=Paragraph)",
+        "description": "Configuration for text files where each line is a text unit",
+        "mimeType": "text/x-regex",
+        "parametersLocation": "textLine.fprm",
+        "parametersRaw": "\nuseLD.b=true\nlocalizeOutside.b=true\nstartString=\"\nendString=\"\nextractOuterStrings.b=false\nuseBSlashEscape.b=true\noneLevelGroups.b=false\nregexOptions.i=8\nmimeType=text/plain\nruleCount.i=1\nrule0.ruleName=Para\nrule0.ruleType.i=1\nrule0.expr=(^(?=.+))(.*?)$\nrule0.groupSource.i=2\nrule0.groupTarget.i=-1\nrule0.groupName.i=-1\nrule0.groupNote.i=-1\nrule0.preserveWS.b=true\nrule0.useCodeFinder.b=false\nrule0.sample=Text 1$0a$Text 2$0a$$0a$Text 3$0a$Text 4\nrule0.codeFinderRules.count.i=0\nrule0.codeFinderRules.sample=\nrule0.codeFinderRules.useAllRulesWhenTesting.b=false\n",
+        "parameters": {
+          "regexOptions": 8,
+          "startString": "\"",
+          "endString": "\"",
+          "extractOuterStrings": false,
+          "useBSlashEscape": true,
+          "useDoubleCharEscape": false,
+          "removeBSlashEscape": false,
+          "mimeType": "text/plain",
+          "oneLevelGroups": false,
+          "subFilter": "",
+          "useLD": true,
+          "localizeOutside": true,
+          "ruleCount": 1,
+          "rule0.ruleName": "Para",
+          "rule0.ruleType": 1,
+          "rule0.expr": "(^(?=.+))(.*?)$",
+          "rule0.groupSource": 2,
+          "rule0.groupTarget": -1,
+          "rule0.groupName": -1,
+          "rule0.groupNote": -1,
+          "rule0.preserveWS": true,
+          "rule0.useCodeFinder": false,
+          "rule0.sample": "Text 1$0a$Text 2$0a$$0a$Text 3$0a$Text 4",
+          "rule0.codeFinderRules.count": 0,
+          "rule0.codeFinderRules.sample": "",
+          "rule0.codeFinderRules.useAllRulesWhenTesting": false,
+          "useLd": true,
+          "rule0.collapseNewline": false,
+          "metaRuleCount": 0
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.regex.RegexFilter"
+      },
+      {
+        "configId": "okf_regex-textBlock",
+        "name": "Text (Block=Paragraph)",
+        "description": "Configuration for text files where text units are separated by 2 or more line-breaks.",
+        "mimeType": "text/x-regex",
+        "parametersLocation": "textBlock.fprm",
+        "parametersRaw": "\nuseLD.b=true\nlocalizeOutside.b=true\nstartString=\"\nendString=\"\nextractOuterStrings.b=false\nuseBSlashEscape.b=true\noneLevelGroups.b=false\nregexOptions.i=40\nmimeType=text/plain\nruleCount.i=1\nrule0.ruleName=Para\nrule0.ruleType.i=1\nrule0.expr=(\\n*)(.*?)(\\n\\n|\\Z)\nrule0.groupSource.i=2\nrule0.groupTarget.i=-1\nrule0.groupName.i=-1\nrule0.groupNote.i=-1\nrule0.preserveWS.b=false\nrule0.useCodeFinder.b=false\nrule0.sample=$0a$text 1$0a$$0a$$0a$text 2$0a$new line.$0a$$0a$text 3\nrule0.codeFinderRules.count.i=0\nrule0.codeFinderRules.sample=\nrule0.codeFinderRules.useAllRulesWhenTesting.b=false\n",
+        "parameters": {
+          "regexOptions": 40,
+          "startString": "\"",
+          "endString": "\"",
+          "extractOuterStrings": false,
+          "useBSlashEscape": true,
+          "useDoubleCharEscape": false,
+          "removeBSlashEscape": false,
+          "mimeType": "text/plain",
+          "oneLevelGroups": false,
+          "subFilter": "",
+          "useLD": true,
+          "localizeOutside": true,
+          "ruleCount": 1,
+          "rule0.ruleName": "Para",
+          "rule0.ruleType": 1,
+          "rule0.expr": "(\\n*)(.*?)(\\n\\n|\\Z)",
+          "rule0.groupSource": 2,
+          "rule0.groupTarget": -1,
+          "rule0.groupName": -1,
+          "rule0.groupNote": -1,
+          "rule0.preserveWS": false,
+          "rule0.useCodeFinder": false,
+          "rule0.sample": "$0a$text 1$0a$$0a$$0a$text 2$0a$new line.$0a$$0a$text 3",
+          "rule0.codeFinderRules.count": 0,
+          "rule0.codeFinderRules.sample": "",
+          "rule0.codeFinderRules.useAllRulesWhenTesting": false,
+          "useLd": true,
+          "rule0.collapseNewline": false,
+          "metaRuleCount": 0
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.regex.RegexFilter"
+      },
+      {
+        "configId": "okf_regex-macStrings",
+        "name": "Text (Mac Strings)",
+        "description": "Configuration for Macintosh .strings files.",
+        "mimeType": "text/x-regex",
+        "extensions": ".strings;",
+        "parametersLocation": "macStrings.fprm",
+        "parametersRaw": "#v1\nregexOptions.i=40\nstartString=\"\nendString=\"\nextractOuterStrings.b=false\nuseBSlashEscape.b=true\nuseDoubleCharEscape.b=false\nmimeType=text/plain\noneLevelGroups.b=false\nuseLd.b=true\nlocalizeOutside.b=true\nruleCount.i=6\nrule0.ruleName=Comments+String\nrule0.ruleType.i=0\nrule0.expr=/\\*(.*?)\\*/\\n\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule0.groupSource.i=3\nrule0.groupTarget.i=-1\nrule0.groupName.i=2\nrule0.groupNote.i=1\nrule0.preserveWS.b=true\nrule0.useCodeFinder.b=true\nrule0.sample=/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$/* An unquoted key */$0a$NSSomeKey = \"Foobar\";\nrule0.codeFinderRules.count.i=3\nrule0.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule0.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule0.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule0.codeFinderRules.sample=\nrule0.codeFinderRules.useAllRulesWhenTesting.b=false\nrule1.ruleName=Comments+Unquoted-Key String\nrule1.ruleType.i=0\nrule1.expr=/\\*(.*?)\\*/\\n([^\"\\s]+)\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule1.groupSource.i=3\nrule1.groupTarget.i=-1\nrule1.groupName.i=2\nrule1.groupNote.i=1\nrule1.preserveWS.b=true\nrule1.useCodeFinder.b=true\nrule1.sample=/* An unquoted key */$0a$NSSomeKey = \"Foobar\";$0a$/* Another unquoted key */$0a$NSSomeKey2 = \"Bizbaz\";\nrule1.codeFinderRules.count.i=3\nrule1.codeFinderRules.sample=\nrule1.codeFinderRules.useAllRulesWhenTesting.b=false\nrule2.ruleName=Bracketing Comments\nrule2.ruleType.i=3\nrule2.expr=/\\*(.*?)\\*/\nrule2.groupSource.i=1\nrule2.groupTarget.i=-1\nrule2.groupName.i=-1\nrule2.groupNote.i=-1\nrule2.preserveWS.b=true\nrule2.useCodeFinder.b=false\nrule2.sample=test /* test */\nrule2.codeFinderRules.count.i=0\nrule2.codeFinderRules.sample=\nrule2.codeFinderRules.useAllRulesWhenTesting.b=false\nrule3.ruleName=Line Comments\nrule3.ruleType.i=3\nrule3.expr=//(.*?)\\n\nrule3.groupSource.i=-1\nrule3.groupTarget.i=-1\nrule3.groupName.i=-1\nrule3.groupNote.i=-1\nrule3.preserveWS.b=true\nrule3.useCodeFinder.b=false\nrule3.sample=// test$0a$test // bbb$0a$\nrule3.codeFinderRules.count.i=0\nrule3.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule3.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule3.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule3.codeFinderRules.sample=\nrule3.codeFinderRules.useAllRulesWhenTesting.b=false\nrule1.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule1.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule1.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule4.ruleName=String\nrule4.ruleType.i=0\nrule4.expr=\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule4.groupSource.i=2\nrule4.groupTarget.i=-1\nrule4.groupName.i=1\nrule4.groupNote.i=-1\nrule4.preserveWS.b=true\nrule4.useCodeFinder.b=true\nrule4.sample=/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$\nrule4.codeFinderRules.count.i=3\nrule4.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule4.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule4.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule4.codeFinderRules.sample=\nrule4.codeFinderRules.useAllRulesWhenTesting.b=false\nrule5.ruleName=Unquoted-Key String\nrule5.ruleType.i=0\nrule5.expr=([^\\s\"]+?)\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");\nrule5.groupSource.i=2\nrule5.groupTarget.i=-1\nrule5.groupName.i=1\nrule5.groupNote.i=-1\nrule5.preserveWS.b=true\nrule5.useCodeFinder.b=true\nrule5.sample=/* An unquoted key */$0a$NSSomeKey = \"Foobar\";$0a$/* Another unquoted key */$0a$NSSomeKey2 = \"Bizbaz\";\nrule5.codeFinderRules.count.i=3\nrule5.codeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]\nrule5.codeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\nrule5.codeFinderRules.rule2=\\<(/?)\\w+[^>]*?>\nrule5.codeFinderRules.sample=\nrule5.codeFinderRules.useAllRulesWhenTesting.b=false\n",
+        "parameters": {
+          "regexOptions": 40,
+          "startString": "\"",
+          "endString": "\"",
+          "extractOuterStrings": false,
+          "useBSlashEscape": true,
+          "useDoubleCharEscape": false,
+          "removeBSlashEscape": false,
+          "mimeType": "text/plain",
+          "oneLevelGroups": false,
+          "subFilter": "",
+          "useLd": true,
+          "localizeOutside": true,
+          "ruleCount": 6,
+          "rule0.ruleName": "Comments+String",
+          "rule0.ruleType": 0,
+          "rule0.expr": "/\\*(.*?)\\*/\\n\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");",
+          "rule0.groupSource": 3,
+          "rule0.groupTarget": -1,
+          "rule0.groupName": 2,
+          "rule0.groupNote": 1,
+          "rule0.preserveWS": true,
+          "rule0.useCodeFinder": true,
+          "rule0.sample": "/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$/* An unquoted key */$0a$NSSomeKey = \"Foobar\";",
+          "rule0.codeFinderRules.count": 3,
+          "rule0.codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]",
+          "rule0.codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "rule0.codeFinderRules.rule2": "\\<(/?)\\w+[^>]*?>",
+          "rule0.codeFinderRules.sample": "",
+          "rule0.codeFinderRules.useAllRulesWhenTesting": false,
+          "rule1.ruleName": "Comments+Unquoted-Key String",
+          "rule1.ruleType": 0,
+          "rule1.expr": "/\\*(.*?)\\*/\\n([^\"\\s]+)\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");",
+          "rule1.groupSource": 3,
+          "rule1.groupTarget": -1,
+          "rule1.groupName": 2,
+          "rule1.groupNote": 1,
+          "rule1.preserveWS": true,
+          "rule1.useCodeFinder": true,
+          "rule1.sample": "/* An unquoted key */$0a$NSSomeKey = \"Foobar\";$0a$/* Another unquoted key */$0a$NSSomeKey2 = \"Bizbaz\";",
+          "rule1.codeFinderRules.count": 3,
+          "rule1.codeFinderRules.sample": "",
+          "rule1.codeFinderRules.useAllRulesWhenTesting": false,
+          "rule2.ruleName": "Bracketing Comments",
+          "rule2.ruleType": 3,
+          "rule2.expr": "/\\*(.*?)\\*/",
+          "rule2.groupSource": 1,
+          "rule2.groupTarget": -1,
+          "rule2.groupName": -1,
+          "rule2.groupNote": -1,
+          "rule2.preserveWS": true,
+          "rule2.useCodeFinder": false,
+          "rule2.sample": "test /* test */",
+          "rule2.codeFinderRules.count": 0,
+          "rule2.codeFinderRules.sample": "",
+          "rule2.codeFinderRules.useAllRulesWhenTesting": false,
+          "rule3.ruleName": "Line Comments",
+          "rule3.ruleType": 3,
+          "rule3.expr": "//(.*?)\\n",
+          "rule3.groupSource": -1,
+          "rule3.groupTarget": -1,
+          "rule3.groupName": -1,
+          "rule3.groupNote": -1,
+          "rule3.preserveWS": true,
+          "rule3.useCodeFinder": false,
+          "rule3.sample": "// test$0a$test // bbb$0a$",
+          "rule3.codeFinderRules.count": 0,
+          "rule3.codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]",
+          "rule3.codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "rule3.codeFinderRules.rule2": "\\<(/?)\\w+[^>]*?>",
+          "rule3.codeFinderRules.sample": "",
+          "rule3.codeFinderRules.useAllRulesWhenTesting": false,
+          "rule1.codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]",
+          "rule1.codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "rule1.codeFinderRules.rule2": "\\<(/?)\\w+[^>]*?>",
+          "rule4.ruleName": "String",
+          "rule4.ruleType": 0,
+          "rule4.expr": "\"(.*?)\"\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");",
+          "rule4.groupSource": 2,
+          "rule4.groupTarget": -1,
+          "rule4.groupName": 1,
+          "rule4.groupNote": -1,
+          "rule4.preserveWS": true,
+          "rule4.useCodeFinder": true,
+          "rule4.sample": "/* Menu item to make the current document plain text */$0a$\"Make Plain Text\" = \"Make Plain \\\"Text\";$0a$/* Menu item to make the current document rich text */$0a$\"Make Rich Text\" = \"Make Rich Text\";$0a$",
+          "rule4.codeFinderRules.count": 3,
+          "rule4.codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]",
+          "rule4.codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "rule4.codeFinderRules.rule2": "\\<(/?)\\w+[^>]*?>",
+          "rule4.codeFinderRules.sample": "",
+          "rule4.codeFinderRules.useAllRulesWhenTesting": false,
+          "rule5.ruleName": "Unquoted-Key String",
+          "rule5.ruleType": 0,
+          "rule5.expr": "([^\\s\"]+?)\\s*=(.*?(?<!\\\\)(?:\\\\{2})*\");",
+          "rule5.groupSource": 2,
+          "rule5.groupTarget": -1,
+          "rule5.groupName": 1,
+          "rule5.groupNote": -1,
+          "rule5.preserveWS": true,
+          "rule5.useCodeFinder": true,
+          "rule5.sample": "/* An unquoted key */$0a$NSSomeKey = \"Foobar\";$0a$/* Another unquoted key */$0a$NSSomeKey2 = \"Bizbaz\";",
+          "rule5.codeFinderRules.count": 3,
+          "rule5.codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn@]",
+          "rule5.codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "rule5.codeFinderRules.rule2": "\\<(/?)\\w+[^>]*?>",
+          "rule5.codeFinderRules.sample": "",
+          "rule5.codeFinderRules.useAllRulesWhenTesting": false,
+          "rule0.collapseNewline": false,
+          "rule1.collapseNewline": false,
+          "rule2.collapseNewline": false,
+          "rule3.collapseNewline": false,
+          "rule4.collapseNewline": false,
+          "rule5.collapseNewline": false,
+          "metaRuleCount": 0
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.regex.RegexFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "extraction": {
+      "type": "object",
+      "description": "Regex extraction settings",
+      "properties": {
+        "startString": {
+          "type": "string",
+          "default": "\"",
+          "title": "Beginning of String",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "startString",
+          "description": "Character(s) marking the start of a string for string extraction."
+        },
+        "endString": {
+          "type": "string",
+          "default": "\"",
+          "title": "End of String",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "endString",
+          "description": "Character(s) marking the end of a string for string extraction."
+        },
+        "regexOptions": {
+          "type": "integer",
+          "default": 40,
+          "x-flattenPath": "regexOptions",
+          "description": "Regex options"
+        },
+        "extractOuterStrings": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractOuterStrings",
+          "description": "Extract strings outside the main content structure"
+        },
+        "oneLevelGroups": {
+          "type": "boolean",
+          "default": false,
+          "title": "Auto-close previous section when a new one starts",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "oneLevelGroups",
+          "description": "Use one-level groups"
+        },
+        "mimeType": {
+          "type": "string",
+          "default": "text/plain",
+          "title": "Document MIME Type",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "mimeType",
+          "description": "MIME type used to identify the document format during extraction."
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Output settings",
+      "properties": {
+        "localizeOutside": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "localizeOutside",
+          "description": "Localize content outside patterns"
+        },
+        "useBSlashEscape": {
+          "type": "boolean",
+          "default": true,
+          "title": "Escaped characters use back-slash prefix",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "useBSlashEscape",
+          "description": "Use backslash escaping"
+        },
+        "removeBSlashEscape": {
+          "type": "boolean",
+          "default": false,
+          "title": "Escaped characters are unescaped on import",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "removeBSlashEscape",
+          "description": "Remove backslash escaping"
+        },
+        "useDoubleCharEscape": {
+          "type": "boolean",
+          "default": false,
+          "title": "Double Character Escape",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "useDoubleCharEscape",
+          "description": "Use character doubling to escape characters in strings."
+        },
+        "useLd": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useLd",
+          "description": "Use localization directives"
+        }
+      }
+    },
+    "subfilters": {
+      "type": "object",
+      "description": "Sub-filter configuration",
+      "properties": {
+        "subFilter": {
+          "type": "string",
+          "default": "",
+          "title": "Sub-filter name",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "subFilter",
+          "description": "Sub-filter for content processing"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "description": "Ordered list of regex-based rules with actions and capturing group assignments.",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          },
+          "title": "Extraction Rules"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "Ordered list of regex-based rules with actions and capturing group assignments.",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          },
+          "title": "Extraction Rules"
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfRegexFilterConfig",
+  "x-apiVersion": "v6",
+  "x-baseVersion": 6,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "26663ef7ede5",
+  "x-compositeHash": "1d0b437e3b65"
+}

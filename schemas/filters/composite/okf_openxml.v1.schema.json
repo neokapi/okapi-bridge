@@ -1,0 +1,259 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_openxml.v1.schema.json",
+  "version": 1,
+  "title": "OpenXML Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_openxml",
+    "class": "net.sf.okapi.filters.openxml.OpenXMLFilter",
+    "extensions": [
+      ".docx",
+      ".docm",
+      ".dotx",
+      ".dotm",
+      ".pptx",
+      ".pptm",
+      ".ppsx",
+      ".ppsm",
+      ".potx",
+      ".potm",
+      ".xlsx",
+      ".xlsm",
+      ".xltx",
+      ".xltm",
+      ".vsdx",
+      ".vsdm"
+    ],
+    "mimeTypes": [
+      "text/xml"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_openxml",
+        "name": "Microsoft Office Document",
+        "description": "Microsoft Office documents (DOCX, DOCM, DOTX, DOTM, PPTX, PPTM, PPSX, PPSM, POTX, POTM, XLSX, XLSM, XLTX, XLTM, VSDX, VSDM).",
+        "mimeType": "text/xml",
+        "extensions": ".docx;.docm;.dotx;.dotm;.pptx;.pptm;.ppsx;.ppsm;.potx;.potm;.xlsx;.xlsm;.xltx;.xltm;.vsdx;.vsdm;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.openxml.OpenXMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "word": {
+      "type": "object",
+      "description": "Word document settings",
+      "properties": {
+        "translateHeadersFooters": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslateWordHeadersFooters",
+          "description": "Extract text from headers and footers in Word documents."
+        },
+        "translateHidden": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateWordHidden",
+          "description": "Translate hidden text"
+        },
+        "translateComments": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslateComments",
+          "description": "Translate comments"
+        },
+        "translateDocProperties": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslateDocProperties",
+          "description": "Translate document properties"
+        },
+        "excludeGraphicMetaData": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateWordExcludeGraphicMetaData",
+          "description": "Exclude graphic metadata"
+        },
+        "excludeColors": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateWordExcludeColors",
+          "description": "Exclude specific font colors"
+        },
+        "automaticallyAcceptRevisions": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceAutomaticallyAcceptRevisions",
+          "description": "Accept revisions automatically"
+        }
+      },
+      "title": "Word Options"
+    },
+    "excel": {
+      "type": "object",
+      "description": "Excel spreadsheet settings",
+      "properties": {
+        "translateHidden": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelHidden",
+          "description": "Extract text from hidden cells in Excel."
+        },
+        "translateSheetNames": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelSheetNames",
+          "description": "Extract sheet names in Excel workbooks."
+        },
+        "translateDrawings": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelDrawings",
+          "description": "Extract text from shapes and drawings in Excel."
+        },
+        "translateDiagramData": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelDiagramData",
+          "description": "Translate diagram data"
+        },
+        "excludeColors": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelExcludeColors",
+          "description": "Exclude specific cell colors"
+        }
+      },
+      "title": "Excel Options"
+    },
+    "powerpoint": {
+      "type": "object",
+      "description": "PowerPoint presentation settings",
+      "properties": {
+        "translateHidden": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslatePowerpointHidden",
+          "description": "Translate hidden slides"
+        },
+        "translateMasters": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslatePowerpointMasters",
+          "description": "Extract text from slide masters in PowerPoint."
+        },
+        "translateNotes": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslatePowerpointNotes",
+          "description": "Extract speaker notes in PowerPoint presentations."
+        },
+        "includedSlideNumbersOnly": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferencePowerpointIncludedSlideNumbersOnly",
+          "description": "Only translate specific slides"
+        },
+        "ignorePlaceholdersInMasters": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceIgnorePlaceholdersInPowerpointMasters",
+          "description": "Ignore placeholders in masters"
+        },
+        "reorderNotesAndComments": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bReorderPowerpointNotesAndComments",
+          "description": "Reorder notes and comments"
+        }
+      },
+      "title": "PowerPoint Options"
+    },
+    "general": {
+      "type": "object",
+      "description": "General settings",
+      "properties": {
+        "extractExternalHyperlinks": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bExtractExternalHyperlinks",
+          "description": "Extract external hyperlinks"
+        },
+        "inExcludeMode": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bInExcludeMode",
+          "description": "Use include/exclude mode"
+        },
+        "inExcludeHighlightMode": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bInExcludeHighlightMode",
+          "description": "Use highlight include/exclude mode"
+        },
+        "addLineSeparator": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAddLineSeparatorAsCharacter",
+          "description": "Add line separator as character"
+        },
+        "addTabAsCharacter": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAddTabAsCharacter",
+          "description": "Add tab as character"
+        },
+        "aggressiveCleanup": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAggressiveCleanup",
+          "description": "Aggressive code cleanup"
+        },
+        "ignoreSoftHyphenTag": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceIgnoreSoftHyphenTag",
+          "description": "Ignore soft hyphen tags"
+        },
+        "replaceNoBreakHyphenTag": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceReplaceNoBreakHyphenTag",
+          "description": "Replace no-break hyphen tags"
+        },
+        "lineSeparatorReplacement": {
+          "type": "string",
+          "default": "\n",
+          "x-flattenPath": "sPreferenceLineSeparatorReplacement",
+          "description": "Line separator replacement string"
+        },
+        "fileType": {
+          "type": "string",
+          "default": "MSWORD",
+          "enum": [
+            "MSWORD",
+            "MSEXCEL",
+            "MSWORDDOCPROPERTIES",
+            "MSPOWERPOINTCOMMENTS"
+          ],
+          "x-flattenPath": "nFileType",
+          "description": "File type identifier"
+        }
+      },
+      "title": "General Options"
+    },
+    "bPreferenceTranslateExcelExcludeColumns": {
+      "type": "boolean",
+      "default": false
+    }
+  },
+  "additionalProperties": false,
+  "x-kind": "OkfOpenxmlFilterConfig",
+  "x-apiVersion": "v1",
+  "x-baseVersion": 1,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "89f63d88e8a9",
+  "x-compositeHash": "5b35554aef0b"
+}

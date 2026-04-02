@@ -1,0 +1,464 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_openxml.v8.schema.json",
+  "version": 8,
+  "title": "OpenXML Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_openxml",
+    "class": "net.sf.okapi.filters.openxml.OpenXMLFilter",
+    "extensions": [
+      ".docx",
+      ".docm",
+      ".dotx",
+      ".dotm",
+      ".pptx",
+      ".pptm",
+      ".ppsx",
+      ".ppsm",
+      ".potx",
+      ".potm",
+      ".xlsx",
+      ".xlsm",
+      ".xltx",
+      ".xltm",
+      ".vsdx",
+      ".vsdm"
+    ],
+    "mimeTypes": [
+      "text/xml"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_openxml",
+        "name": "Microsoft Office Document",
+        "description": "Microsoft Office documents (DOCX, DOCM, DOTX, DOTM, PPTX, PPTM, PPSX, PPSM, POTX, POTM, XLSX, XLSM, XLTX, XLTM, VSDX, VSDM).",
+        "mimeType": "text/xml",
+        "extensions": ".docx;.docm;.dotx;.dotm;.pptx;.pptm;.ppsx;.ppsm;.potx;.potm;.xlsx;.xlsm;.xltx;.xltm;.vsdx;.vsdm;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.openxml.OpenXMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline codes"
+    },
+    "word": {
+      "type": "object",
+      "description": "Word document settings",
+      "properties": {
+        "translateHeadersFooters": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslateWordHeadersFooters",
+          "description": "Extract text from headers and footers in Word documents."
+        },
+        "translateHidden": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateWordHidden",
+          "description": "Translate hidden text"
+        },
+        "translateComments": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslateComments",
+          "description": "Translate comments"
+        },
+        "translateDocProperties": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslateDocProperties",
+          "description": "Translate document properties"
+        },
+        "excludeGraphicMetaData": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateWordExcludeGraphicMetaData",
+          "description": "Exclude graphic metadata"
+        },
+        "excludeColors": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateWordExcludeColors",
+          "description": "Exclude specific font colors"
+        },
+        "allowStyleOptimisation": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "allowWordStyleOptimisation",
+          "description": "Allow style optimization"
+        },
+        "translateNumberingLevelText": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "translateWordNumberingLevelText",
+          "description": "Translate numbering level text"
+        },
+        "ignoreFontColors": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreWordFontColors",
+          "description": "Ignore font colors"
+        },
+        "fontColorsMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "wordFontColorsMinIgnoranceThreshold",
+          "description": "Font color min threshold"
+        },
+        "fontColorsMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "wordFontColorsMaxIgnoranceThreshold",
+          "description": "Font color max threshold"
+        },
+        "automaticallyAcceptRevisions": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceAutomaticallyAcceptRevisions",
+          "description": "Accept revisions automatically"
+        }
+      },
+      "title": "Word Options"
+    },
+    "excel": {
+      "type": "object",
+      "description": "Excel spreadsheet settings",
+      "properties": {
+        "translateHidden": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelHidden",
+          "description": "Extract text from hidden cells in Excel."
+        },
+        "translateSheetNames": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelSheetNames",
+          "description": "Extract sheet names in Excel workbooks."
+        },
+        "translateDrawings": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelDrawings",
+          "description": "Extract text from shapes and drawings in Excel."
+        },
+        "translateDiagramData": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelDiagramData",
+          "description": "Translate diagram data"
+        },
+        "excludeColors": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslateExcelExcludeColors",
+          "description": "Exclude specific cell colors"
+        },
+        "preserveStylesInTargetColumns": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "preserveExcelStylesInTargetColumns",
+          "description": "Preserve styles in target columns"
+        },
+        "translateCellsCopied": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translateExcelCellsCopied",
+          "description": "Translate copied cells"
+        }
+      },
+      "title": "Excel Options"
+    },
+    "powerpoint": {
+      "type": "object",
+      "description": "PowerPoint presentation settings",
+      "properties": {
+        "translateHidden": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceTranslatePowerpointHidden",
+          "description": "Translate hidden slides"
+        },
+        "translateMasters": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslatePowerpointMasters",
+          "description": "Extract text from slide masters in PowerPoint."
+        },
+        "translateNotes": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bPreferenceTranslatePowerpointNotes",
+          "description": "Extract speaker notes in PowerPoint presentations."
+        },
+        "includedSlideNumbersOnly": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferencePowerpointIncludedSlideNumbersOnly",
+          "description": "Only translate specific slides"
+        },
+        "ignorePlaceholdersInMasters": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceIgnorePlaceholdersInPowerpointMasters",
+          "description": "Ignore placeholders in masters"
+        },
+        "reorderNotes": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceReorderPowerpointNotes",
+          "description": "Reorder notes"
+        },
+        "reorderCharts": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "reorderPowerpointCharts",
+          "description": "Reorder charts"
+        },
+        "reorderComments": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "reorderPowerpointComments",
+          "description": "Reorder comments"
+        },
+        "reorderDiagramData": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "reorderPowerpointDiagramData",
+          "description": "Reorder diagram data"
+        },
+        "reorderDocProperties": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "reorderPowerpointDocProperties",
+          "description": "Reorder doc properties"
+        },
+        "reorderRelationships": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "reorderPowerpointRelationships",
+          "description": "Reorder relationships"
+        },
+        "reorderNotesAndComments": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bReorderPowerpointNotesAndComments",
+          "description": "Reorder notes and comments"
+        },
+        "translateCharts": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translatePowerpointCharts",
+          "description": "Translate chart text"
+        },
+        "translateComments": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translatePowerpointComments",
+          "description": "Translate comments"
+        },
+        "translateDiagramData": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translatePowerpointDiagramData",
+          "description": "Translate diagram data"
+        },
+        "translateDocProperties": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "translatePowerpointDocProperties",
+          "description": "Translate doc properties"
+        }
+      },
+      "title": "PowerPoint Options"
+    },
+    "general": {
+      "type": "object",
+      "description": "General settings",
+      "properties": {
+        "extractExternalHyperlinks": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bExtractExternalHyperlinks",
+          "description": "Extract external hyperlinks"
+        },
+        "inExcludeMode": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bInExcludeMode",
+          "description": "Use include/exclude mode"
+        },
+        "inExcludeHighlightMode": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "bInExcludeHighlightMode",
+          "description": "Use highlight include/exclude mode"
+        },
+        "addLineSeparator": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAddLineSeparatorAsCharacter",
+          "description": "Add line separator as character"
+        },
+        "addTabAsCharacter": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAddTabAsCharacter",
+          "description": "Add tab as character"
+        },
+        "aggressiveCleanup": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAggressiveCleanup",
+          "description": "Aggressive code cleanup"
+        },
+        "allowEmptyTargets": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceAllowEmptyTargets",
+          "description": "Allow empty targets"
+        },
+        "ignoreSoftHyphenTag": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceIgnoreSoftHyphenTag",
+          "description": "Ignore soft hyphen tags"
+        },
+        "replaceNoBreakHyphenTag": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "bPreferenceReplaceNoBreakHyphenTag",
+          "description": "Replace no-break hyphen tags"
+        },
+        "lineSeparatorReplacement": {
+          "type": "string",
+          "default": "\n",
+          "x-flattenPath": "sPreferenceLineSeparatorReplacement",
+          "description": "Line separator replacement string"
+        },
+        "maxAttributeSize": {
+          "type": "integer",
+          "default": 4194304,
+          "x-flattenPath": "maxAttributeSize",
+          "description": "Max attribute size"
+        },
+        "fileType": {
+          "type": "string",
+          "default": "MSWORD",
+          "enum": [
+            "MSWORD",
+            "MSEXCEL",
+            "MSWORDDOCPROPERTIES",
+            "MSPOWERPOINTCOMMENTS"
+          ],
+          "x-flattenPath": "nFileType",
+          "description": "File type identifier"
+        }
+      },
+      "title": "General Options"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "x-presets": {
+            "mergeFields": {
+              "rules": [
+                {
+                  "pattern": "«[^»]+»"
+                }
+              ],
+              "sample": "Dear «FirstName» «LastName»"
+            },
+            "placeholders": {
+              "rules": [
+                {
+                  "pattern": "\\{[^}]+\\}"
+                }
+              ],
+              "sample": "Hello {name}"
+            }
+          },
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfOpenxmlFilterConfig",
+  "x-apiVersion": "v8",
+  "x-baseVersion": 8,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "f0efac849e75",
+  "x-compositeHash": "360712b478b1"
+}

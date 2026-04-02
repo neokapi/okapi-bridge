@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_dtd.v3.schema.json",
+  "version": 3,
+  "title": "DTD Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_dtd",
+    "class": "net.sf.okapi.filters.dtd.DTDFilter",
+    "extensions": [
+      ".dtd",
+      ".ent"
+    ],
+    "mimeTypes": [
+      "application/xml+dtd"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_dtd",
+        "name": "DTD (Document Type Definition)",
+        "description": "Configuration for XML DTD documents (entities content)",
+        "mimeType": "application/xml+dtd",
+        "extensions": ".dtd;.ent;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.dtd.DTDFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "useCodeFinder": {
+      "type": "boolean",
+      "default": true,
+      "title": "Use Code Finder",
+      "description": "Enable regular expression-based inline code detection in extracted text."
+    },
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "type": "boolean",
+      "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)"
+    },
+    "mergeAdjacentCodes": {
+      "type": "boolean",
+      "description": "Merge consecutive inline codes into a single placeholder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "additionalProperties": false,
+  "x-kind": "OkfDtdFilterConfig",
+  "x-apiVersion": "v3",
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.48.0",
+  "x-baseHash": "46daa29a2f55",
+  "x-compositeHash": "25367878ab71"
+}

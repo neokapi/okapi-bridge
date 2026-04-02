@@ -1,0 +1,392 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_commaseparatedvalues.v3.schema.json",
+  "version": 3,
+  "title": "CSV (Comma-Separated Values)",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_commaseparatedvalues",
+    "class": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter",
+    "extensions": [
+      ".csv"
+    ],
+    "mimeTypes": [
+      "text/csv"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_table_csv",
+        "name": "Table (Comma-Separated Values)",
+        "description": "Comma-separated values, optional header with field names.",
+        "mimeType": "text/csv",
+        "extensions": ".csv;",
+        "parametersLocation": "okf_table_csv.fprm",
+        "parametersRaw": "#v1\nunescapeSource.b=true\ntrimLeading.b=true\ntrimTrailing.b=true\npreserveWS.b=false\nuseCodeFinder.b=false\ncodeFinderRules=#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false\nwrapMode.i=0\ncolumnNamesLineNum.i=1\nvaluesStartLineNum.i=2\ndetectColumnsMode.i=0\nnumColumns.i=1\nsendHeaderMode.i=1\ntrimMode.i=1\nsendColumnsMode.i=2\nsourceIdColumns=\nsourceColumns=\ntargetColumns=\ncommentColumns=\ncommentSourceRefs=\nrecordIdColumn.i=0\nsourceIdSourceRefs=\nsourceIdSuffixes=\ntargetLanguages=\ntargetSourceRefs=\nfieldDelimiter=,\ntextQualifier=\"\nremoveQualifiers.b=true\nparametersClass=net.sf.okapi.filters.table.csv.Parameters\n",
+        "parameters": {
+          "unescapeSource": true,
+          "trimLeading": true,
+          "trimTrailing": true,
+          "preserveWS": false,
+          "useCodeFinder": false,
+          "codeFinderRules": "#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false",
+          "wrapMode": 0,
+          "columnNamesLineNum": 1,
+          "valuesStartLineNum": 2,
+          "detectColumnsMode": 0,
+          "numColumns": 1,
+          "sendHeaderMode": 1,
+          "trimMode": 1,
+          "sendColumnsMode": 2,
+          "sourceIdColumns": "",
+          "sourceColumns": "",
+          "targetColumns": "",
+          "commentColumns": "",
+          "commentSourceRefs": "",
+          "exposeCommentsAsMetadata": false,
+          "recordIdColumn": 0,
+          "sourceIdSourceRefs": "",
+          "sourceIdSuffixes": "",
+          "targetLanguages": "",
+          "targetSourceRefs": "",
+          "fieldDelimiter": ",",
+          "textQualifier": "\"",
+          "removeQualifiers": true,
+          "escapingMode": 1,
+          "addQualifiers": false
+        },
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter"
+      },
+      {
+        "configId": "okf_table_catkeys",
+        "name": "Haiku CatKeys",
+        "description": "Haiku CatKeys resource files",
+        "mimeType": "text/csv",
+        "parametersLocation": "okf_table_catkeys.fprm",
+        "parametersRaw": "#v1\nunescapeSource.b=false\ntrimLeading.b=false\ntrimTrailing.b=false\npreserveWS.b=true\nuseCodeFinder.b=true\ncodeFinderRules=#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false\nwrapMode.i=0\ncolumnNamesLineNum.i=0\nvaluesStartLineNum.i=2\ndetectColumnsMode.i=2\nnumColumns.i=4\nsendHeaderMode.i=0\ntrimMode.i=0\nsendColumnsMode.i=1\nsourceIdColumns=\nsourceColumns=1\ntargetColumns=4\ncommentColumns=3\ncommentSourceRefs=1\nrecordIdColumn.i=0\nsourceIdSourceRefs=\nsourceIdSuffixes=\ntargetLanguages=\ntargetSourceRefs=1\nfieldDelimiter=\t\ntextQualifier=%%%^^^$$$nonenonenone$$$^^^%%%\nremoveQualifiers.b=false\nparametersClass=net.sf.okapi.filters.table.csv.Parameters\n",
+        "parameters": {
+          "unescapeSource": false,
+          "trimLeading": false,
+          "trimTrailing": false,
+          "preserveWS": true,
+          "useCodeFinder": true,
+          "codeFinderRules": "#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false",
+          "wrapMode": 0,
+          "columnNamesLineNum": 0,
+          "valuesStartLineNum": 2,
+          "detectColumnsMode": 2,
+          "numColumns": 4,
+          "sendHeaderMode": 0,
+          "trimMode": 0,
+          "sendColumnsMode": 1,
+          "sourceIdColumns": "",
+          "sourceColumns": 1,
+          "targetColumns": 4,
+          "commentColumns": 3,
+          "commentSourceRefs": 1,
+          "exposeCommentsAsMetadata": false,
+          "recordIdColumn": 0,
+          "sourceIdSourceRefs": "",
+          "sourceIdSuffixes": "",
+          "targetLanguages": "",
+          "targetSourceRefs": 1,
+          "fieldDelimiter": "",
+          "textQualifier": "%%%^^^$$$nonenonenone$$$^^^%%%",
+          "removeQualifiers": false,
+          "escapingMode": 1,
+          "addQualifiers": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter"
+      },
+      {
+        "configId": "okf_table_src-tab-trg",
+        "name": "Table (Tab-Separated Values)",
+        "description": "2-column (source + target), tab separated files.",
+        "mimeType": "text/csv",
+        "parametersLocation": "okf_table_src-tab-trg.fprm",
+        "parametersRaw": "#v1\nunescapeSource.b=true\ntrimLeading.b=true\ntrimTrailing.b=true\npreserveWS.b=false\nuseCodeFinder.b=false\ncodeFinderRules=#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false\nwrapMode.i=0\ncolumnNamesLineNum.i=0\nvaluesStartLineNum.i=1\ndetectColumnsMode.i=0\nnumColumns.i=1\nsendHeaderMode.i=0\ntrimMode.i=1\nsendColumnsMode.i=1\nsourceIdColumns=\nsourceColumns=1\ntargetColumns=2\ncommentColumns=3\ncommentSourceRefs=1\nrecordIdColumn.i=0\nsourceIdSourceRefs=\nsourceIdSuffixes=\ntargetLanguages=\ntargetSourceRefs=1\nfieldDelimiter=\t\ntextQualifier=\"\nremoveQualifiers.b=true\nescapingMode.i=1\nparametersClass=net.sf.okapi.filters.table.csv.Parameters\n",
+        "parameters": {
+          "unescapeSource": true,
+          "trimLeading": true,
+          "trimTrailing": true,
+          "preserveWS": false,
+          "useCodeFinder": false,
+          "codeFinderRules": "#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false",
+          "wrapMode": 0,
+          "columnNamesLineNum": 0,
+          "valuesStartLineNum": 1,
+          "detectColumnsMode": 0,
+          "numColumns": 1,
+          "sendHeaderMode": 0,
+          "trimMode": 1,
+          "sendColumnsMode": 1,
+          "sourceIdColumns": "",
+          "sourceColumns": 1,
+          "targetColumns": 2,
+          "commentColumns": 3,
+          "commentSourceRefs": 1,
+          "exposeCommentsAsMetadata": false,
+          "recordIdColumn": 0,
+          "sourceIdSourceRefs": "",
+          "sourceIdSuffixes": "",
+          "targetLanguages": "",
+          "targetSourceRefs": 1,
+          "fieldDelimiter": "",
+          "textQualifier": "\"",
+          "removeQualifiers": true,
+          "escapingMode": 1,
+          "addQualifiers": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.table.csv.CommaSeparatedValuesFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline codes"
+    },
+    "format": {
+      "type": "object",
+      "description": "CSV format settings",
+      "properties": {
+        "fieldDelimiter": {
+          "type": "string",
+          "default": ",",
+          "x-flattenPath": "fieldDelimiter",
+          "description": "Field delimiter character"
+        },
+        "textQualifier": {
+          "type": "string",
+          "default": "\"",
+          "x-flattenPath": "textQualifier",
+          "description": "Text qualifier character"
+        },
+        "escapingMode": {
+          "type": "integer",
+          "default": 1,
+          "x-flattenPath": "escapingMode",
+          "description": "Escaping mode"
+        },
+        "addQualifiers": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "addQualifiers",
+          "description": "Add text qualifiers to output"
+        },
+        "removeQualifiers": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "removeQualifiers",
+          "description": "Remove text qualifiers from input"
+        }
+      },
+      "title": "Table type"
+    },
+    "columnNamesLineNum": {
+      "type": "integer",
+      "default": 0,
+      "title": "Line with column names (0 if none)"
+    },
+    "valuesStartLineNum": {
+      "type": "integer",
+      "default": 1,
+      "title": "Values start at line"
+    },
+    "detectColumnsMode": {
+      "type": "integer",
+      "default": 0,
+      "title": "Number of columns"
+    },
+    "numColumns": {
+      "type": "integer",
+      "default": 2,
+      "title": "Number of Columns",
+      "description": "Fixed number of columns when column detection mode is set to fixed."
+    },
+    "sendHeaderMode": {
+      "type": "integer",
+      "default": 0,
+      "title": "Extract header lines"
+    },
+    "trimMode": {
+      "type": "integer",
+      "default": 1,
+      "title": "Exclude leading/trailing white spaces from extracted text"
+    },
+    "sendColumnsMode": {
+      "type": "integer",
+      "default": 1,
+      "title": "Extract table data"
+    },
+    "recordIdColumn": {
+      "type": "integer",
+      "default": 0,
+      "title": "Record ID"
+    },
+    "exposeCommentsAsMetadata": {
+      "type": "boolean",
+      "default": false,
+      "title": "Expose comments as metadata"
+    },
+    "sourceColumns": {
+      "type": "string",
+      "default": "1",
+      "title": "Source"
+    },
+    "sourceIdColumns": {
+      "type": "string",
+      "default": "",
+      "title": "Source ID"
+    },
+    "sourceIdSuffixes": {
+      "type": "string",
+      "default": "",
+      "title": "ID suffix"
+    },
+    "sourceIdSourceRefs": {
+      "type": "string",
+      "default": "",
+      "title": "Source column"
+    },
+    "targetColumns": {
+      "type": "string",
+      "default": "2",
+      "title": "Target"
+    },
+    "targetSourceRefs": {
+      "type": "string",
+      "default": "1",
+      "title": "Source column"
+    },
+    "targetLanguages": {
+      "type": "string",
+      "default": "",
+      "title": "Language"
+    },
+    "commentColumns": {
+      "type": "string",
+      "default": "",
+      "title": "Comment"
+    },
+    "commentSourceRefs": {
+      "type": "string",
+      "default": "",
+      "title": "Source column"
+    },
+    "unescapeSource": {
+      "type": "boolean",
+      "default": true,
+      "title": "Convert \\t, \\n, \\\\, \\uXXXX into characters"
+    },
+    "trimLeading": {
+      "type": "boolean",
+      "default": true,
+      "title": "Trim leading spaces and tabs"
+    },
+    "trimTrailing": {
+      "type": "boolean",
+      "default": true,
+      "title": "Trim trailing spaces and tabs"
+    },
+    "preserveWS": {
+      "type": "boolean",
+      "default": true,
+      "title": "Allow trimming"
+    },
+    "wrapMode": {
+      "type": "string",
+      "default": "NONE",
+      "enum": [
+        "NONE",
+        "SPACES",
+        "PLACEHOLDERS"
+      ],
+      "title": "Multi-line text units"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfCommaseparatedvaluesFilterConfig",
+  "x-apiVersion": "v3",
+  "x-baseVersion": 3,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "5683e6de7b01",
+  "x-compositeHash": "895a80763689"
+}

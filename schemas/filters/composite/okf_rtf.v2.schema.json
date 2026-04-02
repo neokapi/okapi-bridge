@@ -1,0 +1,37 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_rtf.v2.schema.json",
+  "version": 2,
+  "title": "Trados-Tagged RTF Filter - READING ONLY Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_rtf",
+    "class": "net.sf.okapi.filters.rtf.RTFFilter",
+    "extensions": [
+      ".rtf"
+    ],
+    "mimeTypes": [
+      "application/rtf"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_tradosrtf",
+        "name": "Trados-Tagged RTF",
+        "description": "Configuration for Trados-tagged RTF files - READING ONLY.",
+        "mimeType": "application/rtf",
+        "extensions": ".rtf;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.rtf.RTFFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {},
+  "additionalProperties": false,
+  "x-kind": "OkfRtfFilterConfig",
+  "x-apiVersion": "v2",
+  "x-baseVersion": 2,
+  "x-introducedInOkapi": "0.38",
+  "x-baseHash": "2681c3030bd8",
+  "x-compositeHash": "2681c3030bd8"
+}

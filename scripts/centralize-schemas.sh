@@ -322,15 +322,20 @@ regenerate_composites() {
 
     local composite_count=0
     for filter in $filters; do
-        # Find the latest base version for this filter
-        local latest_base
-        latest_base=$(ls "$BASE_DIR/${filter}".v*.schema.json 2>/dev/null | \
-            sed 's/.*\.v\([0-9]*\)\.schema\.json$/\1 &/' | sort -rn | head -1 | awk '{print $2}')
+        local override_file="$OVERRIDES_DIR/${filter}.overrides.json"
+        local override_hash=""
+        if [[ -f "$override_file" ]]; then
+            override_hash=$("$SCRIPT_DIR/compute-hash.sh" "$override_file")
+        fi
 
-        [[ -f "$latest_base" ]] || continue
+        # Process ALL base versions that have entries in versions.json (not just latest)
+        local base_files
+        base_files=$(ls "$BASE_DIR/${filter}".v*.schema.json 2>/dev/null | \
+            sed 's/.*\.v\([0-9]*\)\.schema\.json$/\1 &/' | sort -n | awk '{print $2}')
 
+        for base_file in $base_files; do
         local base_version
-        base_version=$(basename "$latest_base" | sed 's/.*\.v\([0-9]*\)\.schema\.json/\1/')
+        base_version=$(basename "$base_file" | sed 's/.*\.v\([0-9]*\)\.schema\.json/\1/')
 
         # Look up okapiVersions from versions.json by version number
         local okapi_versions
@@ -339,23 +344,16 @@ regenerate_composites() {
         ' "$VERSIONS_FILE")
 
         if [[ "$okapi_versions" == "[]" || "$okapi_versions" == "null" ]]; then
-            echo "  - $filter v$base_version (no version entry, skipping)"
             continue
         fi
 
-        local override_file="$OVERRIDES_DIR/${filter}.overrides.json"
-        local override_hash=""
-        if [[ -f "$override_file" ]]; then
-            override_hash=$("$SCRIPT_DIR/compute-hash.sh" "$override_file")
-        fi
-
         local base_hash
-        base_hash=$("$SCRIPT_DIR/compute-hash.sh" "$latest_base")
+        base_hash=$("$SCRIPT_DIR/compute-hash.sh" "$base_file")
 
         # Generate composite (merge base + override)
         local composite_output="$COMPOSITE_DIR/${filter}.v${base_version}.schema.json"
-        "$SCRIPT_DIR/merge-schema.sh" "$latest_base" "$override_file" "$composite_output" 2>/dev/null || \
-            cp "$latest_base" "$composite_output"
+        "$SCRIPT_DIR/merge-schema.sh" "$base_file" "$override_file" "$composite_output" 2>/dev/null || \
+            cp "$base_file" "$composite_output"
 
         local composite_hash
         composite_hash=$("$SCRIPT_DIR/compute-hash.sh" "$composite_output")
@@ -415,7 +413,8 @@ regenerate_composites() {
             echo "  = $filter v$base_version (base only)"
         fi
         ((composite_count++))
-    done
+        done  # end base_files loop
+    done  # end filters loop
 
     # Update timestamp
     update_timestamp

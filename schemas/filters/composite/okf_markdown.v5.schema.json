@@ -1,0 +1,287 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_markdown.v5.schema.json",
+  "version": 5,
+  "title": "Markdown Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_markdown",
+    "class": "net.sf.okapi.filters.markdown.MarkdownFilter",
+    "extensions": [
+      ".md",
+      ".markdown"
+    ],
+    "mimeTypes": [
+      "text/markdown"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_markdown",
+        "name": "Markdown",
+        "description": "Markdown files",
+        "mimeType": "text/markdown",
+        "extensions": ".md;.markdown;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.markdown.MarkdownFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "extraction": {
+      "type": "object",
+      "description": "Content extraction settings",
+      "properties": {
+        "translateImageAltText": {
+          "type": "boolean",
+          "default": true,
+          "title": "Translate Image Alt Text",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateImageAltText",
+          "description": "Extract image alt text from Markdown and HTML img tags for translation."
+        },
+        "translateUrls": {
+          "type": "boolean",
+          "default": false,
+          "title": "Translate Hyperlink URLs",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateUrls",
+          "description": "Extract URLs in link and image statements as translatable subflows."
+        },
+        "urlPattern": {
+          "type": "string",
+          "default": ".+",
+          "title": "Translatable URL Pattern",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "urlToTranslatePattern",
+          "description": "Regex pattern to filter which URLs are extracted when URL translation is enabled."
+        },
+        "translateCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "title": "Translate Fenced Code Blocks",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateCodeBlocks",
+          "description": "Expose contents of fenced code blocks for translation."
+        },
+        "translateIndentedCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "title": "Translate Indented Code Blocks",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateIndentedCodeBlocks",
+          "description": "Expose contents of indented code blocks for translation."
+        },
+        "translateInlineCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "title": "Translate Inline Code Blocks",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateInlineCodeBlocks",
+          "description": "Expose contents of backtick-delimited inline code for translation."
+        },
+        "translateHeaderMetadata": {
+          "type": "boolean",
+          "default": false,
+          "title": "Translate YAML Metadata Header",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateHeaderMetadata",
+          "description": "Translate YAML front matter"
+        },
+        "nonTranslateBlocks": {
+          "type": "string",
+          "default": "",
+          "title": "Non-Translatable Block Quotes",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "nonTranslateBlocks",
+          "description": "Comma-separated prefixes identifying block quotes to exclude from translation."
+        },
+        "parseMdx": {
+          "type": "boolean",
+          "default": false,
+          "title": "Parse MDX Expressions",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "parseMdx",
+          "description": "Parse out multi-line MDX export blocks as non-translatable skeleton."
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Output formatting",
+      "properties": {
+        "generateHeaderAnchors": {
+          "type": "boolean",
+          "default": false,
+          "title": "Generate Header Anchors",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "generateHeaderAnchors",
+          "description": "Automatically generate named anchors for headings to preserve link targets."
+        },
+        "charactersToEscape": {
+          "type": "string",
+          "default": "*_`{}[]<>()#+\\-.!|",
+          "title": "Characters to Escape",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "charactersToEscape",
+          "description": "Punctuation characters to backslash-escape on export."
+        },
+        "htmlEntitiesToEscape": {
+          "type": "string",
+          "default": "",
+          "title": "Characters to escape as HTML entities",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "htmlEntitiesToEscape",
+          "description": "HTML entities to escape"
+        },
+        "unescapeBackslashCharacters": {
+          "type": "boolean",
+          "default": false,
+          "title": "Support Backslash Escaping",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "unescapeBackslashCharacters",
+          "description": "Parse backslash-escaped punctuation in source documents."
+        }
+      }
+    },
+    "subfilters": {
+      "type": "object",
+      "description": "Sub-filter configuration",
+      "properties": {
+        "htmlSubfilter": {
+          "type": "string",
+          "default": "",
+          "title": "HTML Subfilter Configuration",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "htmlSubfilter",
+          "description": "Custom HTML filter configuration ID for processing HTML within Markdown."
+        },
+        "yamlSubfilter": {
+          "type": "string",
+          "default": "",
+          "title": "YAML Subfilter Configuration",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "yamlSubfilter",
+          "description": "Custom YAML filter configuration ID for processing YAML metadata headers."
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable the Inline Code Finder for identifying inline codes in translatable text.",
+          "x-flattenPath": "useCodeFinder",
+          "title": "Use Code Finder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfMarkdownFilterConfig",
+  "x-apiVersion": "v5",
+  "x-baseVersion": 5,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "5a217dfa8c67",
+  "x-compositeHash": "9ce6330dd611"
+}

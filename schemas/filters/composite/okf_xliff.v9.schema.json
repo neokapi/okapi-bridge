@@ -1,0 +1,673 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_xliff.v9.schema.json",
+  "version": 9,
+  "title": "XLIFF Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_xliff",
+    "class": "net.sf.okapi.filters.xliff.XLIFFFilter",
+    "extensions": [
+      ".xlf",
+      ".xlif",
+      ".xliff",
+      ".mxliff",
+      ".mqxliff",
+      ".sdlxliff"
+    ],
+    "mimeTypes": [
+      "application/x-xliff+xml"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_xliff",
+        "name": "XLIFF",
+        "description": "Configuration for XML Localisation Interchange File Format (XLIFF) documents.",
+        "mimeType": "application/x-xliff+xml",
+        "extensions": ".xlf;.xlif;.xliff;.mxliff;.mqxliff;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.xliff.XLIFFFilter"
+      },
+      {
+        "configId": "okf_xliff-sdl",
+        "name": "SDLXLIFF",
+        "description": "Configuration for SDL XLIFF documents. Supports SDL specific metadata",
+        "mimeType": "application/x-xliff+xml",
+        "extensions": ".sdlxliff;",
+        "parametersLocation": "sdl.fprm",
+        "parametersRaw": "#v1\nuseCustomParser.b=true\nfactoryClass=com.ctc.wstx.stax.WstxInputFactory\nfallbackToID.b=false\nescapeGT.b=false\naddTargetLanguage.b=true\noverrideTargetLanguage.b=false\noutputSegmentationType.i=0\nignoreInputSegmentation.b=false\naddAltTrans.b=false\naddAltTransGMode.b=true\neditAltTrans.b=false\nincludeExtensions.b=true\nincludeIts.b=true\nbalanceCodes.b=true\nallowEmptyTargets.b=false\ntargetStateMode.i=0\ntargetStateValue=needs-translation\nalwaysUseSegSource.b=false\nquoteModeDefined.b=true\nquoteMode.i=0\nuseSdlXliffWriter.b=true\nsdlSegConfValue=Translated\npreserveSpaceByDefault.b=true\nskipNoMrkSegSource.b=true\nuseTranslationTargetState.b=false\n",
+        "parameters": {
+          "useCustomParser": true,
+          "factoryClass": "com.ctc.wstx.stax.WstxInputFactory",
+          "fallbackToID": false,
+          "escapeGT": false,
+          "addTargetLanguage": true,
+          "overrideTargetLanguage": false,
+          "outputSegmentationType": 0,
+          "ignoreInputSegmentation": false,
+          "addAltTrans": false,
+          "addAltTransGMode": true,
+          "editAltTrans": false,
+          "includeExtensions": true,
+          "includeIts": true,
+          "allowEmptyTargets": false,
+          "targetStateMode": 0,
+          "targetStateValue": "needs-translation",
+          "useTranslationTargetState": false,
+          "alwaysUseSegSource": false,
+          "quoteModeDefined": true,
+          "quoteMode": 0,
+          "useSdlXliffWriter": true,
+          "preserveSpaceByDefault": true,
+          "useSegsForSdlProps": false,
+          "useIwsXliffWriter": false,
+          "iwsBlockFinished": true,
+          "iwsTransStatusValue": "finished",
+          "iwsTransTypeValue": "manual_translation",
+          "iwsRemoveTmOrigin": false,
+          "iwsBlockLockStatus": false,
+          "iwsBlockTmScore": false,
+          "iwsBlockTmScoreValue": 100,
+          "iwsIncludeMultipleExact": false,
+          "iwsBlockMultipleExact": false,
+          "inlineCdata": false,
+          "skipNoMrkSegSource": true,
+          "useCodeFinder": false,
+          "subAsTextUnit": false,
+          "alwaysAddTargets": false,
+          "forceUniqueIds": false,
+          "balanceCodes": true,
+          "sdlSegConfValue": "Translated",
+          "codeFinderRules.count": 0,
+          "codeFinderRules.sample": "",
+          "codeFinderRules.useAllRulesWhenTesting": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xliff.XLIFFFilter"
+      },
+      {
+        "configId": "okf_xliff-iws",
+        "name": "IWSXLIFF",
+        "description": "Configuration for IWS XLIFF documents. Supports IWS specific metadata",
+        "mimeType": "application/x-xliff+xml",
+        "extensions": ".xlf;",
+        "parametersLocation": "iws.fprm",
+        "parametersRaw": "#v1\nuseCustomParser.b=true\nfactoryClass=com.ctc.wstx.stax.WstxInputFactory\nfallbackToID.b=false\nescapeGT.b=false\naddTargetLanguage.b=true\noverrideTargetLanguage.b=false\noutputSegmentationType.i=0\nignoreInputSegmentation.b=false\naddAltTrans.b=false\naddAltTransGMode.b=true\neditAltTrans.b=false\nincludeExtensions.b=true\nincludeIts.b=true\nbalanceCodes.b=true\nallowEmptyTargets.b=false\ntargetStateMode.i=0\ntargetStateValue=needs-translation\nalwaysUseSegSource.b=false\nquoteModeDefined.b=true\nquoteMode.i=0\nuseSdlXliffWriter.b=false\npreserveSpaceByDefault.b=true\nuseSegsForSdlProps.b=false\nuseIwsXliffWriter.b=true\niwsBlockFinished.b=true\niwsTransStatusValue=pending\niwsTransTypeValue=manual_translation\niwsRemoveTmOrigin.b=false\niwsBlockLockStatus.b=false\niwsBlockTmScore.b=false\niwsBlockTmScoreValue=100.00\niwsIncludeMultipleExact.b=false\niwsBlockMultipleExact.b=false\ninlineCdata.b=false\nskipNoMrkSegSource.b=true\nuseCodeFinder.b=false\nsdlSegConfValue=Translated\ncodeFinderRules.count.i=0\ncodeFinderRules.sample=\ncodeFinderRules.useAllRulesWhenTesting.b=false\n",
+        "parameters": {
+          "useCustomParser": true,
+          "factoryClass": "com.ctc.wstx.stax.WstxInputFactory",
+          "fallbackToID": false,
+          "escapeGT": false,
+          "addTargetLanguage": true,
+          "overrideTargetLanguage": false,
+          "outputSegmentationType": 0,
+          "ignoreInputSegmentation": false,
+          "addAltTrans": false,
+          "addAltTransGMode": true,
+          "editAltTrans": false,
+          "includeExtensions": true,
+          "includeIts": true,
+          "allowEmptyTargets": false,
+          "targetStateMode": 0,
+          "targetStateValue": "needs-translation",
+          "useTranslationTargetState": true,
+          "alwaysUseSegSource": false,
+          "quoteModeDefined": true,
+          "quoteMode": 0,
+          "useSdlXliffWriter": false,
+          "preserveSpaceByDefault": true,
+          "useSegsForSdlProps": false,
+          "useIwsXliffWriter": true,
+          "iwsBlockFinished": true,
+          "iwsTransStatusValue": "pending",
+          "iwsTransTypeValue": "manual_translation",
+          "iwsRemoveTmOrigin": false,
+          "iwsBlockLockStatus": false,
+          "iwsBlockTmScore": false,
+          "iwsBlockTmScoreValue": 100,
+          "iwsIncludeMultipleExact": false,
+          "iwsBlockMultipleExact": false,
+          "inlineCdata": false,
+          "skipNoMrkSegSource": true,
+          "useCodeFinder": false,
+          "subAsTextUnit": false,
+          "alwaysAddTargets": false,
+          "forceUniqueIds": false,
+          "balanceCodes": true,
+          "sdlSegConfValue": "Translated",
+          "codeFinderRules.count": 0,
+          "codeFinderRules.sample": "",
+          "codeFinderRules.useAllRulesWhenTesting": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xliff.XLIFFFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "extraction": {
+      "type": "object",
+      "description": "Control what content is extracted",
+      "properties": {
+        "preserveSpaceByDefault": {
+          "type": "boolean",
+          "default": false,
+          "title": "Preserve whitespace by default",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "preserveSpaceByDefault",
+          "description": "Preserve whitespace by default"
+        },
+        "includeExtensions": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "includeExtensions",
+          "description": "Include XLIFF extension elements"
+        },
+        "includeIts": {
+          "type": "boolean",
+          "default": true,
+          "title": "Include ITS markup",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "includeIts",
+          "description": "Include ITS annotations"
+        },
+        "inlineCdata": {
+          "type": "boolean",
+          "default": false,
+          "title": "Preserve CDATA sections",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "inlineCdata",
+          "description": "Treat CDATA sections as inline"
+        },
+        "subAsTextUnit": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "subAsTextUnit",
+          "description": "Process sub elements as text units"
+        },
+        "ignoreInputSegmentation": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ignore segmentation information in input",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "ignoreInputSegmentation",
+          "description": "Ignore existing segmentation"
+        },
+        "skipNoMrkSegSource": {
+          "type": "boolean",
+          "default": false,
+          "title": "Skip seg-sources with no marked segments",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "skipNoMrkSegSource",
+          "description": "Skip seg-source without mrk elements"
+        },
+        "fallbackToID": {
+          "type": "boolean",
+          "default": false,
+          "title": "Use trans-unit id for text unit name if no resname",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "fallbackToID",
+          "description": "Fall back to trans-unit ID"
+        },
+        "forceUniqueIds": {
+          "type": "boolean",
+          "default": false,
+          "title": "Rewrite TU IDs to enforce uniqueness",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "forceUniqueIds",
+          "description": "Force unique text unit IDs"
+        }
+      }
+    },
+    "states": {
+      "type": "object",
+      "description": "Translation state handling",
+      "properties": {
+        "targetStateMode": {
+          "type": "integer",
+          "default": 0,
+          "x-flattenPath": "targetStateMode",
+          "description": "How to handle target state attribute"
+        },
+        "targetStateValue": {
+          "type": "string",
+          "default": "needs-translation",
+          "x-flattenPath": "targetStateValue",
+          "description": "State value to set on targets"
+        },
+        "useTranslationTargetState": {
+          "type": "boolean",
+          "default": true,
+          "title": "Update state attribute of translated XLIFF",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "useTranslationTargetState",
+          "description": "Use translation-specific target state"
+        },
+        "editAltTrans": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "editAltTrans",
+          "description": "Edit alt-trans elements"
+        },
+        "addAltTrans": {
+          "type": "boolean",
+          "default": false,
+          "title": "Allow addition of new <alt-trans> elements",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "addAltTrans",
+          "description": "Add alt-trans for existing translations"
+        },
+        "addAltTransGMode": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "addAltTransGMode",
+          "description": "Alt-trans mode for group-level"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "description": "Output formatting and behavior",
+      "properties": {
+        "addTargetLanguage": {
+          "type": "boolean",
+          "default": true,
+          "title": "Add target-language attribute if not present",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "addTargetLanguage",
+          "description": "Add target-language attribute"
+        },
+        "overrideTargetLanguage": {
+          "type": "boolean",
+          "default": false,
+          "title": "Override target language of XLIFF document",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "overrideTargetLanguage",
+          "description": "Override target language in output"
+        },
+        "allowEmptyTargets": {
+          "type": "boolean",
+          "default": false,
+          "title": "Allow empty <target> elements",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "allowEmptyTargets",
+          "description": "Allow empty target elements"
+        },
+        "alwaysAddTargets": {
+          "type": "boolean",
+          "default": false,
+          "title": "Add <target> elements for monolingual XLIFF",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "alwaysAddTargets",
+          "description": "Always add target elements"
+        },
+        "alwaysUseSegSource": {
+          "type": "boolean",
+          "default": false,
+          "title": "Always use seg-source content",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "alwaysUseSegSource",
+          "description": "Always use seg-source"
+        },
+        "outputSegmentationType": {
+          "type": "string",
+          "title": "Type of output segmentation",
+          "x-editor": {
+            "widget": "select"
+          },
+          "x-options": [
+            {
+              "value": 0,
+              "label": "Segment only if input is segmented"
+            },
+            {
+              "value": 1,
+              "label": "Always segment"
+            },
+            {
+              "value": 2,
+              "label": "Never segment"
+            },
+            {
+              "value": 3,
+              "label": "Segment regardless of input"
+            }
+          ],
+          "x-flattenPath": "outputSegmentationType",
+          "description": "Output segmentation type"
+        }
+      }
+    },
+    "subfilters": {
+      "type": "object",
+      "description": "Sub-filter configuration",
+      "properties": {
+        "cdataSubfilter": {
+          "type": "string",
+          "default": "",
+          "title": "Sub-filter for CDATA content",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "cdataSubfilter",
+          "description": "Sub-filter for CDATA content"
+        },
+        "pcdataSubfilter": {
+          "type": "string",
+          "default": "",
+          "title": "Sub-filter for PCDATA content",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "pcdataSubfilter",
+          "description": "Sub-filter for PCDATA content"
+        }
+      }
+    },
+    "parser": {
+      "type": "object",
+      "description": "Parser settings",
+      "properties": {
+        "useCustomParser": {
+          "type": "boolean",
+          "default": true,
+          "title": "Use a custom XML stream parser",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-enables": [
+            "factoryClass"
+          ],
+          "x-flattenPath": "useCustomParser",
+          "description": "Use custom parser"
+        },
+        "factoryClass": {
+          "type": "string",
+          "default": "com.ctc.wstx.stax.WstxInputFactory",
+          "title": "Factory class for custom XML stream parser",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "factoryClass",
+          "description": "Custom parser factory class"
+        }
+      }
+    },
+    "sdl": {
+      "type": "object",
+      "description": "SDL XLIFF extensions",
+      "properties": {
+        "useSdlXliffWriter": {
+          "type": "boolean",
+          "default": false,
+          "title": "Use SDLXLIFF Writer",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "useSdlXliffWriter",
+          "description": "Use SDL XLIFF writer"
+        },
+        "useSegsForSdlProps": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useSegsForSdlProps",
+          "description": "Use segments for SDL properties"
+        },
+        "sdlSegConfValue": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "sdlSegConfValue",
+          "description": "SDL segment confidence value"
+        },
+        "sdlSegLockedValue": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "sdlSegLockedValue",
+          "description": "SDL segment locked value"
+        },
+        "sdlSegOriginValue": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "sdlSegOriginValue",
+          "description": "SDL segment origin value"
+        }
+      }
+    },
+    "iws": {
+      "type": "object",
+      "description": "Idiom WorldServer extensions",
+      "properties": {
+        "useIwsXliffWriter": {
+          "type": "boolean",
+          "default": false,
+          "title": "Use IWSXLIFF Writer",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-enables": [
+            "iwsBlockFinished",
+            "iwsTransStatusValue",
+            "iwsTransTypeValue",
+            "iwsRemoveTmOrigin",
+            "iwsBlockLockStatus",
+            "iwsBlockTmScore",
+            "iwsBlockTmScoreValue",
+            "iwsIncludeMultipleExact",
+            "iwsBlockMultipleExact"
+          ],
+          "x-flattenPath": "useIwsXliffWriter",
+          "description": "Use IWS XLIFF writer"
+        },
+        "iwsBlockFinished": {
+          "type": "boolean",
+          "default": true,
+          "title": "Set Finished Segments as translate=\"no\"",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "iwsBlockFinished",
+          "description": "IWS block finished state"
+        },
+        "iwsBlockLockStatus": {
+          "type": "boolean",
+          "default": false,
+          "title": "Set locked Finished Segments as translate=\"no\"",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "iwsBlockLockStatus",
+          "description": "IWS lock status"
+        },
+        "iwsBlockMultipleExact": {
+          "type": "boolean",
+          "default": false,
+          "title": "Set Finished multiple_exact segments as translate=\"no\"",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "iwsBlockMultipleExact",
+          "description": "IWS multiple exact matches"
+        },
+        "iwsBlockTmScore": {
+          "type": "boolean",
+          "default": false,
+          "title": "Set segments with matching tm_score as translate=\"no\"",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-enables": [
+            "iwsBlockTmScoreValue",
+            "iwsIncludeMultipleExact"
+          ],
+          "x-flattenPath": "iwsBlockTmScore",
+          "description": "IWS TM score threshold"
+        },
+        "iwsBlockTmScoreValue": {
+          "type": "string",
+          "default": "100.00",
+          "title": "Value of tm_score to match",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "iwsBlockTmScoreValue",
+          "description": "IWS TM score value"
+        },
+        "iwsIncludeMultipleExact": {
+          "type": "boolean",
+          "default": false,
+          "title": "Include segments with multiple_exact regardless of tm_score",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "iwsIncludeMultipleExact",
+          "description": "Include multiple exact matches"
+        },
+        "iwsRemoveTmOrigin": {
+          "type": "boolean",
+          "default": false,
+          "title": "Remove tm_origin attribute",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "iwsRemoveTmOrigin",
+          "description": "Remove TM origin"
+        },
+        "iwsTransStatusValue": {
+          "type": "string",
+          "default": "finished",
+          "title": "Default translation_status value",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "iwsTransStatusValue",
+          "description": "IWS translation status value"
+        },
+        "iwsTransTypeValue": {
+          "type": "string",
+          "default": "manual_translation",
+          "title": "Default translation_type value",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "iwsTransTypeValue",
+          "description": "IWS translation type value"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "x-flattenPath": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfXliffFilterConfig",
+  "x-apiVersion": "v9",
+  "x-baseVersion": 9,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "c390f4104b3d",
+  "x-compositeHash": "206d937cc01c"
+}
