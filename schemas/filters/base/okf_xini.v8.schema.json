@@ -1,0 +1,164 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "XINI Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_xini",
+    "class": "net.sf.okapi.filters.xini.XINIFilter",
+    "extensions": [
+      ".xini"
+    ],
+    "mimeTypes": [
+      "text/x-xini"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_xini",
+        "name": "XINI",
+        "description": "Configuration for XINI documents from ONTRAM",
+        "mimeType": "text/x-xini",
+        "extensions": ".xini;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.xini.XINIFilter"
+      },
+      {
+        "configId": "okf_xini-noOutputSegmentation",
+        "name": "XINI (no output segmentation)",
+        "description": "Configuration for XINI documents from ONTRAM (fields in the output are not segmented)",
+        "mimeType": "text/x-xini",
+        "parametersLocation": "noOutputSegmentation.fprm",
+        "parametersRaw": "#v1\nuseOkapiSegmentation.b=false\n",
+        "parameters": {
+          "useOkapiSegmentation": false
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.xini.XINIFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "segmentation": {
+      "type": "object",
+      "title": "Segmentation settings",
+      "properties": {
+        "useOkapiSegmentation": {
+          "type": "boolean",
+          "default": true,
+          "title": "Use Okapi segmentation for output",
+          "description": "If disabled, all XINI segments with the same value\nof the attribute 'SegmentIDBeforeSegmentation' will be merged.\nIf the XINI was not segmented, it will remain unsegmented.\nIf this option is enabled, new segmentation\n(i.e. from segmentation step) will be used for the output.",
+          "x-flattenPath": "useOkapiSegmentation"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "segmentation",
+      "label": "Segmentation settings",
+      "fields": [
+        "segmentation"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "x-widget": "codeFinder"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  }
+}

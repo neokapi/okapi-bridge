@@ -1,0 +1,334 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Json Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_json",
+    "class": "net.sf.okapi.filters.json.JSONFilter",
+    "extensions": [
+      ".json"
+    ],
+    "mimeTypes": [
+      "application/json"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_json",
+        "name": "JSON (JavaScript Object Notation)",
+        "description": "Configuration for JSON files",
+        "mimeType": "application/json",
+        "extensions": ".json;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.json.JSONFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "extraction": {
+      "type": "object",
+      "title": "Control what content is extracted for translation",
+      "properties": {
+        "extractAll": {
+          "type": "boolean",
+          "default": true,
+          "title": "Extract all key/string pairs",
+          "description": "Extract all key/string pairs; when disabled, no key/string pairs are extracted",
+          "x-editor": {
+            "widget": "radio"
+          },
+          "x-options": [
+            {
+              "value": true,
+              "label": "Extract all key/string pairs"
+            },
+            {
+              "value": false,
+              "label": "Do not extract key/string pairs"
+            }
+          ],
+          "x-flattenPath": "extractAllPairs"
+        },
+        "pathRules": {
+          "type": "string",
+          "default": "",
+          "title": "Extraction rules",
+          "description": "Regex matching keys for which values are extracted (overrides extraction exceptions)",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "extractionRules"
+        },
+        "includeIsolatedStrings": {
+          "type": "boolean",
+          "default": false,
+          "title": "Extract strings without associated key",
+          "description": "Extract stand-alone strings that have no associated key",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "extractIsolatedStrings"
+        },
+        "excludeKeys": {
+          "type": "string",
+          "default": "",
+          "title": "Key exception pattern",
+          "description": "Regular expression matching keys to except from the extraction rule",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "exceptions"
+        },
+        "subfilterRules": {
+          "type": "string",
+          "default": "",
+          "title": "Sub-filter rules",
+          "description": "Regex matching keys for which values should be processed with the sub-filter",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "subfilterRules"
+        }
+      }
+    },
+    "keys": {
+      "type": "object",
+      "title": "Configure how JSON keys map to text unit identification",
+      "properties": {
+        "useAsName": {
+          "type": "boolean",
+          "default": true,
+          "title": "Use the key as the resname",
+          "description": "Use the JSON key as the resource name (resname) in the extracted translation unit",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "useKeyAsName"
+        },
+        "useFullPath": {
+          "type": "boolean",
+          "default": false,
+          "title": "Use the full key path",
+          "description": "Use the full path of nested keys as the resource name",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-enables": [
+            "useLeadingSlashOnKeyPath"
+          ],
+          "x-flattenPath": "useFullKeyPath"
+        },
+        "leadingSlash": {
+          "type": "boolean",
+          "default": true,
+          "title": "Include leading \"/\" on key path",
+          "description": "Include a leading slash on the full key path used as the resource name",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "useLeadingSlashOnKeyPath"
+        },
+        "useIdStack": {
+          "type": "boolean",
+          "default": false,
+          "title": "Use the full path of IDs for resname and TextUnit Metadata",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "useIdStack"
+        },
+        "idRules": {
+          "type": "string",
+          "default": "",
+          "title": "ID rules",
+          "description": "Regex matching keys which are IDs (resname in XLIFF), overrides \"use key as resname\"",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "idRules"
+        }
+      }
+    },
+    "metadata": {
+      "type": "object",
+      "title": "Configure metadata extraction rules",
+      "properties": {
+        "noteRules": {
+          "type": "string",
+          "default": "",
+          "title": "Note rules",
+          "description": "Regex matching keys that are notes, values appear as <note> in XLIFF",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "noteRules"
+        },
+        "metaRules": {
+          "type": "string",
+          "default": "",
+          "title": "Generic metadata rules",
+          "description": "Regex matching keys for which values are added as TextUnit Metadata",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "genericMetaRules"
+        },
+        "maxwidthRules": {
+          "type": "string",
+          "default": "",
+          "title": "Maxwidth rules",
+          "description": "Regex matching keys that are numbers, extracted as maxwidth property in XLIFF",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "maxwidthRules"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "title": "Output formatting options",
+      "properties": {
+        "escapeSlashes": {
+          "type": "boolean",
+          "default": true,
+          "title": "Escape forward slashes",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "escapeForwardSlashes"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "extraction",
+      "label": "Control what content is extracted for translation",
+      "fields": [
+        "extraction"
+      ]
+    },
+    {
+      "id": "keys",
+      "label": "Configure how JSON keys map to text unit identification",
+      "fields": [
+        "keys"
+      ]
+    },
+    {
+      "id": "metadata",
+      "label": "Configure metadata extraction rules",
+      "fields": [
+        "metadata"
+      ]
+    },
+    {
+      "id": "output",
+      "label": "Output formatting options",
+      "fields": [
+        "output"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "x-widget": "codeFinder"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  }
+}

@@ -1,0 +1,306 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Markdown Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_markdown",
+    "class": "net.sf.okapi.filters.markdown.MarkdownFilter",
+    "extensions": [
+      ".md",
+      ".markdown"
+    ],
+    "mimeTypes": [
+      "text/markdown"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_markdown",
+        "name": "Markdown",
+        "description": "Markdown files",
+        "mimeType": "text/markdown",
+        "extensions": ".md;.markdown;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.markdown.MarkdownFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "extraction": {
+      "type": "object",
+      "title": "Content extraction settings",
+      "properties": {
+        "translateImageAltText": {
+          "type": "boolean",
+          "default": true,
+          "title": "Translate Image Alt Text",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateImageAltText"
+        },
+        "translateUrls": {
+          "type": "boolean",
+          "default": false,
+          "title": "Translate Hyperlink URLs extracted as a subflow",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateUrls"
+        },
+        "urlPattern": {
+          "type": "string",
+          "default": ".+",
+          "title": "REGEX Pattern for Translatable URLs",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "urlToTranslatePattern"
+        },
+        "translateCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "title": "Translate Fenced Code Blocks",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateCodeBlocks"
+        },
+        "translateIndentedCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "title": "Translate Indented Code Blocks",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateIndentedCodeBlocks"
+        },
+        "translateInlineCodeBlocks": {
+          "type": "boolean",
+          "default": true,
+          "title": "Translate Inline Code Blocks",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateInlineCodeBlocks"
+        },
+        "translateHeaderMetadata": {
+          "type": "boolean",
+          "default": false,
+          "title": "Translate YAML Metadata Header",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "translateHeaderMetadata"
+        },
+        "nonTranslateBlocks": {
+          "type": "string",
+          "default": "",
+          "title": "Non-translatable block quotes",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "nonTranslateBlocks"
+        },
+        "parseMdx": {
+          "type": "boolean",
+          "default": false,
+          "title": "Parse MDX expressions using regex (Experimental)",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "parseMdx"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "title": "Output formatting",
+      "properties": {
+        "generateHeaderAnchors": {
+          "type": "boolean",
+          "default": false,
+          "title": "Generate anchors based on header text",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "generateHeaderAnchors"
+        },
+        "charactersToEscape": {
+          "type": "string",
+          "default": "*_`{}[]<>()#+\\-.!|",
+          "title": "Punctuation characters to escape",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "charactersToEscape"
+        },
+        "htmlEntitiesToEscape": {
+          "type": "string",
+          "default": "",
+          "title": "Characters to escape as HTML entities",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "htmlEntitiesToEscape"
+        },
+        "unescapeBackslashCharacters": {
+          "type": "boolean",
+          "default": false,
+          "title": "Support backslash escaping of punctuation",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "unescapeBackslashCharacters"
+        }
+      }
+    },
+    "subfilters": {
+      "type": "object",
+      "title": "Sub-filter configuration",
+      "properties": {
+        "htmlSubfilter": {
+          "type": "string",
+          "default": "",
+          "title": "HTML subfilter configuration ID",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "htmlSubfilter"
+        },
+        "yamlSubfilter": {
+          "type": "string",
+          "default": "",
+          "title": "YAML subfilter configuration ID",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "yamlSubfilter"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "extraction",
+      "label": "Content extraction settings",
+      "fields": [
+        "extraction"
+      ]
+    },
+    {
+      "id": "output",
+      "label": "Output formatting",
+      "fields": [
+        "output"
+      ]
+    },
+    {
+      "id": "subfilters",
+      "label": "Sub-filter configuration",
+      "fields": [
+        "subfilters"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "x-widget": "codeFinder"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  }
+}

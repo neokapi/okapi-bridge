@@ -1,0 +1,204 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "MIF Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_mif",
+    "class": "net.sf.okapi.filters.mif.MIFFilter",
+    "extensions": [
+      ".mif"
+    ],
+    "mimeTypes": [
+      "application/vnd.mif"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_mif",
+        "name": "MIF",
+        "description": "Adobe FrameMaker MIF documents",
+        "mimeType": "application/vnd.mif",
+        "extensions": ".mif;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.mif.MIFFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "extraction": {
+      "type": "object",
+      "title": "Extraction settings",
+      "properties": {
+        "extractBodyPages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractBodyPages",
+          "title": "Extract body pages"
+        },
+        "extractMasterPages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractMasterPages",
+          "title": "Extract master pages"
+        },
+        "extractReferencePages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractReferencePages",
+          "title": "Extract reference pages"
+        },
+        "extractHiddenPages": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractHiddenPages",
+          "title": "Extract hidden pages"
+        },
+        "extractVariables": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractVariables",
+          "title": "Extract variables"
+        },
+        "extractIndexMarkers": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractIndexMarkers",
+          "title": "Extract index markers"
+        },
+        "extractLinks": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractLinks",
+          "title": "Extract cross-reference links"
+        },
+        "extractHardReturnsAsText": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractHardReturnsAsText",
+          "title": "Extract hard returns as text"
+        },
+        "extractPgfNumFormatsInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractPgfNumFormatsInline",
+          "title": "Extract paragraph number formats inline"
+        },
+        "extractReferenceFormats": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractReferenceFormats",
+          "title": "Extract reference formats"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "extraction",
+      "label": "Extraction settings",
+      "fields": [
+        "extraction"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "x-widget": "codeFinder"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  }
+}

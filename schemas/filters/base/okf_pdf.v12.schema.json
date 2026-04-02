@@ -1,0 +1,258 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "PDF Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_pdf",
+    "class": "net.sf.okapi.filters.pdf.PdfFilter",
+    "extensions": [
+      ".pdf"
+    ],
+    "mimeTypes": [
+      "application/pdf"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_pdf",
+        "name": "PDF (Portable Document Format)",
+        "description": "Configuration for PDF documents",
+        "mimeType": "application/pdf",
+        "extensions": ".pdf;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.pdf.PdfFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "whitespace": {
+      "$ref": "#/$defs/whitespace"
+    },
+    "parser": {
+      "type": "object",
+      "title": "Parser settings",
+      "properties": {
+        "preserveWhitespace": {
+          "type": "boolean",
+          "default": false,
+          "title": "Preserve whitespace",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "preserveWhitespace"
+        },
+        "indentThreshold": {
+          "type": "string",
+          "default": "2.0",
+          "title": "Amount of indent needed to define a new paragraph (Default=2.0)",
+          "x-editor": {
+            "widget": "text",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "indentThreshold"
+        },
+        "spacingTolerance": {
+          "type": "string",
+          "default": "0.5",
+          "title": "Amount of spacing needed to define a white space character (Default=0.5)",
+          "x-editor": {
+            "widget": "text",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "spacingTolerance"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "title": "Output formatting",
+      "properties": {
+        "lineSeparator": {
+          "type": "string",
+          "default": "\n",
+          "title": "Character to use as line separator",
+          "x-editor": {
+            "widget": "text",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "lineSeparator"
+        },
+        "paragraphSeparator": {
+          "type": "string",
+          "default": "\n",
+          "title": "Character to use as paragraph separator",
+          "x-editor": {
+            "widget": "text",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "paragraphSeparator"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "whitespace",
+      "label": "Whitespace",
+      "fields": [
+        "whitespace"
+      ]
+    },
+    {
+      "id": "parser",
+      "label": "Parser settings",
+      "fields": [
+        "parser"
+      ]
+    },
+    {
+      "id": "output",
+      "label": "Output formatting",
+      "fields": [
+        "output"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "x-widget": "codeFinder"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    },
+    "whitespace": {
+      "type": "object",
+      "title": "Whitespace",
+      "description": "Whitespace handling",
+      "properties": {
+        "preserve": {
+          "type": "boolean",
+          "title": "Preserve Whitespace",
+          "description": "Preserve original whitespace",
+          "x-flattenPath": "preserveWhitespace"
+        },
+        "collapse": {
+          "type": "boolean",
+          "title": "Collapse Whitespace",
+          "description": "Collapse multiple whitespace chars into single spaces",
+          "x-flattenPath": "collapseWhitespace"
+        },
+        "trimLeading": {
+          "type": "boolean",
+          "title": "Trim Leading Whitespace",
+          "description": "Remove leading whitespace from segments",
+          "x-flattenPath": "trimLeadingWS"
+        },
+        "trimTrailing": {
+          "type": "boolean",
+          "title": "Trim Trailing Whitespace",
+          "description": "Remove trailing whitespace from segments",
+          "x-flattenPath": "trimTrailingWS"
+        }
+      }
+    }
+  }
+}

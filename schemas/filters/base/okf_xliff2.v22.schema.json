@@ -1,0 +1,258 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "XLIFF-2 Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_xliff2",
+    "class": "net.sf.okapi.filters.xliff2.XLIFF2Filter",
+    "extensions": [
+      ".xlf",
+      ".xliff",
+      ".xlf2",
+      ".xliff2"
+    ],
+    "mimeTypes": [
+      "application/xliff+xml"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_xliff2",
+        "name": "XLIFF-2",
+        "description": "Configuration for XLIFF-2 documents.",
+        "mimeType": "application/xliff+xml",
+        "extensions": ".xlf;.xliff;.xlf2;.xliff2",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.xliff2.XLIFF2Filter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "extraction": {
+      "type": "object",
+      "title": "Control what content is extracted",
+      "properties": {
+        "needsSegmentation": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "needsSegmentation",
+          "title": "Apply segmentation to content"
+        },
+        "forceUniqueIds": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ensure tag IDs are unique within units",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "forceUniqueIds"
+        },
+        "simplifyTags": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "simplifyTags",
+          "title": "Simplify inline tags"
+        },
+        "ignoreTagTypeMatch": {
+          "type": "boolean",
+          "default": false,
+          "title": "Ignore tag type mismatch between source and target",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "ignoreTagTypeMatch"
+        }
+      }
+    },
+    "states": {
+      "type": "object",
+      "title": "Translation state handling",
+      "properties": {
+        "discardInvalidTargets": {
+          "type": "boolean",
+          "default": false,
+          "title": "Discard invalid targets rather than rejecting the file",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "discardInvalidTargets"
+        },
+        "subfilterOverwriteTarget": {
+          "type": "boolean",
+          "default": false,
+          "title": "Subfilter: Always Overwrite Target?",
+          "description": "Should the writer always overwrite an existing target even if state is final?",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "subfilterOverwriteTarget"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "title": "Output settings",
+      "properties": {
+        "writeOriginalData": {
+          "type": "boolean",
+          "default": true,
+          "title": "Output includes original data when available",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "writeOriginalData"
+        },
+        "maxValidation": {
+          "type": "boolean",
+          "default": true,
+          "title": "Perform maximum validation when parsing",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "maxValidation"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "extraction",
+      "label": "Control what content is extracted",
+      "fields": [
+        "extraction"
+      ]
+    },
+    {
+      "id": "states",
+      "label": "Translation state handling",
+      "fields": [
+        "states"
+      ]
+    },
+    {
+      "id": "output",
+      "label": "Output settings",
+      "fields": [
+        "output"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "x-widget": "codeFinder"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  }
+}

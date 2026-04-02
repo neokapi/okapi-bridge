@@ -1,0 +1,307 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "IDML Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_idml",
+    "class": "net.sf.okapi.filters.idml.IDMLFilter",
+    "extensions": [
+      ".idml"
+    ],
+    "mimeTypes": [
+      "application/vnd.adobe.indesign-idml-package"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_idml",
+        "name": "IDML",
+        "description": "Adobe InDesign IDML documents",
+        "mimeType": "application/vnd.adobe.indesign-idml-package",
+        "extensions": ".idml;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.idml.IDMLFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "extraction": {
+      "type": "object",
+      "title": "Extraction settings",
+      "properties": {
+        "extractNotes": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractNotes",
+          "title": "Extract editorial notes"
+        },
+        "extractMasterSpreads": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractMasterSpreads",
+          "title": "Extract master spreads"
+        },
+        "extractCustomTextVariables": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractCustomTextVariables",
+          "title": "Extract custom text variables"
+        },
+        "extractExternalHyperlinks": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractExternalHyperlinks",
+          "title": "Extract external hyperlinks"
+        },
+        "extractHiddenLayers": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHiddenLayers",
+          "title": "Extract hidden layers"
+        },
+        "extractHiddenPasteboardItems": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHiddenPasteboardItems",
+          "title": "Extract hidden pasteboard items"
+        },
+        "extractHyperlinkTextSourcesInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractHyperlinkTextSourcesInline",
+          "title": "Extract hyperlink text inline"
+        },
+        "extractIndexTopics": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractIndexTopics",
+          "title": "Extract index topics"
+        },
+        "extractBreaksInline": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "extractBreaksInline",
+          "title": "Extract breaks inline"
+        },
+        "untagXmlStructures": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "untagXmlStructures",
+          "title": "Untag XML structures"
+        },
+        "skipDiscretionaryHyphens": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "skipDiscretionaryHyphens",
+          "title": "Skip discretionary hyphens"
+        },
+        "specialCharacterPattern": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "specialCharacterPattern",
+          "title": "Special character pattern"
+        },
+        "maxAttributeSize": {
+          "type": "integer",
+          "default": 4194304,
+          "x-flattenPath": "maxAttributeSize",
+          "title": "Maximum attribute size"
+        }
+      }
+    },
+    "formatting": {
+      "type": "object",
+      "title": "Formatting tolerance thresholds",
+      "properties": {
+        "ignoreCharacterKerning": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterKerning",
+          "title": "Ignore kerning differences"
+        },
+        "kerningMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterKerningMinIgnoranceThreshold",
+          "title": "Kerning min threshold"
+        },
+        "kerningMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterKerningMaxIgnoranceThreshold",
+          "title": "Kerning max threshold"
+        },
+        "ignoreCharacterTracking": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterTracking",
+          "title": "Ignore tracking differences"
+        },
+        "trackingMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterTrackingMinIgnoranceThreshold",
+          "title": "Tracking min threshold"
+        },
+        "trackingMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterTrackingMaxIgnoranceThreshold",
+          "title": "Tracking max threshold"
+        },
+        "ignoreCharacterLeading": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterLeading",
+          "title": "Ignore leading differences"
+        },
+        "leadingMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterLeadingMinIgnoranceThreshold",
+          "title": "Leading min threshold"
+        },
+        "leadingMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterLeadingMaxIgnoranceThreshold",
+          "title": "Leading max threshold"
+        },
+        "ignoreCharacterBaselineShift": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "ignoreCharacterBaselineShift",
+          "title": "Ignore baseline shift"
+        },
+        "baselineShiftMin": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterBaselineShiftMinIgnoranceThreshold",
+          "title": "Baseline shift min"
+        },
+        "baselineShiftMax": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "characterBaselineShiftMaxIgnoranceThreshold",
+          "title": "Baseline shift max"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "extraction",
+      "label": "Extraction settings",
+      "fields": [
+        "extraction"
+      ]
+    },
+    {
+      "id": "formatting",
+      "label": "Formatting tolerance thresholds",
+      "fields": [
+        "formatting"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "x-widget": "codeFinder"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  }
+}

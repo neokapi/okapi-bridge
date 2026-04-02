@@ -1,0 +1,402 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_basetable.v10.schema.json",
+  "version": 10,
+  "title": "Table (Generic)",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_basetable",
+    "class": "net.sf.okapi.filters.table.base.BaseTableFilter",
+    "extensions": [
+      ".txt"
+    ],
+    "mimeTypes": [
+      "text/csv"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_plaintext",
+        "name": "Plain Text",
+        "description": "Plain text files.",
+        "mimeType": "text/csv",
+        "extensions": ".txt;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.table.base.BaseTableFilter"
+      },
+      {
+        "configId": "okf_plaintext_trim_trail",
+        "name": "Plain Text (Trim Trail)",
+        "description": "Text files; trailing spaces and tabs removed from extracted lines.",
+        "mimeType": "text/csv",
+        "parametersLocation": "okf_plaintext_trim_trail.fprm",
+        "parametersRaw": "#v1\nunescapeSource.b=true\ntrimLeading.b=false\ntrimTrailing.b=true\npreserveWS.b=false\nuseCodeFinder.b=false\ncodeFinderRules=#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false\nwrapMode.i=0\nparametersClass=net.sf.okapi.filters.plaintext.base.Parameters\n",
+        "parameters": {
+          "unescapeSource": true,
+          "trimLeading": true,
+          "trimTrailing": true,
+          "preserveWS": false,
+          "useCodeFinder": false,
+          "codeFinderRules": "#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false",
+          "wrapMode": 0,
+          "columnNamesLineNum": 0,
+          "valuesStartLineNum": 1,
+          "detectColumnsMode": 0,
+          "numColumns": 2,
+          "sendHeaderMode": 0,
+          "trimMode": 1,
+          "sendColumnsMode": 1,
+          "sourceIdColumns": "",
+          "sourceColumns": 1,
+          "targetColumns": 2,
+          "commentColumns": "",
+          "commentSourceRefs": "",
+          "exposeCommentsAsMetadata": false,
+          "recordIdColumn": 0,
+          "sourceIdSourceRefs": "",
+          "sourceIdSuffixes": "",
+          "targetLanguages": "",
+          "targetSourceRefs": 1
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.table.base.BaseTableFilter"
+      },
+      {
+        "configId": "okf_plaintext_trim_all",
+        "name": "Plain Text (Trim All)",
+        "description": "Text files; leading and trailing spaces and tabs removed from extracted lines.",
+        "mimeType": "text/csv",
+        "parametersLocation": "okf_plaintext_trim_all.fprm",
+        "parametersRaw": "#v1\nunescapeSource.b=true\ntrimLeading.b=true\ntrimTrailing.b=true\npreserveWS.b=false\nuseCodeFinder.b=false\ncodeFinderRules=#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false\nwrapMode.i=0\nparametersClass=net.sf.okapi.filters.plaintext.base.Parameters\n",
+        "parameters": {
+          "unescapeSource": true,
+          "trimLeading": true,
+          "trimTrailing": true,
+          "preserveWS": false,
+          "useCodeFinder": false,
+          "codeFinderRules": "#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false",
+          "wrapMode": 0,
+          "columnNamesLineNum": 0,
+          "valuesStartLineNum": 1,
+          "detectColumnsMode": 0,
+          "numColumns": 2,
+          "sendHeaderMode": 0,
+          "trimMode": 1,
+          "sendColumnsMode": 1,
+          "sourceIdColumns": "",
+          "sourceColumns": 1,
+          "targetColumns": 2,
+          "commentColumns": "",
+          "commentSourceRefs": "",
+          "exposeCommentsAsMetadata": false,
+          "recordIdColumn": 0,
+          "sourceIdSourceRefs": "",
+          "sourceIdSuffixes": "",
+          "targetLanguages": "",
+          "targetSourceRefs": 1
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.table.base.BaseTableFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "columns": {
+      "type": "object",
+      "title": "Column definitions",
+      "properties": {
+        "numColumns": {
+          "type": "integer",
+          "default": 2,
+          "x-flattenPath": "numColumns",
+          "title": "Number of columns"
+        },
+        "sourceColumns": {
+          "type": "string",
+          "default": "1",
+          "x-flattenPath": "sourceColumns",
+          "title": "Source language columns"
+        },
+        "targetColumns": {
+          "type": "string",
+          "default": "2",
+          "x-flattenPath": "targetColumns",
+          "title": "Target language columns"
+        },
+        "targetLanguages": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "targetLanguages",
+          "title": "Target language codes"
+        },
+        "commentColumns": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "commentColumns",
+          "title": "Comment columns"
+        },
+        "sourceIdColumns": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "sourceIdColumns",
+          "title": "Source ID columns"
+        },
+        "recordIdColumn": {
+          "type": "integer",
+          "default": 0,
+          "x-flattenPath": "recordIdColumn",
+          "title": "Record ID column"
+        },
+        "columnNamesLineNum": {
+          "type": "integer",
+          "default": 0,
+          "x-flattenPath": "columnNamesLineNum",
+          "title": "Line number with column names"
+        },
+        "valuesStartLineNum": {
+          "type": "integer",
+          "default": 1,
+          "x-flattenPath": "valuesStartLineNum",
+          "title": "First data line number"
+        },
+        "detectColumnsMode": {
+          "type": "integer",
+          "default": 0,
+          "x-flattenPath": "detectColumnsMode",
+          "title": "Column detection mode"
+        },
+        "sendColumnsMode": {
+          "type": "integer",
+          "default": 1,
+          "x-flattenPath": "sendColumnsMode",
+          "title": "Column send mode"
+        },
+        "sendHeaderMode": {
+          "type": "integer",
+          "default": 0,
+          "x-flattenPath": "sendHeaderMode",
+          "title": "Header send mode"
+        }
+      }
+    },
+    "references": {
+      "type": "object",
+      "title": "Source reference columns",
+      "properties": {
+        "commentSourceRefs": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "commentSourceRefs",
+          "title": "Comment source references"
+        },
+        "sourceIdSourceRefs": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "sourceIdSourceRefs",
+          "title": "Source ID source references"
+        },
+        "sourceIdSuffixes": {
+          "type": "string",
+          "default": "",
+          "x-flattenPath": "sourceIdSuffixes",
+          "title": "Source ID suffixes"
+        },
+        "targetSourceRefs": {
+          "type": "string",
+          "default": "1",
+          "x-flattenPath": "targetSourceRefs",
+          "title": "Target source references"
+        },
+        "exposeCommentsAsMetadata": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "exposeCommentsAsMetadata",
+          "title": "Expose comments as metadata"
+        }
+      }
+    },
+    "parser": {
+      "type": "object",
+      "title": "Parser settings",
+      "properties": {
+        "preserveWS": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "preserveWS",
+          "title": "Preserve whitespace"
+        },
+        "trimLeading": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "trimLeading",
+          "title": "Trim leading whitespace"
+        },
+        "trimTrailing": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "trimTrailing",
+          "title": "Trim trailing whitespace"
+        },
+        "trimMode": {
+          "type": "integer",
+          "default": 1,
+          "x-flattenPath": "trimMode",
+          "title": "Trim mode"
+        },
+        "unescapeSource": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "unescapeSource",
+          "title": "Unescape source content"
+        },
+        "wrapMode": {
+          "type": "string",
+          "default": "NONE",
+          "enum": [
+            "NONE",
+            "SPACES",
+            "PLACEHOLDERS"
+          ],
+          "x-flattenPath": "wrapMode",
+          "title": "Line wrapping mode"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "columns",
+      "label": "Column configuration",
+      "fields": [
+        "columns"
+      ]
+    },
+    {
+      "id": "references",
+      "label": "Source reference columns",
+      "fields": [
+        "references"
+      ]
+    },
+    {
+      "id": "parser",
+      "label": "Parser settings",
+      "fields": [
+        "parser"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "x-widget": "codeFinder",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfBasetableFilterConfig",
+  "x-apiVersion": "v10",
+  "x-baseVersion": 10,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "b4a6a2b93aee",
+  "x-compositeHash": "8d7243e4f255"
+}

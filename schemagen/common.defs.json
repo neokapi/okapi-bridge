@@ -20,7 +20,8 @@
           "$ref": "#/$defs/codeFinderRules",
           "title": "Code Finder Rules",
           "x-flattenPath": "codeFinderRules",
-          "x-enabledBy": "enabled"
+          "x-enabledBy": "enabled",
+          "x-widget": "codeFinderRules"
         },
         "mergeAdjacent": {
           "type": "boolean",

@@ -1,0 +1,388 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Properties Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_properties",
+    "class": "net.sf.okapi.filters.properties.PropertiesFilter",
+    "extensions": [
+      ".properties",
+      ".lang"
+    ],
+    "mimeTypes": [
+      "text/x-properties"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_properties",
+        "name": "Java Properties",
+        "description": "Java properties files (Output used \\uHHHH escapes)",
+        "mimeType": "text/x-properties",
+        "extensions": ".properties;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.properties.PropertiesFilter"
+      },
+      {
+        "configId": "okf_properties-outputNotEscaped",
+        "name": "Java Properties (Output not escaped)",
+        "description": "Java properties files (Characters in the output encoding are not escaped)",
+        "mimeType": "text/x-properties",
+        "parametersLocation": "outputNotEscaped.fprm",
+        "parametersRaw": "#v1\nuseLD.b=true\nlocalizeOutside.b=true\nuseKeyCondition.b=false\nextractOnlyMatchingKey.b=true\nkeyCondition=.*text.*\nextraComments.b=false\ncommentsAreNotes.b=true\nescapeExtendedChars.b=false\nuseCodeFinder.b=true\ncodeFinderRules.count.i=4\ncodeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\ncodeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\ncodeFinderRules.rule2=\\{\\d.*?\\}\ncodeFinderRules.rule3=\\<(/?)\\w+[^>]*?>\ncodeFinderRules.sample=%s, %d, {1}, \\n, \\r, \\t, etc.\ncodeFinderRules.useAllRulesWhenTesting.b=true\n",
+        "parameters": {
+          "escapeExtendedChars": false,
+          "convertLFandTab": true,
+          "useKeyCondition": false,
+          "extractOnlyMatchingKey": true,
+          "keyCondition": ".*text.*",
+          "extraComments": false,
+          "commentsAreNotes": true,
+          "idLikeResname": false,
+          "useJavaEscapes": false,
+          "useCodeFinder": true,
+          "useLD": true,
+          "localizeOutside": true,
+          "codeFinderRules.count": 4,
+          "codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
+          "codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "codeFinderRules.rule2": "\\{\\d.*?\\}",
+          "codeFinderRules.rule3": "\\<(/?)\\w+[^>]*?>",
+          "codeFinderRules.sample": "%s, %d, {1}, \\n, \\r, \\t, etc.",
+          "codeFinderRules.useAllRulesWhenTesting": true,
+          "useLd": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.properties.PropertiesFilter"
+      },
+      {
+        "configId": "okf_properties-skypeLang",
+        "name": "Skype Language Files",
+        "description": "Skype language properties files (including support for HTML codes)",
+        "mimeType": "text/x-properties",
+        "extensions": ".lang;",
+        "parametersLocation": "skypeLang.fprm",
+        "parametersRaw": "#v1\nuseLD.b=true\nlocalizeOutside.b=true\nuseKeyCondition.b=false\nextractOnlyMatchingKey.b=true\nkeyCondition=.*text.*\nextraComments.b=false\ncommentsAreNotes.b=true\nescapeExtendedChars.b=false\nuseCodeFinder.b=true\ncodeFinderRules.count.i=4\ncodeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\ncodeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\ncodeFinderRules.rule2=\\{\\d.*?\\}\ncodeFinderRules.rule3=\\<(/?)\\w+[^>]*?>\ncodeFinderRules.sample=%s, %d, {1}, \\n, \\r, \\t, etc.$0a$<a attr=\"qwerty\">text</a>text<img/>$0a$Test &tl; and more.\ncodeFinderRules.useAllRulesWhenTesting.b=true\n",
+        "parameters": {
+          "escapeExtendedChars": false,
+          "convertLFandTab": true,
+          "useKeyCondition": false,
+          "extractOnlyMatchingKey": true,
+          "keyCondition": ".*text.*",
+          "extraComments": false,
+          "commentsAreNotes": true,
+          "idLikeResname": false,
+          "useJavaEscapes": false,
+          "useCodeFinder": true,
+          "useLD": true,
+          "localizeOutside": true,
+          "codeFinderRules.count": 4,
+          "codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
+          "codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "codeFinderRules.rule2": "\\{\\d.*?\\}",
+          "codeFinderRules.rule3": "\\<(/?)\\w+[^>]*?>",
+          "codeFinderRules.sample": "%s, %d, {1}, \\n, \\r, \\t, etc.$0a$<a attr=\"qwerty\">text</a>text<img/>$0a$Test &tl; and more.",
+          "codeFinderRules.useAllRulesWhenTesting": true,
+          "useLd": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.properties.PropertiesFilter"
+      },
+      {
+        "configId": "okf_properties-html-subfilter",
+        "name": "Properties with complex HTML Content",
+        "description": "Java Property content processed by an HTML subfilter",
+        "mimeType": "text/x-properties",
+        "parametersLocation": "html-subfilter.fprm",
+        "parametersRaw": "#v1\nuseLD.b=true\nlocalizeOutside.b=true\nuseKeyCondition.b=false\nextractOnlyMatchingKey.b=true\nkeyCondition=.*text.*\nextraComments.b=false\ncommentsAreNotes.b=true\nescapeExtendedChars.b=false\nuseCodeFinder.b=true\ncodeFinderRules.count.i=3\ncodeFinderRules.rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]\ncodeFinderRules.rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v\ncodeFinderRules.rule2=\\{\\d.*?\\}\ncodeFinderRules.sample=%s, %d, {1}, \\n, \\r, \\t.\ncodeFinderRules.useAllRulesWhenTesting.b=true\nsubfilter=okf_html\n",
+        "parameters": {
+          "escapeExtendedChars": false,
+          "convertLFandTab": true,
+          "useKeyCondition": false,
+          "extractOnlyMatchingKey": true,
+          "keyCondition": ".*text.*",
+          "extraComments": false,
+          "commentsAreNotes": true,
+          "idLikeResname": false,
+          "useJavaEscapes": false,
+          "useCodeFinder": true,
+          "useLD": true,
+          "localizeOutside": true,
+          "codeFinderRules.count": 3,
+          "codeFinderRules.rule0": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
+          "codeFinderRules.rule1": "(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v",
+          "codeFinderRules.rule2": "\\{\\d.*?\\}",
+          "codeFinderRules.sample": "%s, %d, {1}, \\n, \\r, \\t.",
+          "codeFinderRules.useAllRulesWhenTesting": true,
+          "subfilter": "okf_html",
+          "useLd": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.properties.PropertiesFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes"
+    },
+    "extraction": {
+      "type": "object",
+      "title": "Control what content is extracted",
+      "properties": {
+        "extractOnlyMatchingKey": {
+          "type": "boolean",
+          "default": true,
+          "title": "Extract only items with a key matching the given expression",
+          "x-editor": {
+            "widget": "radio"
+          },
+          "x-options": [
+            {
+              "value": true,
+              "label": "Extract only matching keys"
+            },
+            {
+              "value": false,
+              "label": "Do not extract matching keys"
+            }
+          ],
+          "x-flattenPath": "extractOnlyMatchingKey"
+        },
+        "useKeyCondition": {
+          "type": "boolean",
+          "default": false,
+          "title": "Use the following key condition",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-enables": [
+            "extractOnlyMatchingKey",
+            "keyCondition"
+          ],
+          "x-flattenPath": "useKeyCondition"
+        },
+        "keyCondition": {
+          "type": "string",
+          "default": ".*text.*",
+          "title": "Key condition expression",
+          "x-editor": {
+            "widget": "text"
+          },
+          "x-flattenPath": "keyCondition"
+        },
+        "localizeOutside": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "localizeOutside",
+          "title": "Localize values outside matching keys"
+        },
+        "extraComments": {
+          "type": "boolean",
+          "default": false,
+          "title": "Recognize additional comment markers",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "extraComments"
+        }
+      }
+    },
+    "notes": {
+      "type": "object",
+      "title": "Comment/note handling",
+      "properties": {
+        "commentsAreNotes": {
+          "type": "boolean",
+          "default": true,
+          "title": "Extract comments to note properties",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "commentsAreNotes"
+        }
+      }
+    },
+    "identification": {
+      "type": "object",
+      "title": "ID and naming",
+      "properties": {
+        "idLikeResname": {
+          "type": "boolean",
+          "default": false,
+          "title": "Use the key value for the text-unit ID",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "idLikeResname"
+        },
+        "useLd": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "useLd",
+          "title": "Use localization directives"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "title": "Output formatting",
+      "properties": {
+        "escapeExtendedChars": {
+          "type": "boolean",
+          "default": true,
+          "title": "Escape all extended characters (\\uHHHH notation)",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "escapeExtendedChars"
+        },
+        "useJavaEscapes": {
+          "type": "boolean",
+          "default": false,
+          "title": "Use Java Properties escaping conventions",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "useJavaEscapes"
+        },
+        "convertLFandTab": {
+          "type": "boolean",
+          "default": true,
+          "title": "Convert \\n and \\t to line-break and tab",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "convertLFandTab"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-groups": [
+    {
+      "id": "inlineCodes",
+      "label": "Inline Codes",
+      "fields": [
+        "inlineCodes"
+      ]
+    },
+    {
+      "id": "extraction",
+      "label": "Control what content is extracted",
+      "fields": [
+        "extraction"
+      ]
+    },
+    {
+      "id": "notes",
+      "label": "Comment/note handling",
+      "fields": [
+        "notes"
+      ]
+    },
+    {
+      "id": "identification",
+      "label": "ID and naming",
+      "fields": [
+        "identification"
+      ]
+    },
+    {
+      "id": "output",
+      "label": "Output formatting",
+      "fields": [
+        "output"
+      ]
+    }
+  ],
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes",
+          "x-flattenPath": "useCodeFinder",
+          "x-enables": [
+            "rules",
+            "mergeAdjacent",
+            "moveBoundaryCodes",
+            "simplifierRules"
+          ]
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "x-enabledBy": "enabled",
+          "x-widget": "codeFinder"
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move codes at segment boundaries to the skeleton",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  }
+}
