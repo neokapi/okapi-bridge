@@ -1,5 +1,7 @@
 {
   "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_xmlstream.v8.schema.json",
+  "version": 8,
   "title": "XML Stream Filter",
   "type": "object",
   "x-filter": {
@@ -510,7 +512,9 @@
   },
   "properties": {
     "inlineCodes": {
-      "$ref": "#/$defs/inlineCodes"
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
     },
     "parser": {
       "type": "object",
@@ -531,7 +535,9 @@
       }
     },
     "path": {
-      "type": "string"
+      "type": "string",
+      "title": "Configuration File Path",
+      "description": "Path to an external YAML configuration file"
     },
     "attributes": {
       "type": "object",
@@ -821,13 +827,17 @@
           "type": "boolean",
           "default": false,
           "title": "Enable Inline Code Detection",
-          "description": "Enable pattern-based detection of inline codes",
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
           "x-flattenPath": "useCodeFinder"
         },
         "rules": {
           "$ref": "#/$defs/codeFinderRules",
           "title": "Code Finder Rules",
-          "x-flattenPath": "codeFinderRules"
+          "x-flattenPath": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
         },
         "mergeAdjacent": {
           "type": "boolean",
@@ -838,13 +848,14 @@
         "moveBoundaryCodes": {
           "type": "boolean",
           "title": "Move Boundary Codes",
-          "description": "Move codes at segment boundaries to the skeleton",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
           "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
         },
         "simplifierRules": {
           "$ref": "#/$defs/simplifierRules",
           "title": "Simplifier Rules",
-          "x-flattenPath": "simplifierRules"
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
         }
       }
     },
@@ -891,5 +902,11 @@
       "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor"
     }
-  }
+  },
+  "x-kind": "OkfXmlstreamFilterConfig",
+  "x-apiVersion": "v8",
+  "x-baseVersion": 10,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "f79ec29702bb",
+  "x-compositeHash": "92764a7ee204"
 }

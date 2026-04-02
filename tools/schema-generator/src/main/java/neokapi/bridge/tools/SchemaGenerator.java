@@ -43,6 +43,22 @@ public class SchemaGenerator {
     private final JsonObject resMetadata;
     private final JsonObject helpMetadata;
 
+    // Internal implementation fields that leak from introspection but are not
+    // user-facing configuration parameters. Excluded from both filter and step schemas.
+    private static final java.util.Set<String> EXCLUDED_PROPERTIES = java.util.Set.of(
+            // Array stems (collapsed into "patterns" array)
+            "usePattern", "fromSourcePattern", "singlePattern", "severityPattern",
+            "sourcePattern", "targetPattern", "descPattern", "patternCount",
+            // Leaked enum values
+            "None", "Transitional", "Strict",                    // xliffSchemaType values
+            "tmx", "po", "table", "pensieve", "corpus",         // format-conversion format constants
+            "wordtable", "xliff",                                // format-conversion format constants
+            "original", "generic", "plain",                      // inconsistency-check display options
+            "translation_type", "translation_status",            // xliff-splitter IWS attribute names
+            ".qccfg",                                            // quality-check file extension constant
+            // AbstractMarkupParameters internal fields (not user-facing config)
+            "editorTitle", "taggedConfig");
+
     public SchemaGenerator() {
         this.introspector = new ParameterIntrospector();
         this.transformer = new SchemaTransformer();
@@ -206,26 +222,13 @@ public class SchemaGenerator {
 
         // Known bare stems from array-encoded parameters (collapsed by StepSchemaGenerator).
         // These appear in introspection but are serialization artifacts, not real parameters.
-        // Known bare stems from array-encoded parameters (collapsed by StepSchemaGenerator)
-        // and leaked constant values (enum values, file extensions, attribute names).
-        // These appear in introspection results but are not real parameters.
-        java.util.Set<String> excludeFromEnrichment = java.util.Set.of(
-                // Array stems (collapsed into "patterns" array)
-                "usePattern", "fromSourcePattern", "singlePattern", "severityPattern",
-                "sourcePattern", "targetPattern", "descPattern", "patternCount",
-                // Leaked enum values
-                "None", "Transitional", "Strict",                    // xliffSchemaType values
-                "tmx", "po", "table", "pensieve", "corpus",         // format-conversion format constants
-                "wordtable", "xliff",                                // format-conversion format constants
-                "original", "generic", "plain",                      // inconsistency-check display options
-                "translation_type", "translation_status",            // xliff-splitter IWS attribute names
-                ".qccfg");                                           // quality-check file extension constant
+        // Use the class-level exclude set for internal implementation fields
 
         // Build enriched properties using the transformer.
         JsonObject enrichedProps = new JsonObject();
         for (Map.Entry<String, ParameterIntrospector.ParamInfo> entry : params.entrySet()) {
             String paramName = entry.getKey();
-            if (excludeFromEnrichment.contains(paramName)) continue;
+            if (EXCLUDED_PROPERTIES.contains(paramName)) continue;
             ParameterIntrospector.ParamInfo paramInfo = entry.getValue();
 
             JsonObject propSchema = transformer.transformParameter(paramName, paramInfo);
@@ -299,11 +302,16 @@ public class SchemaGenerator {
             for (Map.Entry<String, ParameterIntrospector.ParamInfo> entry : params.entrySet()) {
                 String paramName = entry.getKey();
                 ParameterIntrospector.ParamInfo paramInfo = entry.getValue();
-                
+
+                // Skip internal implementation fields (not user-facing config)
+                if (EXCLUDED_PROPERTIES.contains(paramName)) continue;
+                // Skip invalid property names
+                if (!paramName.matches("[a-zA-Z][a-zA-Z0-9_]*")) continue;
+
                 if ("elementRules".equals(paramInfo.okapiFormat) || "attributeRules".equals(paramInfo.okapiFormat)) {
                     needsYamlDefs = true;
                 }
-                
+
                 JsonObject propSchema = transformer.transformParameter(paramName, paramInfo);
                 if (propSchema != null) {
                     properties.add(paramName, propSchema);
