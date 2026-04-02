@@ -1,0 +1,59 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_autoxliff.v4.schema.json",
+  "version": 4,
+  "title": "XLIFF 1.2 and 2.0 Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_autoxliff",
+    "class": "net.sf.okapi.filters.autoxliff.AutoXLIFFFilter",
+    "extensions": [
+      ".xlf",
+      ".xliff",
+      ".xlf2",
+      ".xliff2"
+    ],
+    "mimeTypes": [
+      "application/xliff+xml"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_autoxliff",
+        "name": "XLIFF 1.2 and 2.0 Filter",
+        "description": "Calls the appropriate filter for any version of XLIFF",
+        "mimeType": "application/xliff+xml",
+        "extensions": ".xlf;.xliff;.xlf2;.xliff2",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.autoxliff.AutoXLIFFFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "general": {
+      "type": "object",
+      "title": "Configuration selection",
+      "properties": {
+        "xliffConfig": {
+          "type": "string",
+          "default": "okf_xliff",
+          "x-flattenPath": "xliff_config",
+          "title": "XLIFF 1.x filter configuration"
+        },
+        "xliff2Config": {
+          "type": "string",
+          "default": "okf_xliff2",
+          "x-flattenPath": "xliff2_config",
+          "title": "XLIFF 2.0 filter configuration"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-kind": "OkfAutoxliffFilterConfig",
+  "x-apiVersion": "v4",
+  "x-baseVersion": 4,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "dc57d40fac4b",
+  "x-compositeHash": "dc57d40fac4b"
+}

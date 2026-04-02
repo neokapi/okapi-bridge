@@ -1,0 +1,168 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_vtt.v3.schema.json",
+  "version": 3,
+  "title": "VTT Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_vtt",
+    "class": "net.sf.okapi.filters.vtt.VTTFilter",
+    "extensions": [
+      ".vtt",
+      ".srt"
+    ],
+    "mimeTypes": [
+      "text/vtt"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_vtt",
+        "name": "VTT",
+        "description": "VTT Documents",
+        "mimeType": "text/vtt",
+        "extensions": ".vtt;.srt",
+        "parametersLocation": "okf_vtt.fprm",
+        "parametersRaw": "#v1\ntimeFormat=HH:mm:ss.SSS\nmaxLinesPerCaption.i=2\nmaxCharsPerLine.i=47\ncjkCharsPerLine.i=18\n",
+        "parameters": {
+          "timeFormat": "HH:mm:ss.SSS",
+          "maxLinesPerCaption": 2,
+          "maxCharsPerLine": 47,
+          "cjkCharsPerLine": 18
+        },
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.vtt.VTTFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "extraction": {
+      "type": "object",
+      "title": "Extraction settings",
+      "properties": {
+        "discardCues": {
+          "type": "boolean",
+          "default": false,
+          "title": "Discard existing cue settings",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "discardCues"
+        },
+        "cueSettings": {
+          "type": "string",
+          "default": "",
+          "title": "Replace existing cue settings with text",
+          "x-editor": {
+            "widget": "text",
+            "enabledBy": {
+              "parameter": "discardCues",
+              "enabledWhenSelected": false
+            },
+            "layout": {
+              "vertical": true
+            },
+            "text": {
+              "allowEmpty": true
+            }
+          },
+          "x-flattenPath": "cueSettings"
+        }
+      }
+    },
+    "output": {
+      "type": "object",
+      "title": "Output settings",
+      "properties": {
+        "keepTimecodes": {
+          "type": "boolean",
+          "default": false,
+          "title": "Keep timecodes",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "keepTimecodes"
+        },
+        "timeFormat": {
+          "type": "string",
+          "default": "",
+          "title": "Time format",
+          "x-editor": {
+            "widget": "text",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "timeFormat"
+        },
+        "maxCharsPerLine": {
+          "type": "integer",
+          "default": 0,
+          "title": "Max characters per line",
+          "minimum": 1,
+          "maximum": 9999999,
+          "x-editor": {
+            "widget": "spin",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "maxCharsPerLine"
+        },
+        "maxLinesPerCaption": {
+          "type": "integer",
+          "default": 0,
+          "title": "Max lines per caption",
+          "minimum": 1,
+          "maximum": 9999999,
+          "x-editor": {
+            "widget": "spin",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "maxLinesPerCaption"
+        },
+        "cjkCharsPerLine": {
+          "type": "integer",
+          "default": 0,
+          "title": "Max characters per line for CJK",
+          "minimum": 1,
+          "maximum": 9999999,
+          "x-editor": {
+            "widget": "spin",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "cjkCharsPerLine"
+        },
+        "splitWords": {
+          "type": "boolean",
+          "default": false,
+          "title": "Split words so that they don't go over the char limit",
+          "x-editor": {
+            "widget": "checkbox",
+            "layout": {
+              "vertical": true
+            }
+          },
+          "x-flattenPath": "splitWords"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "x-kind": "OkfVttFilterConfig",
+  "x-apiVersion": "v3",
+  "x-baseVersion": 7,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "bf5be390c157",
+  "x-compositeHash": "bf5be390c157"
+}

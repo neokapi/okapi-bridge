@@ -1,0 +1,150 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_ts.v5.schema.json",
+  "version": 5,
+  "title": "TS Filter",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_ts",
+    "class": "net.sf.okapi.filters.ts.TsFilter",
+    "extensions": [
+      ".ts"
+    ],
+    "mimeTypes": [
+      "application/x-ts"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_ts",
+        "name": "TS",
+        "description": "Configuration for Qt TS files.",
+        "mimeType": "application/x-ts",
+        "extensions": ".ts;",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.ts.TsFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "output": {
+      "type": "object",
+      "title": "Output settings",
+      "properties": {
+        "escapeGT": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "escapeGT",
+          "title": "Escape greater-than in output"
+        },
+        "decodeByteValues": {
+          "type": "boolean",
+          "default": false,
+          "title": "Convert byte values to raw characters",
+          "x-editor": {
+            "widget": "checkbox"
+          },
+          "x-flattenPath": "decodeByteValues"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Has Inline Codes",
+          "description": "Enable pattern-based inline code detection using the defined regular expressions.",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfTsFilterConfig",
+  "x-apiVersion": "v5",
+  "x-baseVersion": 5,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "eec0fc54284b",
+  "x-compositeHash": "88173ff87724"
+}

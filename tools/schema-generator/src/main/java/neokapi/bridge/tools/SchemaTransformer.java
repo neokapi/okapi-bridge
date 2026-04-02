@@ -753,8 +753,12 @@ public class SchemaTransformer {
                 if (flatProperties.has(flattenPath)) {
                     JsonObject originalProp = flatProperties.getAsJsonObject(flattenPath).deepCopy();
                     originalProp.addProperty("x-flattenPath", flattenPath);
-                    // Override description if provided in grouping
-                    if (propDef.has("description")) {
+                    // Apply title from grouping (short label)
+                    if (propDef.has("title") && !originalProp.has("title")) {
+                        originalProp.addProperty("title", propDef.get("title").getAsString());
+                    }
+                    // Apply description from grouping (if provided and not already set)
+                    if (propDef.has("description") && !originalProp.has("description")) {
                         originalProp.addProperty("description", propDef.get("description").getAsString());
                     }
                     groupProperties.add(cleanName, originalProp);

@@ -1,0 +1,249 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_splicedlines.v5.schema.json",
+  "version": 5,
+  "title": "Plain Text (Spliced Lines)",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_splicedlines",
+    "class": "net.sf.okapi.filters.plaintext.spliced.SplicedLinesFilter",
+    "extensions": [],
+    "mimeTypes": [
+      "text/plain"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_plaintext_spliced",
+        "name": "Spliced Lines",
+        "description": "Extracts as one line the consecutive lines with a predefined splicer character at the end.",
+        "mimeType": "text/plain",
+        "parametersLocation": "okf_plaintext_spliced.fprm",
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.plaintext.spliced.SplicedLinesFilter"
+      },
+      {
+        "configId": "okf_plaintext_spliced_backslash",
+        "name": "Spliced Lines (Backslash)",
+        "description": "Spliced lines filter with the backslash character (\\) used as the splicer.",
+        "mimeType": "text/plain",
+        "parametersLocation": "okf_plaintext_spliced_backslash.fprm",
+        "parametersRaw": "#v1\nunescapeSource.b=true\ntrimLeading.b=false\ntrimTrailing.b=false\npreserveWS.b=true\nuseCodeFinder.b=false\ncodeFinderRules=#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false\nwrapMode.i=0\nsplicer=\\\ncreatePlaceholders.b=true\nparametersClass=net.sf.okapi.filters.plaintext.spliced.Parameters\n",
+        "parameters": {
+          "unescapeSource": true,
+          "trimLeading": false,
+          "trimTrailing": false,
+          "preserveWS": true,
+          "useCodeFinder": false,
+          "codeFinderRules": "#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false",
+          "wrapMode": 0,
+          "splicer": "\\",
+          "createPlaceholders": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.plaintext.spliced.SplicedLinesFilter"
+      },
+      {
+        "configId": "okf_plaintext_spliced_underscore",
+        "name": "Spliced Lines (Underscore)",
+        "description": "Spliced lines filter with the underscore character (_) used as the splicer.",
+        "mimeType": "text/plain",
+        "parametersLocation": "okf_plaintext_spliced_underscore.fprm",
+        "parametersRaw": "#v1\nunescapeSource.b=true\ntrimLeading.b=false\ntrimTrailing.b=false\npreserveWS.b=true\nuseCodeFinder.b=false\ncodeFinderRules=#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false\nwrapMode.i=0\nsplicer=_\ncreatePlaceholders.b=true\nparametersClass=net.sf.okapi.filters.plaintext.spliced.Parameters\n",
+        "parameters": {
+          "unescapeSource": true,
+          "trimLeading": false,
+          "trimTrailing": false,
+          "preserveWS": true,
+          "useCodeFinder": false,
+          "codeFinderRules": "#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false",
+          "wrapMode": 0,
+          "splicer": "_",
+          "createPlaceholders": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.plaintext.spliced.SplicedLinesFilter"
+      },
+      {
+        "configId": "okf_plaintext_spliced_custom",
+        "name": "Spliced Lines (Custom)",
+        "description": "Spliced lines filter with a user-defined splicer.",
+        "mimeType": "text/plain",
+        "parametersLocation": "okf_plaintext_spliced_custom.fprm",
+        "parametersRaw": "#v1\nunescapeSource.b=true\ntrimLeading.b=false\ntrimTrailing.b=false\npreserveWS.b=true\nuseCodeFinder.b=false\ncodeFinderRules=#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false\nwrapMode.i=0\nsplicer=\ncreatePlaceholders.b=true\nparametersClass=net.sf.okapi.filters.plaintext.spliced.Parameters\n",
+        "parameters": {
+          "unescapeSource": true,
+          "trimLeading": false,
+          "trimTrailing": false,
+          "preserveWS": true,
+          "useCodeFinder": false,
+          "codeFinderRules": "#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false",
+          "wrapMode": 0,
+          "splicer": "",
+          "createPlaceholders": true
+        },
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.plaintext.spliced.SplicedLinesFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "extraction": {
+      "type": "object",
+      "title": "Extraction settings",
+      "properties": {
+        "splicer": {
+          "type": "string",
+          "default": "\\",
+          "x-flattenPath": "splicer",
+          "title": "Line splicer pattern"
+        },
+        "createPlaceholders": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "createPlaceholders",
+          "title": "Create inline placeholders"
+        }
+      }
+    },
+    "parser": {
+      "type": "object",
+      "title": "Parser settings",
+      "properties": {
+        "preserveWS": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "preserveWS",
+          "title": "Preserve whitespace"
+        },
+        "trimLeading": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "trimLeading",
+          "title": "Trim leading whitespace"
+        },
+        "trimTrailing": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "trimTrailing",
+          "title": "Trim trailing whitespace"
+        },
+        "unescapeSource": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "unescapeSource",
+          "title": "Unescape source content"
+        },
+        "wrapMode": {
+          "type": "string",
+          "default": "NONE",
+          "enum": [
+            "NONE",
+            "SPACES",
+            "PLACEHOLDERS"
+          ],
+          "x-flattenPath": "wrapMode",
+          "title": "Line wrapping mode"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfSplicedlinesFilterConfig",
+  "x-apiVersion": "v5",
+  "x-baseVersion": 5,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "957e4ff8e965",
+  "x-compositeHash": "8a219ea141ce"
+}

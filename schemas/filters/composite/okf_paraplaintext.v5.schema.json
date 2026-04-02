@@ -1,0 +1,200 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://neokapi.github.io/schemas/filters/okf_paraplaintext.v5.schema.json",
+  "version": 5,
+  "title": "Plain Text (Paragraph-Based)",
+  "type": "object",
+  "x-filter": {
+    "id": "okf_paraplaintext",
+    "class": "net.sf.okapi.filters.plaintext.paragraphs.ParaPlainTextFilter",
+    "extensions": [],
+    "mimeTypes": [
+      "text/plain"
+    ],
+    "configurations": [
+      {
+        "configId": "okf_plaintext_paragraphs",
+        "name": "Plain Text (Paragraphs)",
+        "description": "Text files extracted by paragraphs (separated by 1 or more empty lines).",
+        "mimeType": "text/plain",
+        "parametersLocation": "okf_plaintext_paragraphs.fprm",
+        "parametersRaw": "#v1\nunescapeSource.b=true\ntrimLeading.b=false\ntrimTrailing.b=false\npreserveWS.b=true\nuseCodeFinder.b=false\ncodeFinderRules=#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false\nwrapMode.i=0\nextractParagraphs.b=true\nparametersClass=net.sf.okapi.filters.plaintext.paragraphs.Parameters\n",
+        "parameters": {
+          "unescapeSource": true,
+          "trimLeading": false,
+          "trimTrailing": false,
+          "preserveWS": true,
+          "useCodeFinder": false,
+          "codeFinderRules": "#v1$0a$count.i=2$0a$rule0=%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]$0a$rule1=(\\\\r\\\\n)|\\\\a|\\\\b|\\\\f|\\\\n|\\\\r|\\\\t|\\\\v$0a$sample=$0a$useAllRulesWhenTesting.b=false",
+          "wrapMode": 0,
+          "extractParagraphs": true
+        },
+        "isDefault": true,
+        "filterClass": "net.sf.okapi.filters.plaintext.paragraphs.ParaPlainTextFilter"
+      },
+      {
+        "configId": "okf_plaintext_paragraphs_lines",
+        "name": "Plain Text (Lines)",
+        "description": "Text files extracted by lines (each line is a text unit).",
+        "mimeType": "text/plain",
+        "parametersLocation": "okf_plaintext_paragraphs_lines.fprm",
+        "isDefault": false,
+        "filterClass": "net.sf.okapi.filters.plaintext.paragraphs.ParaPlainTextFilter"
+      }
+    ],
+    "serializationFormat": "stringParameters"
+  },
+  "properties": {
+    "inlineCodes": {
+      "$ref": "#/$defs/inlineCodes",
+      "title": "Inline Codes",
+      "description": "Pattern-based detection of inline codes (placeholders, variables, tags) within translatable text."
+    },
+    "extraction": {
+      "type": "object",
+      "title": "Extraction settings",
+      "properties": {
+        "extractParagraphs": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "extractParagraphs",
+          "title": "Extract by paragraph"
+        }
+      }
+    },
+    "parser": {
+      "type": "object",
+      "title": "Parser settings",
+      "properties": {
+        "preserveWS": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "preserveWS",
+          "title": "Preserve whitespace"
+        },
+        "trimLeading": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "trimLeading",
+          "title": "Trim leading whitespace"
+        },
+        "trimTrailing": {
+          "type": "boolean",
+          "default": false,
+          "x-flattenPath": "trimTrailing",
+          "title": "Trim trailing whitespace"
+        },
+        "unescapeSource": {
+          "type": "boolean",
+          "default": true,
+          "x-flattenPath": "unescapeSource",
+          "title": "Unescape source content"
+        },
+        "wrapMode": {
+          "type": "string",
+          "default": "NONE",
+          "enum": [
+            "NONE",
+            "SPACES",
+            "PLACEHOLDERS"
+          ],
+          "x-flattenPath": "wrapMode",
+          "title": "Line wrapping mode"
+        }
+      }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "inlineCodes": {
+      "type": "object",
+      "title": "Inline Codes",
+      "description": "Inline code detection and handling",
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "default": false,
+          "title": "Enable Inline Code Detection",
+          "description": "Enable pattern-based detection of inline codes (placeholders, tags, etc.)",
+          "x-flattenPath": "useCodeFinder"
+        },
+        "rules": {
+          "$ref": "#/$defs/codeFinderRules",
+          "title": "Code Finder Rules",
+          "x-flattenPath": "codeFinderRules",
+          "description": "Regex patterns to identify inline codes in translatable text",
+          "x-editor": {
+            "widget": "codeFinderRules"
+          }
+        },
+        "mergeAdjacent": {
+          "type": "boolean",
+          "title": "Merge Adjacent Codes",
+          "description": "Merge consecutive inline codes into a single placeholder",
+          "x-flattenPath": "mergeAdjacentCodes"
+        },
+        "moveBoundaryCodes": {
+          "type": "boolean",
+          "title": "Move Boundary Codes",
+          "description": "Move inline codes at segment boundaries to the skeleton (non-translatable)",
+          "x-flattenPath": "moveLeadingAndTrailingCodesToSkeleton"
+        },
+        "simplifierRules": {
+          "$ref": "#/$defs/simplifierRules",
+          "title": "Simplifier Rules",
+          "x-flattenPath": "simplifierRules",
+          "description": "Rules for simplifying inline code representation"
+        }
+      }
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "title": "Code Finder Rules",
+      "description": "Regex patterns for inline code detection",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "title": "Patterns",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "title": "Pattern",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "title": "Sample Text",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "title": "Test All Rules Together",
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
+    },
+    "simplifierRules": {
+      "type": "string",
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation",
+      "x-widget": "simplifierRulesEditor"
+    }
+  },
+  "x-kind": "OkfParaplaintextFilterConfig",
+  "x-apiVersion": "v5",
+  "x-baseVersion": 5,
+  "x-introducedInOkapi": "1.47.0",
+  "x-baseHash": "26e27df18874",
+  "x-compositeHash": "7ea310d62197"
+}

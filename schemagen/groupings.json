@@ -25,23 +25,23 @@
       "properties": {
         "extractAll": {
           "flattenPath": "extractAllPairs",
-          "description": "Extract all key-value pairs"
+          "title": "Extract all key-value pairs"
         },
         "pathRules": {
           "flattenPath": "extractionRules",
-          "description": "Regex for JSON paths to extract"
+          "title": "Regex for JSON paths to extract"
         },
         "includeIsolatedStrings": {
           "flattenPath": "extractIsolatedStrings",
-          "description": "Extract array string values without keys"
+          "title": "Extract array string values without keys"
         },
         "excludeKeys": {
           "flattenPath": "exceptions",
-          "description": "Comma-separated keys to exclude from extraction"
+          "title": "Comma-separated keys to exclude from extraction"
         },
         "subfilterRules": {
           "flattenPath": "subfilterRules",
-          "description": "Sub-filter rules for embedded content"
+          "title": "Sub-filter rules for embedded content"
         }
       },
       "title": "Control what content is extracted for translation"
@@ -50,23 +50,23 @@
       "properties": {
         "useAsName": {
           "flattenPath": "useKeyAsName",
-          "description": "Use JSON key as text unit name"
+          "title": "Use JSON key as text unit name"
         },
         "useFullPath": {
           "flattenPath": "useFullKeyPath",
-          "description": "Use full path (/key1/key2) as name"
+          "title": "Use full path (/key1/key2) as name"
         },
         "leadingSlash": {
           "flattenPath": "useLeadingSlashOnKeyPath",
-          "description": "Include leading slash in paths"
+          "title": "Include leading slash in paths"
         },
         "useIdStack": {
           "flattenPath": "useIdStack",
-          "description": "Build IDs from nested key stack"
+          "title": "Build IDs from nested key stack"
         },
         "idRules": {
           "flattenPath": "idRules",
-          "description": "Regex for keys used as text unit IDs"
+          "title": "Regex for keys used as text unit IDs"
         }
       },
       "title": "Configure how JSON keys map to text unit identification"
@@ -75,15 +75,15 @@
       "properties": {
         "noteRules": {
           "flattenPath": "noteRules",
-          "description": "Regex for translator note keys"
+          "title": "Regex for translator note keys"
         },
         "metaRules": {
           "flattenPath": "genericMetaRules",
-          "description": "Regex for generic metadata keys"
+          "title": "Regex for generic metadata keys"
         },
         "maxwidthRules": {
           "flattenPath": "maxwidthRules",
-          "description": "Regex for max width constraint keys"
+          "title": "Regex for max width constraint keys"
         }
       },
       "title": "Configure metadata extraction rules"
@@ -92,7 +92,7 @@
       "properties": {
         "escapeSlashes": {
           "flattenPath": "escapeForwardSlashes",
-          "description": "Escape forward slashes in output"
+          "title": "Escape forward slashes in output"
         }
       },
       "title": "Output formatting options"
@@ -103,15 +103,15 @@
       "properties": {
         "extractAll": {
           "flattenPath": "extractAllPairs",
-          "description": "Extract all key-value pairs"
+          "title": "Extract all key-value pairs"
         },
         "includeIsolatedStrings": {
           "flattenPath": "extractIsolatedStrings",
-          "description": "Extract array string values"
+          "title": "Extract array string values"
         },
         "excludeKeys": {
           "flattenPath": "exceptions",
-          "description": "Comma-separated keys to exclude"
+          "title": "Comma-separated keys to exclude"
         }
       },
       "title": "Control what content is extracted for translation"
@@ -120,11 +120,11 @@
       "properties": {
         "useAsName": {
           "flattenPath": "useKeyAsName",
-          "description": "Use YAML key as text unit name"
+          "title": "Use YAML key as text unit name"
         },
         "useFullPath": {
           "flattenPath": "useFullKeyPath",
-          "description": "Use full path as name"
+          "title": "Use full path as name"
         }
       },
       "title": "Configure how YAML keys map to text unit identification"
@@ -133,15 +133,15 @@
       "properties": {
         "escapeNonAscii": {
           "flattenPath": "escapeNonAscii",
-          "description": "Escape non-ASCII characters"
+          "title": "Escape non-ASCII characters"
         },
         "wrap": {
           "flattenPath": "wrap",
-          "description": "Line wrapping mode"
+          "title": "Line wrapping mode"
         },
         "subFilterProcessLiteralAsBlock": {
           "flattenPath": "subFilterProcessLiteralAsBlock",
-          "description": "Process literal blocks with sub-filter"
+          "title": "Process literal blocks with sub-filter"
         }
       },
       "title": "Output formatting options"
@@ -152,23 +152,23 @@
       "properties": {
         "extractOnlyMatchingKey": {
           "flattenPath": "extractOnlyMatchingKey",
-          "description": "Only extract keys matching condition"
+          "title": "Only extract keys matching condition"
         },
         "useKeyCondition": {
           "flattenPath": "useKeyCondition",
-          "description": "Enable key filtering condition"
+          "title": "Enable key filtering condition"
         },
         "keyCondition": {
           "flattenPath": "keyCondition",
-          "description": "Regex condition for key extraction"
+          "title": "Regex condition for key extraction"
         },
         "localizeOutside": {
           "flattenPath": "localizeOutside",
-          "description": "Localize values outside matching keys"
+          "title": "Localize values outside matching keys"
         },
         "extraComments": {
           "flattenPath": "extraComments",
-          "description": "Include extra comment lines"
+          "title": "Include extra comment lines"
         }
       },
       "title": "Control what content is extracted"
@@ -177,7 +177,7 @@
       "properties": {
         "commentsAreNotes": {
           "flattenPath": "commentsAreNotes",
-          "description": "Treat comments as translator notes"
+          "title": "Treat comments as translator notes"
         }
       },
       "title": "Comment/note handling"
@@ -186,11 +186,11 @@
       "properties": {
         "idLikeResname": {
           "flattenPath": "idLikeResname",
-          "description": "Use resource name as ID"
+          "title": "Use resource name as ID"
         },
         "useLd": {
           "flattenPath": "useLd",
-          "description": "Use localization directives"
+          "title": "Use localization directives"
         }
       },
       "title": "ID and naming"
@@ -199,15 +199,15 @@
       "properties": {
         "escapeExtendedChars": {
           "flattenPath": "escapeExtendedChars",
-          "description": "Escape extended characters in output"
+          "title": "Escape extended characters in output"
         },
         "useJavaEscapes": {
           "flattenPath": "useJavaEscapes",
-          "description": "Use Java-style unicode escapes"
+          "title": "Use Java-style unicode escapes"
         },
         "convertLFandTab": {
           "flattenPath": "convertLFandTab",
-          "description": "Convert LF and tab characters"
+          "title": "Convert LF and tab characters"
         }
       },
       "title": "Output formatting"
@@ -218,39 +218,39 @@
       "properties": {
         "preserveSpaceByDefault": {
           "flattenPath": "preserveSpaceByDefault",
-          "description": "Preserve whitespace by default"
+          "title": "Preserve whitespace by default"
         },
         "includeExtensions": {
           "flattenPath": "includeExtensions",
-          "description": "Include XLIFF extension elements"
+          "title": "Include XLIFF extension elements"
         },
         "includeIts": {
           "flattenPath": "includeIts",
-          "description": "Include ITS annotations"
+          "title": "Include ITS annotations"
         },
         "inlineCdata": {
           "flattenPath": "inlineCdata",
-          "description": "Treat CDATA sections as inline"
+          "title": "Treat CDATA sections as inline"
         },
         "subAsTextUnit": {
           "flattenPath": "subAsTextUnit",
-          "description": "Process sub elements as text units"
+          "title": "Process sub elements as text units"
         },
         "ignoreInputSegmentation": {
           "flattenPath": "ignoreInputSegmentation",
-          "description": "Ignore existing segmentation"
+          "title": "Ignore existing segmentation"
         },
         "skipNoMrkSegSource": {
           "flattenPath": "skipNoMrkSegSource",
-          "description": "Skip seg-source without mrk elements"
+          "title": "Skip seg-source without mrk elements"
         },
         "fallbackToID": {
           "flattenPath": "fallbackToID",
-          "description": "Fall back to trans-unit ID"
+          "title": "Fall back to trans-unit ID"
         },
         "forceUniqueIds": {
           "flattenPath": "forceUniqueIds",
-          "description": "Force unique text unit IDs"
+          "title": "Force unique text unit IDs"
         }
       },
       "title": "Control what content is extracted"
@@ -259,27 +259,27 @@
       "properties": {
         "targetStateMode": {
           "flattenPath": "targetStateMode",
-          "description": "How to handle target state attribute"
+          "title": "How to handle target state attribute"
         },
         "targetStateValue": {
           "flattenPath": "targetStateValue",
-          "description": "State value to set on targets"
+          "title": "State value to set on targets"
         },
         "useTranslationTargetState": {
           "flattenPath": "useTranslationTargetState",
-          "description": "Use translation-specific target state"
+          "title": "Use translation-specific target state"
         },
         "editAltTrans": {
           "flattenPath": "editAltTrans",
-          "description": "Edit alt-trans elements"
+          "title": "Edit alt-trans elements"
         },
         "addAltTrans": {
           "flattenPath": "addAltTrans",
-          "description": "Add alt-trans for existing translations"
+          "title": "Add alt-trans for existing translations"
         },
         "addAltTransGMode": {
           "flattenPath": "addAltTransGMode",
-          "description": "Alt-trans mode for group-level"
+          "title": "Alt-trans mode for group-level"
         }
       },
       "title": "Translation state handling"
@@ -288,27 +288,27 @@
       "properties": {
         "addTargetLanguage": {
           "flattenPath": "addTargetLanguage",
-          "description": "Add target-language attribute"
+          "title": "Add target-language attribute"
         },
         "overrideTargetLanguage": {
           "flattenPath": "overrideTargetLanguage",
-          "description": "Override target language in output"
+          "title": "Override target language in output"
         },
         "allowEmptyTargets": {
           "flattenPath": "allowEmptyTargets",
-          "description": "Allow empty target elements"
+          "title": "Allow empty target elements"
         },
         "alwaysAddTargets": {
           "flattenPath": "alwaysAddTargets",
-          "description": "Always add target elements"
+          "title": "Always add target elements"
         },
         "alwaysUseSegSource": {
           "flattenPath": "alwaysUseSegSource",
-          "description": "Always use seg-source"
+          "title": "Always use seg-source"
         },
         "outputSegmentationType": {
           "flattenPath": "outputSegmentationType",
-          "description": "Output segmentation type"
+          "title": "Output segmentation type"
         }
       },
       "title": "Output formatting and behavior"
@@ -317,11 +317,11 @@
       "properties": {
         "cdataSubfilter": {
           "flattenPath": "cdataSubfilter",
-          "description": "Sub-filter for CDATA content"
+          "title": "Sub-filter for CDATA content"
         },
         "pcdataSubfilter": {
           "flattenPath": "pcdataSubfilter",
-          "description": "Sub-filter for PCDATA content"
+          "title": "Sub-filter for PCDATA content"
         }
       },
       "title": "Sub-filter configuration"
@@ -330,11 +330,11 @@
       "properties": {
         "useCustomParser": {
           "flattenPath": "useCustomParser",
-          "description": "Use custom parser"
+          "title": "Use custom parser"
         },
         "factoryClass": {
           "flattenPath": "factoryClass",
-          "description": "Custom parser factory class"
+          "title": "Custom parser factory class"
         }
       },
       "title": "Parser settings"
@@ -343,23 +343,23 @@
       "properties": {
         "useSdlXliffWriter": {
           "flattenPath": "useSdlXliffWriter",
-          "description": "Use SDL XLIFF writer"
+          "title": "Use SDL XLIFF writer"
         },
         "useSegsForSdlProps": {
           "flattenPath": "useSegsForSdlProps",
-          "description": "Use segments for SDL properties"
+          "title": "Use segments for SDL properties"
         },
         "sdlSegConfValue": {
           "flattenPath": "sdlSegConfValue",
-          "description": "SDL segment confidence value"
+          "title": "SDL segment confidence value"
         },
         "sdlSegLockedValue": {
           "flattenPath": "sdlSegLockedValue",
-          "description": "SDL segment locked value"
+          "title": "SDL segment locked value"
         },
         "sdlSegOriginValue": {
           "flattenPath": "sdlSegOriginValue",
-          "description": "SDL segment origin value"
+          "title": "SDL segment origin value"
         }
       },
       "title": "SDL XLIFF extensions"
@@ -368,43 +368,43 @@
       "properties": {
         "useIwsXliffWriter": {
           "flattenPath": "useIwsXliffWriter",
-          "description": "Use IWS XLIFF writer"
+          "title": "Use IWS XLIFF writer"
         },
         "iwsBlockFinished": {
           "flattenPath": "iwsBlockFinished",
-          "description": "IWS block finished state"
+          "title": "IWS block finished state"
         },
         "iwsBlockLockStatus": {
           "flattenPath": "iwsBlockLockStatus",
-          "description": "IWS lock status"
+          "title": "IWS lock status"
         },
         "iwsBlockMultipleExact": {
           "flattenPath": "iwsBlockMultipleExact",
-          "description": "IWS multiple exact matches"
+          "title": "IWS multiple exact matches"
         },
         "iwsBlockTmScore": {
           "flattenPath": "iwsBlockTmScore",
-          "description": "IWS TM score threshold"
+          "title": "IWS TM score threshold"
         },
         "iwsBlockTmScoreValue": {
           "flattenPath": "iwsBlockTmScoreValue",
-          "description": "IWS TM score value"
+          "title": "IWS TM score value"
         },
         "iwsIncludeMultipleExact": {
           "flattenPath": "iwsIncludeMultipleExact",
-          "description": "Include multiple exact matches"
+          "title": "Include multiple exact matches"
         },
         "iwsRemoveTmOrigin": {
           "flattenPath": "iwsRemoveTmOrigin",
-          "description": "Remove TM origin"
+          "title": "Remove TM origin"
         },
         "iwsTransStatusValue": {
           "flattenPath": "iwsTransStatusValue",
-          "description": "IWS translation status value"
+          "title": "IWS translation status value"
         },
         "iwsTransTypeValue": {
           "flattenPath": "iwsTransTypeValue",
-          "description": "IWS translation type value"
+          "title": "IWS translation type value"
         }
       },
       "title": "Idiom WorldServer extensions"
@@ -415,19 +415,19 @@
       "properties": {
         "needsSegmentation": {
           "flattenPath": "needsSegmentation",
-          "description": "Apply segmentation to content"
+          "title": "Apply segmentation to content"
         },
         "forceUniqueIds": {
           "flattenPath": "forceUniqueIds",
-          "description": "Force unique text unit IDs"
+          "title": "Force unique text unit IDs"
         },
         "simplifyTags": {
           "flattenPath": "simplifyTags",
-          "description": "Simplify inline tags"
+          "title": "Simplify inline tags"
         },
         "ignoreTagTypeMatch": {
           "flattenPath": "ignoreTagTypeMatch",
-          "description": "Ignore tag type matching"
+          "title": "Ignore tag type matching"
         }
       },
       "title": "Control what content is extracted"
@@ -436,11 +436,11 @@
       "properties": {
         "discardInvalidTargets": {
           "flattenPath": "discardInvalidTargets",
-          "description": "Discard invalid target elements"
+          "title": "Discard invalid target elements"
         },
         "subfilterOverwriteTarget": {
           "flattenPath": "subfilterOverwriteTarget",
-          "description": "Sub-filter overwrites target"
+          "title": "Sub-filter overwrites target"
         }
       },
       "title": "Translation state handling"
@@ -449,11 +449,11 @@
       "properties": {
         "writeOriginalData": {
           "flattenPath": "writeOriginalData",
-          "description": "Write original data to output"
+          "title": "Write original data to output"
         },
         "maxValidation": {
           "flattenPath": "maxValidation",
-          "description": "Maximum validation level"
+          "title": "Maximum validation level"
         }
       },
       "title": "Output settings"
@@ -464,11 +464,11 @@
       "properties": {
         "assumeWellformed": {
           "flattenPath": "assumeWellformed",
-          "description": "Assume well-formed HTML"
+          "title": "Assume well-formed HTML"
         },
         "preserveWhitespace": {
           "flattenPath": "preserve_whitespace",
-          "description": "Preserve whitespace"
+          "title": "Preserve whitespace"
         }
       },
       "title": "Parser behavior"
@@ -481,11 +481,11 @@
       "properties": {
         "assumeWellformed": {
           "flattenPath": "assumeWellformed",
-          "description": "Assume well-formed XML"
+          "title": "Assume well-formed XML"
         },
         "preserveWhitespace": {
           "flattenPath": "preserve_whitespace",
-          "description": "Preserve whitespace"
+          "title": "Preserve whitespace"
         }
       },
       "title": "Parser behavior"
@@ -497,15 +497,15 @@
       "properties": {
         "doxygenCommands": {
           "flattenPath": "doxygen_commands",
-          "description": "Custom Doxygen command definitions"
+          "title": "Custom Doxygen command definitions"
         },
         "htmlCommands": {
           "flattenPath": "html_commands",
-          "description": "Custom HTML command definitions"
+          "title": "Custom HTML command definitions"
         },
         "preserveWhitespace": {
           "flattenPath": "preserve_whitespace",
-          "description": "Preserve whitespace"
+          "title": "Preserve whitespace"
         }
       },
       "title": "Parser configuration"
@@ -517,15 +517,15 @@
       "properties": {
         "bilingualMode": {
           "flattenPath": "bilingualMode",
-          "description": "Treat as bilingual file"
+          "title": "Treat as bilingual file"
         },
         "protectApproved": {
           "flattenPath": "protectApproved",
-          "description": "Protect approved translations"
+          "title": "Protect approved translations"
         },
         "wrapContent": {
           "flattenPath": "wrapContent",
-          "description": "Wrap long content lines"
+          "title": "Wrap long content lines"
         }
       },
       "title": "Processing mode"
@@ -534,11 +534,11 @@
       "properties": {
         "makeID": {
           "flattenPath": "makeID",
-          "description": "Generate text unit IDs"
+          "title": "Generate text unit IDs"
         },
         "includeMsgContextInNote": {
           "flattenPath": "includeMsgContextInNote",
-          "description": "Include msgctxt in notes"
+          "title": "Include msgctxt in notes"
         }
       },
       "title": "ID and naming"
@@ -547,11 +547,11 @@
       "properties": {
         "outputGeneric": {
           "flattenPath": "outputGeneric",
-          "description": "Output in generic format"
+          "title": "Output in generic format"
         },
         "allowEmptyOutputTarget": {
           "flattenPath": "allowEmptyOutputTarget",
-          "description": "Allow empty target output"
+          "title": "Allow empty target output"
         }
       },
       "title": "Output formatting"
@@ -562,23 +562,23 @@
       "properties": {
         "segType": {
           "flattenPath": "segType",
-          "description": "Segmentation type"
+          "title": "Segmentation type"
         },
         "processAllTargets": {
           "flattenPath": "processAllTargets",
-          "description": "Process all target languages"
+          "title": "Process all target languages"
         },
         "exitOnInvalid": {
           "flattenPath": "exitOnInvalid",
-          "description": "Exit on invalid TMX"
+          "title": "Exit on invalid TMX"
         },
         "consolidateDpSkeleton": {
           "flattenPath": "consolidateDpSkeleton",
-          "description": "Consolidate document part skeleton"
+          "title": "Consolidate document part skeleton"
         },
         "propValueSep": {
           "flattenPath": "propValueSep",
-          "description": "Property value separator"
+          "title": "Property value separator"
         }
       },
       "title": "TMX processing settings"
@@ -587,7 +587,7 @@
       "properties": {
         "escapeGT": {
           "flattenPath": "escapeGT",
-          "description": "Escape greater-than in output"
+          "title": "Escape greater-than in output"
         }
       },
       "title": "Output settings"
@@ -598,11 +598,11 @@
       "properties": {
         "escapeGT": {
           "flattenPath": "escapeGT",
-          "description": "Escape greater-than in output"
+          "title": "Escape greater-than in output"
         },
         "decodeByteValues": {
           "flattenPath": "decodeByteValues",
-          "description": "Decode byte values"
+          "title": "Decode byte values"
         }
       },
       "title": "Output settings"
@@ -613,7 +613,7 @@
       "properties": {
         "segmentMode": {
           "flattenPath": "segmentMode",
-          "description": "Segmentation mode"
+          "title": "Segmentation mode"
         }
       },
       "title": "Processing mode"
@@ -622,7 +622,7 @@
       "properties": {
         "escapeGT": {
           "flattenPath": "escapeGT",
-          "description": "Escape greater-than in output"
+          "title": "Escape greater-than in output"
         }
       },
       "title": "Output settings"
@@ -633,7 +633,7 @@
       "properties": {
         "allowEmptyOutputTarget": {
           "flattenPath": "allowEmptyOutputTarget",
-          "description": "Allow empty target in output"
+          "title": "Allow empty target in output"
         }
       },
       "title": "Output settings"
@@ -644,11 +644,11 @@
       "properties": {
         "xliffConfig": {
           "flattenPath": "xliff_config",
-          "description": "XLIFF 1.x filter configuration"
+          "title": "XLIFF 1.x filter configuration"
         },
         "xliff2Config": {
           "flattenPath": "xliff2_config",
-          "description": "XLIFF 2.0 filter configuration"
+          "title": "XLIFF 2.0 filter configuration"
         }
       },
       "title": "Configuration selection"
@@ -659,51 +659,51 @@
       "properties": {
         "translateHeadersFooters": {
           "flattenPath": "bPreferenceTranslateWordHeadersFooters",
-          "description": "Translate headers and footers"
+          "title": "Translate headers and footers"
         },
         "translateHidden": {
           "flattenPath": "bPreferenceTranslateWordHidden",
-          "description": "Translate hidden text"
+          "title": "Translate hidden text"
         },
         "translateComments": {
           "flattenPath": "bPreferenceTranslateComments",
-          "description": "Translate comments"
+          "title": "Translate comments"
         },
         "translateDocProperties": {
           "flattenPath": "bPreferenceTranslateDocProperties",
-          "description": "Translate document properties"
+          "title": "Translate document properties"
         },
         "excludeGraphicMetaData": {
           "flattenPath": "bPreferenceTranslateWordExcludeGraphicMetaData",
-          "description": "Exclude graphic metadata"
+          "title": "Exclude graphic metadata"
         },
         "excludeColors": {
           "flattenPath": "bPreferenceTranslateWordExcludeColors",
-          "description": "Exclude specific font colors"
+          "title": "Exclude specific font colors"
         },
         "allowStyleOptimisation": {
           "flattenPath": "allowWordStyleOptimisation",
-          "description": "Allow style optimization"
+          "title": "Allow style optimization"
         },
         "translateNumberingLevelText": {
           "flattenPath": "translateWordNumberingLevelText",
-          "description": "Translate numbering level text"
+          "title": "Translate numbering level text"
         },
         "ignoreFontColors": {
           "flattenPath": "ignoreWordFontColors",
-          "description": "Ignore font colors"
+          "title": "Ignore font colors"
         },
         "fontColorsMin": {
           "flattenPath": "wordFontColorsMinIgnoranceThreshold",
-          "description": "Font color min threshold"
+          "title": "Font color min threshold"
         },
         "fontColorsMax": {
           "flattenPath": "wordFontColorsMaxIgnoranceThreshold",
-          "description": "Font color max threshold"
+          "title": "Font color max threshold"
         },
         "automaticallyAcceptRevisions": {
           "flattenPath": "bPreferenceAutomaticallyAcceptRevisions",
-          "description": "Accept revisions automatically"
+          "title": "Accept revisions automatically"
         }
       },
       "title": "Word document settings"
@@ -712,31 +712,31 @@
       "properties": {
         "translateHidden": {
           "flattenPath": "bPreferenceTranslateExcelHidden",
-          "description": "Translate hidden cells"
+          "title": "Translate hidden cells"
         },
         "translateSheetNames": {
           "flattenPath": "bPreferenceTranslateExcelSheetNames",
-          "description": "Translate sheet names"
+          "title": "Translate sheet names"
         },
         "translateDrawings": {
           "flattenPath": "bPreferenceTranslateExcelDrawings",
-          "description": "Translate drawings"
+          "title": "Translate drawings"
         },
         "translateDiagramData": {
           "flattenPath": "bPreferenceTranslateExcelDiagramData",
-          "description": "Translate diagram data"
+          "title": "Translate diagram data"
         },
         "excludeColors": {
           "flattenPath": "bPreferenceTranslateExcelExcludeColors",
-          "description": "Exclude specific cell colors"
+          "title": "Exclude specific cell colors"
         },
         "preserveStylesInTargetColumns": {
           "flattenPath": "preserveExcelStylesInTargetColumns",
-          "description": "Preserve styles in target columns"
+          "title": "Preserve styles in target columns"
         },
         "translateCellsCopied": {
           "flattenPath": "translateExcelCellsCopied",
-          "description": "Translate copied cells"
+          "title": "Translate copied cells"
         }
       },
       "title": "Excel spreadsheet settings"
@@ -745,67 +745,67 @@
       "properties": {
         "translateHidden": {
           "flattenPath": "bPreferenceTranslatePowerpointHidden",
-          "description": "Translate hidden slides"
+          "title": "Translate hidden slides"
         },
         "translateMasters": {
           "flattenPath": "bPreferenceTranslatePowerpointMasters",
-          "description": "Translate master slides"
+          "title": "Translate master slides"
         },
         "translateNotes": {
           "flattenPath": "bPreferenceTranslatePowerpointNotes",
-          "description": "Translate slide notes"
+          "title": "Translate slide notes"
         },
         "includedSlideNumbersOnly": {
           "flattenPath": "bPreferencePowerpointIncludedSlideNumbersOnly",
-          "description": "Only translate specific slides"
+          "title": "Only translate specific slides"
         },
         "ignorePlaceholdersInMasters": {
           "flattenPath": "bPreferenceIgnorePlaceholdersInPowerpointMasters",
-          "description": "Ignore placeholders in masters"
+          "title": "Ignore placeholders in masters"
         },
         "reorderNotes": {
           "flattenPath": "bPreferenceReorderPowerpointNotes",
-          "description": "Reorder notes"
+          "title": "Reorder notes"
         },
         "reorderCharts": {
           "flattenPath": "reorderPowerpointCharts",
-          "description": "Reorder charts"
+          "title": "Reorder charts"
         },
         "reorderComments": {
           "flattenPath": "reorderPowerpointComments",
-          "description": "Reorder comments"
+          "title": "Reorder comments"
         },
         "reorderDiagramData": {
           "flattenPath": "reorderPowerpointDiagramData",
-          "description": "Reorder diagram data"
+          "title": "Reorder diagram data"
         },
         "reorderDocProperties": {
           "flattenPath": "reorderPowerpointDocProperties",
-          "description": "Reorder doc properties"
+          "title": "Reorder doc properties"
         },
         "reorderRelationships": {
           "flattenPath": "reorderPowerpointRelationships",
-          "description": "Reorder relationships"
+          "title": "Reorder relationships"
         },
         "reorderNotesAndComments": {
           "flattenPath": "bReorderPowerpointNotesAndComments",
-          "description": "Reorder notes and comments"
+          "title": "Reorder notes and comments"
         },
         "translateCharts": {
           "flattenPath": "translatePowerpointCharts",
-          "description": "Translate chart text"
+          "title": "Translate chart text"
         },
         "translateComments": {
           "flattenPath": "translatePowerpointComments",
-          "description": "Translate comments"
+          "title": "Translate comments"
         },
         "translateDiagramData": {
           "flattenPath": "translatePowerpointDiagramData",
-          "description": "Translate diagram data"
+          "title": "Translate diagram data"
         },
         "translateDocProperties": {
           "flattenPath": "translatePowerpointDocProperties",
-          "description": "Translate doc properties"
+          "title": "Translate doc properties"
         }
       },
       "title": "PowerPoint presentation settings"
@@ -814,51 +814,51 @@
       "properties": {
         "extractExternalHyperlinks": {
           "flattenPath": "bExtractExternalHyperlinks",
-          "description": "Extract external hyperlinks"
+          "title": "Extract external hyperlinks"
         },
         "inExcludeMode": {
           "flattenPath": "bInExcludeMode",
-          "description": "Use include/exclude mode"
+          "title": "Use include/exclude mode"
         },
         "inExcludeHighlightMode": {
           "flattenPath": "bInExcludeHighlightMode",
-          "description": "Use highlight include/exclude mode"
+          "title": "Use highlight include/exclude mode"
         },
         "addLineSeparator": {
           "flattenPath": "bPreferenceAddLineSeparatorAsCharacter",
-          "description": "Add line separator as character"
+          "title": "Add line separator as character"
         },
         "addTabAsCharacter": {
           "flattenPath": "bPreferenceAddTabAsCharacter",
-          "description": "Add tab as character"
+          "title": "Add tab as character"
         },
         "aggressiveCleanup": {
           "flattenPath": "bPreferenceAggressiveCleanup",
-          "description": "Aggressive code cleanup"
+          "title": "Aggressive code cleanup"
         },
         "allowEmptyTargets": {
           "flattenPath": "bPreferenceAllowEmptyTargets",
-          "description": "Allow empty targets"
+          "title": "Allow empty targets"
         },
         "ignoreSoftHyphenTag": {
           "flattenPath": "bPreferenceIgnoreSoftHyphenTag",
-          "description": "Ignore soft hyphen tags"
+          "title": "Ignore soft hyphen tags"
         },
         "replaceNoBreakHyphenTag": {
           "flattenPath": "bPreferenceReplaceNoBreakHyphenTag",
-          "description": "Replace no-break hyphen tags"
+          "title": "Replace no-break hyphen tags"
         },
         "lineSeparatorReplacement": {
           "flattenPath": "sPreferenceLineSeparatorReplacement",
-          "description": "Line separator replacement string"
+          "title": "Line separator replacement string"
         },
         "maxAttributeSize": {
           "flattenPath": "maxAttributeSize",
-          "description": "Max attribute size"
+          "title": "Max attribute size"
         },
         "fileType": {
           "flattenPath": "nFileType",
-          "description": "File type identifier"
+          "title": "File type identifier"
         }
       },
       "title": "General settings"
@@ -869,23 +869,23 @@
       "properties": {
         "extractNotes": {
           "flattenPath": "extractNotes",
-          "description": "Extract editorial notes"
+          "title": "Extract editorial notes"
         },
         "extractMasterSpreads": {
           "flattenPath": "extractMasterSpreads",
-          "description": "Extract master spreads"
+          "title": "Extract master spreads"
         },
         "newTuOnBr": {
           "flattenPath": "newTuOnBr",
-          "description": "Start new text unit on line break"
+          "title": "Start new text unit on line break"
         },
         "simplifyCodes": {
           "flattenPath": "simplifyCodes",
-          "description": "Simplify inline codes"
+          "title": "Simplify inline codes"
         },
         "skipThreshold": {
           "flattenPath": "skipThreshold",
-          "description": "Skip threshold for similar segments"
+          "title": "Skip threshold for similar segments"
         }
       },
       "title": "Extraction settings"
@@ -896,55 +896,55 @@
       "properties": {
         "extractNotes": {
           "flattenPath": "extractNotes",
-          "description": "Extract editorial notes"
+          "title": "Extract editorial notes"
         },
         "extractMasterSpreads": {
           "flattenPath": "extractMasterSpreads",
-          "description": "Extract master spreads"
+          "title": "Extract master spreads"
         },
         "extractCustomTextVariables": {
           "flattenPath": "extractCustomTextVariables",
-          "description": "Extract custom text variables"
+          "title": "Extract custom text variables"
         },
         "extractExternalHyperlinks": {
           "flattenPath": "extractExternalHyperlinks",
-          "description": "Extract external hyperlinks"
+          "title": "Extract external hyperlinks"
         },
         "extractHiddenLayers": {
           "flattenPath": "extractHiddenLayers",
-          "description": "Extract hidden layers"
+          "title": "Extract hidden layers"
         },
         "extractHiddenPasteboardItems": {
           "flattenPath": "extractHiddenPasteboardItems",
-          "description": "Extract hidden pasteboard items"
+          "title": "Extract hidden pasteboard items"
         },
         "extractHyperlinkTextSourcesInline": {
           "flattenPath": "extractHyperlinkTextSourcesInline",
-          "description": "Extract hyperlink text inline"
+          "title": "Extract hyperlink text inline"
         },
         "extractIndexTopics": {
           "flattenPath": "extractIndexTopics",
-          "description": "Extract index topics"
+          "title": "Extract index topics"
         },
         "extractBreaksInline": {
           "flattenPath": "extractBreaksInline",
-          "description": "Extract breaks inline"
+          "title": "Extract breaks inline"
         },
         "untagXmlStructures": {
           "flattenPath": "untagXmlStructures",
-          "description": "Untag XML structures"
+          "title": "Untag XML structures"
         },
         "skipDiscretionaryHyphens": {
           "flattenPath": "skipDiscretionaryHyphens",
-          "description": "Skip discretionary hyphens"
+          "title": "Skip discretionary hyphens"
         },
         "specialCharacterPattern": {
           "flattenPath": "specialCharacterPattern",
-          "description": "Special character pattern"
+          "title": "Special character pattern"
         },
         "maxAttributeSize": {
           "flattenPath": "maxAttributeSize",
-          "description": "Maximum attribute size"
+          "title": "Maximum attribute size"
         }
       },
       "title": "Extraction settings"
@@ -953,51 +953,51 @@
       "properties": {
         "ignoreCharacterKerning": {
           "flattenPath": "ignoreCharacterKerning",
-          "description": "Ignore kerning differences"
+          "title": "Ignore kerning differences"
         },
         "kerningMin": {
           "flattenPath": "characterKerningMinIgnoranceThreshold",
-          "description": "Kerning min threshold"
+          "title": "Kerning min threshold"
         },
         "kerningMax": {
           "flattenPath": "characterKerningMaxIgnoranceThreshold",
-          "description": "Kerning max threshold"
+          "title": "Kerning max threshold"
         },
         "ignoreCharacterTracking": {
           "flattenPath": "ignoreCharacterTracking",
-          "description": "Ignore tracking differences"
+          "title": "Ignore tracking differences"
         },
         "trackingMin": {
           "flattenPath": "characterTrackingMinIgnoranceThreshold",
-          "description": "Tracking min threshold"
+          "title": "Tracking min threshold"
         },
         "trackingMax": {
           "flattenPath": "characterTrackingMaxIgnoranceThreshold",
-          "description": "Tracking max threshold"
+          "title": "Tracking max threshold"
         },
         "ignoreCharacterLeading": {
           "flattenPath": "ignoreCharacterLeading",
-          "description": "Ignore leading differences"
+          "title": "Ignore leading differences"
         },
         "leadingMin": {
           "flattenPath": "characterLeadingMinIgnoranceThreshold",
-          "description": "Leading min threshold"
+          "title": "Leading min threshold"
         },
         "leadingMax": {
           "flattenPath": "characterLeadingMaxIgnoranceThreshold",
-          "description": "Leading max threshold"
+          "title": "Leading max threshold"
         },
         "ignoreCharacterBaselineShift": {
           "flattenPath": "ignoreCharacterBaselineShift",
-          "description": "Ignore baseline shift"
+          "title": "Ignore baseline shift"
         },
         "baselineShiftMin": {
           "flattenPath": "characterBaselineShiftMinIgnoranceThreshold",
-          "description": "Baseline shift min"
+          "title": "Baseline shift min"
         },
         "baselineShiftMax": {
           "flattenPath": "characterBaselineShiftMaxIgnoranceThreshold",
-          "description": "Baseline shift max"
+          "title": "Baseline shift max"
         }
       },
       "title": "Formatting tolerance thresholds"
@@ -1008,43 +1008,43 @@
       "properties": {
         "extractBodyPages": {
           "flattenPath": "extractBodyPages",
-          "description": "Extract body pages"
+          "title": "Extract body pages"
         },
         "extractMasterPages": {
           "flattenPath": "extractMasterPages",
-          "description": "Extract master pages"
+          "title": "Extract master pages"
         },
         "extractReferencePages": {
           "flattenPath": "extractReferencePages",
-          "description": "Extract reference pages"
+          "title": "Extract reference pages"
         },
         "extractHiddenPages": {
           "flattenPath": "extractHiddenPages",
-          "description": "Extract hidden pages"
+          "title": "Extract hidden pages"
         },
         "extractVariables": {
           "flattenPath": "extractVariables",
-          "description": "Extract variables"
+          "title": "Extract variables"
         },
         "extractIndexMarkers": {
           "flattenPath": "extractIndexMarkers",
-          "description": "Extract index markers"
+          "title": "Extract index markers"
         },
         "extractLinks": {
           "flattenPath": "extractLinks",
-          "description": "Extract cross-reference links"
+          "title": "Extract cross-reference links"
         },
         "extractHardReturnsAsText": {
           "flattenPath": "extractHardReturnsAsText",
-          "description": "Extract hard returns as text"
+          "title": "Extract hard returns as text"
         },
         "extractPgfNumFormatsInline": {
           "flattenPath": "extractPgfNumFormatsInline",
-          "description": "Extract paragraph number formats inline"
+          "title": "Extract paragraph number formats inline"
         },
         "extractReferenceFormats": {
           "flattenPath": "extractReferenceFormats",
-          "description": "Extract reference formats"
+          "title": "Extract reference formats"
         }
       },
       "title": "Extraction settings"
@@ -1055,19 +1055,19 @@
       "properties": {
         "extractNotes": {
           "flattenPath": "extractNotes",
-          "description": "Extract notes/comments"
+          "title": "Extract notes/comments"
         },
         "extractMetadata": {
           "flattenPath": "extractMetadata",
-          "description": "Extract document metadata"
+          "title": "Extract document metadata"
         },
         "extractReferences": {
           "flattenPath": "extractReferences",
-          "description": "Extract cross-references"
+          "title": "Extract cross-references"
         },
         "encodeCharacterEntityReferenceGlyphs": {
           "flattenPath": "encodeCharacterEntityReferenceGlyphs",
-          "description": "Encode character entity glyphs"
+          "title": "Encode character entity glyphs"
         }
       },
       "title": "Extraction settings"
@@ -1078,19 +1078,19 @@
       "properties": {
         "extractNotes": {
           "flattenPath": "extractNotes",
-          "description": "Extract notes/comments"
+          "title": "Extract notes/comments"
         },
         "extractMetadata": {
           "flattenPath": "extractMetadata",
-          "description": "Extract document metadata"
+          "title": "Extract document metadata"
         },
         "extractReferences": {
           "flattenPath": "extractReferences",
-          "description": "Extract cross-references"
+          "title": "Extract cross-references"
         },
         "encodeCharacterEntityReferenceGlyphs": {
           "flattenPath": "encodeCharacterEntityReferenceGlyphs",
-          "description": "Encode character entity glyphs"
+          "title": "Encode character entity glyphs"
         }
       },
       "title": "Extraction settings"
@@ -1101,39 +1101,39 @@
       "properties": {
         "translateImageAltText": {
           "flattenPath": "translateImageAltText",
-          "description": "Translate image alt text"
+          "title": "Translate image alt text"
         },
         "translateUrls": {
           "flattenPath": "translateUrls",
-          "description": "Translate URLs"
+          "title": "Translate URLs"
         },
         "urlPattern": {
           "flattenPath": "urlToTranslatePattern",
-          "description": "Regex for URLs to translate"
+          "title": "Regex for URLs to translate"
         },
         "translateCodeBlocks": {
           "flattenPath": "translateCodeBlocks",
-          "description": "Translate fenced code blocks"
+          "title": "Translate fenced code blocks"
         },
         "translateIndentedCodeBlocks": {
           "flattenPath": "translateIndentedCodeBlocks",
-          "description": "Translate indented code blocks"
+          "title": "Translate indented code blocks"
         },
         "translateInlineCodeBlocks": {
           "flattenPath": "translateInlineCodeBlocks",
-          "description": "Translate inline code"
+          "title": "Translate inline code"
         },
         "translateHeaderMetadata": {
           "flattenPath": "translateHeaderMetadata",
-          "description": "Translate YAML front matter"
+          "title": "Translate YAML front matter"
         },
         "nonTranslateBlocks": {
           "flattenPath": "nonTranslateBlocks",
-          "description": "Regex for non-translatable blocks"
+          "title": "Regex for non-translatable blocks"
         },
         "parseMdx": {
           "flattenPath": "parseMdx",
-          "description": "Parse MDX syntax"
+          "title": "Parse MDX syntax"
         }
       },
       "title": "Content extraction settings"
@@ -1142,19 +1142,19 @@
       "properties": {
         "generateHeaderAnchors": {
           "flattenPath": "generateHeaderAnchors",
-          "description": "Generate header anchor IDs"
+          "title": "Generate header anchor IDs"
         },
         "charactersToEscape": {
           "flattenPath": "charactersToEscape",
-          "description": "Characters to escape in output"
+          "title": "Characters to escape in output"
         },
         "htmlEntitiesToEscape": {
           "flattenPath": "htmlEntitiesToEscape",
-          "description": "HTML entities to escape"
+          "title": "HTML entities to escape"
         },
         "unescapeBackslashCharacters": {
           "flattenPath": "unescapeBackslashCharacters",
-          "description": "Unescape backslash characters"
+          "title": "Unescape backslash characters"
         }
       },
       "title": "Output formatting"
@@ -1163,11 +1163,11 @@
       "properties": {
         "htmlSubfilter": {
           "flattenPath": "htmlSubfilter",
-          "description": "HTML sub-filter configuration"
+          "title": "HTML sub-filter configuration"
         },
         "yamlSubfilter": {
           "flattenPath": "yamlSubfilter",
-          "description": "YAML front matter sub-filter"
+          "title": "YAML front matter sub-filter"
         }
       },
       "title": "Sub-filter configuration"
@@ -1178,15 +1178,15 @@
       "properties": {
         "addPluralForms": {
           "flattenPath": "addPluralForms",
-          "description": "Add plural form variants"
+          "title": "Add plural form variants"
         },
         "normalize": {
           "flattenPath": "normalize",
-          "description": "Normalize message format"
+          "title": "Normalize message format"
         },
         "prettyPrint": {
           "flattenPath": "prettyPrint",
-          "description": "Pretty-print output"
+          "title": "Pretty-print output"
         }
       },
       "title": "General settings"
@@ -1197,15 +1197,15 @@
       "properties": {
         "preserveWhitespace": {
           "flattenPath": "preserveWhitespace",
-          "description": "Preserve whitespace"
+          "title": "Preserve whitespace"
         },
         "indentThreshold": {
           "flattenPath": "indentThreshold",
-          "description": "Indent detection threshold"
+          "title": "Indent detection threshold"
         },
         "spacingTolerance": {
           "flattenPath": "spacingTolerance",
-          "description": "Spacing tolerance"
+          "title": "Spacing tolerance"
         }
       },
       "title": "Parser settings"
@@ -1214,11 +1214,11 @@
       "properties": {
         "lineSeparator": {
           "flattenPath": "lineSeparator",
-          "description": "Line separator character"
+          "title": "Line separator character"
         },
         "paragraphSeparator": {
           "flattenPath": "paragraphSeparator",
-          "description": "Paragraph separator"
+          "title": "Paragraph separator"
         }
       },
       "title": "Output formatting"
@@ -1229,27 +1229,27 @@
       "properties": {
         "startString": {
           "flattenPath": "startString",
-          "description": "Start pattern for extraction"
+          "title": "Start pattern for extraction"
         },
         "endString": {
           "flattenPath": "endString",
-          "description": "End pattern for extraction"
+          "title": "End pattern for extraction"
         },
         "regexOptions": {
           "flattenPath": "regexOptions",
-          "description": "Regex options"
+          "title": "Regex options"
         },
         "extractOuterStrings": {
           "flattenPath": "extractOuterStrings",
-          "description": "Extract strings outside patterns"
+          "title": "Extract strings outside patterns"
         },
         "oneLevelGroups": {
           "flattenPath": "oneLevelGroups",
-          "description": "Use one-level groups"
+          "title": "Use one-level groups"
         },
         "mimeType": {
           "flattenPath": "mimeType",
-          "description": "MIME type for content"
+          "title": "MIME type for content"
         }
       },
       "title": "Regex extraction settings"
@@ -1258,23 +1258,23 @@
       "properties": {
         "localizeOutside": {
           "flattenPath": "localizeOutside",
-          "description": "Localize content outside patterns"
+          "title": "Localize content outside patterns"
         },
         "useBSlashEscape": {
           "flattenPath": "useBSlashEscape",
-          "description": "Use backslash escaping"
+          "title": "Use backslash escaping"
         },
         "removeBSlashEscape": {
           "flattenPath": "removeBSlashEscape",
-          "description": "Remove backslash escaping"
+          "title": "Remove backslash escaping"
         },
         "useDoubleCharEscape": {
           "flattenPath": "useDoubleCharEscape",
-          "description": "Use double-character escaping"
+          "title": "Use double-character escaping"
         },
         "useLd": {
           "flattenPath": "useLd",
-          "description": "Use localization directives"
+          "title": "Use localization directives"
         }
       },
       "title": "Output settings"
@@ -1283,7 +1283,7 @@
       "properties": {
         "subFilter": {
           "flattenPath": "subFilter",
-          "description": "Sub-filter for content processing"
+          "title": "Sub-filter for content processing"
         }
       },
       "title": "Sub-filter configuration"
@@ -1294,11 +1294,11 @@
       "properties": {
         "useDirectives": {
           "flattenPath": "useDirectives",
-          "description": "Use extraction directives"
+          "title": "Use extraction directives"
         },
         "extractOutsideDirectives": {
           "flattenPath": "extractOutsideDirectives",
-          "description": "Extract outside directive blocks"
+          "title": "Extract outside directive blocks"
         }
       },
       "title": "Extraction settings"
@@ -1309,23 +1309,23 @@
       "properties": {
         "preserveWS": {
           "flattenPath": "preserveWS",
-          "description": "Preserve whitespace"
+          "title": "Preserve whitespace"
         },
         "trimLeading": {
           "flattenPath": "trimLeading",
-          "description": "Trim leading whitespace"
+          "title": "Trim leading whitespace"
         },
         "trimTrailing": {
           "flattenPath": "trimTrailing",
-          "description": "Trim trailing whitespace"
+          "title": "Trim trailing whitespace"
         },
         "unescapeSource": {
           "flattenPath": "unescapeSource",
-          "description": "Unescape source content"
+          "title": "Unescape source content"
         },
         "wrapMode": {
           "flattenPath": "wrapMode",
-          "description": "Line wrapping mode"
+          "title": "Line wrapping mode"
         }
       },
       "title": "Parser settings"
@@ -1336,7 +1336,7 @@
       "properties": {
         "extractParagraphs": {
           "flattenPath": "extractParagraphs",
-          "description": "Extract by paragraph"
+          "title": "Extract by paragraph"
         }
       },
       "title": "Extraction settings"
@@ -1345,23 +1345,23 @@
       "properties": {
         "preserveWS": {
           "flattenPath": "preserveWS",
-          "description": "Preserve whitespace"
+          "title": "Preserve whitespace"
         },
         "trimLeading": {
           "flattenPath": "trimLeading",
-          "description": "Trim leading whitespace"
+          "title": "Trim leading whitespace"
         },
         "trimTrailing": {
           "flattenPath": "trimTrailing",
-          "description": "Trim trailing whitespace"
+          "title": "Trim trailing whitespace"
         },
         "unescapeSource": {
           "flattenPath": "unescapeSource",
-          "description": "Unescape source content"
+          "title": "Unescape source content"
         },
         "wrapMode": {
           "flattenPath": "wrapMode",
-          "description": "Line wrapping mode"
+          "title": "Line wrapping mode"
         }
       },
       "title": "Parser settings"
@@ -1372,19 +1372,19 @@
       "properties": {
         "rule": {
           "flattenPath": "rule",
-          "description": "Extraction regex rule"
+          "title": "Extraction regex rule"
         },
         "sourceGroup": {
           "flattenPath": "sourceGroup",
-          "description": "Regex group for source text"
+          "title": "Regex group for source text"
         },
         "sample": {
           "flattenPath": "sample",
-          "description": "Sample text for testing"
+          "title": "Sample text for testing"
         },
         "regexOptions": {
           "flattenPath": "regexOptions",
-          "description": "Regex options"
+          "title": "Regex options"
         }
       },
       "title": "Extraction settings"
@@ -1393,23 +1393,23 @@
       "properties": {
         "preserveWS": {
           "flattenPath": "preserveWS",
-          "description": "Preserve whitespace"
+          "title": "Preserve whitespace"
         },
         "trimLeading": {
           "flattenPath": "trimLeading",
-          "description": "Trim leading whitespace"
+          "title": "Trim leading whitespace"
         },
         "trimTrailing": {
           "flattenPath": "trimTrailing",
-          "description": "Trim trailing whitespace"
+          "title": "Trim trailing whitespace"
         },
         "unescapeSource": {
           "flattenPath": "unescapeSource",
-          "description": "Unescape source content"
+          "title": "Unescape source content"
         },
         "wrapMode": {
           "flattenPath": "wrapMode",
-          "description": "Line wrapping mode"
+          "title": "Line wrapping mode"
         }
       },
       "title": "Parser settings"
@@ -1420,11 +1420,11 @@
       "properties": {
         "splicer": {
           "flattenPath": "splicer",
-          "description": "Line splicer pattern"
+          "title": "Line splicer pattern"
         },
         "createPlaceholders": {
           "flattenPath": "createPlaceholders",
-          "description": "Create inline placeholders"
+          "title": "Create inline placeholders"
         }
       },
       "title": "Extraction settings"
@@ -1433,23 +1433,23 @@
       "properties": {
         "preserveWS": {
           "flattenPath": "preserveWS",
-          "description": "Preserve whitespace"
+          "title": "Preserve whitespace"
         },
         "trimLeading": {
           "flattenPath": "trimLeading",
-          "description": "Trim leading whitespace"
+          "title": "Trim leading whitespace"
         },
         "trimTrailing": {
           "flattenPath": "trimTrailing",
-          "description": "Trim trailing whitespace"
+          "title": "Trim trailing whitespace"
         },
         "unescapeSource": {
           "flattenPath": "unescapeSource",
-          "description": "Unescape source content"
+          "title": "Unescape source content"
         },
         "wrapMode": {
           "flattenPath": "wrapMode",
-          "description": "Line wrapping mode"
+          "title": "Line wrapping mode"
         }
       },
       "title": "Parser settings"
@@ -1462,51 +1462,51 @@
       "properties": {
         "numColumns": {
           "flattenPath": "numColumns",
-          "description": "Number of columns"
+          "title": "Number of columns"
         },
         "sourceColumns": {
           "flattenPath": "sourceColumns",
-          "description": "Source language columns"
+          "title": "Source language columns"
         },
         "targetColumns": {
           "flattenPath": "targetColumns",
-          "description": "Target language columns"
+          "title": "Target language columns"
         },
         "targetLanguages": {
           "flattenPath": "targetLanguages",
-          "description": "Target language codes"
+          "title": "Target language codes"
         },
         "commentColumns": {
           "flattenPath": "commentColumns",
-          "description": "Comment columns"
+          "title": "Comment columns"
         },
         "sourceIdColumns": {
           "flattenPath": "sourceIdColumns",
-          "description": "Source ID columns"
+          "title": "Source ID columns"
         },
         "recordIdColumn": {
           "flattenPath": "recordIdColumn",
-          "description": "Record ID column"
+          "title": "Record ID column"
         },
         "columnNamesLineNum": {
           "flattenPath": "columnNamesLineNum",
-          "description": "Line number with column names"
+          "title": "Line number with column names"
         },
         "valuesStartLineNum": {
           "flattenPath": "valuesStartLineNum",
-          "description": "First data line number"
+          "title": "First data line number"
         },
         "detectColumnsMode": {
           "flattenPath": "detectColumnsMode",
-          "description": "Column detection mode"
+          "title": "Column detection mode"
         },
         "sendColumnsMode": {
           "flattenPath": "sendColumnsMode",
-          "description": "Column send mode"
+          "title": "Column send mode"
         },
         "sendHeaderMode": {
           "flattenPath": "sendHeaderMode",
-          "description": "Header send mode"
+          "title": "Header send mode"
         }
       },
       "title": "Column configuration"
@@ -1515,23 +1515,23 @@
       "properties": {
         "commentSourceRefs": {
           "flattenPath": "commentSourceRefs",
-          "description": "Comment source references"
+          "title": "Comment source references"
         },
         "sourceIdSourceRefs": {
           "flattenPath": "sourceIdSourceRefs",
-          "description": "Source ID source references"
+          "title": "Source ID source references"
         },
         "sourceIdSuffixes": {
           "flattenPath": "sourceIdSuffixes",
-          "description": "Source ID suffixes"
+          "title": "Source ID suffixes"
         },
         "targetSourceRefs": {
           "flattenPath": "targetSourceRefs",
-          "description": "Target source references"
+          "title": "Target source references"
         },
         "exposeCommentsAsMetadata": {
           "flattenPath": "exposeCommentsAsMetadata",
-          "description": "Expose comments as metadata"
+          "title": "Expose comments as metadata"
         }
       },
       "title": "Source reference columns"
@@ -1540,27 +1540,27 @@
       "properties": {
         "preserveWS": {
           "flattenPath": "preserveWS",
-          "description": "Preserve whitespace"
+          "title": "Preserve whitespace"
         },
         "trimLeading": {
           "flattenPath": "trimLeading",
-          "description": "Trim leading whitespace"
+          "title": "Trim leading whitespace"
         },
         "trimTrailing": {
           "flattenPath": "trimTrailing",
-          "description": "Trim trailing whitespace"
+          "title": "Trim trailing whitespace"
         },
         "trimMode": {
           "flattenPath": "trimMode",
-          "description": "Trim mode"
+          "title": "Trim mode"
         },
         "unescapeSource": {
           "flattenPath": "unescapeSource",
-          "description": "Unescape source content"
+          "title": "Unescape source content"
         },
         "wrapMode": {
           "flattenPath": "wrapMode",
-          "description": "Line wrapping mode"
+          "title": "Line wrapping mode"
         }
       },
       "title": "Parser settings"
@@ -1571,23 +1571,23 @@
       "properties": {
         "fieldDelimiter": {
           "flattenPath": "fieldDelimiter",
-          "description": "Field delimiter character"
+          "title": "Field delimiter character"
         },
         "textQualifier": {
           "flattenPath": "textQualifier",
-          "description": "Text qualifier character"
+          "title": "Text qualifier character"
         },
         "escapingMode": {
           "flattenPath": "escapingMode",
-          "description": "Escaping mode"
+          "title": "Escaping mode"
         },
         "addQualifiers": {
           "flattenPath": "addQualifiers",
-          "description": "Add text qualifiers to output"
+          "title": "Add text qualifiers to output"
         },
         "removeQualifiers": {
           "flattenPath": "removeQualifiers",
-          "description": "Remove text qualifiers from input"
+          "title": "Remove text qualifiers from input"
         }
       },
       "title": "CSV format settings"
@@ -1599,11 +1599,11 @@
       "properties": {
         "columnStartPositions": {
           "flattenPath": "columnStartPositions",
-          "description": "Column start positions"
+          "title": "Column start positions"
         },
         "columnEndPositions": {
           "flattenPath": "columnEndPositions",
-          "description": "Column end positions"
+          "title": "Column end positions"
         }
       },
       "title": "Column position settings"
@@ -1614,27 +1614,27 @@
       "properties": {
         "keepTimecodes": {
           "flattenPath": "keepTimecodes",
-          "description": "Preserve timing information"
+          "title": "Preserve timing information"
         },
         "timeFormat": {
           "flattenPath": "timeFormat",
-          "description": "Time code format"
+          "title": "Time code format"
         },
         "maxCharsPerLine": {
           "flattenPath": "maxCharsPerLine",
-          "description": "Maximum characters per line"
+          "title": "Maximum characters per line"
         },
         "maxLinesPerCaption": {
           "flattenPath": "maxLinesPerCaption",
-          "description": "Maximum lines per caption"
+          "title": "Maximum lines per caption"
         },
         "cjkCharsPerLine": {
           "flattenPath": "cjkCharsPerLine",
-          "description": "CJK characters per line"
+          "title": "CJK characters per line"
         },
         "splitWords": {
           "flattenPath": "splitWords",
-          "description": "Split words at line boundaries"
+          "title": "Split words at line boundaries"
         }
       },
       "title": "Output settings"
@@ -1645,11 +1645,11 @@
       "properties": {
         "discardCues": {
           "flattenPath": "discardCues",
-          "description": "Discard cue settings"
+          "title": "Discard cue settings"
         },
         "cueSettings": {
           "flattenPath": "cueSettings",
-          "description": "Cue settings configuration"
+          "title": "Cue settings configuration"
         }
       },
       "title": "Extraction settings"
@@ -1658,27 +1658,27 @@
       "properties": {
         "keepTimecodes": {
           "flattenPath": "keepTimecodes",
-          "description": "Preserve timing information"
+          "title": "Preserve timing information"
         },
         "timeFormat": {
           "flattenPath": "timeFormat",
-          "description": "Time code format"
+          "title": "Time code format"
         },
         "maxCharsPerLine": {
           "flattenPath": "maxCharsPerLine",
-          "description": "Maximum characters per line"
+          "title": "Maximum characters per line"
         },
         "maxLinesPerCaption": {
           "flattenPath": "maxLinesPerCaption",
-          "description": "Maximum lines per caption"
+          "title": "Maximum lines per caption"
         },
         "cjkCharsPerLine": {
           "flattenPath": "cjkCharsPerLine",
-          "description": "CJK characters per line"
+          "title": "CJK characters per line"
         },
         "splitWords": {
           "flattenPath": "splitWords",
-          "description": "Split words at line boundaries"
+          "title": "Split words at line boundaries"
         }
       },
       "title": "Output settings"
@@ -1689,15 +1689,15 @@
       "properties": {
         "fileNames": {
           "flattenPath": "fileNames",
-          "description": "File name patterns"
+          "title": "File name patterns"
         },
         "mimeType": {
           "flattenPath": "mimeType",
-          "description": "MIME type for content"
+          "title": "MIME type for content"
         },
         "configIds": {
           "flattenPath": "configIds",
-          "description": "Filter configuration IDs"
+          "title": "Filter configuration IDs"
         }
       },
       "title": "File identification"
@@ -1708,15 +1708,15 @@
       "properties": {
         "fileNames": {
           "flattenPath": "fileNames",
-          "description": "File name patterns"
+          "title": "File name patterns"
         },
         "mimeType": {
           "flattenPath": "mimeType",
-          "description": "MIME type for content"
+          "title": "MIME type for content"
         },
         "configIds": {
           "flattenPath": "configIds",
-          "description": "Filter configuration IDs"
+          "title": "Filter configuration IDs"
         }
       },
       "title": "File identification"
@@ -1727,15 +1727,15 @@
       "properties": {
         "fileNames": {
           "flattenPath": "fileNames",
-          "description": "File name patterns"
+          "title": "File name patterns"
         },
         "mimeType": {
           "flattenPath": "mimeType",
-          "description": "MIME type for content"
+          "title": "MIME type for content"
         },
         "configIds": {
           "flattenPath": "configIds",
-          "description": "Filter configuration IDs"
+          "title": "Filter configuration IDs"
         }
       },
       "title": "File identification"
@@ -1746,15 +1746,15 @@
       "properties": {
         "fileNames": {
           "flattenPath": "fileNames",
-          "description": "File name patterns"
+          "title": "File name patterns"
         },
         "mimeType": {
           "flattenPath": "mimeType",
-          "description": "MIME type for content"
+          "title": "MIME type for content"
         },
         "configIds": {
           "flattenPath": "configIds",
-          "description": "Filter configuration IDs"
+          "title": "Filter configuration IDs"
         }
       },
       "title": "File identification"
@@ -1765,7 +1765,7 @@
       "properties": {
         "openManifest": {
           "flattenPath": "openManifest",
-          "description": "Open manifest file"
+          "title": "Open manifest file"
         }
       },
       "title": "General settings"
@@ -1776,7 +1776,7 @@
       "properties": {
         "openProject": {
           "flattenPath": "openProject",
-          "description": "Transifex project to open"
+          "title": "Transifex project to open"
         }
       },
       "title": "General settings"
@@ -1787,19 +1787,19 @@
       "properties": {
         "monolingual": {
           "flattenPath": "monolingual",
-          "description": "Monolingual mode"
+          "title": "Monolingual mode"
         },
         "quoteMode": {
           "flattenPath": "quoteMode",
-          "description": "Quote handling mode"
+          "title": "Quote handling mode"
         },
         "quoteModeDefined": {
           "flattenPath": "quoteModeDefined",
-          "description": "Quote mode is defined"
+          "title": "Quote mode is defined"
         },
         "useCDATA": {
           "flattenPath": "useCDATA",
-          "description": "Use CDATA sections"
+          "title": "Use CDATA sections"
         }
       },
       "title": "Processing mode"
@@ -1808,19 +1808,19 @@
       "properties": {
         "localeId": {
           "flattenPath": "localeId",
-          "description": "Locale identifier"
+          "title": "Locale identifier"
         },
         "sourceId": {
           "flattenPath": "sourceId",
-          "description": "Source content identifier"
+          "title": "Source content identifier"
         },
         "partsNames": {
           "flattenPath": "partsNames",
-          "description": "Part names"
+          "title": "Part names"
         },
         "partsConfigurations": {
           "flattenPath": "partsConfigurations",
-          "description": "Part configurations"
+          "title": "Part configurations"
         }
       },
       "title": "Content identification"
@@ -1831,7 +1831,7 @@
       "properties": {
         "useOkapiSegmentation": {
           "flattenPath": "useOkapiSegmentation",
-          "description": "Use Okapi segmentation"
+          "title": "Use Okapi segmentation"
         }
       },
       "title": "Segmentation settings"
@@ -1842,23 +1842,23 @@
       "properties": {
         "csvAutoDetectColumnTypes": {
           "flattenPath": "csvAutoDetectColumnTypes",
-          "description": "Auto-detect column types"
+          "title": "Auto-detect column types"
         },
         "csvAutoDetectColumnTypesRow": {
           "flattenPath": "csvAutoDetectColumnTypesRow",
-          "description": "Row for type detection"
+          "title": "Row for type detection"
         },
         "csvFormatCols": {
           "flattenPath": "csvFormatCols",
-          "description": "Format column specifications"
+          "title": "Format column specifications"
         },
         "csvNoExtractCols": {
           "flattenPath": "csvNoExtractCols",
-          "description": "Columns to skip"
+          "title": "Columns to skip"
         },
         "csvStartingRow": {
           "flattenPath": "csvStartingRow",
-          "description": "Starting data row"
+          "title": "Starting data row"
         }
       },
       "title": "CSV extraction settings"
