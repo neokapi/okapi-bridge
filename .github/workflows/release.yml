@@ -163,7 +163,7 @@ jobs:
 
       - name: Extract capabilities JSON for registry
         if: matrix.okapi-version == needs.setup.outputs.latest
-        run: jq '.capabilities' staging/manifest.json > capabilities.json
+        run: jq '.capabilities' dist/plugin/manifest.json > capabilities.json
 
       - name: Upload build artifacts
         uses: actions/upload-artifact@v4
