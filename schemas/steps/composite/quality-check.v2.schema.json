@@ -44,13 +44,21 @@
       "type": "boolean",
       "default": false,
       "title": "Include Text Containers",
-      "description": "Include non-segment text parts (inter-segment content) in quality checks."
+      "description": "Include the source and target TextContainer objects with each reported issue. Off by default for performance.",
+      "group": "output",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "useGenericCodes": {
       "type": "boolean",
       "default": false,
-      "title": "Use Generic Codes",
-      "description": "Replace specific inline code content with generic placeholders before comparison."
+      "title": "Use Generic Codes in Display",
+      "description": "Use generic code placeholders in the report display instead of original code data.",
+      "group": "output",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "outputPath": {
       "type": "string",
@@ -62,128 +70,302 @@
           "html"
         ]
       },
-      "title": "Report Output Path",
-      "description": "Path of the HTML report file to generate."
+      "title": "Report File Path",
+      "description": "Path of the report file to generate. Use ${rootDir} for the project root directory.",
+      "group": "output",
+      "path": {
+        "browseTitle": "Quality Check Report",
+        "forSaveAs": true,
+        "filters": [
+          {
+            "name": "HTML Files",
+            "extensions": "*.html;*.htm"
+          },
+          {
+            "name": "All Files",
+            "extensions": "*.*"
+          }
+        ]
+      },
+      "x-editor": {
+        "widget": "path"
+      }
     },
     "outputType": {
       "type": "integer",
       "default": 0,
-      "title": "Report Output Type",
-      "description": "Format of the generated quality check report."
+      "title": "Report Format",
+      "description": "Format of the generated quality check report.",
+      "group": "output",
+      "options": [
+        {
+          "value": 0,
+          "label": "HTML file"
+        },
+        {
+          "value": 1,
+          "label": "Tab-delimited file"
+        },
+        {
+          "value": 2,
+          "label": "XML file"
+        }
+      ],
+      "x-editor": {
+        "widget": "dropdown"
+      }
     },
     "autoOpen": {
       "type": "boolean",
       "default": true,
       "title": "Open Report After Completion",
-      "description": "Automatically open the report file after processing."
+      "description": "Automatically open the report file in the default application after processing.",
+      "group": "output",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "leadingWS": {
       "type": "boolean",
       "default": true,
       "title": "Check Leading Whitespace",
-      "description": "Flag text units where leading whitespace differs between source and target."
+      "description": "Flag text units where leading whitespace differs between source and target.",
+      "group": "general",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "trailingWS": {
       "type": "boolean",
       "default": true,
       "title": "Check Trailing Whitespace",
-      "description": "Flag text units where trailing whitespace differs between source and target."
+      "description": "Flag text units where trailing whitespace differs between source and target.",
+      "group": "general",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "emptyTarget": {
       "type": "boolean",
       "default": true,
-      "title": "Check Empty Target",
-      "description": "Flag segments where the target translation is empty while the source is not."
+      "title": "Warn on Empty Target",
+      "description": "Flag segments where the target is empty when the source is not empty.",
+      "group": "general",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "emptySource": {
       "type": "boolean",
       "default": true,
-      "title": "Check Empty Source",
-      "description": "Flag segments where the source is empty but the target is not."
+      "title": "Warn on Non-Empty Target with Empty Source",
+      "description": "Flag segments where the target is not empty but the source is empty.",
+      "group": "general",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "targetSameAsSource": {
       "type": "boolean",
       "default": true,
-      "title": "Check Target Same as Source",
-      "description": "Flag segments where the target translation is identical to the source."
+      "title": "Warn on Target Same as Source",
+      "description": "Flag segments where the target translation is identical to the source. Only checked when the source contains at least one word character.",
+      "group": "general",
+      "enables": [
+        "targetSameAsSourceForSameLanguage",
+        "targetSameAsSourceWithCodes",
+        "targetSameAsSourceWithNumbers"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "targetSameAsSourceForSameLanguage": {
       "type": "boolean",
       "default": true,
-      "title": "Check Same-as-Source for Same Language",
-      "description": "Apply the target-same-as-source check even when source and target languages match."
+      "title": "Verify for Same Language Family",
+      "description": "Also apply the target-same-as-source check when source and target are in the same language family (e.g. en vs. en-GB, or fr-FR vs. fr-CA).",
+      "group": "general",
+      "enabledBy": {
+        "parameter": "targetSameAsSource",
+        "enabledWhenSelected": true
+      },
+      "layout": {
+        "withLabel": true,
+        "vertical": false
+      },
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "targetSameAsSourceWithCodes": {
       "type": "boolean",
       "default": true,
       "title": "Include Codes in Comparison",
-      "description": "Include inline codes when comparing source and target for identity."
+      "description": "Include inline codes when comparing source and target for identity. If set and the only difference is a code, the segment is not flagged.",
+      "group": "general",
+      "enabledBy": {
+        "parameter": "targetSameAsSource",
+        "enabledWhenSelected": true
+      },
+      "layout": {
+        "withLabel": true,
+        "vertical": false
+      },
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "targetSameAsSourceWithNumbers": {
       "type": "boolean",
       "default": true,
-      "title": "Include Numbers in Comparison",
-      "description": "Include numeric values when comparing source and target for identity."
+      "title": "Include Number-Only Segments",
+      "description": "Include segments containing only numbers in the same-as-source comparison.",
+      "group": "general",
+      "enabledBy": {
+        "parameter": "targetSameAsSource",
+        "enabledWhenSelected": true
+      },
+      "layout": {
+        "withLabel": true,
+        "vertical": false
+      },
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "codeDifference": {
       "type": "boolean",
       "default": true,
       "title": "Check Code Differences",
-      "description": "Verify that target segments have the same inline codes as source segments."
+      "description": "Verify that target segments have the same inline codes as source segments. Reports both missing and extra codes.",
+      "group": "inlineCodes",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "guessOpenClose": {
       "type": "boolean",
       "default": true,
-      "title": "Guess Open/Close Codes",
-      "description": "Infer whether inline codes are opening or closing when not explicitly marked."
+      "title": "Guess Opening/Closing Types",
+      "description": "Try to infer whether placeholder codes are opening or closing when not explicitly marked.",
+      "group": "inlineCodes",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "strictCodeOrder": {
       "type": "boolean",
       "default": false,
-      "title": "Strict Code Order",
-      "description": "Also flag code differences when codes appear in a different order."
+      "title": "Enforce Strict Code Order",
+      "description": "Also flag differences when codes appear in a different order between source and target.",
+      "group": "inlineCodes",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "checkXliffSchema": {
       "type": "boolean",
       "default": true,
       "title": "Validate XLIFF Schema",
-      "description": "Validate input against an XLIFF schema."
+      "description": "Validate XLIFF input documents against an XLIFF schema.",
+      "group": "general",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "xliffSchemaType": {
       "type": "string",
       "default": "Transitional",
       "title": "XLIFF Schema Type",
-      "description": "XLIFF schema validation level: Transitional or Strict."
+      "description": "XLIFF schema validation mode.",
+      "group": "general",
+      "options": [
+        {
+          "value": "None",
+          "label": "None"
+        },
+        {
+          "value": "Transitional",
+          "label": "Transitional"
+        },
+        {
+          "value": "Strict",
+          "label": "Strict"
+        }
+      ],
+      "x-editor": {
+        "widget": "dropdown"
+      }
     },
     "checkPatterns": {
       "type": "boolean",
       "default": true,
       "title": "Check Patterns",
-      "description": "Verify that source patterns have expected corresponding content in the target."
+      "description": "Verify that source patterns defined in the list have their expected corresponding content in the target.",
+      "group": "patterns",
+      "enables": [
+        "patterns",
+        "showOnlyPatternDescription"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "checkWithLT": {
       "type": "boolean",
       "default": false,
-      "title": "Check with LanguageTool",
-      "description": "Run additional grammar/style checks using a LanguageTool server."
+      "title": "Use LanguageTool",
+      "description": "Run grammar and style checks using a LanguageTool server. Requires a running LanguageTool instance.",
+      "group": "languageTool",
+      "enables": [
+        "serverURL",
+        "ltBilingualMode"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "serverURL": {
       "type": "string",
       "default": "http://localhost:8081/",
-      "title": "LanguageTool Server URL",
-      "description": "URL of the LanguageTool server instance."
+      "title": "Server URL",
+      "description": "URL of the LanguageTool server (e.g. http://localhost:8081/).",
+      "group": "languageTool",
+      "enabledBy": {
+        "parameter": "checkWithLT",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "text"
+      }
     },
     "ltBilingualMode": {
       "type": "boolean",
       "default": false,
       "title": "Bilingual Mode",
-      "description": "Auto-translate LanguageTool error messages into another language."
+      "description": "Enable bilingual mode for LanguageTool verification.",
+      "group": "languageTool",
+      "enabledBy": {
+        "parameter": "checkWithLT",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "saveSession": {
       "type": "boolean",
       "default": true,
       "title": "Save Session",
-      "description": "Save the QA session to a file for later review in CheckMate."
+      "description": "Save the QA session to a file for later review in CheckMate.",
+      "group": "output",
+      "enables": [
+        "sessionPath"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "sessionPath": {
       "type": "string",
@@ -196,127 +378,307 @@
         ]
       },
       "title": "Session File Path",
-      "description": "Path for the saved QA session file."
+      "description": "Path for the saved QA session file.",
+      "group": "output",
+      "enabledBy": {
+        "parameter": "saveSession",
+        "enabledWhenSelected": true
+      },
+      "path": {
+        "browseTitle": "Quality Check Session",
+        "forSaveAs": true,
+        "filters": [
+          {
+            "name": "Quality Check Sessions",
+            "extensions": "*.qcs"
+          },
+          {
+            "name": "All Files",
+            "extensions": "*.*"
+          }
+        ]
+      },
+      "x-editor": {
+        "widget": "path"
+      }
     },
     "doubledWord": {
       "type": "boolean",
       "default": true,
-      "title": "Check Doubled Words",
-      "description": "Flag target segments with consecutive repeated words."
+      "title": "Warn on Doubled Words",
+      "description": "Flag target segments with consecutive repeated words (e.g. \"is is\" in \"This is is an example\"). Case-insensitive.",
+      "group": "general",
+      "enables": [
+        "doubledWordExceptions"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "doubledWordExceptions": {
       "type": "string",
       "default": "sie;vous;nous",
       "title": "Doubled Word Exceptions",
-      "description": "Semicolon-separated words allowed to be repeated."
+      "description": "Semicolon-separated list of words that may be repeated (e.g. \"vous;nous\"). Case-insensitive.",
+      "group": "general",
+      "enabledBy": {
+        "parameter": "doubledWord",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "text"
+      }
     },
     "corruptedCharacters": {
       "type": "boolean",
       "default": true,
       "title": "Check Corrupted Characters",
-      "description": "Detect patterns indicating encoding corruption in target text."
+      "description": "Check for special patterns that often indicate encoding corruption (e.g. UTF-8 file opened as ISO-8859-1).",
+      "group": "characters",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "scope": {
       "type": "integer",
       "default": 0,
       "title": "Processing Scope",
-      "description": "Which entries to process: all, approved only, or non-approved only."
+      "description": "Which entries to process based on approval status. Non-translatable entries are always skipped.",
+      "group": "output",
+      "options": [
+        {
+          "value": 0,
+          "label": "Process all entries"
+        },
+        {
+          "value": 1,
+          "label": "Process only approved entries"
+        },
+        {
+          "value": 2,
+          "label": "Process only non-approved entries"
+        }
+      ],
+      "x-editor": {
+        "widget": "dropdown"
+      }
     },
     "checkMaxCharLength": {
       "type": "boolean",
       "default": true,
-      "title": "Check Maximum Length",
-      "description": "Flag targets longer than a percentage of source character length."
+      "title": "Check Maximum Length Ratio",
+      "description": "Flag targets longer than a given percentage of source character length. Different percentages apply to short and long text.",
+      "group": "length",
+      "enables": [
+        "maxCharLengthBreak",
+        "maxCharLengthAbove",
+        "maxCharLengthBelow"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "maxCharLengthBreak": {
       "type": "integer",
       "default": 20,
-      "title": "Max Length Short Text %",
-      "description": "Maximum length percentage for short text."
+      "title": "Short/Long Threshold (Max)",
+      "description": "Character count above which text is considered \"long\" for the maximum length check.",
+      "group": "length",
+      "enabledBy": {
+        "parameter": "checkMaxCharLength",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "spin"
+      }
     },
     "maxCharLengthAbove": {
       "type": "integer",
       "default": 200,
-      "title": "Max Length Short/Long Threshold",
-      "description": "Character count above which text is considered long for max length check."
+      "title": "Percentage for Long Text (Max)",
+      "description": "Maximum allowed percentage of source length for text longer than the threshold.",
+      "group": "length",
+      "enabledBy": {
+        "parameter": "checkMaxCharLength",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "spin"
+      }
     },
     "maxCharLengthBelow": {
       "type": "integer",
       "default": 350,
-      "title": "Max Length Long Text %",
-      "description": "Maximum length percentage for long text."
+      "title": "Percentage for Short Text (Max)",
+      "description": "Maximum allowed percentage of source length for text at or below the threshold.",
+      "group": "length",
+      "enabledBy": {
+        "parameter": "checkMaxCharLength",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "spin"
+      }
     },
     "checkMinCharLength": {
       "type": "boolean",
       "default": true,
-      "title": "Check Minimum Length",
-      "description": "Flag targets shorter than a percentage of source character length."
+      "title": "Check Minimum Length Ratio",
+      "description": "Flag targets shorter than a given percentage of source character length. Different percentages apply to short and long text.",
+      "group": "length",
+      "enables": [
+        "minCharLengthBreak",
+        "minCharLengthAbove",
+        "minCharLengthBelow"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "minCharLengthBreak": {
       "type": "integer",
       "default": 20,
-      "title": "Min Length Short Text %",
-      "description": "Minimum length percentage for short text."
+      "title": "Short/Long Threshold (Min)",
+      "description": "Character count above which text is considered \"long\" for the minimum length check.",
+      "group": "length",
+      "enabledBy": {
+        "parameter": "checkMinCharLength",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "spin"
+      }
     },
     "minCharLengthAbove": {
       "type": "integer",
       "default": 45,
-      "title": "Min Length Short/Long Threshold",
-      "description": "Character count above which text is considered long for min length check."
+      "title": "Percentage for Long Text (Min)",
+      "description": "Minimum required percentage of source length for text longer than the threshold.",
+      "group": "length",
+      "enabledBy": {
+        "parameter": "checkMinCharLength",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "spin"
+      }
     },
     "minCharLengthBelow": {
       "type": "integer",
       "default": 30,
-      "title": "Min Length Long Text %",
-      "description": "Minimum length percentage for long text."
+      "title": "Percentage for Short Text (Min)",
+      "description": "Minimum required percentage of source length for text at or below the threshold.",
+      "group": "length",
+      "enabledBy": {
+        "parameter": "checkMinCharLength",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "spin"
+      }
     },
     "checkStorageSize": {
       "type": "boolean",
       "default": true,
-      "title": "Check Storage Size",
-      "description": "Verify target fits within the storage size defined by the document format."
+      "title": "Check ITS Storage Size",
+      "description": "Warn if a source or target text unit does not fit its ITS Storage Size property.",
+      "group": "length",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "checkAbsoluteMaxCharLength": {
       "type": "boolean",
       "default": false,
-      "title": "Check Absolute Max Length",
-      "description": "Flag targets exceeding an absolute character count limit."
+      "title": "Check Absolute Maximum Length",
+      "description": "Flag target segments that exceed an absolute character count limit.",
+      "group": "length",
+      "enables": [
+        "absoluteMaxCharLength"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "absoluteMaxCharLength": {
       "type": "integer",
       "default": 255,
-      "title": "Absolute Max Characters",
-      "description": "Maximum number of characters allowed in any target segment."
+      "title": "Absolute Maximum Characters",
+      "description": "Maximum number of characters allowed in any target segment.",
+      "group": "length",
+      "enabledBy": {
+        "parameter": "checkAbsoluteMaxCharLength",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "spin"
+      }
     },
     "checkAllowedCharacters": {
       "type": "boolean",
       "default": true,
-      "title": "Check Allowed Characters",
-      "description": "Enable character-level validation of target text."
+      "title": "Check ITS Allowed Characters",
+      "description": "Verify target text against the ITS Allowed Characters annotation property.",
+      "group": "characters",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "checkCharacters": {
       "type": "boolean",
       "default": false,
-      "title": "Check Against Charset",
-      "description": "Validate target characters against a specific charset encoding."
+      "title": "Check Against Charset Encoding",
+      "description": "Warn if a target character cannot be represented in the specified character set encoding.",
+      "group": "characters",
+      "enables": [
+        "charset",
+        "extraCharsAllowed"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "charset": {
       "type": "string",
       "default": "ISO-8859-1",
       "title": "Character Set Encoding",
-      "description": "Charset encoding to validate target text against."
+      "description": "Name of the character set encoding to validate against (e.g. ISO-8859-1). Leave empty to use only the regex pattern below.",
+      "group": "characters",
+      "enabledBy": {
+        "parameter": "checkCharacters",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "text"
+      }
     },
     "extraCharsAllowed": {
       "type": "string",
       "default": "",
-      "title": "Extra Allowed Characters",
-      "description": "Regex matching additional characters to allow beyond the charset."
+      "title": "Extra Allowed Characters (Regex)",
+      "description": "Regular expression matching additional characters to allow beyond the charset. These characters pass validation even if not in the charset.",
+      "group": "characters",
+      "enabledBy": {
+        "parameter": "checkCharacters",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "text"
+      }
     },
     "checkTerms": {
       "type": "boolean",
       "default": false,
-      "title": "Check Terminology",
-      "description": "Verify terminology using a glossary or termbase file."
+      "title": "Verify Terminology",
+      "description": "Verify terminology usage against a glossary file (TBX, CSV, or tab-delimited). Experimental feature.",
+      "group": "terms",
+      "enables": [
+        "termsPath",
+        "stringMode"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "termsPath": {
       "type": "string",
@@ -326,44 +688,121 @@
         "role": "input",
         "resourceKind": "termbase"
       },
-      "title": "Termbase Path",
-      "description": "Path to the termbase file for terminology verification."
+      "title": "Glossary File Path",
+      "description": "Path to the glossary file (TBX, CSV, or tab-delimited TXT).",
+      "group": "terms",
+      "enabledBy": {
+        "parameter": "checkTerms",
+        "enabledWhenSelected": true
+      },
+      "path": {
+        "browseTitle": "Select Glossary File",
+        "filters": [
+          {
+            "name": "TBX Documents",
+            "extensions": "*.tbx"
+          },
+          {
+            "name": "CSV Files",
+            "extensions": "*.csv"
+          },
+          {
+            "name": "Tab-Delimited Files",
+            "extensions": "*.txt"
+          },
+          {
+            "name": "All Files",
+            "extensions": "*.*"
+          }
+        ]
+      },
+      "x-editor": {
+        "widget": "path"
+      }
     },
     "stringMode": {
       "type": "boolean",
       "default": false,
-      "title": "String Match Mode",
-      "description": "Use string-based matching instead of word-boundary matching for terms."
+      "title": "Use String Matching",
+      "description": "Use string-based matching instead of word-boundary matching for terminology verification.",
+      "group": "terms",
+      "enabledBy": {
+        "parameter": "checkTerms",
+        "enabledWhenSelected": true
+      },
+      "enables": [
+        "betweenCodes"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "betweenCodes": {
       "type": "boolean",
       "default": false,
-      "title": "Check Between Codes Only",
-      "description": "Restrict terminology checking to text between inline codes."
+      "title": "Match Between Codes Only",
+      "description": "Strings must appear between inline codes to count as a terminology match.",
+      "group": "terms",
+      "enabledBy": {
+        "parameter": "stringMode",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "showFullPath": {
       "type": "boolean",
       "default": true,
-      "title": "Show Full File Path",
-      "description": "Display full file paths in the report instead of filenames only."
+      "title": "Show Full Paths in Report",
+      "description": "Display full file paths in the report instead of relative paths.",
+      "group": "output",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "checkBlacklist": {
       "type": "boolean",
       "default": false,
       "title": "Check Blacklist",
-      "description": "Check target text against a list of forbidden terms."
+      "description": "Check target text against a list of forbidden terms.",
+      "group": "terms",
+      "enables": [
+        "allowBlacklistSub",
+        "blacklistSrc",
+        "blacklistPath"
+      ],
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "allowBlacklistSub": {
       "type": "boolean",
       "default": false,
-      "title": "Allow Substring Matching",
-      "description": "Allow substring matches when checking blacklisted terms."
+      "title": "Detect Substrings",
+      "description": "Allow substring matches when checking blacklisted terms (otherwise whole-word only).",
+      "group": "terms",
+      "enabledBy": {
+        "parameter": "checkBlacklist",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "blacklistSrc": {
       "type": "boolean",
       "default": false,
-      "title": "Check Source Blacklist",
-      "description": "Also check the source text against the blacklist."
+      "title": "Check Source Against Blacklist",
+      "description": "Also check the source text against the blacklist, not just the target.",
+      "group": "terms",
+      "enabledBy": {
+        "parameter": "checkBlacklist",
+        "enabledWhenSelected": true
+      },
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "blacklistPath": {
       "type": "string",
@@ -373,373 +812,297 @@
         "role": "input"
       },
       "title": "Blacklist File Path",
-      "description": "Path to the file containing forbidden terms."
+      "description": "Path to the tab-delimited file containing forbidden terms.",
+      "group": "terms",
+      "enabledBy": {
+        "parameter": "checkBlacklist",
+        "enabledWhenSelected": true
+      },
+      "path": {
+        "browseTitle": "Select Blacklist File",
+        "filters": [
+          {
+            "name": "Tab-Delimited Files",
+            "extensions": "*.txt"
+          },
+          {
+            "name": "All Files",
+            "extensions": "*.*"
+          }
+        ]
+      },
+      "x-editor": {
+        "widget": "path"
+      }
     },
     "showOnlyPatternDescription": {
       "type": "boolean",
       "default": false,
       "title": "Show Pattern Description Only",
-      "description": "Show only the pattern description in reports instead of full match details."
+      "description": "When a pattern error is reported, show only the pattern description instead of full match details.",
+      "group": "patterns",
+      "x-editor": {
+        "widget": "checkbox"
+      }
     },
     "typesToIgnore": {
       "type": "string",
       "default": "mrk;x-df-s;",
       "title": "Code Types to Ignore",
-      "description": "Semicolon-separated list of inline code types to skip during verification."
+      "description": "Semicolon-separated list of inline code types to skip during code verification (e.g. \"mrk;x-df-s;\").",
+      "group": "inlineCodes",
+      "x-editor": {
+        "widget": "text"
+      }
     },
     "patternCount": {
       "type": "integer",
-      "default": 8,
-      "title": "Pattern Count",
-      "description": "Number of pattern rules defined."
+      "default": 8
     },
     "usePattern0": {
       "type": "boolean",
-      "default": true,
-      "title": "Enable Pattern 0",
-      "description": "Enable pattern rule #0 (opening parenthesis)."
+      "default": true
     },
     "fromSourcePattern0": {
       "type": "boolean",
-      "default": true,
-      "title": "Pattern 0 Direction",
-      "description": "Search source first then verify target (true) or vice versa (false)."
+      "default": true
     },
     "singlePattern0": {
       "type": "boolean",
-      "default": false,
-      "title": "Pattern 0 Single Match",
-      "description": "Expect only a single occurrence for pattern #0."
+      "default": false
     },
     "severityPattern0": {
       "type": "integer",
-      "default": 0,
-      "title": "Pattern 0 Severity",
-      "description": "Warning severity level for pattern rule #0."
+      "default": 0
     },
     "sourcePattern0": {
       "type": "string",
-      "default": "[\\(\\uFF08]",
-      "title": "Pattern 0 Source Regex",
-      "description": "Regular expression to match in source for pattern #0."
+      "default": "[\\(\\uFF08]"
     },
     "targetPattern0": {
       "type": "string",
-      "default": "[\\(\\uFF08]",
-      "title": "Pattern 0 Target Regex",
-      "description": "Expected pattern in target for pattern #0, or <same>."
+      "default": "[\\(\\uFF08]"
     },
     "descPattern0": {
       "type": "string",
-      "default": "Opening parenthesis",
-      "title": "Pattern 0 Description",
-      "description": "Human-readable description of pattern rule #0."
+      "default": "Opening parenthesis"
     },
     "usePattern1": {
       "type": "boolean",
-      "default": true,
-      "title": "Enable Pattern 1",
-      "description": "Enable pattern rule #1 (closing parenthesis)."
+      "default": true
     },
     "fromSourcePattern1": {
       "type": "boolean",
-      "default": true,
-      "title": "Pattern 1 Direction",
-      "description": "Search source first then verify target (true) or vice versa (false)."
+      "default": true
     },
     "singlePattern1": {
       "type": "boolean",
-      "default": false,
-      "title": "Pattern 1 Single Match",
-      "description": "Expect only a single occurrence for pattern #1."
+      "default": false
     },
     "severityPattern1": {
       "type": "integer",
-      "default": 0,
-      "title": "Pattern 1 Severity",
-      "description": "Warning severity level for pattern rule #1."
+      "default": 0
     },
     "sourcePattern1": {
       "type": "string",
-      "default": "[\\)\\uFF09]",
-      "title": "Pattern 1 Source Regex",
-      "description": "Regular expression to match in source for pattern #1."
+      "default": "[\\)\\uFF09]"
     },
     "targetPattern1": {
       "type": "string",
-      "default": "[\\)\\uFF09]",
-      "title": "Pattern 1 Target Regex",
-      "description": "Expected pattern in target for pattern #1, or <same>."
+      "default": "[\\)\\uFF09]"
     },
     "descPattern1": {
       "type": "string",
-      "default": "Closing parenthesis",
-      "title": "Pattern 1 Description",
-      "description": "Human-readable description of pattern rule #1."
+      "default": "Closing parenthesis"
     },
     "usePattern2": {
       "type": "boolean",
-      "default": true,
-      "title": "Enable Pattern 2",
-      "description": "Enable pattern rule #2 (bracketing characters)."
+      "default": true
     },
     "fromSourcePattern2": {
       "type": "boolean",
-      "default": true,
-      "title": "Pattern 2 Direction",
-      "description": "Search source first then verify target (true) or vice versa (false)."
+      "default": true
     },
     "singlePattern2": {
       "type": "boolean",
-      "default": false,
-      "title": "Pattern 2 Single Match",
-      "description": "Expect only a single occurrence for pattern #2."
+      "default": false
     },
     "severityPattern2": {
       "type": "integer",
-      "default": 0,
-      "title": "Pattern 2 Severity",
-      "description": "Warning severity level for pattern rule #2."
+      "default": 0
     },
     "sourcePattern2": {
       "type": "string",
-      "default": "[\\p{Ps}\\p{Pe}&&[^\\(\\)\\uFF08\\uFF09]]",
-      "title": "Pattern 2 Source Regex",
-      "description": "Regular expression to match in source for pattern #2."
+      "default": "[\\p{Ps}\\p{Pe}&&[^\\(\\)\\uFF08\\uFF09]]"
     },
     "targetPattern2": {
       "type": "string",
-      "default": "<same>",
-      "title": "Pattern 2 Target Regex",
-      "description": "Expected pattern in target for pattern #2, or <same>."
+      "default": "<same>"
     },
     "descPattern2": {
       "type": "string",
-      "default": "Bracketing characters (except parentheses)",
-      "title": "Pattern 2 Description",
-      "description": "Human-readable description of pattern rule #2."
+      "default": "Bracketing characters (except parentheses)"
     },
     "usePattern3": {
       "type": "boolean",
-      "default": true,
-      "title": "Enable Pattern 3",
-      "description": "Enable pattern rule #3 (email addresses)."
+      "default": true
     },
     "fromSourcePattern3": {
       "type": "boolean",
-      "default": true,
-      "title": "Pattern 3 Direction",
-      "description": "Search source first then verify target (true) or vice versa (false)."
+      "default": true
     },
     "singlePattern3": {
       "type": "boolean",
-      "default": false,
-      "title": "Pattern 3 Single Match",
-      "description": "Expect only a single occurrence for pattern #3."
+      "default": false
     },
     "severityPattern3": {
       "type": "integer",
-      "default": 1,
-      "title": "Pattern 3 Severity",
-      "description": "Warning severity level for pattern rule #3."
+      "default": 1
     },
     "sourcePattern3": {
       "type": "string",
-      "default": "[\\w\\.\\-]+@[\\w\\.\\-]+",
-      "title": "Pattern 3 Source Regex",
-      "description": "Regular expression to match in source for pattern #3."
+      "default": "[\\w\\.\\-]+@[\\w\\.\\-]+"
     },
     "targetPattern3": {
       "type": "string",
-      "default": "<same>",
-      "title": "Pattern 3 Target Regex",
-      "description": "Expected pattern in target for pattern #3, or <same>."
+      "default": "<same>"
     },
     "descPattern3": {
       "type": "string",
-      "default": "Email addresses",
-      "title": "Pattern 3 Description",
-      "description": "Human-readable description of pattern rule #3."
+      "default": "Email addresses"
     },
     "usePattern4": {
       "type": "boolean",
-      "default": true,
-      "title": "Enable Pattern 4",
-      "description": "Enable pattern rule #4 (URLs)."
+      "default": true
     },
     "fromSourcePattern4": {
       "type": "boolean",
-      "default": true,
-      "title": "Pattern 4 Direction",
-      "description": "Search source first then verify target (true) or vice versa (false)."
+      "default": true
     },
     "singlePattern4": {
       "type": "boolean",
-      "default": false,
-      "title": "Pattern 4 Single Match",
-      "description": "Expect only a single occurrence for pattern #4."
+      "default": false
     },
     "severityPattern4": {
       "type": "integer",
-      "default": 1,
-      "title": "Pattern 4 Severity",
-      "description": "Warning severity level for pattern rule #4."
+      "default": 1
     },
     "sourcePattern4": {
       "type": "string",
-      "default": "https?:[\\w/\\.:;+\\-~\\%#\\$?=&,()]+[\\w/:;+\\-~\\%#\\$?=&,()]+|www\\.[\\w/\\.:;+\\-~\\%#\\$?=&,()]+|ftp:[\\w/\\.:;+\\-~\\%#?=&,]+",
-      "title": "Pattern 4 Source Regex",
-      "description": "Regular expression to match in source for pattern #4."
+      "default": "https?:[\\w/\\.:;+\\-~\\%#\\$?=&,()]+[\\w/:;+\\-~\\%#\\$?=&,()]+|www\\.[\\w/\\.:;+\\-~\\%#\\$?=&,()]+|ftp:[\\w/\\.:;+\\-~\\%#?=&,]+"
     },
     "targetPattern4": {
       "type": "string",
-      "default": "<same>",
-      "title": "Pattern 4 Target Regex",
-      "description": "Expected pattern in target for pattern #4, or <same>."
+      "default": "<same>"
     },
     "descPattern4": {
       "type": "string",
-      "default": "URLs",
-      "title": "Pattern 4 Description",
-      "description": "Human-readable description of pattern rule #4."
+      "default": "URLs"
     },
     "usePattern5": {
       "type": "boolean",
-      "default": true,
-      "title": "Enable Pattern 5",
-      "description": "Enable pattern rule #5 (IP addresses)."
+      "default": true
     },
     "fromSourcePattern5": {
       "type": "boolean",
-      "default": true,
-      "title": "Pattern 5 Direction",
-      "description": "Search source first then verify target (true) or vice versa (false)."
+      "default": true
     },
     "singlePattern5": {
       "type": "boolean",
-      "default": false,
-      "title": "Pattern 5 Single Match",
-      "description": "Expect only a single occurrence for pattern #5."
+      "default": false
     },
     "severityPattern5": {
       "type": "integer",
-      "default": 2,
-      "title": "Pattern 5 Severity",
-      "description": "Warning severity level for pattern rule #5."
+      "default": 2
     },
     "sourcePattern5": {
       "type": "string",
-      "default": "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b",
-      "title": "Pattern 5 Source Regex",
-      "description": "Regular expression to match in source for pattern #5."
+      "default": "\\b(?:\\d{1,3}\\.){3}\\d{1,3}\\b"
     },
     "targetPattern5": {
       "type": "string",
-      "default": "<same>",
-      "title": "Pattern 5 Target Regex",
-      "description": "Expected pattern in target for pattern #5, or <same>."
+      "default": "<same>"
     },
     "descPattern5": {
       "type": "string",
-      "default": "IP addresses",
-      "title": "Pattern 5 Description",
-      "description": "Human-readable description of pattern rule #5."
+      "default": "IP addresses"
     },
     "usePattern6": {
       "type": "boolean",
-      "default": true,
-      "title": "Enable Pattern 6",
-      "description": "Enable pattern rule #6 (printf codes)."
+      "default": true
     },
     "fromSourcePattern6": {
       "type": "boolean",
-      "default": true,
-      "title": "Pattern 6 Direction",
-      "description": "Search source first then verify target (true) or vice versa (false)."
+      "default": true
     },
     "singlePattern6": {
       "type": "boolean",
-      "default": false,
-      "title": "Pattern 6 Single Match",
-      "description": "Expect only a single occurrence for pattern #6."
+      "default": false
     },
     "severityPattern6": {
       "type": "integer",
-      "default": 2,
-      "title": "Pattern 6 Severity",
-      "description": "Warning severity level for pattern rule #6."
+      "default": 2
     },
     "sourcePattern6": {
       "type": "string",
-      "default": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]",
-      "title": "Pattern 6 Source Regex",
-      "description": "Regular expression to match in source for pattern #6."
+      "default": "%(([-0+#]?)[-0+#]?)((\\d\\$)?)(([\\d\\*]*)(\\.[\\d\\*]*)?)[dioxXucsfeEgGpn]"
     },
     "targetPattern6": {
       "type": "string",
-      "default": "<same>",
-      "title": "Pattern 6 Target Regex",
-      "description": "Expected pattern in target for pattern #6, or <same>."
+      "default": "<same>"
     },
     "descPattern6": {
       "type": "string",
-      "default": "C-style printf codes",
-      "title": "Pattern 6 Description",
-      "description": "Human-readable description of pattern rule #6."
+      "default": "C-style printf codes"
     },
     "usePattern7": {
       "type": "boolean",
-      "default": true,
-      "title": "Enable Pattern 7",
-      "description": "Enable pattern rule #7 (tripled letters)."
+      "default": true
     },
     "fromSourcePattern7": {
       "type": "boolean",
-      "default": false,
-      "title": "Pattern 7 Direction",
-      "description": "Search source first then verify target (true) or vice versa (false)."
+      "default": false
     },
     "singlePattern7": {
       "type": "boolean",
-      "default": false,
-      "title": "Pattern 7 Single Match",
-      "description": "Expect only a single occurrence for pattern #7."
+      "default": false
     },
     "severityPattern7": {
       "type": "integer",
-      "default": 1,
-      "title": "Pattern 7 Severity",
-      "description": "Warning severity level for pattern rule #7."
+      "default": 1
     },
     "sourcePattern7": {
       "type": "string",
-      "default": "<same>",
-      "title": "Pattern 7 Source Regex",
-      "description": "Regular expression to match in source for pattern #7."
+      "default": "<same>"
     },
     "targetPattern7": {
       "type": "string",
-      "default": "([\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lo}])\\1\\1",
-      "title": "Pattern 7 Target Regex",
-      "description": "Expected pattern in target for pattern #7, or <same>."
+      "default": "([\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lo}])\\1\\1"
     },
     "descPattern7": {
       "type": "string",
-      "default": "Tripled letter",
-      "title": "Pattern 7 Description",
-      "description": "Human-readable description of pattern rule #7."
+      "default": "Tripled letter"
     },
     "extraCodesAllowed": {
       "type": "integer",
       "default": 0,
       "title": "Extra Codes Allowed",
-      "description": "Number of extra inline codes allowed in target without warning."
+      "description": "List of inline code type names that are allowed to appear in the target even if not present in the source.",
+      "group": "inlineCodes",
+      "x-editor": {
+        "widget": "stringList"
+      }
     },
     "missingCodesAllowed": {
       "type": "integer",
       "default": 0,
       "title": "Missing Codes Allowed",
-      "description": "Number of missing inline codes allowed from target without warning."
+      "description": "List of inline code type names that are allowed to be missing from the target even if present in the source.",
+      "group": "inlineCodes",
+      "x-editor": {
+        "widget": "stringList"
+      }
     }
-  }
+  },
+  "description": "Configurable quality assurance checks for bilingual content: whitespace, inline codes, patterns, length, characters, terminology, and LanguageTool grammar verification."
 }
