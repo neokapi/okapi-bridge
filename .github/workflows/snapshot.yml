@@ -118,6 +118,49 @@ jobs:
           echo "SNAPSHOT_DIR=$SNAPSHOT_DIR" >> "$GITHUB_ENV"
           ./scripts/generate-version-pom.sh --local --output-dir "$SNAPSHOT_DIR" "$OKAPI_VERSION"
 
+      - name: Patch pom for partial Okapi builds
+        if: steps.okapi-build.outputs.okapi_build_status == 'partial'
+        env:
+          OKAPI_VERSION: ${{ steps.okapi-version.outputs.version }}
+        run: |
+          # okapi-lib (the SDK uber-JAR) won't exist if any Okapi module failed.
+          # Replace it with individual filter/step JARs that were actually installed.
+          OKAPI_DIR="$HOME/.m2/repository/net/sf/okapi"
+
+          DEPS=""
+          for jar in "$OKAPI_DIR"/okapi-filter-*/"$OKAPI_VERSION"/*.jar \
+                     "$OKAPI_DIR"/okapi-step-*/"$OKAPI_VERSION"/*.jar \
+                     "$OKAPI_DIR"/okapi-lib-*/"$OKAPI_VERSION"/*.jar; do
+            [ -f "$jar" ] || continue
+            # Skip sources/javadoc JARs
+            [[ "$jar" == *-sources.jar ]] && continue
+            [[ "$jar" == *-javadoc.jar ]] && continue
+            ARTIFACT=$(basename "$(dirname "$(dirname "$jar")")")
+            DEPS="$DEPS        <dependency>
+              <groupId>net.sf.okapi</groupId>
+              <artifactId>${ARTIFACT}</artifactId>
+              <version>\${okapi.version}</version>
+          </dependency>
+          "
+          done
+
+          INSTALLED=$(echo "$DEPS" | grep -c '<dependency>' || true)
+          echo "Replacing okapi-lib with $INSTALLED individual Okapi artifacts"
+
+          # Replace the okapi-lib dependency block with individual deps
+          python3 -c "
+          import re, sys
+          pom = open('$SNAPSHOT_DIR/pom.xml').read()
+          okapi_lib_dep = re.compile(
+              r'<dependency>\s*<groupId>net\.sf\.okapi</groupId>\s*'
+              r'<artifactId>okapi-lib</artifactId>.*?</dependency>',
+              re.DOTALL
+          )
+          deps = '''$DEPS'''
+          pom = okapi_lib_dep.sub(deps.strip(), pom, count=1)
+          open('$SNAPSHOT_DIR/pom.xml', 'w').write(pom)
+          "
+
       - name: Build okapi-bridge
         run: mvn -B package -f "$SNAPSHOT_DIR/pom.xml"
 
