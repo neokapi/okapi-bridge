@@ -63,6 +63,12 @@ public class OkapiBridgeServer {
                     // shift args so subsequent flag parsing ignores "daemon"
                     args = trimFirst(args);
                     break;
+                case "pseudo":
+                    // Pseudo-translate one document through Okapi's
+                    // TextModificationStep (TYPE_EXTREPLACE / SCRIPT_EXT_LATIN).
+                    // Used by the parity round-trip harness as the comparator.
+                    System.exit(PseudoCommand.run(trimFirst(args)));
+                    return;
                 default:
                     // fall through to legacy flag parsing
             }
