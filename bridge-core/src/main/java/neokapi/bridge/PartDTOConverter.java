@@ -69,7 +69,19 @@ public class PartDTOConverter {
         // referenceFlag) when the structural shape matches — see
         // OkapiCodeConverter.toTextFragment for why writers depend on it.
         TextContainer sourceContainer = tu.getSource();
+        TextContainer existingTarget = tu.getTarget(targetLocale);
         TextContainer targetContainer = new TextContainer();
+        // Carry over properties (e.g. PO "approved" -> #, fuzzy flag, TS
+        // "approved" -> type="unfinished") from any existing target the filter
+        // attached when reading the source. Mirrors StreamingTranslationApplier.
+        if (existingTarget != null) {
+            for (String name : existingTarget.getPropertyNames()) {
+                Property p = existingTarget.getProperty(name);
+                if (p != null) {
+                    targetContainer.setProperty(p.clone());
+                }
+            }
+        }
         tu.setTarget(targetLocale, targetContainer);
 
         List<SegmentDTO> targetSegments = matchingTarget.getSegments();

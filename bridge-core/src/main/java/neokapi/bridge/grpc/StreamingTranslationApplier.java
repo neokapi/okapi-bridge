@@ -6,6 +6,7 @@ import net.sf.okapi.common.Event;
 import net.sf.okapi.common.EventType;
 import net.sf.okapi.common.LocaleId;
 import net.sf.okapi.common.resource.ITextUnit;
+import net.sf.okapi.common.resource.Property;
 import net.sf.okapi.common.resource.Segment;
 import net.sf.okapi.common.resource.TextContainer;
 import net.sf.okapi.common.resource.TextFragment;
@@ -69,7 +70,21 @@ public class StreamingTranslationApplier {
         // re-emit codes via the source's Codes list (HtmlSkeletonWriter,
         // OpenXML, IDML, MIF, …) need that metadata to find the code.
         TextContainer sourceContainer = tu.getSource();
+        TextContainer existingTarget = tu.getTarget(targetLocale);
         TextContainer targetContainer = new TextContainer();
+        // Carry over properties (e.g. PO "approved" -> #, fuzzy flag, TS
+        // "approved" -> type="unfinished") from any existing target the filter
+        // attached when reading the source. Without this, GenericSkeletonWriter
+        // emits -ERR:PROP-NOT-FOUND- for skeleton placeholders that reference
+        // these target properties.
+        if (existingTarget != null) {
+            for (String name : existingTarget.getPropertyNames()) {
+                Property p = existingTarget.getProperty(name);
+                if (p != null) {
+                    targetContainer.setProperty(p.clone());
+                }
+            }
+        }
         tu.setTarget(targetLocale, targetContainer);
 
         if (fragments.size() == 1) {
