@@ -10,7 +10,6 @@ import net.sf.okapi.common.resource.RawDocument;
 import net.sf.okapi.steps.common.FilterEventsToRawDocumentStep;
 import net.sf.okapi.steps.common.RawDocumentToFilterEventsStep;
 import net.sf.okapi.steps.textmodification.Parameters;
-import net.sf.okapi.steps.textmodification.TextModificationStep;
 
 import java.io.File;
 import java.net.URI;
@@ -136,7 +135,11 @@ public final class PseudoCommand {
         RawDocumentToFilterEventsStep rd2feStep = new RawDocumentToFilterEventsStep(filter);
         driver.addStep(rd2feStep);
 
-        TextModificationStep modStep = new TextModificationStep();
+        // Use the property-preserving subclass so PO `approved`/TS `approved`
+        // (backing #, fuzzy and type="unfinished" attrs) survive the pseudo
+        // pass — upstream TextModificationStep replaces the target container
+        // when filling blank entries, dropping its property bag.
+        PropertyPreservingTextModificationStep modStep = new PropertyPreservingTextModificationStep();
         Parameters params = (Parameters) modStep.getParameters();
         params.setType(Parameters.TYPE_EXTREPLACE);
         params.setScript(Parameters.SCRIPT_EXT_LATIN);
