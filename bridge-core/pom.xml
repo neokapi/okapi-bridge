@@ -91,6 +91,22 @@
             <version>${okapi.version}</version>
             <scope>test</scope>
         </dependency>
+
+        <!-- Steps used by PseudoCommand. test scope keeps the bridge-core
+             test build self-contained; production shading happens in the
+             per-version pom which pulls in okapi-lib and brings these in. -->
+        <dependency>
+            <groupId>net.sf.okapi.steps</groupId>
+            <artifactId>okapi-step-common</artifactId>
+            <version>${okapi.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.okapi.steps</groupId>
+            <artifactId>okapi-step-textmodification</artifactId>
+            <version>${okapi.version}</version>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <build>

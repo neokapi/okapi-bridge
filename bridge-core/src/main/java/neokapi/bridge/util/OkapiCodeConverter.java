@@ -234,24 +234,49 @@ public class OkapiCodeConverter {
     }
 
     /**
-     * Find the first unused source Code matching this (id, tagType). Marks the
-     * match used so a later span with the same shape doesn't hydrate from the
-     * same source slot. Returns null if no match.
+     * Find the first unused source Code matching this span. Prefers an exact
+     * {@code (id, tagType)} match; falls back to id-only when no tagType
+     * match exists.
+     *
+     * <p>The id-only fallback handles Okapi filters whose codedText marker
+     * disagrees with the {@code Code.tagType} — e.g. {@code MarkdownFilter}
+     * emits a {@code Code} with {@code tagType=CLOSING} for the trailing
+     * {@code ]} of a {@code [text][ref]} construct, but writes a PLACEHOLDER
+     * marker ({@code }) for it in the codedText. The bridge's
+     * outbound conversion uses the codedText marker to set spanType
+     * (PLACEHOLDER), so on the way back the (id, PLACEHOLDER) match misses
+     * the (id, CLOSING) source code. Falling back to id-only recovers the
+     * original Code with its full metadata, including the data the writer
+     * needs to emit.</p>
+     *
+     * <p>Marks the chosen source slot used so a later span with the same id
+     * doesn't double-hydrate from it.</p>
      */
     private static Code findUnusedSourceCode(List<Code> sourceCodes, boolean[] used,
                                              int spanId, TextFragment.TagType tagType) {
         if (sourceCodes == null) {
             return null;
         }
+        int idOnlyMatch = -1;
         for (int i = 0; i < sourceCodes.size(); i++) {
             if (used[i]) {
                 continue;
             }
             Code candidate = sourceCodes.get(i);
-            if (candidate.getId() == spanId && candidate.getTagType() == tagType) {
+            if (candidate.getId() != spanId) {
+                continue;
+            }
+            if (candidate.getTagType() == tagType) {
                 used[i] = true;
                 return candidate;
             }
+            if (idOnlyMatch == -1) {
+                idOnlyMatch = i;
+            }
+        }
+        if (idOnlyMatch >= 0) {
+            used[idOnlyMatch] = true;
+            return sourceCodes.get(idOnlyMatch);
         }
         return null;
     }
@@ -261,9 +286,15 @@ public class OkapiCodeConverter {
      * and any other Okapi-internal fields) then overlay the wire-carried
      * fields from the SpanDTO. Go is the authority for fields that crossed
      * the wire; source is the authority for fields that didn't.
+     *
+     * <p>Note: Okapi's {@link Code#setData} resets {@code referenceFlag} as
+     * a side effect, so we capture {@code hasReference} before calling it
+     * and restore it afterwards (subject to a wire-side override via
+     * SpanDTO flags).</p>
      */
     private static Code hydrateFromSource(Code source, SpanDTO span, int spanId) {
         Code code = source.clone();
+        boolean preservedReference = code.hasReference();
         code.setId(spanId);
         if (span == null) {
             return code;
@@ -271,7 +302,7 @@ public class OkapiCodeConverter {
         // Wire-carried fields: trust Go's value, including empty strings
         // (Go may have intentionally cleared them).
         if (span.getData() != null) {
-            code.setData(span.getData());
+            code.setData(span.getData()); // side effect: clears referenceFlag
         }
         if (span.getType() != null) {
             code.setType(span.getType());
@@ -292,7 +323,8 @@ public class OkapiCodeConverter {
         if (span.getOriginalId() != null && !span.getOriginalId().isEmpty()) {
             code.setOriginalId(span.getOriginalId());
         }
-        if ((span.getFlags() & SPAN_FLAG_HAS_REF) != 0) {
+        boolean spanHasRef = (span.getFlags() & SPAN_FLAG_HAS_REF) != 0;
+        if (preservedReference || spanHasRef) {
             code.setReferenceFlag(true);
         }
         return code;
@@ -302,19 +334,22 @@ public class OkapiCodeConverter {
      * Build a Code purely from a SpanDTO when no source-side match exists
      * (Go inserted a code the source didn't have). Wire-lossy fields stay
      * unset — the bridge has no source to hydrate from.
+     *
+     * <p>Note: Okapi's two-arg {@code Code(TagType, String)} constructor
+     * takes {@code (tagType, type)}, NOT {@code (tagType, data)} — the
+     * second arg is the named-type label and {@code data} is initialized to
+     * empty. Use the three-arg form to set data correctly the first time.</p>
      */
     private static Code buildFreshCode(SpanDTO span, TextFragment.TagType tagType) {
         String codeData = (span != null && span.getData() != null) ? span.getData() : "";
-        Code code = new Code(tagType, codeData);
+        String codeType = (span != null && span.getType() != null) ? span.getType() : "";
+        Code code = new Code(tagType, codeType, codeData);
         if (span == null) {
             return code;
         }
         code.setId(parseSpanId(span));
         if (span.getOuterData() != null) {
             code.setOuterData(span.getOuterData());
-        }
-        if (span.getType() != null) {
-            code.setType(span.getType());
         }
         code.setDeleteable(span.isDeletable());
         code.setCloneable(span.isCloneable());
