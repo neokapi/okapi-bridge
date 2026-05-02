@@ -63,23 +63,31 @@ public class StreamingTranslationApplier {
             return event;
         }
 
-        // Apply fragments to text unit (same logic as PartDTOConverter).
+        // Apply fragments to text unit. Pass the source TextFragment so the
+        // converter can preserve code identity (originalId, type, outerData,
+        // referenceFlag) when the structural shape matches — writers that
+        // re-emit codes via the source's Codes list (HtmlSkeletonWriter,
+        // OpenXML, IDML, MIF, …) need that metadata to find the code.
+        TextContainer sourceContainer = tu.getSource();
         TextContainer targetContainer = new TextContainer();
         tu.setTarget(targetLocale, targetContainer);
 
         if (fragments.size() == 1) {
-            TextFragment tf = OkapiCodeConverter.toTextFragment(fragments.get(0));
+            TextFragment sourceFragment = sourceContainer != null
+                    ? sourceContainer.getUnSegmentedContentCopy() : null;
+            TextFragment tf = OkapiCodeConverter.toTextFragment(fragments.get(0), sourceFragment);
             targetContainer.setContent(tf);
         } else {
-            TextContainer source = tu.getSource();
-            targetContainer.setContent(source.getUnSegmentedContentCopy());
+            targetContainer.setContent(sourceContainer.getUnSegmentedContentCopy());
 
-            Iterator<Segment> segs = targetContainer.getSegments().iterator();
+            Iterator<Segment> srcSegs = sourceContainer.getSegments().iterator();
+            Iterator<Segment> tgtSegs = targetContainer.getSegments().iterator();
             int idx = 0;
-            while (segs.hasNext() && idx < fragments.size()) {
-                Segment seg = segs.next();
-                TextFragment tf = OkapiCodeConverter.toTextFragment(fragments.get(idx));
-                seg.setContent(tf);
+            while (tgtSegs.hasNext() && idx < fragments.size()) {
+                Segment tgtSeg = tgtSegs.next();
+                TextFragment sourceFragment = srcSegs.hasNext() ? srcSegs.next().getContent() : null;
+                TextFragment tf = OkapiCodeConverter.toTextFragment(fragments.get(idx), sourceFragment);
+                tgtSeg.setContent(tf);
                 idx++;
             }
         }

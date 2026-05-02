@@ -128,8 +128,53 @@ public class OkapiCodeConverter {
 
     /**
      * Convert a neokapi FragmentDTO to an Okapi TextFragment.
+     *
+     * <p>Equivalent to {@link #toTextFragment(FragmentDTO, TextFragment)} with a
+     * null source — used when there's no source TextFragment to align against
+     * (e.g. translations submitted standalone, not as part of a round-trip).</p>
      */
     public static TextFragment toTextFragment(FragmentDTO dto) {
+        return toTextFragment(dto, null);
+    }
+
+    /**
+     * Convert a neokapi FragmentDTO to an Okapi TextFragment, hydrating
+     * Okapi-internal Code metadata from the source TextFragment when
+     * available.
+     *
+     * <p><b>Why this exists.</b> Okapi's {@link Code} carries three fields
+     * that the proto Run schema doesn't model — {@code outerData},
+     * {@code originalId}, and {@code referenceFlag}. Many writers
+     * (HtmlSkeletonWriter, OpenXML, IDML, MIF, …) re-emit a code by looking
+     * up its {@code originalId} or by emitting its {@code outerData} verbatim;
+     * if those fields are null the writer drops the code from the output.</p>
+     *
+     * <p><b>What we do.</b> The bridge daemon's pipeline keeps the original
+     * Event in-process from reader to writer. By the time {@code applyTranslations}
+     * is called, the source TextFragment still holds the full original Codes —
+     * those Okapi-internal fields never had to cross the wire. For each
+     * incoming SpanDTO we look up a matching source Code by {@code (id, tagType)},
+     * clone it, then overlay the wire-carried fields ({@code data}, {@code type},
+     * {@code equiv}, {@code disp}, {@code constraints}, {@code id}) from the
+     * SpanDTO — Go is the authority for things that did cross the wire, source
+     * is the authority for things that didn't.</p>
+     *
+     * <p><b>What it handles.</b></p>
+     * <ul>
+     *   <li>Pseudo-translation (Go preserves codes structurally) — exact source-code reuse.</li>
+     *   <li>Real translation that mutates {@code data} (e.g. {@code alt="hello"} → {@code alt="hola"})
+     *       — source metadata preserved, Go's {@code data} change respected.</li>
+     *   <li>Go reorders codes — lookup is by id, not position.</li>
+     *   <li>Go drops a code — just doesn't appear in target.</li>
+     *   <li>Go inserts a brand-new code (id not in source) — built from SpanDTO with no
+     *       source-side metadata (unavoidable: the bridge has nothing to hydrate from).</li>
+     * </ul>
+     *
+     * @param dto    the FragmentDTO carrying the rewritten target content
+     * @param source the source TextFragment from the same TextUnit, or null
+     *               when no source is available
+     */
+    public static TextFragment toTextFragment(FragmentDTO dto, TextFragment source) {
         if (dto == null || dto.getCodedText() == null) {
             return new TextFragment();
         }
@@ -138,71 +183,162 @@ public class OkapiCodeConverter {
         List<SpanDTO> spans = dto.getSpans();
         int spanIndex = 0;
 
+        // Track which source Codes we've already consumed so two target spans
+        // with the same (id, tagType) — e.g. a Go-cloned pair — don't both
+        // hydrate from the same source slot.
+        List<Code> sourceCodes = (source != null) ? source.getCodes() : null;
+        boolean[] sourceUsed = (sourceCodes != null) ? new boolean[sourceCodes.size()] : null;
+
         StringBuilder okapiText = new StringBuilder();
         List<Code> codes = new ArrayList<>();
 
         for (int i = 0; i < neokapiText.length(); i++) {
             char c = neokapiText.charAt(i);
 
-            if (c == NEOKAPI_OPENING || c == NEOKAPI_CLOSING || c == NEOKAPI_PLACEHOLDER) {
-                SpanDTO span = (spans != null && spanIndex < spans.size()) ? spans.get(spanIndex) : null;
-                spanIndex++;
-
-                Code code;
-                String codeData = (span != null && span.getData() != null) ? span.getData() : "";
-                int codeId = 0;
-                if (span != null && span.getId() != null && !span.getId().isEmpty()) {
-                    try {
-                        codeId = Integer.parseInt(span.getId());
-                    } catch (NumberFormatException ignored) {
-                    }
-                }
-
-                if (c == NEOKAPI_OPENING) {
-                    code = new Code(TextFragment.TagType.OPENING, codeData);
-                    okapiText.append(OKAPI_OPENING);
-                } else if (c == NEOKAPI_CLOSING) {
-                    code = new Code(TextFragment.TagType.CLOSING, codeData);
-                    okapiText.append(OKAPI_CLOSING);
-                } else {
-                    code = new Code(TextFragment.TagType.PLACEHOLDER, codeData);
-                    okapiText.append(OKAPI_PLACEHOLDER);
-                }
-
-                code.setId(codeId);
-                if (span != null) {
-                    if (span.getOuterData() != null) {
-                        code.setOuterData(span.getOuterData());
-                    }
-                    if (span.getType() != null) {
-                        code.setType(span.getType());
-                    }
-                    code.setDeleteable(span.isDeletable());
-                    code.setCloneable(span.isCloneable());
-
-                    // Restore enriched fields
-                    if (span.getDisplayText() != null && !span.getDisplayText().isEmpty()) {
-                        code.setDisplayText(span.getDisplayText());
-                    }
-                    if (span.getOriginalId() != null && !span.getOriginalId().isEmpty()) {
-                        code.setOriginalId(span.getOriginalId());
-                    }
-                    if ((span.getFlags() & SPAN_FLAG_HAS_REF) != 0) {
-                        code.setReferenceFlag(true);
-                    }
-                }
-
-                int idx = codes.size();
-                codes.add(code);
-                okapiText.append(TextFragment.toChar(idx));
-            } else {
+            if (c != NEOKAPI_OPENING && c != NEOKAPI_CLOSING && c != NEOKAPI_PLACEHOLDER) {
                 okapiText.append(c);
+                continue;
             }
+
+            SpanDTO span = (spans != null && spanIndex < spans.size()) ? spans.get(spanIndex) : null;
+            spanIndex++;
+
+            TextFragment.TagType tagType;
+            char okapiMarker;
+            if (c == NEOKAPI_OPENING) {
+                tagType = TextFragment.TagType.OPENING;
+                okapiMarker = OKAPI_OPENING;
+            } else if (c == NEOKAPI_CLOSING) {
+                tagType = TextFragment.TagType.CLOSING;
+                okapiMarker = OKAPI_CLOSING;
+            } else {
+                tagType = TextFragment.TagType.PLACEHOLDER;
+                okapiMarker = OKAPI_PLACEHOLDER;
+            }
+
+            int spanId = parseSpanId(span);
+            Code sourceMatch = findUnusedSourceCode(sourceCodes, sourceUsed, spanId, tagType);
+            Code code = (sourceMatch != null)
+                    ? hydrateFromSource(sourceMatch, span, spanId)
+                    : buildFreshCode(span, tagType);
+
+            int idx = codes.size();
+            codes.add(code);
+            okapiText.append(okapiMarker);
+            okapiText.append(TextFragment.toChar(idx));
         }
 
         TextFragment tf = new TextFragment();
         tf.setCodedText(okapiText.toString(), codes);
         return tf;
+    }
+
+    /**
+     * Find the first unused source Code matching this (id, tagType). Marks the
+     * match used so a later span with the same shape doesn't hydrate from the
+     * same source slot. Returns null if no match.
+     */
+    private static Code findUnusedSourceCode(List<Code> sourceCodes, boolean[] used,
+                                             int spanId, TextFragment.TagType tagType) {
+        if (sourceCodes == null) {
+            return null;
+        }
+        for (int i = 0; i < sourceCodes.size(); i++) {
+            if (used[i]) {
+                continue;
+            }
+            Code candidate = sourceCodes.get(i);
+            if (candidate.getId() == spanId && candidate.getTagType() == tagType) {
+                used[i] = true;
+                return candidate;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Clone a source Code (preserving outerData, originalId, referenceFlag,
+     * and any other Okapi-internal fields) then overlay the wire-carried
+     * fields from the SpanDTO. Go is the authority for fields that crossed
+     * the wire; source is the authority for fields that didn't.
+     */
+    private static Code hydrateFromSource(Code source, SpanDTO span, int spanId) {
+        Code code = source.clone();
+        code.setId(spanId);
+        if (span == null) {
+            return code;
+        }
+        // Wire-carried fields: trust Go's value, including empty strings
+        // (Go may have intentionally cleared them).
+        if (span.getData() != null) {
+            code.setData(span.getData());
+        }
+        if (span.getType() != null) {
+            code.setType(span.getType());
+        }
+        code.setDeleteable(span.isDeletable());
+        code.setCloneable(span.isCloneable());
+        if (span.getDisplayText() != null && !span.getDisplayText().isEmpty()) {
+            code.setDisplayText(span.getDisplayText());
+        }
+        // Wire-lossy fields (outerData, originalId, referenceFlag) are
+        // already on the cloned source. SpanDTO's outerData/originalId/flags
+        // are populated only on the outbound conversion (toFragmentDTO)
+        // for diagnostic round-trips, not on inbound from Go — but if Go
+        // did surface them back, honour the override.
+        if (span.getOuterData() != null) {
+            code.setOuterData(span.getOuterData());
+        }
+        if (span.getOriginalId() != null && !span.getOriginalId().isEmpty()) {
+            code.setOriginalId(span.getOriginalId());
+        }
+        if ((span.getFlags() & SPAN_FLAG_HAS_REF) != 0) {
+            code.setReferenceFlag(true);
+        }
+        return code;
+    }
+
+    /**
+     * Build a Code purely from a SpanDTO when no source-side match exists
+     * (Go inserted a code the source didn't have). Wire-lossy fields stay
+     * unset — the bridge has no source to hydrate from.
+     */
+    private static Code buildFreshCode(SpanDTO span, TextFragment.TagType tagType) {
+        String codeData = (span != null && span.getData() != null) ? span.getData() : "";
+        Code code = new Code(tagType, codeData);
+        if (span == null) {
+            return code;
+        }
+        code.setId(parseSpanId(span));
+        if (span.getOuterData() != null) {
+            code.setOuterData(span.getOuterData());
+        }
+        if (span.getType() != null) {
+            code.setType(span.getType());
+        }
+        code.setDeleteable(span.isDeletable());
+        code.setCloneable(span.isCloneable());
+        if (span.getDisplayText() != null && !span.getDisplayText().isEmpty()) {
+            code.setDisplayText(span.getDisplayText());
+        }
+        if (span.getOriginalId() != null && !span.getOriginalId().isEmpty()) {
+            code.setOriginalId(span.getOriginalId());
+        }
+        if ((span.getFlags() & SPAN_FLAG_HAS_REF) != 0) {
+            code.setReferenceFlag(true);
+        }
+        return code;
+    }
+
+    private static int parseSpanId(SpanDTO span) {
+        if (span == null || span.getId() == null || span.getId().isEmpty()) {
+            return 0;
+        }
+        try {
+            return Integer.parseInt(span.getId());
+        } catch (NumberFormatException ignored) {
+            return 0;
+        }
     }
 
     /**
