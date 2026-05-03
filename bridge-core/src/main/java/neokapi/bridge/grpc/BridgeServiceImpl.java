@@ -199,10 +199,10 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                     BlockMessage blockMsg = pm.getBlock();
                     String locale = header.getOutputLocale().isEmpty()
                             ? header.getTargetLocale() : header.getOutputLocale();
-                    List<FragmentDTO> fragments = extractTargetFragments(blockMsg, locale);
+                    List<SegmentDTO> segments = extractTargetSegments(blockMsg, locale);
                     try {
                         translationQueue.offer(
-                                new TranslationEntry(blockMsg.getId(), fragments),
+                                new TranslationEntry(blockMsg.getId(), segments),
                                 stuckTimeoutSeconds, TimeUnit.SECONDS);
                     } catch (InterruptedException e) {
                         Thread.currentThread().interrupt();
@@ -213,16 +213,16 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             private void handleContentBlock(ContentBlock cb) {
                 // Must offer an entry for EVERY block (including non-translatable),
                 // because the writer thread polls the queue for each TEXT_UNIT event.
-                // Non-translatable blocks get null fragments → writer skips them.
-                List<FragmentDTO> fragments = null;
+                // Non-translatable blocks get null segments → writer skips them.
+                List<SegmentDTO> segments = null;
                 if (cb.getTranslatable()) {
                     String locale = header.getOutputLocale().isEmpty()
                             ? header.getTargetLocale() : header.getOutputLocale();
-                    fragments = extractContentBlockTargets(cb, locale);
+                    segments = extractContentBlockTargets(cb, locale);
                 }
                 try {
                     translationQueue.offer(
-                            new TranslationEntry(cb.getId(), fragments),
+                            new TranslationEntry(cb.getId(), segments),
                             stuckTimeoutSeconds, TimeUnit.SECONDS);
                 } catch (InterruptedException e) {
                     Thread.currentThread().interrupt();
@@ -915,34 +915,42 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
      * Extract target fragments for the given locale directly from a proto BlockMessage.
      * Works on proto messages without converting to DTOs, avoiding intermediate allocations.
      */
-    private static List<FragmentDTO> extractTargetFragments(BlockMessage block, String locale) {
+    private static List<SegmentDTO> extractTargetSegments(BlockMessage block, String locale) {
         for (TargetEntry target : block.getTargetsList()) {
             if (target.getLocale().equals(locale)) {
-                List<FragmentDTO> fragments = new ArrayList<>(target.getSegmentsCount());
+                List<SegmentDTO> segments = new ArrayList<>(target.getSegmentsCount());
                 for (SegmentMessage seg : target.getSegmentsList()) {
-                    if (seg.getRunsCount() > 0) {
-                        fragments.add(ProtoAdapter.runsToFragment(seg.getRunsList()));
+                    if (seg.getRunsCount() == 0) {
+                        continue;
                     }
+                    SegmentDTO dto = new SegmentDTO();
+                    dto.setId(seg.getId());
+                    dto.setContent(ProtoAdapter.runsToFragment(seg.getRunsList()));
+                    segments.add(dto);
                 }
-                return fragments;
+                return segments;
             }
         }
         return null;
     }
 
     /**
-     * Extract target fragments for the given locale from a ContentBlock proto.
+     * Extract target segments for the given locale from a ContentBlock proto.
      */
-    private static List<FragmentDTO> extractContentBlockTargets(ContentBlock cb, String locale) {
+    private static List<SegmentDTO> extractContentBlockTargets(ContentBlock cb, String locale) {
         for (TargetEntry target : cb.getTargetsList()) {
             if (target.getLocale().equals(locale)) {
-                List<FragmentDTO> fragments = new ArrayList<>(target.getSegmentsCount());
+                List<SegmentDTO> segments = new ArrayList<>(target.getSegmentsCount());
                 for (SegmentMessage seg : target.getSegmentsList()) {
-                    if (seg.getRunsCount() > 0) {
-                        fragments.add(ProtoAdapter.runsToFragment(seg.getRunsList()));
+                    if (seg.getRunsCount() == 0) {
+                        continue;
                     }
+                    SegmentDTO dto = new SegmentDTO();
+                    dto.setId(seg.getId());
+                    dto.setContent(ProtoAdapter.runsToFragment(seg.getRunsList()));
+                    segments.add(dto);
                 }
-                return fragments;
+                return segments;
             }
         }
         return null;

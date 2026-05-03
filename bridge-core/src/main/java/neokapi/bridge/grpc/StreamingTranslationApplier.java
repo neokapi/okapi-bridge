@@ -1,6 +1,6 @@
 package neokapi.bridge.grpc;
 
-import neokapi.bridge.model.FragmentDTO;
+import neokapi.bridge.model.SegmentDTO;
 import neokapi.bridge.util.OkapiCodeConverter;
 import net.sf.okapi.common.Event;
 import net.sf.okapi.common.EventType;
@@ -10,7 +10,9 @@ import net.sf.okapi.common.resource.Property;
 import net.sf.okapi.common.resource.Segment;
 import net.sf.okapi.common.resource.TextContainer;
 import net.sf.okapi.common.resource.TextFragment;
+import net.sf.okapi.common.resource.TextPart;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,7 +37,7 @@ public class StreamingTranslationApplier {
     private final BlockingQueue<TranslationEntry> queue;
     private final LocaleId targetLocale;
     private final long pollTimeoutSeconds;
-    private final Map<String, List<FragmentDTO>> lookahead = new LinkedHashMap<>();
+    private final Map<String, List<SegmentDTO>> lookahead = new LinkedHashMap<>();
     private boolean endOfStream = false;
 
     public StreamingTranslationApplier(BlockingQueue<TranslationEntry> queue,
@@ -59,19 +61,66 @@ public class StreamingTranslationApplier {
         }
 
         ITextUnit tu = event.getTextUnit();
-        List<FragmentDTO> fragments = findFragments(tu.getId());
-        if (fragments == null || fragments.isEmpty()) {
+        List<SegmentDTO> segments = findSegments(tu.getId());
+        if (segments == null || segments.isEmpty()) {
             return event;
         }
 
-        // Apply fragments to text unit. Pass the source TextFragment so the
+        // Apply segments to text unit. Pass the source TextFragment so the
         // converter can preserve code identity (originalId, type, outerData,
         // referenceFlag) when the structural shape matches — writers that
         // re-emit codes via the source's Codes list (HtmlSkeletonWriter,
         // OpenXML, IDML, MIF, …) need that metadata to find the code.
         TextContainer sourceContainer = tu.getSource();
         TextContainer existingTarget = tu.getTarget(targetLocale);
-        TextContainer targetContainer = new TextContainer();
+
+        TextContainer targetContainer;
+        if (segments.size() == 1) {
+            targetContainer = new TextContainer();
+            TextFragment sourceFragment = sourceContainer != null
+                    ? sourceContainer.getUnSegmentedContentCopy() : null;
+            TextFragment tf = OkapiCodeConverter.toTextFragment(segments.get(0).getContent(), sourceFragment);
+            targetContainer.setContent(tf);
+        } else {
+            // Multi-segment target: clone the source container so we
+            // inherit its segments AND inter-segment text parts (the
+            // whitespace between <mrk> elements in XLIFF, ICU plural
+            // selectors, etc.) — then replace each segment's content +
+            // id with the SegmentDTO data from Go.
+            //
+            // The previous shape — setContent(unSegmentedSourceCopy)
+            // followed by getSegments().iterator() — collapsed the
+            // target to a single segment, so multi-segment translations
+            // only got the first DTO's content AND every segment id got
+            // re-renumbered by Okapi's writer (segmentation2.xlf
+            // surfaced this as <mrk mid="0"> where the reference had
+            // mid="1"; RB-12-Test02 dropped the inter-segment space).
+            targetContainer = sourceContainer != null
+                    ? sourceContainer.clone() : new TextContainer();
+            // Drop source-side properties — we'll carry over the existing
+            // target's properties (approved/fuzzy/etc.) below.
+            for (String name : new java.util.ArrayList<>(targetContainer.getPropertyNames())) {
+                targetContainer.removeProperty(name);
+            }
+            Iterator<Segment> tgtSegs = targetContainer.getSegments().iterator();
+            Iterator<Segment> srcSegs = sourceContainer != null
+                    ? sourceContainer.getSegments().iterator() : Collections.<Segment>emptyIterator();
+            int idx = 0;
+            while (tgtSegs.hasNext() && idx < segments.size()) {
+                Segment tgtSeg = tgtSegs.next();
+                Segment srcSeg = srcSegs.hasNext() ? srcSegs.next() : null;
+                SegmentDTO segDTO = segments.get(idx);
+                TextFragment sourceFragment = srcSeg != null ? srcSeg.getContent() : null;
+                TextFragment tf = OkapiCodeConverter.toTextFragment(segDTO.getContent(), sourceFragment);
+                tgtSeg.setContent(tf);
+                String segId = segDTO.getId();
+                if (segId != null && !segId.isEmpty()) {
+                    tgtSeg.id = segId;
+                }
+                idx++;
+            }
+        }
+
         // Carry over properties (e.g. PO "approved" -> #, fuzzy flag, TS
         // "approved" -> type="unfinished") from any existing target the filter
         // attached when reading the source. Without this, GenericSkeletonWriter
@@ -87,37 +136,17 @@ public class StreamingTranslationApplier {
         }
         tu.setTarget(targetLocale, targetContainer);
 
-        if (fragments.size() == 1) {
-            TextFragment sourceFragment = sourceContainer != null
-                    ? sourceContainer.getUnSegmentedContentCopy() : null;
-            TextFragment tf = OkapiCodeConverter.toTextFragment(fragments.get(0), sourceFragment);
-            targetContainer.setContent(tf);
-        } else {
-            targetContainer.setContent(sourceContainer.getUnSegmentedContentCopy());
-
-            Iterator<Segment> srcSegs = sourceContainer.getSegments().iterator();
-            Iterator<Segment> tgtSegs = targetContainer.getSegments().iterator();
-            int idx = 0;
-            while (tgtSegs.hasNext() && idx < fragments.size()) {
-                Segment tgtSeg = tgtSegs.next();
-                TextFragment sourceFragment = srcSegs.hasNext() ? srcSegs.next().getContent() : null;
-                TextFragment tf = OkapiCodeConverter.toTextFragment(fragments.get(idx), sourceFragment);
-                tgtSeg.setContent(tf);
-                idx++;
-            }
-        }
-
         return event;
     }
 
     /**
-     * Find the target fragments for the given block ID.
+     * Find the target segments for the given block ID.
      * First checks the lookahead map, then pulls from the queue until found
      * or end-of-stream is reached.
      */
-    private List<FragmentDTO> findFragments(String blockId) {
+    private List<SegmentDTO> findSegments(String blockId) {
         // Check lookahead first (for out-of-order arrivals).
-        List<FragmentDTO> cached = lookahead.remove(blockId);
+        List<SegmentDTO> cached = lookahead.remove(blockId);
         if (cached != null) {
             return cached;
         }
@@ -146,9 +175,9 @@ public class StreamingTranslationApplier {
                 return null;
             }
             if (entry.blockId().equals(blockId)) {
-                return entry.fragments();
+                return entry.segments();
             }
-            lookahead.put(entry.blockId(), entry.fragments());
+            lookahead.put(entry.blockId(), entry.segments());
         }
     }
 }
