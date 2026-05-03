@@ -92,7 +92,7 @@ public class EventConverter {
             Map<String, String> props = new LinkedHashMap<>();
             for (String propName : sd.getPropertyNames()) {
                 Property prop = sd.getProperty(propName);
-                if (prop != null) {
+                if (prop != null && prop.getValue() != null) {
                     props.put(propName, prop.getValue());
                 }
             }
@@ -131,7 +131,7 @@ public class EventConverter {
             Map<String, String> props = new LinkedHashMap<>();
             for (String propName : sg.getPropertyNames()) {
                 Property prop = sg.getProperty(propName);
-                if (prop != null) {
+                if (prop != null && prop.getValue() != null) {
                     props.put(propName, prop.getValue());
                 }
             }
@@ -188,13 +188,16 @@ public class EventConverter {
             block.setTargets(targets);
         }
 
-        // Convert properties (generic + source).
+        // Convert properties (generic + source). Skip nil-valued
+        // properties — protobuf map fields reject null values, and
+        // some Okapi filters (notably XLIFF2) attach properties whose
+        // value is null to act as a presence marker.
         Map<String, String> tuProps = new LinkedHashMap<>();
 
         if (tu.getPropertyNames() != null && !tu.getPropertyNames().isEmpty()) {
             for (String propName : tu.getPropertyNames()) {
                 Property prop = tu.getProperty(propName);
-                if (prop != null) {
+                if (prop != null && prop.getValue() != null) {
                     tuProps.put(propName, prop.getValue());
                 }
             }
@@ -205,7 +208,7 @@ public class EventConverter {
         if (tuSrcNames != null && !tuSrcNames.isEmpty()) {
             for (String propName : tuSrcNames) {
                 Property prop = tu.getSourceProperty(propName);
-                if (prop != null) {
+                if (prop != null && prop.getValue() != null) {
                     tuProps.put(propName, prop.getValue());
                 }
             }
@@ -242,7 +245,7 @@ public class EventConverter {
         if (dp.getPropertyNames() != null && !dp.getPropertyNames().isEmpty()) {
             for (String propName : dp.getPropertyNames()) {
                 Property prop = dp.getProperty(propName);
-                if (prop != null) {
+                if (prop != null && prop.getValue() != null) {
                     props.put(propName, prop.getValue());
                 }
             }
@@ -253,7 +256,7 @@ public class EventConverter {
         if (srcNames != null && !srcNames.isEmpty()) {
             for (String propName : srcNames) {
                 Property prop = dp.getSourceProperty(propName);
-                if (prop != null) {
+                if (prop != null && prop.getValue() != null) {
                     props.put(propName, prop.getValue());
                 }
             }
