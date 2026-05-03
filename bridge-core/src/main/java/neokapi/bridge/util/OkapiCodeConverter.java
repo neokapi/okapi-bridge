@@ -175,6 +175,26 @@ public class OkapiCodeConverter {
      *               when no source is available
      */
     public static TextFragment toTextFragment(FragmentDTO dto, TextFragment source) {
+        return toTextFragment(dto, source, null);
+    }
+
+    /**
+     * Convert a neokapi FragmentDTO to an Okapi TextFragment, hydrating
+     * Okapi-internal Code metadata from {@code existingTarget} first, then
+     * {@code source}.
+     *
+     * <p>Why prefer existing-target codes. XLIFF allows target codes to have
+     * IDs that differ from source codes (e.g. source has {@code <x id="x1"/>},
+     * target has {@code <x id="x3"/>}). Okapi's filter normalises both to
+     * sequential integer ids and stashes the original {@code "x1"} /
+     * {@code "x3"} on the {@code Code.originalId}. The wire protocol carries
+     * only the integer id, so on round-trip the only way to recover the
+     * target's original {@code "x3"} is to look it up in the existing target's
+     * Code list. Falling back to source codes loses the distinction —
+     * ImplementationPlan.docx.xlf surfaced this as the bridge writing
+     * {@code <x id="x1"/>} where the okapi reference had {@code <x id="x3"/>}.</p>
+     */
+    public static TextFragment toTextFragment(FragmentDTO dto, TextFragment source, TextFragment existingTarget) {
         if (dto == null || dto.getCodedText() == null) {
             return new TextFragment();
         }
@@ -183,9 +203,11 @@ public class OkapiCodeConverter {
         List<SpanDTO> spans = dto.getSpans();
         int spanIndex = 0;
 
-        // Track which source Codes we've already consumed so two target spans
-        // with the same (id, tagType) — e.g. a Go-cloned pair — don't both
-        // hydrate from the same source slot.
+        // Track which existing-target / source Codes we've already consumed
+        // so two target spans with the same (id, tagType) — e.g. a Go-cloned
+        // pair — don't both hydrate from the same slot.
+        List<Code> existingTargetCodes = (existingTarget != null) ? existingTarget.getCodes() : null;
+        boolean[] existingTargetUsed = (existingTargetCodes != null) ? new boolean[existingTargetCodes.size()] : null;
         List<Code> sourceCodes = (source != null) ? source.getCodes() : null;
         boolean[] sourceUsed = (sourceCodes != null) ? new boolean[sourceCodes.size()] : null;
 
@@ -217,9 +239,15 @@ public class OkapiCodeConverter {
             }
 
             int spanId = parseSpanId(span);
-            Code sourceMatch = findUnusedSourceCode(sourceCodes, sourceUsed, spanId, tagType);
-            Code code = (sourceMatch != null)
-                    ? hydrateFromSource(sourceMatch, span, spanId)
+            // Prefer existing-target codes over source codes — the target
+            // may carry an originalId distinct from the source's (XLIFF
+            // allows target <x id="x3"/> while source has <x id="x1"/>).
+            Code match = findUnusedSourceCode(existingTargetCodes, existingTargetUsed, spanId, tagType);
+            if (match == null) {
+                match = findUnusedSourceCode(sourceCodes, sourceUsed, spanId, tagType);
+            }
+            Code code = (match != null)
+                    ? hydrateFromSource(match, span, spanId)
                     : buildFreshCode(span, tagType);
 
             int idx = codes.size();

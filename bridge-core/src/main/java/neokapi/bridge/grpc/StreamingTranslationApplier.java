@@ -79,7 +79,10 @@ public class StreamingTranslationApplier {
             targetContainer = new TextContainer();
             TextFragment sourceFragment = sourceContainer != null
                     ? sourceContainer.getUnSegmentedContentCopy() : null;
-            TextFragment tf = OkapiCodeConverter.toTextFragment(segments.get(0).getContent(), sourceFragment);
+            TextFragment existingTargetFragment = existingTarget != null
+                    ? existingTarget.getUnSegmentedContentCopy() : null;
+            TextFragment tf = OkapiCodeConverter.toTextFragment(
+                    segments.get(0).getContent(), sourceFragment, existingTargetFragment);
             targetContainer.setContent(tf);
         } else {
             // Multi-segment target: clone the source container so we
@@ -105,13 +108,18 @@ public class StreamingTranslationApplier {
             Iterator<Segment> tgtSegs = targetContainer.getSegments().iterator();
             Iterator<Segment> srcSegs = sourceContainer != null
                     ? sourceContainer.getSegments().iterator() : Collections.<Segment>emptyIterator();
+            Iterator<Segment> existingTgtSegs = existingTarget != null
+                    ? existingTarget.getSegments().iterator() : Collections.<Segment>emptyIterator();
             int idx = 0;
             while (tgtSegs.hasNext() && idx < segments.size()) {
                 Segment tgtSeg = tgtSegs.next();
                 Segment srcSeg = srcSegs.hasNext() ? srcSegs.next() : null;
+                Segment existingTgtSeg = existingTgtSegs.hasNext() ? existingTgtSegs.next() : null;
                 SegmentDTO segDTO = segments.get(idx);
                 TextFragment sourceFragment = srcSeg != null ? srcSeg.getContent() : null;
-                TextFragment tf = OkapiCodeConverter.toTextFragment(segDTO.getContent(), sourceFragment);
+                TextFragment existingTargetFragment = existingTgtSeg != null ? existingTgtSeg.getContent() : null;
+                TextFragment tf = OkapiCodeConverter.toTextFragment(
+                        segDTO.getContent(), sourceFragment, existingTargetFragment);
                 tgtSeg.setContent(tf);
                 String segId = segDTO.getId();
                 if (segId != null && !segId.isEmpty()) {
