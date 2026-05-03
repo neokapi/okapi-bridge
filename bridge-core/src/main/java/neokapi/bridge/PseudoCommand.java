@@ -135,6 +135,13 @@ public final class PseudoCommand {
         RawDocumentToFilterEventsStep rd2feStep = new RawDocumentToFilterEventsStep(filter);
         driver.addStep(rd2feStep);
 
+        // XLIFF2Filter (and any other filter that never calls
+        // StartDocument.setFilterWriter) leaves the FilterWriter null on the
+        // event, which makes FilterEventsToRawDocumentStep.handleStartDocument
+        // NPE when it dereferences startDoc.getFilterWriter().setOptions(...).
+        // EnsureFilterWriterStep falls back to filter.createFilterWriter().
+        driver.addStep(new EnsureFilterWriterStep(filter));
+
         // Use the property-preserving subclass so PO `approved`/TS `approved`
         // (backing #, fuzzy and type="unfinished" attrs) survive the pseudo
         // pass — upstream TextModificationStep replaces the target container

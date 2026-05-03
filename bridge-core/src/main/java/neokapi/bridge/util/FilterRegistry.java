@@ -555,12 +555,26 @@ public class FilterRegistry {
             return filterClass;
         }
         ensureInitialized();
+        // Two filters can derive the same short id (e.g. okapi-filter-xliff2's
+        // XLIFF2Filter and okapi-filter-rainbowkit's XLIFF2Filter both map to
+        // okf_xliff2). The rainbowkit variants are stubs for the Rainbow
+        // translation-package workflow — their createFilterWriter() returns
+        // null, which breaks the pseudo pipeline. Prefer the non-rainbowkit
+        // implementation when there's a tie.
+        String fallback = null;
         for (FilterInfo info : FILTERS.values()) {
             if (filterClass.equals(info.getId())) {
-                return info.getFilterClass();
+                String fqcn = info.getFilterClass();
+                if (fqcn != null && fqcn.contains(".rainbowkit.")) {
+                    if (fallback == null) {
+                        fallback = fqcn;
+                    }
+                    continue;
+                }
+                return fqcn;
             }
         }
-        return filterClass;
+        return fallback != null ? fallback : filterClass;
     }
 
     /**
