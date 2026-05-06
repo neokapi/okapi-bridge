@@ -96,6 +96,7 @@ jpackage \
   --main-class neokapi.bridge.OkapiBridgeServer \
   --app-version "$JPACKAGE_VERSION" \
   --java-options '-Xss512k' \
+  --java-options '-Djava.security.egd=file:/dev/./urandom' \
   --dest "$WORK"
 
 # Reshape the app-image into the unified-plugin layout. The jpackage
