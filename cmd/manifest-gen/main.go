@@ -190,8 +190,20 @@ func Generate(filtersJSON []byte, opts Options) (*Manifest, error) {
 		return nil, fmt.Errorf("parse filters JSON: %w", err)
 	}
 
-	formats := make([]Format, 0, len(listed.Filters))
-	for _, f := range listed.Filters {
+	// Dedup by ID before emitting Format entries. The bridge's filter
+	// discovery surfaces every class implementing IFilter, including
+	// rainbowkit's stub variants (e.g. net.sf.okapi.filters.rainbowkit.
+	// XLIFF2Filter shadows okapi-filter-xliff2's XLIFF2Filter — both
+	// derive id "okf_xliff2"). Without dedup we'd emit two `okf_xliff2`
+	// format entries in the manifest, which kapi's plugin host treats
+	// as a same-plugin conflict and refuses to dispatch — printing
+	// `format "okf_xliff2" is provided by plugins "okapi-bridge" and
+	// "okapi-bridge"`. Mirror FilterRegistry.resolveFilterClass: when
+	// multiple filters share an ID, keep the non-rainbowkit one.
+	deduped := dedupFiltersByID(listed.Filters)
+
+	formats := make([]Format, 0, len(deduped))
+	for _, f := range deduped {
 		if !opts.IncludeAutoXLIFF && skipFilters[f.ID] {
 			continue
 		}
@@ -308,6 +320,45 @@ func expandSchemaPath(pattern, id string) string {
 		return ""
 	}
 	return strings.ReplaceAll(pattern, "{id}", id)
+}
+
+// dedupFiltersByID collapses entries with the same ID into one,
+// preferring filter classes outside the `net.sf.okapi.filters.rainbowkit`
+// package. Rainbowkit ships stub variants of common filters whose
+// createFilterWriter() returns null, which breaks the pseudo pipeline;
+// FilterRegistry.resolveFilterClass already prefers the canonical
+// implementation at runtime, so the manifest must agree.
+//
+// Input order is otherwise preserved (first non-rainbowkit per ID
+// wins; if there is no non-rainbowkit alternative, the rainbowkit
+// entry is kept as a fallback).
+func dedupFiltersByID(in []FilterInfo) []FilterInfo {
+	type slot struct {
+		idx     int // position in `out`
+		isStub  bool
+	}
+	chosen := make(map[string]slot, len(in))
+	out := make([]FilterInfo, 0, len(in))
+	for _, f := range in {
+		if f.ID == "" {
+			out = append(out, f)
+			continue
+		}
+		isStub := strings.Contains(f.FilterClass, ".rainbowkit.")
+		if cur, ok := chosen[f.ID]; ok {
+			if cur.isStub && !isStub {
+				out[cur.idx] = f
+				cur.isStub = false
+				chosen[f.ID] = cur
+			}
+			// Otherwise keep the existing entry — it's either canonical
+			// (and we ignore the stub) or both are stubs.
+			continue
+		}
+		chosen[f.ID] = slot{idx: len(out), isStub: isStub}
+		out = append(out, f)
+	}
+	return out
 }
 
 func writeJSON(path string, m *Manifest) error {
