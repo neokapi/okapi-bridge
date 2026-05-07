@@ -84,6 +84,17 @@ public class StreamingTranslationApplier {
             TextFragment tf = OkapiCodeConverter.toTextFragment(
                     segments.get(0).getContent(), sourceFragment, existingTargetFragment);
             targetContainer.setContent(tf);
+            // Align segment ID with source so writers (XLIFF2, etc.) can
+            // match source↔target pairs. setContent() resets to id "0";
+            // the real ID lives on the source's first segment.
+            if (sourceContainer != null) {
+                Segment srcSeg = sourceContainer.getFirstSegment();
+                Segment tgtSeg = targetContainer.getFirstSegment();
+                if (srcSeg != null && tgtSeg != null) {
+                    tgtSeg.id = srcSeg.id;
+                    tgtSeg.setOriginalId(srcSeg.getOriginalId());
+                }
+            }
         } else {
             // Multi-segment target: clone the source container so we
             // inherit its segments AND inter-segment text parts (the

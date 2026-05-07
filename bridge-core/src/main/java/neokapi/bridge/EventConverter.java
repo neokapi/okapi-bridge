@@ -336,7 +336,8 @@ public class EventConverter {
         if (tc.contentIsOneSegment()) {
             // Single segment: use the whole content.
             SegmentDTO seg = new SegmentDTO();
-            seg.setId("0");
+            Segment firstSeg = tc.getFirstSegment();
+            seg.setId(firstSeg != null && firstSeg.getId() != null ? firstSeg.getId() : "0");
             seg.setContent(OkapiCodeConverter.toFragmentDTO(tc.getFirstContent()));
             segments.add(seg);
         } else {
