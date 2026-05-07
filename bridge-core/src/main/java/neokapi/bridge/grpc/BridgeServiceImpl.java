@@ -17,7 +17,9 @@ import io.grpc.stub.StreamObserver;
 import net.sf.okapi.common.Event;
 import net.sf.okapi.common.IParameters;
 import net.sf.okapi.common.LocaleId;
+import net.sf.okapi.common.encoder.EncoderManager;
 import net.sf.okapi.common.filters.IFilter;
+import net.sf.okapi.common.filterwriter.GenericFilterWriter;
 import net.sf.okapi.common.filterwriter.IFilterWriter;
 import net.sf.okapi.common.resource.ITextUnit;
 import net.sf.okapi.common.resource.RawDocument;
@@ -306,6 +308,27 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 }
                 outputPath = resolveProcessOutputPath(header);
                 writer.setOptions(LocaleId.fromString(outputLocale), encoding);
+
+                // Force the writer's encoder manager to re-initialise on the
+                // next updateEncoder() call in processStartDocument.  During
+                // filter.open() some filters (e.g. XLIFFFilter) call
+                // EncoderManager.updateEncoder with the format's MIME type,
+                // which caches the source file's charset encoder and line break.
+                // GenericFilterWriter.processStartDocument later calls
+                // updateEncoder with the same MIME type, but it short-circuits
+                // (same type → early return), leaving the stale charset from
+                // the source encoding (e.g. windows-1252 → entity encoding
+                // of chars > U+00FF even though the output is UTF-8).
+                // Passing a dummy MIME type resets the cached value so the
+                // real call in processStartDocument creates a fresh encoder
+                // with the correct output encoding (UTF-8) and line break.
+                if (writer instanceof GenericFilterWriter) {
+                    EncoderManager em = ((GenericFilterWriter) writer).getEncoderManager();
+                    if (em != null) {
+                        em.updateEncoder("application/x-force-reinit");
+                    }
+                }
+
                 if (outputPath != null) {
                     writer.setOutput(outputPath);
                 } else {
