@@ -75,10 +75,14 @@ public class StreamingTranslationApplier {
         TextContainer existingTarget = tu.getTarget(targetLocale);
 
         TextContainer targetContainer;
-        if (segments.size() == 1) {
+        if (sourceContainer != null && sourceContainer.contentIsOneSegment() && segments.size() == 1) {
+            // True single-segment unit: create a fresh container.
+            if (segments.get(0).getContent() == null) {
+                // Empty DTO (segment had no runs) — skip target creation.
+                return event;
+            }
             targetContainer = new TextContainer();
-            TextFragment sourceFragment = sourceContainer != null
-                    ? sourceContainer.getUnSegmentedContentCopy() : null;
+            TextFragment sourceFragment = sourceContainer.getUnSegmentedContentCopy();
             TextFragment existingTargetFragment = existingTarget != null
                     ? existingTarget.getUnSegmentedContentCopy() : null;
             TextFragment tf = OkapiCodeConverter.toTextFragment(
@@ -87,48 +91,57 @@ public class StreamingTranslationApplier {
             // Align segment ID with source so writers (XLIFF2, etc.) can
             // match source↔target pairs. setContent() resets to id "0";
             // the real ID lives on the source's first segment.
-            if (sourceContainer != null) {
-                Segment srcSeg = sourceContainer.getFirstSegment();
-                Segment tgtSeg = targetContainer.getFirstSegment();
-                if (srcSeg != null && tgtSeg != null) {
-                    tgtSeg.id = srcSeg.id;
-                    tgtSeg.setOriginalId(srcSeg.getOriginalId());
-                }
+            Segment srcSeg = sourceContainer.getFirstSegment();
+            Segment tgtSeg = targetContainer.getFirstSegment();
+            if (srcSeg != null && tgtSeg != null) {
+                tgtSeg.id = srcSeg.id;
+                tgtSeg.setOriginalId(srcSeg.getOriginalId());
             }
         } else {
-            // Multi-segment target: clone the source container so we
-            // inherit its segments AND inter-segment text parts (the
-            // whitespace between <mrk> elements in XLIFF, ICU plural
-            // selectors, etc.) — then replace each segment's content +
-            // id with the SegmentDTO data from Go.
-            //
-            // The previous shape — setContent(unSegmentedSourceCopy)
-            // followed by getSegments().iterator() — collapsed the
-            // target to a single segment, so multi-segment translations
-            // only got the first DTO's content AND every segment id got
-            // re-renumbered by Okapi's writer (segmentation2.xlf
-            // surfaced this as <mrk mid="0"> where the reference had
-            // mid="1"; RB-12-Test02 dropped the inter-segment space).
-            targetContainer = sourceContainer != null
-                    ? sourceContainer.clone() : new TextContainer();
-            // Drop source-side properties — we'll carry over the existing
-            // target's properties (approved/fuzzy/etc.) below.
+            // Multi-segment (or single DTO for multi-segment source):
+            // Clone the existing target when available so we preserve its
+            // structure (which segments have content, pre-existing ignorable
+            // targets, etc.). Otherwise clone source to materialise targets
+            // for all parts — matching PseudoTranslationStep's createTarget
+            // with COPY_ALL semantics.
+            if (existingTarget != null && existingTarget.hasText()) {
+                targetContainer = existingTarget.clone();
+            } else {
+                targetContainer = sourceContainer != null
+                        ? sourceContainer.clone() : new TextContainer();
+            }
+            // Drop source/existing-side properties — we'll carry over the
+            // existing target's properties (approved/fuzzy/etc.) below.
             for (String name : new java.util.ArrayList<>(targetContainer.getPropertyNames())) {
                 targetContainer.removeProperty(name);
             }
+
+            // Apply DTOs positionally to target segments. The DTO order
+            // matches the cloned container's segment order because Go
+            // pseudo-translates the same segment set (existing target when
+            // available, otherwise source) in extraction order.
             Iterator<Segment> tgtSegs = targetContainer.getSegments().iterator();
             Iterator<Segment> srcSegs = sourceContainer != null
                     ? sourceContainer.getSegments().iterator() : Collections.<Segment>emptyIterator();
-            Iterator<Segment> existingTgtSegs = existingTarget != null
-                    ? existingTarget.getSegments().iterator() : Collections.<Segment>emptyIterator();
             int idx = 0;
             while (tgtSegs.hasNext() && idx < segments.size()) {
                 Segment tgtSeg = tgtSegs.next();
                 Segment srcSeg = srcSegs.hasNext() ? srcSegs.next() : null;
-                Segment existingTgtSeg = existingTgtSegs.hasNext() ? existingTgtSegs.next() : null;
                 SegmentDTO segDTO = segments.get(idx);
+                // Skip empty DTOs (empty-run segments) — the segment keeps
+                // whatever content it inherited from the cloned container.
+                if (segDTO.getContent() == null) {
+                    String segId = segDTO.getId();
+                    if (segId != null && !segId.isEmpty()) {
+                        tgtSeg.id = segId;
+                    }
+                    idx++;
+                    continue;
+                }
                 TextFragment sourceFragment = srcSeg != null ? srcSeg.getContent() : null;
-                TextFragment existingTargetFragment = existingTgtSeg != null ? existingTgtSeg.getContent() : null;
+                // Use the cloned segment's current content as the existing
+                // target reference — preserves code identity for writers.
+                TextFragment existingTargetFragment = tgtSeg.getContent();
                 TextFragment tf = OkapiCodeConverter.toTextFragment(
                         segDTO.getContent(), sourceFragment, existingTargetFragment);
                 tgtSeg.setContent(tf);

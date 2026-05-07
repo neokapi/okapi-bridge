@@ -9,7 +9,6 @@ import net.sf.okapi.common.pipelinedriver.PipelineDriver;
 import net.sf.okapi.common.resource.RawDocument;
 import net.sf.okapi.steps.common.FilterEventsToRawDocumentStep;
 import net.sf.okapi.steps.common.RawDocumentToFilterEventsStep;
-import net.sf.okapi.steps.textmodification.Parameters;
 
 import java.io.File;
 import java.net.URI;
@@ -22,16 +21,18 @@ import java.util.List;
 
 /**
  * Implementation of the {@code pseudo} subcommand. Composes
- * {@code RawDocumentToFilterEventsStep → TextModificationStep → FilterEventsToRawDocumentStep}
+ * {@code RawDocumentToFilterEventsStep → PseudoTranslationStep → FilterEventsToRawDocumentStep}
  * to produce a merged document where every translatable text unit's target
  * is the source with each Latin letter substituted using Okapi's
  * {@code SCRIPT_EXT_LATIN} character map (e.g. {@code A → À}, {@code e → ē}).
  *
- * <p>Inline codes are preserved — {@code TextModificationStep} skips the
- * {@code TextFragment} marker chars during substitution.
+ * <p>Inline codes are preserved — {@code PseudoTranslationStep} skips the
+ * {@code TextFragment} marker chars during substitution. Ignorable TextParts
+ * are left untouched (unlike upstream's {@code TextModificationStep} which
+ * transforms all parts indiscriminately).
  *
  * <p>This subcommand exists so the parity round-trip harness can use
- * upstream Okapi's own pseudo-translate semantics as the comparator
+ * consistent pseudo-translate semantics as the comparator
  * across all engines (native, bridge, okapi). Previously the harness
  * shelled out to {@code tikal -x}/{@code -m} and rewrote XLIFF targets
  * by hand, which mishandled inline placeholders.
@@ -235,17 +236,11 @@ public final class PseudoCommand {
         // EnsureFilterWriterStep falls back to filter.createFilterWriter().
         driver.addStep(new EnsureFilterWriterStep(filter));
 
-        // Use the property-preserving subclass so PO `approved`/TS `approved`
-        // (backing #, fuzzy and type="unfinished" attrs) survive the pseudo
-        // pass — upstream TextModificationStep replaces the target container
-        // when filling blank entries, dropping its property bag.
-        PropertyPreservingTextModificationStep modStep = new PropertyPreservingTextModificationStep();
-        Parameters params = (Parameters) modStep.getParameters();
-        params.setType(Parameters.TYPE_EXTREPLACE);
-        params.setScript(Parameters.SCRIPT_EXT_LATIN);
-        params.setApplyToBlankEntries(true);
-        params.setApplyToExistingTarget(true);
-        driver.addStep(modStep);
+        // Our own PseudoTranslationStep: SCRIPT_EXT_LATIN replacement on
+        // segments only (ignorables stay untouched, fixing upstream's bug of
+        // pseudo-translating ignorable TextParts), with target property
+        // preservation (PO approved/fuzzy, TS type="unfinished").
+        driver.addStep(new PseudoTranslationStep());
 
         driver.addStep(new FilterEventsToRawDocumentStep());
 

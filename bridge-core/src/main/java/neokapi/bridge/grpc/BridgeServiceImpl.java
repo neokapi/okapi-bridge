@@ -942,12 +942,14 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             if (target.getLocale().equals(locale)) {
                 List<SegmentDTO> segments = new ArrayList<>(target.getSegmentsCount());
                 for (SegmentMessage seg : target.getSegmentsList()) {
-                    if (seg.getRunsCount() == 0) {
-                        continue;
-                    }
                     SegmentDTO dto = new SegmentDTO();
                     dto.setId(seg.getId());
-                    dto.setContent(ProtoAdapter.runsToFragment(seg.getRunsList()));
+                    // Include empty-run segments so the applier still runs
+                    // for blocks containing ignorables that need source-copy
+                    // targets materialized (icu_message.xlf2 scenario).
+                    if (seg.getRunsCount() > 0) {
+                        dto.setContent(ProtoAdapter.runsToFragment(seg.getRunsList()));
+                    }
                     segments.add(dto);
                 }
                 return segments;
