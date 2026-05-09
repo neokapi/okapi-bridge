@@ -528,17 +528,32 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
     /**
      * Send a ProcessComplete message and close the response stream.
      * Synchronized on the respObserver to avoid concurrent onNext/onCompleted calls.
+     *
+     * <p>Releases the pipeline backpressure slot <em>before</em> the network send
+     * to avoid a race: kapi receives onCompleted() and immediately recycles its
+     * lane to fire the next Process call. With the semaphore sized equal to the
+     * client's concurrency, that follow-up call sees zero permits and gets
+     * RESOURCE_EXHAUSTED — at scale, every subsequent file in the batch fails.
+     * The slot is no longer doing useful work; release it as soon as the
+     * pipeline body is done. The release also lives outside the try so a
+     * client-side cancellation that throws from onNext below does not leak the
+     * permit (previously every cancelled stream lost one permit permanently).
      */
     private void sendCompleteMessage(StreamObserver<ProcessResponse> respObserver,
                                       ProcessComplete complete) {
-        synchronized (respObserver) {
-            respObserver.onNext(ProcessResponse.newBuilder()
-                    .setComplete(complete)
-                    .build());
-            respObserver.onCompleted();
-        }
-        streamEnded();
         pipelineSemaphore.release();
+        try {
+            synchronized (respObserver) {
+                respObserver.onNext(ProcessResponse.newBuilder()
+                        .setComplete(complete)
+                        .build());
+                respObserver.onCompleted();
+            }
+        } catch (Exception e) {
+            System.err.println("[bridge] Could not send Complete (stream closed): " + e.getMessage());
+        } finally {
+            streamEnded();
+        }
     }
 
     // ── ProcessStep RPC ─────────────────────────────────────────────────────────
