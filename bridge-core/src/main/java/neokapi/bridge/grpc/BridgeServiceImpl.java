@@ -365,12 +365,17 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             while (filter.hasNext()) {
                 Event event = filter.next();
 
-                // Enqueue for writer thread.
-                if (eventQueue != null) {
-                    eventQueue.put(event);
-                }
-
-                // Send subscribed parts to Go.
+                // Convert and send subscribed parts to Go BEFORE handing the
+                // event to the writer thread. EventConverter (specifically
+                // AnnotationExtractor.extractAltTranslations) iterates
+                // source.getSegments() and target.getSegments(); the writer's
+                // applyTranslations / FilterWriter.handleEvent operate on
+                // those same Container/Segments objects. If the writer thread
+                // dequeues and starts processing while we are still
+                // iterating, Okapi's Segments$1 iterator hits the now-empty
+                // backing parts list and throws IndexOutOfBoundsException
+                // (parts get reset via TextContainer.setContent/createSingleSegment
+                // when downstream code touches the same TU).
                 PartDTO partDTO = EventConverter.convert(event);
                 if (partDTO != null) {
                     boolean subscribed = sendAll || subscribedTypes.contains(partDTO.getPartType());
@@ -385,6 +390,11 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                             sendBatch.clear();
                         }
                     }
+                }
+
+                // Now safe to enqueue for writer thread.
+                if (eventQueue != null) {
+                    eventQueue.put(event);
                 }
             }
 
