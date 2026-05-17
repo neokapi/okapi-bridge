@@ -278,9 +278,19 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             }
             boolean sendAll = subscribedTypes.isEmpty();
 
-            filter = FilterRegistry.createFilter(filterClass);
+            // Promote inner-XML filters to their zip-wrapping siblings when
+            // the input is a container the requested filter cannot read
+            // directly (e.g. okf_odf → okf_openoffice for .odt). See
+            // FilterRegistry.promoteFilterForInput.
+            String effectiveFilterClass = FilterRegistry.promoteFilterForInput(filterClass, inputFile);
+            if (!effectiveFilterClass.equals(filterClass)) {
+                System.err.println("[bridge] promoted filter " + filterClass + " → "
+                        + effectiveFilterClass + " for container input " + inputFile.getName());
+            }
+
+            filter = FilterRegistry.createFilter(effectiveFilterClass);
             if (filter == null) {
-                sendComplete(respObserver, "cannot instantiate filter: " + filterClass);
+                sendComplete(respObserver, "cannot instantiate filter: " + effectiveFilterClass);
                 return;
             }
 
@@ -470,9 +480,11 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
         File inputFile = resolveProcessContent(header);
 
-        IFilter writeFilter = FilterRegistry.createFilter(header.getFilterClass());
+        String effectiveFilterClass = FilterRegistry.promoteFilterForInput(
+                header.getFilterClass(), inputFile);
+        IFilter writeFilter = FilterRegistry.createFilter(effectiveFilterClass);
         if (writeFilter == null) {
-            throw new IllegalStateException("cannot instantiate filter for write: " + header.getFilterClass());
+            throw new IllegalStateException("cannot instantiate filter for write: " + effectiveFilterClass);
         }
 
         Map<String, String> filterParams = header.getFilterParamsMap();
@@ -483,7 +495,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
         IFilterWriter writer = writeFilter.createFilterWriter();
         if (writer == null) {
-            throw new IllegalStateException("filter does not support writing: " + header.getFilterClass());
+            throw new IllegalStateException("filter does not support writing: " + effectiveFilterClass);
         }
 
         String outputPath = resolveProcessOutputPath(header);

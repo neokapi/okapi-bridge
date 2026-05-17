@@ -1,6 +1,11 @@
 package neokapi.bridge.util;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.nio.file.Path;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -103,6 +108,79 @@ class FilterRegistryTest {
     @Test
     void resolveByKind_unknownFormat_returnsNull() {
         assertNull(FilterRegistry.resolveByKind("OkfNonexistentFilterConfig"));
+    }
+
+    // ── promoteFilterForInput ────────────────────────────────────────────
+
+    @Test
+    void promoteFilterForInput_odfWithOdt_promotesToOpenoffice(@TempDir Path tmp) throws Exception {
+        File odt = writeZipStub(tmp.resolve("doc.odt").toFile());
+        assertEquals("okf_openoffice",
+                FilterRegistry.promoteFilterForInput("okf_odf", odt));
+    }
+
+    @Test
+    void promoteFilterForInput_odfWithOds_promotesToOpenoffice(@TempDir Path tmp) throws Exception {
+        File ods = writeZipStub(tmp.resolve("sheet.ods").toFile());
+        assertEquals("okf_openoffice",
+                FilterRegistry.promoteFilterForInput("okf_odf", ods));
+    }
+
+    @Test
+    void promoteFilterForInput_odfFilterClassWithOdt_promotesToOpenoffice(@TempDir Path tmp) throws Exception {
+        File odt = writeZipStub(tmp.resolve("doc.odt").toFile());
+        assertEquals("okf_openoffice",
+                FilterRegistry.promoteFilterForInput(
+                        "net.sf.okapi.filters.openoffice.ODFFilter", odt));
+    }
+
+    @Test
+    void promoteFilterForInput_odfWithFodt_keepsOdf(@TempDir Path tmp) throws Exception {
+        // .fodt is a flat (non-zip) XML serialisation of ODF — ODFFilter
+        // reads it directly, no promotion needed.
+        File fodt = tmp.resolve("doc.fodt").toFile();
+        try (FileOutputStream out = new FileOutputStream(fodt)) {
+            out.write("<?xml version=\"1.0\"?><doc/>".getBytes());
+        }
+        assertEquals("okf_odf",
+                FilterRegistry.promoteFilterForInput("okf_odf", fodt));
+    }
+
+    @Test
+    void promoteFilterForInput_htmlWithHtml_keepsAsRequested(@TempDir Path tmp) throws Exception {
+        File html = tmp.resolve("page.html").toFile();
+        try (FileOutputStream out = new FileOutputStream(html)) {
+            out.write("<html></html>".getBytes());
+        }
+        assertEquals("okf_html",
+                FilterRegistry.promoteFilterForInput("okf_html", html));
+    }
+
+    @Test
+    void promoteFilterForInput_nullInput_keepsAsRequested() {
+        assertEquals("okf_odf",
+                FilterRegistry.promoteFilterForInput("okf_odf", null));
+    }
+
+    @Test
+    void promoteFilterForInput_nullFilter_returnsNull() {
+        assertNull(FilterRegistry.promoteFilterForInput(null, new File("/tmp/x")));
+    }
+
+    @Test
+    void promoteFilterForInput_zipMagicWithoutOoExt_promotes(@TempDir Path tmp) throws Exception {
+        // PK\x03\x04 sniff catches OO containers with unusual names.
+        File weird = writeZipStub(tmp.resolve("weird-name.bin").toFile());
+        assertEquals("okf_openoffice",
+                FilterRegistry.promoteFilterForInput("okf_odf", weird));
+    }
+
+    /** Write 4 bytes that look like a zip local-file-header magic. */
+    private static File writeZipStub(File f) throws Exception {
+        try (FileOutputStream out = new FileOutputStream(f)) {
+            out.write(new byte[]{'P', 'K', 3, 4, 0, 0});
+        }
+        return f;
     }
 
     // ── roundtrip ────────────────────────────────────────────────────────

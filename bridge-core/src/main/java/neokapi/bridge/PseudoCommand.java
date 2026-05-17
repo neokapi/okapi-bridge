@@ -189,9 +189,23 @@ public final class PseudoCommand {
             throw new PseudoFailure(2, "at least one input/output pair is required");
         }
 
-        IFilter filter = FilterRegistry.createFilter(filterClass);
+        // Promote inner-XML filters to their zip-wrapping siblings when the
+        // input is a container the requested filter cannot read directly
+        // (e.g. okf_odf → okf_openoffice for .odt). Spares neokapi callers
+        // from knowing about Okapi's package-internal filter split. We
+        // sniff the first item — runBatch instantiates one filter shared
+        // by all items, so the batch must be homogeneous anyway.
+        File firstInput = uriToFile(items.get(0).input);
+        String effectiveFilterClass = FilterRegistry.promoteFilterForInput(filterClass, firstInput);
+        if (!effectiveFilterClass.equals(filterClass)) {
+            System.err.println("[pseudo] promoted filter " + filterClass + " → "
+                    + effectiveFilterClass + " for container input "
+                    + (firstInput == null ? "<unknown>" : firstInput.getName()));
+        }
+
+        IFilter filter = FilterRegistry.createFilter(effectiveFilterClass);
         if (filter == null) {
-            throw new PseudoFailure(1, "cannot instantiate filter: " + filterClass);
+            throw new PseudoFailure(1, "cannot instantiate filter: " + effectiveFilterClass);
         }
 
         if (fprm != null && !fprm.isEmpty()) {
@@ -294,6 +308,18 @@ public final class PseudoCommand {
             out.add(new IOPair(inFile.toURI(), new File(outPath).toURI()));
         }
         return out;
+    }
+
+    /** Best-effort URI → File conversion; null when the URI isn't a local file. */
+    private static File uriToFile(URI uri) {
+        if (uri == null) {
+            return null;
+        }
+        try {
+            return new File(uri);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
     }
 
     /** A single (input, output) URI pair for batch processing. */

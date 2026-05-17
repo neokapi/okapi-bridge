@@ -84,12 +84,32 @@ public class CommandHandler {
         // Decode content.
         byte[] content = Base64.getDecoder().decode(contentBase64);
         currentContent = content;
-        currentFilterClass = filterClass;
+
+        // Write content to a temp file so filters that need random access (e.g., OpenXML/ZIP) work.
+        String ext = "";
+        int dotIdx = uri.lastIndexOf('.');
+        if (dotIdx >= 0) {
+            ext = uri.substring(dotIdx);
+        }
+        File tempFile = File.createTempFile("neokapi-bridge-", ext);
+        tempFile.deleteOnExit();
+        Files.write(tempFile.toPath(), content);
+
+        // Promote inner-XML filters to their zip-wrapping siblings when the
+        // input is a container the requested filter cannot read directly
+        // (e.g. okf_odf → okf_openoffice for .odt). See
+        // FilterRegistry.promoteFilterForInput.
+        String effectiveFilterClass = FilterRegistry.promoteFilterForInput(filterClass, tempFile);
+        if (!effectiveFilterClass.equals(filterClass)) {
+            System.err.println("[bridge] promoted filter " + filterClass + " → "
+                    + effectiveFilterClass + " for container input " + tempFile.getName());
+        }
+        currentFilterClass = effectiveFilterClass;
 
         // Instantiate filter.
-        currentFilter = FilterRegistry.createFilter(filterClass);
+        currentFilter = FilterRegistry.createFilter(effectiveFilterClass);
         if (currentFilter == null) {
-            return ResponseMessage.error("cannot instantiate filter: " + filterClass);
+            return ResponseMessage.error("cannot instantiate filter: " + effectiveFilterClass);
         }
 
         // Apply filter parameters if provided
@@ -107,22 +127,12 @@ public class CommandHandler {
             }
         }
 
-        // Write content to a temp file so filters that need random access (e.g., OpenXML/ZIP) work.
-        String ext = "";
-        int dotIdx = uri.lastIndexOf('.');
-        if (dotIdx >= 0) {
-            ext = uri.substring(dotIdx);
-        }
-        File tempFile = File.createTempFile("neokapi-bridge-", ext);
-        tempFile.deleteOnExit();
-        Files.write(tempFile.toPath(), content);
-
         LocaleId srcLocale = LocaleId.fromString(sourceLocale);
         RawDocument rawDoc = new RawDocument(tempFile.toURI(), encoding, srcLocale);
 
         currentFilter.open(rawDoc);
 
-        System.err.println("[bridge] Opened filter " + filterClass + " for " + uri);
+        System.err.println("[bridge] Opened filter " + effectiveFilterClass + " for " + uri);
         return ResponseMessage.ok();
     }
 
@@ -168,10 +178,21 @@ public class CommandHandler {
             parts.add(GSON.fromJson(elem, PartDTO.class));
         }
 
+        // Write original content to temp file for filters needing random access.
+        File tempFile = File.createTempFile("neokapi-bridge-write-", "");
+        tempFile.deleteOnExit();
+        Files.write(tempFile.toPath(), originalContent);
+
+        // Promote inner-XML filters to their zip-wrapping siblings when the
+        // input is a container the requested filter cannot read directly
+        // (e.g. okf_odf → okf_openoffice for .odt). See
+        // FilterRegistry.promoteFilterForInput.
+        String effectiveFilterClass = FilterRegistry.promoteFilterForInput(filterClass, tempFile);
+
         // Create filter for reading the skeleton.
-        IFilter filter = FilterRegistry.createFilter(filterClass);
+        IFilter filter = FilterRegistry.createFilter(effectiveFilterClass);
         if (filter == null) {
-            return ResponseMessage.error("cannot instantiate filter: " + filterClass);
+            return ResponseMessage.error("cannot instantiate filter: " + effectiveFilterClass);
         }
 
         // Apply filter parameters if provided
@@ -185,17 +206,12 @@ public class CommandHandler {
         // Create filter writer.
         IFilterWriter writer = filter.createFilterWriter();
         if (writer == null) {
-            return ResponseMessage.error("filter does not support writing: " + filterClass);
+            return ResponseMessage.error("filter does not support writing: " + effectiveFilterClass);
         }
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         writer.setOptions(LocaleId.fromString(locale), encoding);
         writer.setOutput(outputStream);
-
-        // Write original content to temp file for filters needing random access.
-        File tempFile = File.createTempFile("neokapi-bridge-write-", "");
-        tempFile.deleteOnExit();
-        Files.write(tempFile.toPath(), originalContent);
 
         LocaleId srcLocale = LocaleId.fromString("en"); // source locale
         RawDocument rawDoc = new RawDocument(tempFile.toURI(), encoding, srcLocale);

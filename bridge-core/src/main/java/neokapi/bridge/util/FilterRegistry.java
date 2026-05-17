@@ -586,6 +586,63 @@ public class FilterRegistry {
     }
 
     /**
+     * Promote a filter id when the input file is a container the requested
+     * filter cannot read directly. Used to spare callers from knowing about
+     * Okapi's split between content-only inner filters and zip-wrapping
+     * outer filters that share the same package.
+     *
+     * <p>Currently handles {@code okf_odf} (ODFFilter — content.xml / .fodt
+     * flat ODF only) being passed a real OpenDocument container
+     * (.odt/.ods/.odp/.odg/.ott/.ots/.otp/.otg/.swc/.swx/.sxd/.sxi). In that
+     * case, the right filter is {@code okf_openoffice} (OpenOfficeFilter),
+     * which unwraps the zip and dispatches to ODFFilter for each inner
+     * content.xml/styles.xml/meta.xml. If the input is null, missing, or
+     * doesn't match a known mismatch, the input filter id is returned
+     * unchanged.
+     *
+     * @param filterClass requested filter id (Okapi short id or FQCN)
+     * @param input       the file the filter will be asked to read
+     * @return a possibly-promoted filter id; never null when {@code filterClass} is non-null
+     */
+    public static String promoteFilterForInput(String filterClass, File input) {
+        if (filterClass == null || filterClass.isEmpty() || input == null) {
+            return filterClass;
+        }
+        if ("okf_odf".equals(filterClass) || filterClass.endsWith(".ODFFilter")) {
+            if (isOpenOfficeContainer(input)) {
+                return "okf_openoffice";
+            }
+        }
+        return filterClass;
+    }
+
+    /**
+     * Recognise zip-based OpenDocument containers. Matches the extension
+     * list OpenOfficeFilter.getConfigurations() advertises, and falls back
+     * to a PK\x03\x04 magic-byte sniff so containers with non-standard
+     * names still route correctly.
+     */
+    private static boolean isOpenOfficeContainer(File input) {
+        String name = input.getName().toLowerCase(Locale.ROOT);
+        if (name.endsWith(".odt") || name.endsWith(".ods") || name.endsWith(".odp")
+                || name.endsWith(".odg") || name.endsWith(".ott") || name.endsWith(".ots")
+                || name.endsWith(".otp") || name.endsWith(".otg") || name.endsWith(".swc")
+                || name.endsWith(".swx") || name.endsWith(".sxd") || name.endsWith(".sxi")) {
+            return true;
+        }
+        if (!input.isFile()) {
+            return false;
+        }
+        try (java.io.InputStream in = new java.io.FileInputStream(input)) {
+            byte[] head = new byte[4];
+            int n = in.read(head);
+            return n == 4 && head[0] == 'P' && head[1] == 'K' && head[2] == 3 && head[3] == 4;
+        } catch (Exception ignored) {
+            return false;
+        }
+    }
+
+    /**
      * Get the filter ID (e.g., "okf_html") for a given filter class name.
      * This method does NOT trigger full filter discovery — it derives the ID
      * from the class name if the filter hasn't been discovered yet.
