@@ -21,6 +21,7 @@ import net.sf.okapi.common.encoder.EncoderManager;
 import net.sf.okapi.common.filters.IFilter;
 import net.sf.okapi.common.filterwriter.GenericFilterWriter;
 import net.sf.okapi.common.filterwriter.IFilterWriter;
+import net.sf.okapi.common.filterwriter.ZipFilterWriter;
 import net.sf.okapi.common.resource.ITextUnit;
 import net.sf.okapi.common.resource.RawDocument;
 
@@ -308,133 +309,186 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             System.err.println("[bridge] Opened filter " + filter.getClass().getName()
                     + " for " + inputFile.getName());
 
-            // Create writer BEFORE iterating (same filter instance — single read).
+            // Decide pipeline mode. The default is the single-pass design
+            // documented at the top of this class: one filter instance
+            // serves both read and write. That fails for filters whose
+            // FilterWriter holds a live reference to source-side state
+            // (ZipFilterWriter dereferences ZipSkeleton.getOriginal() —
+            // the source ZipFile — when copying passthrough entries) and
+            // whose own filter.next() closes that state on END_DOCUMENT.
+            // The asynchronous writer thread then races against the
+            // reader's internal close() and trips "zip file closed"
+            // (okapi-bridge#11; affects OpenOfficeFilter, ArchiveFilter).
+            //
+            // For those filters the right shape is two passes with two
+            // independent filter instances: pass 1 reads with filter A
+            // and sends parts to Go, pass 2 opens a FRESH filter B (its
+            // own ZipFile lifecycle) and writes with translations from
+            // the queue. The translation queue is unchanged — Go can
+            // start sending translations as soon as pass 1 emits parts,
+            // and pass 2's StreamingTranslationApplier blocks on it
+            // exactly as the single-pass writer thread does today.
+            //
+            // Detection: probe createFilterWriter() and check instanceof
+            // ZipFilterWriter. The probe writer is discarded in two-pass
+            // mode and re-created on filter B; the constructor in
+            // ZipFilterWriter has no I/O side effects so this is cheap.
             String outputPath = null;
             ByteArrayOutputStream outputStream = null;
+            boolean useTwoPass = false;
             if (writeEnabled) {
                 writer = filter.createFilterWriter();
                 if (writer == null) {
                     throw new IllegalStateException("filter does not support writing: " + filterClass);
                 }
                 outputPath = resolveProcessOutputPath(header);
-                writer.setOptions(LocaleId.fromString(outputLocale), encoding);
-
-                // Force the writer's encoder manager to re-initialise on the
-                // next updateEncoder() call in processStartDocument.  During
-                // filter.open() some filters (e.g. XLIFFFilter) call
-                // EncoderManager.updateEncoder with the format's MIME type,
-                // which caches the source file's charset encoder and line break.
-                // GenericFilterWriter.processStartDocument later calls
-                // updateEncoder with the same MIME type, but it short-circuits
-                // (same type → early return), leaving the stale charset from
-                // the source encoding (e.g. windows-1252 → entity encoding
-                // of chars > U+00FF even though the output is UTF-8).
-                // Passing a dummy MIME type resets the cached value so the
-                // real call in processStartDocument creates a fresh encoder
-                // with the correct output encoding (UTF-8) and line break.
-                if (writer instanceof GenericFilterWriter) {
-                    EncoderManager em = ((GenericFilterWriter) writer).getEncoderManager();
-                    if (em != null) {
-                        em.updateEncoder("application/x-force-reinit");
-                    }
-                }
-
-                if (outputPath != null) {
-                    writer.setOutput(outputPath);
-                } else {
+                if (outputPath == null) {
                     outputStream = new ByteArrayOutputStream();
-                    writer.setOutput(outputStream);
+                }
+
+                useTwoPass = (writer instanceof ZipFilterWriter);
+                if (useTwoPass) {
+                    // Discard the probe writer — pass 2 builds a fresh
+                    // writer on filter B with the same configuration.
+                    try { writer.close(); } catch (Exception ignored) {}
+                    writer = null;
+                    System.err.println("[bridge] runPipeline two-pass mode for "
+                            + effectiveFilterClass + " (writer is ZipFilterWriter, "
+                            + "needs fresh filter for write to avoid shared-state race; okapi-bridge#11)");
+                } else {
+                    configureWriter(writer, outputPath, outputStream, LocaleId.fromString(outputLocale), encoding);
                 }
             }
 
-            // ── Start writer thread ──
-            BlockingQueue<Event> eventQueue = writeEnabled
-                    ? new ArrayBlockingQueue<>(EVENT_QUEUE_CAPACITY) : null;
-            Future<Void> writerFuture = null;
-            if (writeEnabled) {
-                IFilterWriter writerRef = writer;
-                StreamingTranslationApplier applier = new StreamingTranslationApplier(
-                        translationQueue, LocaleId.fromString(outputLocale), stuckTimeoutSeconds);
-                writerFuture = writerPool.submit(() -> {
-                    Event ev;
-                    while ((ev = eventQueue.poll(stuckTimeoutSeconds, TimeUnit.SECONDS)) != END_OF_EVENTS) {
-                        if (ev == null) {
-                            throw new RuntimeException("Writer thread timed out waiting for events");
-                        }
+            int totalSent;
+            if (useTwoPass) {
+                // ── Pass 1: this thread reads filter A and sends parts to Go.
+                // No writer involvement; events flow nowhere downstream.
+                totalSent = streamPartsToGo(filter, respObserver, sendAll, subscribedTypes);
+                filter.close();
+                filter = null;
+
+                // ── Pass 2: open a fresh filter B, iterate, apply translations
+                // from the queue, write output. Filter B owns its own ZipFile
+                // (or equivalent) so its close() can't race against in-flight
+                // writer work — there's only one event flow on this thread.
+                IFilter writeFilter = null;
+                try {
+                    writeFilter = openConfiguredFilter(header, effectiveFilterClass, inputFile,
+                            encoding, srcLocale, tgtLocale);
+                    writer = writeFilter.createFilterWriter();
+                    if (writer == null) {
+                        throw new IllegalStateException(
+                                "filter does not support writing on pass 2: " + effectiveFilterClass);
+                    }
+                    configureWriter(writer, outputPath, outputStream, LocaleId.fromString(outputLocale), encoding);
+
+                    StreamingTranslationApplier applier = new StreamingTranslationApplier(
+                            translationQueue, LocaleId.fromString(outputLocale), stuckTimeoutSeconds);
+                    while (writeFilter.hasNext()) {
+                        Event ev = writeFilter.next();
                         Event modified = applier.applyTranslations(ev);
-                        writerRef.handleEvent(modified);
+                        writer.handleEvent(modified);
                     }
-                    return null;
-                });
-            }
+                    writer.close();
+                    writer = null;
+                } finally {
+                    if (writeFilter != null) {
+                        try { writeFilter.close(); } catch (Exception ignored) {}
+                    }
+                }
+            } else {
+                // ── Single-pass: one filter instance feeds both reader and async writer.
+                // ── Start writer thread ──
+                BlockingQueue<Event> eventQueue = writeEnabled
+                        ? new ArrayBlockingQueue<>(EVENT_QUEUE_CAPACITY) : null;
+                Future<Void> writerFuture = null;
+                if (writeEnabled) {
+                    IFilterWriter writerRef = writer;
+                    StreamingTranslationApplier applier = new StreamingTranslationApplier(
+                            translationQueue, LocaleId.fromString(outputLocale), stuckTimeoutSeconds);
+                    writerFuture = writerPool.submit(() -> {
+                        Event ev;
+                        while ((ev = eventQueue.poll(stuckTimeoutSeconds, TimeUnit.SECONDS)) != END_OF_EVENTS) {
+                            if (ev == null) {
+                                throw new RuntimeException("Writer thread timed out waiting for events");
+                            }
+                            Event modified = applier.applyTranslations(ev);
+                            writerRef.handleEvent(modified);
+                        }
+                        return null;
+                    });
+                }
 
-            // ── Reader thread (this thread): read events, send parts, enqueue ──
-            List<ContentBlock> sendBatch = new ArrayList<>(SEND_BATCH_SIZE);
-            int totalSent = 0;
+                // ── Reader thread (this thread): read events, send parts, enqueue ──
+                List<ContentBlock> sendBatch = new ArrayList<>(SEND_BATCH_SIZE);
+                totalSent = 0;
 
-            while (filter.hasNext()) {
-                Event event = filter.next();
+                while (filter.hasNext()) {
+                    Event event = filter.next();
 
-                // Convert and send subscribed parts to Go BEFORE handing the
-                // event to the writer thread. EventConverter (specifically
-                // AnnotationExtractor.extractAltTranslations) iterates
-                // source.getSegments() and target.getSegments(); the writer's
-                // applyTranslations / FilterWriter.handleEvent operate on
-                // those same Container/Segments objects. If the writer thread
-                // dequeues and starts processing while we are still
-                // iterating, Okapi's Segments$1 iterator hits the now-empty
-                // backing parts list and throws IndexOutOfBoundsException
-                // (parts get reset via TextContainer.setContent/createSingleSegment
-                // when downstream code touches the same TU).
-                PartDTO partDTO = EventConverter.convert(event);
-                if (partDTO != null) {
-                    boolean subscribed = sendAll || subscribedTypes.contains(partDTO.getPartType());
-                    if (subscribed) {
-                        sendBatch.add(toContentBlock(partDTO));
-                        totalSent++;
-                        if (sendBatch.size() >= SEND_BATCH_SIZE) {
-                            respObserver.onNext(ProcessResponse.newBuilder()
-                                    .setContentBatch(ContentBlockBatch.newBuilder()
-                                            .addAllBlocks(sendBatch).build())
-                                    .build());
-                            sendBatch.clear();
+                    // Convert and send subscribed parts to Go BEFORE handing the
+                    // event to the writer thread. EventConverter (specifically
+                    // AnnotationExtractor.extractAltTranslations) iterates
+                    // source.getSegments() and target.getSegments(); the writer's
+                    // applyTranslations / FilterWriter.handleEvent operate on
+                    // those same Container/Segments objects. If the writer thread
+                    // dequeues and starts processing while we are still
+                    // iterating, Okapi's Segments$1 iterator hits the now-empty
+                    // backing parts list and throws IndexOutOfBoundsException
+                    // (parts get reset via TextContainer.setContent/createSingleSegment
+                    // when downstream code touches the same TU).
+                    PartDTO partDTO = EventConverter.convert(event);
+                    if (partDTO != null) {
+                        boolean subscribed = sendAll || subscribedTypes.contains(partDTO.getPartType());
+                        if (subscribed) {
+                            sendBatch.add(toContentBlock(partDTO));
+                            totalSent++;
+                            if (sendBatch.size() >= SEND_BATCH_SIZE) {
+                                respObserver.onNext(ProcessResponse.newBuilder()
+                                        .setContentBatch(ContentBlockBatch.newBuilder()
+                                                .addAllBlocks(sendBatch).build())
+                                        .build());
+                                sendBatch.clear();
+                            }
                         }
                     }
+
+                    // Now safe to enqueue for writer thread.
+                    if (eventQueue != null) {
+                        eventQueue.put(event);
+                    }
                 }
 
-                // Now safe to enqueue for writer thread.
+                // Flush remaining send batch.
+                if (!sendBatch.isEmpty()) {
+                    respObserver.onNext(ProcessResponse.newBuilder()
+                            .setContentBatch(ContentBlockBatch.newBuilder()
+                                    .addAllBlocks(sendBatch).build())
+                            .build());
+                }
+
+                // Signal end of events to writer thread.
                 if (eventQueue != null) {
-                    eventQueue.put(event);
+                    eventQueue.put(END_OF_EVENTS);
                 }
-            }
 
-            // Flush remaining send batch.
-            if (!sendBatch.isEmpty()) {
-                respObserver.onNext(ProcessResponse.newBuilder()
-                        .setContentBatch(ContentBlockBatch.newBuilder()
-                                .addAllBlocks(sendBatch).build())
-                        .build());
-            }
+                // Wait for writer thread to finish.
+                if (writerFuture != null) {
+                    writerFuture.get();
+                }
 
-            // Signal end of events to writer thread.
-            if (eventQueue != null) {
-                eventQueue.put(END_OF_EVENTS);
+                // Close writer then filter.
+                if (writer != null) { writer.close(); writer = null; }
+                filter.close(); filter = null;
             }
-
-            // Wait for writer thread to finish.
-            if (writerFuture != null) {
-                writerFuture.get();
-            }
-
-            // Close writer then filter.
-            if (writer != null) { writer.close(); writer = null; }
-            filter.close(); filter = null;
 
             // Signal read done.
             respObserver.onNext(ProcessResponse.newBuilder()
                     .setReadDone(ProcessReadDone.newBuilder().build()).build());
 
-            System.err.println("[bridge] Pipeline complete: " + totalSent + " parts (single-pass)");
+            System.err.println("[bridge] Pipeline complete: " + totalSent + " parts ("
+                    + (useTwoPass ? "two-pass" : "single-pass") + ")");
 
             // Build and send Complete.
             ProcessComplete.Builder complete = ProcessComplete.newBuilder();
@@ -461,6 +515,118 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             }
             sendComplete(respObserver, errMsg);
         }
+    }
+
+    /**
+     * Configure the filter writer with locale, encoding, encoder-manager
+     * reinit, and output sink. Shared by single-pass and two-pass paths
+     * so both branches produce byte-identical writer state for the same
+     * input. Either {@code outputPath} or {@code outputStream} is non-null
+     * (mutually exclusive — see runPipeline's outputPath resolution).
+     */
+    private static void configureWriter(IFilterWriter writer,
+                                         String outputPath,
+                                         ByteArrayOutputStream outputStream,
+                                         LocaleId outputLocale,
+                                         String encoding) {
+        writer.setOptions(outputLocale, encoding);
+
+        // Force the writer's encoder manager to re-initialise on the
+        // next updateEncoder() call in processStartDocument. During
+        // filter.open() some filters (e.g. XLIFFFilter) call
+        // EncoderManager.updateEncoder with the format's MIME type,
+        // which caches the source file's charset encoder and line break.
+        // GenericFilterWriter.processStartDocument later calls
+        // updateEncoder with the same MIME type, but it short-circuits
+        // (same type → early return), leaving the stale charset from
+        // the source encoding (e.g. windows-1252 → entity encoding
+        // of chars > U+00FF even though the output is UTF-8). Passing
+        // a dummy MIME type resets the cached value so the real call
+        // in processStartDocument creates a fresh encoder with the
+        // correct output encoding (UTF-8) and line break.
+        if (writer instanceof GenericFilterWriter) {
+            EncoderManager em = ((GenericFilterWriter) writer).getEncoderManager();
+            if (em != null) {
+                em.updateEncoder("application/x-force-reinit");
+            }
+        }
+
+        if (outputPath != null) {
+            writer.setOutput(outputPath);
+        } else {
+            writer.setOutput(outputStream);
+        }
+    }
+
+    /**
+     * Create, configure, and open a fresh filter instance for the given
+     * header. Used by the two-pass pipeline for filter B (pass 2). Mirrors
+     * the setup done in runPipeline for filter A: same filter class
+     * promotion, same parameters, same FilterConfigurationMapper, same
+     * RawDocument shape. The {@code effectiveFilterClass} is precomputed
+     * by the caller so both passes use the same id even if promotion's
+     * inputs change between calls.
+     */
+    private IFilter openConfiguredFilter(ProcessHeader header,
+                                          String effectiveFilterClass,
+                                          File inputFile,
+                                          String encoding,
+                                          LocaleId srcLocale,
+                                          LocaleId tgtLocale) {
+        IFilter f = FilterRegistry.createFilter(effectiveFilterClass);
+        if (f == null) {
+            throw new IllegalStateException(
+                    "cannot instantiate filter on pass 2: " + effectiveFilterClass);
+        }
+        Map<String, String> filterParams = header.getFilterParamsMap();
+        if (filterParams != null && !filterParams.isEmpty()) {
+            applyFilterParams(f, filterParams);
+        }
+        setupFilterConfigurationMapper(f);
+
+        RawDocument rawDoc = new RawDocument(inputFile.toURI(), encoding, srcLocale, tgtLocale);
+        f.open(rawDoc);
+        return f;
+    }
+
+    /**
+     * Iterate the read-only filter, converting each event to a PartDTO
+     * and sending subscribed parts to Go as ContentBlockBatch responses.
+     * Used by pass 1 of the two-pass pipeline. Events are not retained
+     * — there's no writer downstream on pass 1, and any state they hold
+     * is freed when the read filter closes.
+     *
+     * Returns the number of subscribed parts sent.
+     */
+    private int streamPartsToGo(IFilter readFilter,
+                                 StreamObserver<ProcessResponse> respObserver,
+                                 boolean sendAll,
+                                 Set<Integer> subscribedTypes) {
+        List<ContentBlock> sendBatch = new ArrayList<>(SEND_BATCH_SIZE);
+        int totalSent = 0;
+        while (readFilter.hasNext()) {
+            Event event = readFilter.next();
+            PartDTO partDTO = EventConverter.convert(event);
+            if (partDTO == null) continue;
+            boolean subscribed = sendAll || subscribedTypes.contains(partDTO.getPartType());
+            if (!subscribed) continue;
+            sendBatch.add(toContentBlock(partDTO));
+            totalSent++;
+            if (sendBatch.size() >= SEND_BATCH_SIZE) {
+                respObserver.onNext(ProcessResponse.newBuilder()
+                        .setContentBatch(ContentBlockBatch.newBuilder()
+                                .addAllBlocks(sendBatch).build())
+                        .build());
+                sendBatch.clear();
+            }
+        }
+        if (!sendBatch.isEmpty()) {
+            respObserver.onNext(ProcessResponse.newBuilder()
+                    .setContentBatch(ContentBlockBatch.newBuilder()
+                            .addAllBlocks(sendBatch).build())
+                    .build());
+        }
+        return totalSent;
     }
 
     /**
