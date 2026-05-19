@@ -198,7 +198,18 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             }
 
             private void handleProcessedPart(PartMessage pm) {
-                if (pm.getPartType() == PartDTO.TYPE_BLOCK && pm.hasBlock()) {
+                // Use hasBlock() (proto oneof presence) rather than
+                // comparing pm.getPartType() to PartDTO.TYPE_BLOCK. The
+                // legacy PartDTO.TYPE_* constants disagree with the wire
+                // protocol: PartDTO.TYPE_BLOCK is 4, but the proto spec
+                // (neokapi_bridge.proto:376) and the Go side both use 5
+                // for Block. Comparing against 4 silently dropped every
+                // Block sent by neokapi's pluginhost format-writer, so
+                // `kapi pseudo-translate` via bridge wrote unmodified
+                // source bytes — the verification harness in pseudobench
+                // surfaced this as "84/85 files succeeded but 76 produced
+                // zero pseudo runes" before the fix.
+                if (pm.hasBlock()) {
                     BlockMessage blockMsg = pm.getBlock();
                     String locale = header.getOutputLocale().isEmpty()
                             ? header.getTargetLocale() : header.getOutputLocale();
