@@ -82,9 +82,25 @@ public class StreamingTranslationApplier {
                 return event;
             }
             targetContainer = new TextContainer();
-            TextFragment sourceFragment = sourceContainer.getUnSegmentedContentCopy();
+            // Use getFirstContent() (the original segment's TextFragment) rather
+            // than getUnSegmentedContentCopy() (which calls createJoinedContent
+            // → TextFragment.insert with keepCodeIds=false → renumbers CLOSING
+            // codes via balanceMarkers). EventConverter sends each segment's
+            // pre-join codes to Go, so the inbound SpanDTO ids match what was
+            // emitted; if the applier joins+renumbers here, the (id, tagType)
+            // lookup in OkapiCodeConverter.findUnusedSourceCode misses and
+            // falls through to buildFreshCode — which loses outerData and
+            // causes TTXSkeletonWriter to emit the code's raw data verbatim
+            // (the "literal </a>" bug on unsegmented TTX fixtures).
+            // contentIsOneSegment() guarantees parts.size()==1 here, so
+            // getFirstContent() returns the same logical content.
+            TextFragment sourceFragment = sourceContainer.getFirstContent();
             TextFragment existingTargetFragment = existingTarget != null
-                    ? existingTarget.getUnSegmentedContentCopy() : null;
+                    && existingTarget.contentIsOneSegment()
+                    ? existingTarget.getFirstContent()
+                    : (existingTarget != null
+                            ? existingTarget.getUnSegmentedContentCopy()
+                            : null);
             TextFragment tf = OkapiCodeConverter.toTextFragment(
                     segments.get(0).getContent(), sourceFragment, existingTargetFragment);
             targetContainer.setContent(tf);
