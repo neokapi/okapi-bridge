@@ -1282,7 +1282,8 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
 
     /** Reserved param keys handled specially by the bridge. */
     private static final java.util.Set<String> RESERVED_PARAMS = new java.util.HashSet<>(
-            java.util.Arrays.asList("configFile", "fprmContent", "apiVersion", "kind", "spec"));
+            java.util.Arrays.asList("configFile", "fprmContent", "apiVersion", "kind", "spec",
+                    neokapi.bridge.util.RegexRulesApplier.RULES_PARAM));
 
     /**
      * Apply filter parameters from the gRPC map&lt;string, string&gt; format.
@@ -1409,6 +1410,27 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 System.err.println("[bridge] Applied " + jsonParams.size() + " additional filter parameters");
             } else {
                 System.err.println("[bridge] Warning: Some filter parameters could not be applied");
+            }
+        }
+
+        // Handle regexRulesJson: rebuild the RegexFilter rule list from a JSON
+        // array and compile it. This carries Okapi's rule-driven extraction
+        // through the flat FilterParams transport (the rule list cannot be
+        // expressed as flat string params; see RegexRulesApplier). Applied
+        // last so any escape / regexOptions params set above are in place
+        // before compileRules() runs.
+        String regexRulesJson = params.get(neokapi.bridge.util.RegexRulesApplier.RULES_PARAM);
+        if (regexRulesJson != null && !regexRulesJson.isEmpty()) {
+            if (neokapi.bridge.util.RegexRulesApplier.supports(filterParameters)) {
+                try {
+                    int n = neokapi.bridge.util.RegexRulesApplier.apply(filterParameters, regexRulesJson);
+                    System.err.println("[bridge] Applied " + n + " regex extraction rule(s) from regexRulesJson");
+                } catch (Exception e) {
+                    System.err.println("[bridge] Warning: Could not apply regexRulesJson: " + e.getMessage());
+                }
+            } else {
+                System.err.println("[bridge] Warning: regexRulesJson supplied but filter does not support a "
+                        + "RegexFilter rule list (" + filterParameters.getClass().getName() + ")");
             }
         }
 
