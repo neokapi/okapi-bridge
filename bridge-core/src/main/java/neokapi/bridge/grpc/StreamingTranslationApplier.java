@@ -12,6 +12,7 @@ import net.sf.okapi.common.resource.TextContainer;
 import net.sf.okapi.common.resource.TextFragment;
 import net.sf.okapi.common.resource.TextPart;
 
+import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -111,7 +112,7 @@ public class StreamingTranslationApplier {
             Segment tgtSeg = targetContainer.getFirstSegment();
             if (srcSeg != null && tgtSeg != null) {
                 tgtSeg.id = srcSeg.id;
-                tgtSeg.setOriginalId(srcSeg.getOriginalId());
+                copySegmentOriginalId(srcSeg, tgtSeg);
             }
         } else {
             // Multi-segment (or single DTO for multi-segment source):
@@ -226,6 +227,24 @@ public class StreamingTranslationApplier {
                 return entry.segments();
             }
             lookahead.put(entry.blockId(), entry.segments());
+        }
+    }
+
+    // copySegmentOriginalId aligns the target segment's originalId with the
+    // source's, used so writers (XLIFF2, etc.) can match source↔target pairs.
+    // Segment-level originalId was added to Okapi after the older releases the
+    // bridge still supports (≤1.41 have no Segment.getOriginalId/setOriginalId),
+    // so reflect over it and no-op when absent — those versions have no segment
+    // originalId to preserve. Newer versions behave exactly as a direct call.
+    private static void copySegmentOriginalId(Segment src, Segment tgt) {
+        try {
+            Method get = Segment.class.getMethod("getOriginalId");
+            Method set = Segment.class.getMethod("setOriginalId", String.class);
+            set.invoke(tgt, get.invoke(src));
+        } catch (NoSuchMethodException e) {
+            // Older Okapi: Segment has no originalId — nothing to align.
+        } catch (ReflectiveOperationException e) {
+            // Defensive: never fail translation application over ID alignment.
         }
     }
 }
