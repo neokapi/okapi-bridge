@@ -306,6 +306,11 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                 return;
             }
 
+            // Apply a named built-in Okapi config first (e.g. okf_xml-resx),
+            // then layer any explicit filter_params override on top.
+            if (!header.getConfigId().isEmpty()) {
+                FilterRegistry.applyNamedConfig(filter, header.getConfigId());
+            }
             Map<String, String> filterParams = header.getFilterParamsMap();
             if (filterParams != null && !filterParams.isEmpty()) {
                 applyFilterParams(filter, filterParams);
@@ -589,6 +594,11 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             throw new IllegalStateException(
                     "cannot instantiate filter on pass 2: " + effectiveFilterClass);
         }
+        // Named config first so the write pass uses the same config as the read
+        // pass; explicit filter_params override on top.
+        if (!header.getConfigId().isEmpty()) {
+            FilterRegistry.applyNamedConfig(f, header.getConfigId());
+        }
         Map<String, String> filterParams = header.getFilterParamsMap();
         if (filterParams != null && !filterParams.isEmpty()) {
             applyFilterParams(f, filterParams);
@@ -664,6 +674,11 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
             throw new IllegalStateException("cannot instantiate filter for write: " + effectiveFilterClass);
         }
 
+        // Named config first so the write path matches the read path; explicit
+        // filter_params override on top.
+        if (!header.getConfigId().isEmpty()) {
+            FilterRegistry.applyNamedConfig(writeFilter, header.getConfigId());
+        }
         Map<String, String> filterParams = header.getFilterParamsMap();
         if (filterParams != null && !filterParams.isEmpty()) {
             applyFilterParams(writeFilter, filterParams);

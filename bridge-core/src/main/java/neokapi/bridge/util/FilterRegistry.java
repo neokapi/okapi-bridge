@@ -279,10 +279,153 @@ public class FilterRegistry {
     }
 
     /**
+     * Apply a named built-in Okapi filter configuration to a live filter.
+     *
+     * <p>Finds the {@link FilterConfiguration} whose {@code configId} equals
+     * {@code configId} among {@code filter.getConfigurations()} — for compound
+     * filters (e.g. {@code XmlStreamFilter}, {@code XMLFilter}) this includes
+     * the built-in presets such as {@code okf_xmlstream-dita},
+     * {@code okf_xml-docbook} and {@code okf_xml-resx} — then loads that
+     * config's parameters from its {@code parametersLocation} resource (.fprm,
+     * .yml, ITS rules, …) and sets them on the filter.
+     *
+     * <p>The load uses Okapi's own {@code IParameters.load(URL, false)} so the
+     * native parameters type parses its native serialization (StringParameters
+     * #v1, YAML markup rules, ITS XML, …). The resource is resolved with the
+     * same multi-strategy lookup used for schema generation, since a few
+     * filters reference parameter files in a parent package.
+     *
+     * <p>Callers apply this BEFORE any explicit {@code filter_params} so that
+     * an explicit override layers on top of the named config's defaults.
+     *
+     * @param filter   a freshly-created filter instance
+     * @param configId the requested Okapi config id (e.g. "okf_xml-resx")
+     * @throws IllegalArgumentException if {@code configId} is unknown for the
+     *         filter (so a typo surfaces instead of silently using the default)
+     * @throws IllegalStateException if the config's parameter resource cannot
+     *         be resolved or loaded
+     */
+    public static void applyNamedConfig(IFilter filter, String configId) {
+        if (filter == null) {
+            throw new IllegalArgumentException("filter must not be null");
+        }
+        if (configId == null || configId.isEmpty()) {
+            throw new IllegalArgumentException("configId must not be empty");
+        }
+
+        List<FilterConfiguration> configs = filter.getConfigurations();
+        FilterConfiguration match = null;
+        List<String> known = new ArrayList<>();
+        if (configs != null) {
+            for (FilterConfiguration c : configs) {
+                if (c == null) {
+                    continue;
+                }
+                known.add(c.configId);
+                if (configId.equals(c.configId)) {
+                    match = c;
+                    break;
+                }
+            }
+        }
+
+        if (match == null) {
+            throw new IllegalArgumentException(
+                    "unknown filter configuration '" + configId + "' for "
+                            + filter.getClass().getName()
+                            + " (available: " + known + ")");
+        }
+
+        // The default/base config (e.g. okf_xml, okf_xmlstream) usually carries
+        // no parameter resource — the filter's default parameters already match
+        // it, so applying it is a no-op rather than an error.
+        if (match.parametersLocation == null || match.parametersLocation.isEmpty()) {
+            return;
+        }
+
+        URL resource = resolveConfigResourceURL(filter, match.parametersLocation);
+        if (resource == null) {
+            throw new IllegalStateException(
+                    "could not resolve parameters resource '" + match.parametersLocation
+                            + "' for config '" + configId + "' on "
+                            + filter.getClass().getName());
+        }
+
+        IParameters params = filter.getParameters();
+        if (params == null) {
+            throw new IllegalStateException(
+                    "filter " + filter.getClass().getName()
+                            + " does not support parameters; cannot apply config '" + configId + "'");
+        }
+
+        try {
+            // Okapi's canonical path: each IParameters implementation parses its
+            // own native serialization (StringParameters #v1, AbstractMarkup
+            // YAML, ITS rules XML, …). The boolean is ignoreErrors=false.
+            params.load(resource, false);
+        } catch (Exception e) {
+            throw new IllegalStateException(
+                    "failed to load parameters for config '" + configId + "' from "
+                            + resource + ": " + e.getMessage(), e);
+        }
+        filter.setParameters(params);
+        System.err.println("[bridge] Applied named config '" + configId + "' to "
+                + filter.getClass().getName() + " from " + match.parametersLocation);
+    }
+
+    /**
+     * Resolve a config's {@code parametersLocation} to a {@link URL} using the
+     * same multi-strategy lookup as {@link #loadParametersForConfig}. Filters
+     * normally reference a resource relative to the filter class, but a few
+     * (plaintext, table) reference files in a parent package.
+     */
+    private static URL resolveConfigResourceURL(IFilter filter, String parametersLocation) {
+        // Strategy 1: relative to filter class.
+        URL url = filter.getClass().getResource(parametersLocation);
+
+        // Strategy 2: classloader root with absolute path.
+        if (url == null) {
+            url = filter.getClass().getClassLoader().getResource(parametersLocation);
+        }
+
+        // Strategy 3: walk up the filter's package hierarchy.
+        if (url == null) {
+            String packagePath = filter.getClass().getPackage().getName().replace('.', '/');
+            while (url == null && packagePath.contains("/")) {
+                packagePath = packagePath.substring(0, packagePath.lastIndexOf('/'));
+                url = filter.getClass().getClassLoader().getResource(packagePath + "/" + parametersLocation);
+            }
+        }
+
+        // Strategy 4: common filter resource location.
+        if (url == null) {
+            String filterType = extractFilterType(filter.getClass().getName());
+            if (filterType != null) {
+                url = filter.getClass().getClassLoader().getResource(
+                        "net/sf/okapi/filters/" + filterType + "/" + parametersLocation);
+            }
+        }
+
+        // Strategy 5: plaintext package for okf_plaintext_* configs.
+        if (url == null && parametersLocation.startsWith("okf_plaintext")) {
+            url = filter.getClass().getClassLoader().getResource(
+                    "net/sf/okapi/filters/plaintext/" + parametersLocation);
+        }
+
+        // Strategy 6: table package for okf_table_* configs.
+        if (url == null && parametersLocation.startsWith("okf_table")) {
+            url = filter.getClass().getClassLoader().getResource(
+                    "net/sf/okapi/filters/table/" + parametersLocation);
+        }
+
+        return url;
+    }
+
+    /**
      * Load parameters from a classpath resource file (.yml or .fprm format).
      * Tries multiple resolution strategies since parameter files may be in parent packages.
      */
-    private static void loadParametersForConfig(IFilter filter, String parametersLocation, 
+    private static void loadParametersForConfig(IFilter filter, String parametersLocation,
                                                  FilterConfigurationInfo configInfo) {
         try {
             InputStream is = null;
