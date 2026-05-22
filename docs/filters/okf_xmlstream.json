@@ -1,44 +1,7 @@
 {
   "filterName": "XML Stream Filter",
+  "filterId": "okf_xmlstream",
   "overview": "The XML Stream Filter processes XML documents using a stream parser, allowing it to handle much larger documents than the DOM-based [[XML Filter]]. It uses the same YAML-based configuration syntax as the HTML Filter, with all HTML Filter parameters available except `escapeCharacters`. If you need ITS (Internationalization Tag Set) support, use the XML Filter instead.",
-  "parameters": {
-    "parser.assumeWellformed": {
-      "help": "Controls whether the parser assumes the input XML is well-formed. When enabled, the parser uses a more lenient parsing mode that can handle documents that may not be strictly well-formed XML.\n\nThe default configurations all set this to `true`."
-    },
-    "parser.preserveWhitespace": {
-      "help": "Controls the global default for whitespace preservation. Individual elements can override this via `PRESERVE_WHITESPACE` element rules (e.g., `<pre>`, `<codeblock>`) or the `xml:space` attribute.\n\nWhen `false` (the default), insignificant whitespace is normalized."
-    },
-    "inlineCodes.enabled": {
-      "help": "Activates pattern-based detection of inline codes (placeholders, markup tags, variables, etc.) within translatable text. The patterns are defined in the **rules** section below.\n\nThis uses the same code finder mechanism as the HTML Filter.",
-      "seeAlso": "HTML_Filter#Inline_Codes"
-    },
-    "inlineCodes.rules": {
-      "help": "Regex patterns that identify inline codes within translatable text segments. Each pattern should match a complete inline code (placeholder, variable reference, embedded markup, etc.).\n\nThese are Java regex patterns applied to the extracted text content.",
-      "seeAlso": "HTML_Filter#Inline_Codes"
-    },
-    "inlineCodes.mergeAdjacent": {
-      "help": "When multiple inline codes appear next to each other with no translatable text between them, merge them into a single code placeholder. This simplifies the segments presented to translators."
-    },
-    "inlineCodes.moveBoundaryCodes": {
-      "help": "Moves inline codes that appear at the very start or end of a segment out into the non-translatable skeleton. This keeps segment boundaries clean for translation tools."
-    },
-    "inlineCodes.simplifierRules": {
-      "help": "Rules for simplifying the representation of inline codes in extracted segments. Uses the Okapi simplifier rules format to reduce complex inline code patterns into simpler placeholders."
-    },
-    "attributes": {
-      "help": "Defines global attribute extraction rules that apply across all elements. Each key is an attribute name (e.g., `xml:lang`, `id`, `xml:space`) mapped to a rule specifying how that attribute should be handled.\n\nThe default configuration handles:\n- `xml:lang` — writable localizable (language tag)\n- `xml:id` and `id` — used as segment identifiers\n- `xml:space` — controls whitespace preservation state",
-      "seeAlso": "HTML_Filter#HTML_Configuration_Syntax"
-    },
-    "editorTitle": {
-      "help": "Title displayed in the parameters editor UI. This is a cosmetic setting used by the Okapi GUI tools."
-    },
-    "taggedConfig": {
-      "help": "Internal tagged configuration object used by the filter's YAML-based configuration system. This stores the parsed element and attribute rules from the YAML configuration file."
-    },
-    "path": {
-      "help": "Path to the YAML configuration file containing the filter parameters. When set, the filter loads its configuration from this external file rather than using inline parameters."
-    }
-  },
   "limitations": [
     "No transparent support for namespace prefixes — element names must be declared with their full prefix in the configuration (e.g., `ns:element` not just `element`).",
     "The filter is **not case-sensitive** for element names — `<elem>` and `<Elem>` are treated as identical, which violates the XML specification.",
@@ -78,6 +41,44 @@
       "config": "```yaml\nassumeWellformed: true\nglobal_cdata_subfilter: okf_html\npreserve_whitespace: false\n\nelements:\n  entry:\n    ruleTypes: [TEXTUNIT]\n    idAttributes: [key]\n```"
     }
   ],
+  "parameters": {
+    "parser.assumeWellformed": {
+      "help": "Controls whether the parser assumes the input XML is well-formed. When enabled, the parser uses a more lenient parsing mode that can handle documents that may not be strictly well-formed XML.\n\nThe default configurations all set this to `true`."
+    },
+    "parser.preserveWhitespace": {
+      "help": "Controls the global default for whitespace preservation. Individual elements can override this via `PRESERVE_WHITESPACE` element rules (e.g., `<pre>`, `<codeblock>`) or the `xml:space` attribute.\n\nWhen `false` (the default), insignificant whitespace is normalized."
+    },
+    "inlineCodes.enabled": {
+      "help": "Activates pattern-based detection of inline codes (placeholders, markup tags, variables, etc.) within translatable text. The patterns are defined in the **rules** section below.\n\nThis uses the same code finder mechanism as the HTML Filter.",
+      "seeAlso": "HTML_Filter#Inline_Codes"
+    },
+    "inlineCodes.rules": {
+      "help": "Regex patterns that identify inline codes within translatable text segments. Each pattern should match a complete inline code (placeholder, variable reference, embedded markup, etc.).\n\nThese are Java regex patterns applied to the extracted text content.",
+      "seeAlso": "HTML_Filter#Inline_Codes"
+    },
+    "inlineCodes.mergeAdjacent": {
+      "help": "When multiple inline codes appear next to each other with no translatable text between them, merge them into a single code placeholder. This simplifies the segments presented to translators."
+    },
+    "inlineCodes.moveBoundaryCodes": {
+      "help": "Moves inline codes that appear at the very start or end of a segment out into the non-translatable skeleton. This keeps segment boundaries clean for translation tools."
+    },
+    "inlineCodes.simplifierRules": {
+      "help": "Rules for simplifying the representation of inline codes in extracted segments. Uses the Okapi simplifier rules format to reduce complex inline code patterns into simpler placeholders."
+    },
+    "attributes": {
+      "help": "Defines global attribute extraction rules that apply across all elements. Each key is an attribute name (e.g., `xml:lang`, `id`, `xml:space`) mapped to a rule specifying how that attribute should be handled.\n\nThe default configuration handles:\n- `xml:lang` — writable localizable (language tag)\n- `xml:id` and `id` — used as segment identifiers\n- `xml:space` — controls whitespace preservation state",
+      "seeAlso": "HTML_Filter#HTML_Configuration_Syntax"
+    },
+    "editorTitle": {
+      "help": "Title displayed in the parameters editor UI. This is a cosmetic setting used by the Okapi GUI tools."
+    },
+    "taggedConfig": {
+      "help": "Internal tagged configuration object used by the filter's YAML-based configuration system. This stores the parsed element and attribute rules from the YAML configuration file."
+    },
+    "path": {
+      "help": "Path to the YAML configuration file containing the filter parameters. When set, the filter loads its configuration from this external file rather than using inline parameters."
+    }
+  },
   "propertySuggestions": {
     "editorTitle": {
       "title": "Editor Title",
@@ -93,6 +94,32 @@
     }
   },
   "fullDoc": "# XML Stream Filter\n\nThe XML Stream Filter processes XML documents using a stream parser, allowing it to handle much larger documents than the DOM-based XML Filter. It uses the same YAML-based configuration syntax as the HTML Filter, with all HTML Filter parameters available except `escapeCharacters`. If you need ITS (Internationalization Tag Set) support, use the XML Filter instead.\n\n## Parameters\n\n### Parser\n\n#### Assume Well-Formed\nControls whether the parser assumes the input XML is well-formed. When enabled, the parser uses a more lenient parsing mode. The default configurations all set this to `true`.\n\n#### Preserve Whitespace\nControls the global default for whitespace preservation. Individual elements can override this via `PRESERVE_WHITESPACE` element rules (e.g., `<pre>`, `<codeblock>`) or the `xml:space` attribute. When `false` (the default), insignificant whitespace is normalized.\n\n### Inline Codes\n\n#### Enabled\nActivates pattern-based detection of inline codes (placeholders, markup tags, variables, etc.) within translatable text. The patterns are defined in the rules section.\n\n#### Rules\nRegex patterns that identify inline codes within translatable text segments. Each pattern should match a complete inline code. These are Java regex patterns applied to the extracted text content.\n\n#### Merge Adjacent\nWhen multiple inline codes appear next to each other with no translatable text between them, merge them into a single code placeholder. This simplifies the segments presented to translators.\n\n#### Move Boundary Codes\nMoves inline codes that appear at the very start or end of a segment out into the non-translatable skeleton. This keeps segment boundaries clean for translation tools.\n\n#### Simplifier Rules\nRules for simplifying the representation of inline codes in extracted segments.\n\n### Attributes\nDefines global attribute extraction rules that apply across all elements. Each key is an attribute name mapped to a rule specifying how that attribute should be handled.\n\nThe default configuration handles:\n- `xml:lang` — writable localizable (language tag)\n- `xml:id` and `id` — used as segment identifiers\n- `xml:space` — controls whitespace preservation state\n\n### Other Parameters\n\n#### Editor Title\nTitle displayed in the parameters editor UI.\n\n#### Tagged Configuration\nInternal parsed configuration object for element and attribute rules.\n\n#### Configuration File Path\nPath to an external YAML configuration file.\n\n## CDATA Subfiltering\n\nThe `global_cdata_subfilter` parameter specifies a secondary filter applied to all CDATA content. For example, to process CDATA as HTML:\n\n```yaml\nglobal_cdata_subfilter: okf_html\n```\n\n## PCDATA Subfiltering\n\nThe `global_pcdata_subfilter` parameter applies a secondary filter to escaped markup in PCDATA content. Only content matched by `TEXTUNIT` element rules is passed to the subfilter — `INCLUDE` rules are **not** subfiltered.\n\n```yaml\nglobal_pcdata_subfilter: okf_html\nelements:\n  test:\n    ruleTypes: [TEXTUNIT]\n```\n\n## Quote Mode\n\nEscaping of quote and apostrophe characters can be configured:\n\n```yaml\nquoteModeDefined: true\nquoteMode: 3\n```\n\n- **0** — Do not escape single or double quotes\n- **1** — Escape single and double quotes to named entities\n- **2** — Escape double quotes to named entities, single quotes to numeric entities\n- **3** — Escape double quotes only\n\n## Limitations\n\n- No transparent support for namespace prefixes — element names must be declared with their full prefix in the configuration.\n- The filter is **not case-sensitive** for element names — `<elem>` and `<Elem>` are treated as identical, violating the XML specification.\n- Does not support ITS — use the XML Filter instead.\n- The `escapeCharacters` parameter from the HTML Filter is not available.\n\n## Notes\n\n- **Input encoding**: Uses the document's encoding declaration if present; defaults to UTF-8 otherwise.\n- **Output encoding**: BOM is preserved only if the input was UTF-8 with a BOM. XML encoding declarations are updated or added automatically.\n- **Line breaks**: Output preserves the input document's line-break style.\n\n## Examples\n\n### Java Properties XML with Embedded HTML\n\n```yaml\nassumeWellformed: true\nglobal_cdata_subfilter: okf_html\npreserve_whitespace: false\n\nelements:\n  entry:\n    ruleTypes: [TEXTUNIT]\n    idAttributes: [key]\n```\n\n### PCDATA Subfiltering for Escaped HTML\n\nInput:\n```xml\n<test>\n  &lt;p&gt;This is embedded HTML content.&lt;/p&gt;\n</test>\n```\n\nConfig:\n```yaml\nglobal_pcdata_subfilter: okf_html\nelements:\n  test:\n    ruleTypes: [TEXTUNIT]\n```",
-  "filterId": "okf_xmlstream",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/XML_Stream_Filter"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/XML_Stream_Filter",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/XML_Stream_Filter",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.attributes": "ai",
+      "parameters.editorTitle": "ai",
+      "parameters.inlineCodes.enabled": "ai",
+      "parameters.inlineCodes.mergeAdjacent": "ai",
+      "parameters.inlineCodes.moveBoundaryCodes": "ai",
+      "parameters.inlineCodes.rules": "ai",
+      "parameters.inlineCodes.simplifierRules": "ai",
+      "parameters.parser.assumeWellformed": "ai",
+      "parameters.parser.preserveWhitespace": "ai",
+      "parameters.path": "ai",
+      "parameters.taggedConfig": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

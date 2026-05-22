@@ -1,0 +1,31 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "general-checker",
+  "kind": "step",
+  "name": "General Checker Step",
+  "overview": "The General Checker step compares the source and target of each text unit and annotates segment-level issues that are not specific to inline codes, length, patterns, or character sets. It covers leading and trailing whitespace differences, empty source or empty target, target identical to source, and doubled (consecutively repeated) words in the target. It expects filter events and passes them through unchanged, attaching the issues it finds to the resources for a downstream consumer to report. It is one of the granular quality checks that the aggregate Quality Check step combines into a single pass.",
+  "processingNotes": [
+    "Operates on filter events; events are forwarded unchanged and the detected issues are accumulated per document.",
+    "Delegates to the verification library's `GeneralChecker`; its step parameters are a subset of the full Quality Check / CheckMate configuration.",
+    "By default all of its checks are enabled: leading whitespace, trailing whitespace, empty target, empty source, target-same-as-source (including the same-language and with-codes variants), and doubled words.",
+    "The doubled-word check ships with the default exception list `sie;vous;nous`, allowing those words to repeat without being flagged.",
+    "Requires source and target locales; these are supplied by the pipeline rather than configured on the step."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/generalchecker/GeneralCheckerStep.java",
+      "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/generalchecker/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  },
+  "examples": [
+    {
+      "title": "Catch empty targets, untranslated segments, and doubled words",
+      "description": "Enables the core verifications. Empty or whitespace-only targets and targets identical to their source are flagged, and accidental doubled words are reported — except the listed function words (here French `sie`/`vous`/`nous`) that may legitimately repeat.",
+      "config": "```yaml\nemptyTarget: true\ntargetSameAsSource: true\ndoubledWord: true\ndoubledWordExceptions: \"sie;vous;nous\"\n```"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "okf_autoxliff",
+  "kind": "filter",
+  "name": "XLIFF 1.2 and 2.0 Filter",
+  "overview": "The Auto-XLIFF Filter is a meta-filter that detects the XLIFF version of the input document and delegates parsing to the appropriate XLIFF filter. It inspects the root element of the document: if the first element is `<xliff>` in the XLIFF 2.0 namespace with a `version` attribute in the range `[2.0, 3.0)`, the document is handled by the XLIFF 2.0 filter; otherwise it is handled by the XLIFF 1.x filter. This removes the need to know in advance whether a file is XLIFF 1.2 or 2.0, which is useful when processing mixed sets of XLIFF documents.",
+  "processingNotes": [
+    "Version detection reads only the document's first start element (root). The XLIFF 2.0 path is chosen when the root is `<xliff>` in the XLIFF 2.0 core namespace and its `version` attribute parses to a value `>= 2.0` and `< 3.0`. Any other root, namespace, or version (including a missing or unparseable `version`) falls back to the XLIFF 1.x filter.",
+    "Encoding is auto-detected from the byte-order mark; absent a BOM, UTF-8 is assumed.",
+    "Once a delegate filter is selected, all extraction and writing is performed by that filter using the configuration named by `xliffConfig` or `xliff2Config`. The parameters and behaviour of the chosen filter therefore apply in full.",
+    "Recognised file extensions are `.xlf`, `.xliff`, `.xlf2`, and `.xliff2`."
+  ],
+  "examples": [
+    {
+      "title": "Default auto-detection",
+      "description": "With no configuration, the filter detects the XLIFF version of each document and delegates to the default `okf_xliff` (1.x) or `okf_xliff2` (2.0) configuration accordingly.",
+      "config": "```yaml\n{}\n```",
+      "input": "```xml\n<xliff version=\"2.0\" xmlns=\"urn:oasis:names:tc:xliff:document:2.0\">\n  <file id=\"f1\"><unit id=\"u1\"><segment><source>Hello</source></segment></unit></file>\n</xliff>\n```",
+      "output": "```\nThe root <xliff> element is in the XLIFF 2.0 namespace with version 2.0, so the document is parsed by the XLIFF 2.0 filter (okf_xliff2).\n```"
+    },
+    {
+      "title": "Selecting alternative delegate configurations",
+      "description": "Points the two version paths at non-default filter configurations — for example, a custom XLIFF 1.x configuration tuned for SDLXLIFF — so that auto-detection still applies but each path uses a tailored configuration.",
+      "config": "```yaml\ngeneral:\n  xliffConfig: okf_xliff-sdl\n  xliff2Config: okf_xliff2\n```",
+      "input": "```xml\n<xliff version=\"1.2\"><file source-language=\"en\"><body><trans-unit id=\"1\"><source>Hello</source></trans-unit></body></file></xliff>\n```",
+      "output": "```\nThe XLIFF 1.2 document is delegated to the okf_xliff-sdl configuration rather than the default okf_xliff.\n```"
+    }
+  ],
+  "parameters": {
+    "general.xliffConfig": {
+      "help": "Names the filter configuration used to parse documents detected as XLIFF 1.x. When the root element is not XLIFF 2.0 (the fallback path), the meta-filter instantiates this configuration and hands the document to it.\n\nThe value is a filter configuration id resolved by the bridge's configuration mapper, not an inline parameter set. Use it to substitute a tuned or vendor-specific XLIFF 1.x configuration for the default.",
+      "values": "A filter configuration id (string). Default `okf_xliff` — the standard XLIFF 1.x configuration.",
+      "examples": [
+        "`okf_xliff` — standard XLIFF 1.x handling (default)",
+        "`okf_xliff-sdl` — an SDLXLIFF-oriented configuration, if registered"
+      ]
+    },
+    "general.xliff2Config": {
+      "help": "Names the filter configuration used to parse documents detected as XLIFF 2.0. The meta-filter selects this path when the root element is `<xliff>` in the XLIFF 2.0 core namespace with a `version` attribute in `[2.0, 3.0)`.\n\nThe value is a filter configuration id resolved by the bridge's configuration mapper. Use it to substitute a tuned XLIFF 2.0 configuration for the default.",
+      "values": "A filter configuration id (string). Default `okf_xliff2` — the standard XLIFF 2.0 configuration."
+    }
+  },
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/autoxliff/src/main/java/net/sf/okapi/filters/autoxliff/AutoXLIFFFilter.java",
+      "okapi-source:okapi/filters/autoxliff/src/main/java/net/sf/okapi/filters/autoxliff/AutoXLIFFParameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

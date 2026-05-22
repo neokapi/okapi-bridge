@@ -1,0 +1,25 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "exact-document-context-match-word-count",
+  "kind": "step",
+  "name": "Exact Document Context Match Word Count Step",
+  "overview": "Tallies word counts for the text units whose leveraged top match was categorised as `EXACT_DOCUMENT_CONTEXT` — an exact match that originates from a repeated segment elsewhere in the same document (an internal repetition rather than a previous-version match; compare `EXACT_PREVIOUS_VERSION`). It reads the `AltTranslationsAnnotation` left by a leveraging step and, for each target segment or text container whose highest-ranked match is of this type, counts the words in the corresponding source. The counts are stored as `EXACT_DOCUMENT_CONTEXT` metrics annotations on the segment, text container, and aggregate resources, and consumed downstream by the Scoping Report Step. This is the word-count variant; the character-count variant counts characters instead of words.",
+  "processingNotes": [
+    "Operates on the categorised top match only — the first entry of each segment's `AltTranslationsAnnotation` must have match type `EXACT_DOCUMENT_CONTEXT`.",
+    "Counts are computed over the source content; only translatable text units are counted.",
+    "Where a category group ranks several matches, the `CategoryResolver` keeps only the highest-ranked category and removes lower-ranked overlapping counts so totals are not double-counted."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactDocumentContextMatchWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+      "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

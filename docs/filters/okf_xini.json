@@ -1,0 +1,44 @@
+{
+  "filterName": "XINI Filter",
+  "filterId": "okf_xini",
+  "overview": "The XINI Filter reads and writes **XINI** documents — the XML interchange format used by the ONTRAM translation management system. A XINI document is organised as a set of pages, each containing elements (and tables of fields), whose text fields hold the translatable content as one or more segments. The filter walks this structure, emitting a group per page and a translatable text unit per field, and writes translations back into the corresponding XINI fields.",
+  "processingNotes": [
+    "Document structure maps to events as: each XINI page becomes a group, each element/field becomes a translatable text unit, and field segments become the text-unit segments.",
+    "Output is XML-encoded; the filter uses the XML encoder for the `text/x-xini` media type.",
+    "A predefined `okf_xini-noOutputSegmentation` configuration (i.e. `useOkapiSegmentation` set to `false`) merges segments that share the same `SegmentIDBeforeSegmentation` value in the output, reproducing the document's original segmentation rather than the pipeline's.",
+    "The filter supports an inline code finder and simplifier rules for handling placeholders within field text."
+  ],
+  "examples": [
+    {
+      "title": "Preserve the original XINI segmentation on output",
+      "description": "Disables Okapi segmentation so that fields are written back with their original XINI segmentation. Segments sharing the same `SegmentIDBeforeSegmentation` are merged; an originally unsegmented field stays unsegmented.",
+      "config": "```yaml\nsegmentation:\n  useOkapiSegmentation: false\n```",
+      "input": null,
+      "output": null
+    }
+  ],
+  "parameters": {
+    "useOkapiSegmentation": {
+      "help": "Controls which segmentation is used when writing fields back to the XINI document. When enabled (the default), the segmentation produced by the pipeline (for example by a segmentation step) is used. When disabled, all segments sharing the same `SegmentIDBeforeSegmentation` attribute value are merged on output, restoring the document's original segmentation; a field that was not segmented in the input remains unsegmented. The bundled `okf_xini-noOutputSegmentation` configuration sets this to `false`.",
+      "values": "`true` / `false` (default `true`)"
+    }
+  },
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/XINIFilter.java",
+      "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/Parameters.java",
+      "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/XINIReader.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.useOkapiSegmentation": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

@@ -1,0 +1,89 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "okf_multiparsers",
+  "kind": "filter",
+  "name": "Multi-Parsers Filter",
+  "overview": "The Multi-Parsers Filter extracts translatable text from two-level complex formats, where an outer format contains inner formats. A typical use case is a CSV file where some columns contain Markdown, some HTML, and some plain text. By default, the filter is configured to process a CSV file where all columns are translatable and treated as plain text.",
+  "limitations": [
+    "This filter is **BETA** — behavior and parameters may change in future releases."
+  ],
+  "processingNotes": [
+    "If the input file has a Unicode Byte-Order-Mark (BOM), the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically.",
+    "If no BOM is present, the default encoding specified in the filter options is used."
+  ],
+  "examples": [
+    {
+      "title": "Per-column sub-filters by index",
+      "description": "Treat a CSV where column 1 holds Markdown and column 5 holds HTML; the remaining columns are extracted as plain text. Column indexes are 0-based.",
+      "config": "```yaml\nextraction:\n  csvFormatCols: \"1:okf_markdown, 5:okf_html\"\n```"
+    },
+    {
+      "title": "Skip non-translatable columns and start below the header",
+      "description": "Exclude an internal ID column (index 0) from extraction and begin extracting at row 2, leaving the header row in the skeleton.",
+      "config": "```yaml\nextraction:\n  csvNoExtractCols: \"0\"\n  csvStartingRow: 2\n```"
+    },
+    {
+      "title": "Auto-detect column types from a configuration row",
+      "description": "Read the per-column extraction types from a dedicated row in each input file instead of from the static configuration. With detection enabled, that row (here row 1) holds tokens such as `notrans,text,okf_html,okf_markdown,text`, one per column.",
+      "config": "```yaml\nextraction:\n  csvAutoDetectColumnTypes: true\n  csvAutoDetectColumnTypesRow: 1\n```"
+    }
+  ],
+  "parameters": {
+    "extraction.csvNoExtractCols": {
+      "help": "Comma-separated list of 0-based column indexes that should not be extracted; their content is sent to the skeleton instead of becoming translatable text. Whitespace between values is allowed. Leave empty (the default) to extract every column.\n\nIgnored when `csvAutoDetectColumnTypes` is enabled, since the per-column types then come from the detection row instead.",
+      "values": "Comma-separated 0-based column indexes (default empty — all columns extracted)",
+      "examples": [
+        "`2,4` — leave columns 2 and 4 out of extraction"
+      ],
+      "dependsOn": [
+        {
+          "property": "extraction.csvAutoDetectColumnTypes",
+          "condition": "ignored when auto-detection is enabled"
+        }
+      ]
+    },
+    "extraction.csvFormatCols": {
+      "help": "Comma-separated list mapping 0-based column indexes to the sub-filter that should parse that column's content, using the form `index:filterId`. Columns not listed are treated as plain text. Whitespace between entries is allowed. Leave empty (the default) to treat every column as plain text.\n\nIgnored when `csvAutoDetectColumnTypes` is enabled.",
+      "values": "Comma-separated `index:filterId` pairs (default empty — all columns plain text)",
+      "examples": [
+        "`1:okf_markdown, 5:okf_html` — parse column 1 as Markdown and column 5 as HTML"
+      ],
+      "dependsOn": [
+        {
+          "property": "extraction.csvAutoDetectColumnTypes",
+          "condition": "ignored when auto-detection is enabled"
+        }
+      ]
+    },
+    "extraction.csvStartingRow": {
+      "help": "The 1-based row number at which extraction begins. Rows before it are written to the skeleton and not extracted — set it to `2` to skip a single header row. The default of `1` extracts from the first row.",
+      "values": "Integer, 1-based (default `1`)"
+    },
+    "extraction.csvAutoDetectColumnTypes": {
+      "help": "Selects where per-column extraction types come from. When disabled (the default), the types are taken from the static configuration (`csvNoExtractCols` and `csvFormatCols`). When enabled, they are read at runtime from a designated row of each input file (`csvAutoDetectColumnTypesRow`), whose cells hold tokens such as `notrans`, `text`, or a filter id like `okf_html`. Enabling this disables `csvNoExtractCols` and `csvFormatCols`.",
+      "values": "`true` / `false` (default `false`)"
+    },
+    "extraction.csvAutoDetectColumnTypesRow": {
+      "help": "The 1-based row number that holds the per-column type tokens when `csvAutoDetectColumnTypes` is enabled. Each cell names the handling for its column — for example `notrans,text,okf_html,okf_markdown,text`. Has no effect unless auto-detection is on.",
+      "values": "Integer, 1-based (default `2`)",
+      "dependsOn": [
+        {
+          "property": "extraction.csvAutoDetectColumnTypes",
+          "condition": "must be enabled for this row to be consulted"
+        }
+      ]
+    }
+  },
+  "fullDoc": "# Multi-Parsers Filter\n\nThe Multi-Parsers Filter extracts translatable text from two-level complex formats, where an outer format contains inner formats. A typical use case is a CSV file where some columns contain Markdown, some HTML, and some plain text. By default, the filter is configured to process a CSV file where all columns are translatable and treated as plain text.\n\n## Parameters\n\n#### Columns Not Extracted (`csvNoExtractCols`)\nComma-separated list of 0-based column indexes whose content is sent to the skeleton rather than extracted. Empty by default (all columns extracted). Ignored when auto-detection is enabled.\n\n#### Column Sub-Filters (`csvFormatCols`)\nComma-separated `index:filterId` pairs mapping a 0-based column index to the sub-filter that parses that column (e.g. `1:okf_markdown, 5:okf_html`). Columns not listed are treated as plain text. Ignored when auto-detection is enabled.\n\n#### Starting Row (`csvStartingRow`)\n1-based row number at which extraction begins. Set to `2` to skip a single header row. Default `1`.\n\n#### Auto-Detect Column Types (`csvAutoDetectColumnTypes`)\nWhen enabled, per-column extraction types are read from a designated row of each input file rather than from the static configuration. Default `false`.\n\n#### Auto-Detect Column Types Row (`csvAutoDetectColumnTypesRow`)\n1-based row number holding the per-column type tokens (e.g. `notrans,text,okf_html,okf_markdown,text`) when auto-detection is enabled. Default `2`.\n\n## Limitations\n\n- This filter is **BETA** — behavior and parameters may change in future releases.\n\n## Notes\n\n- If the input file has a Unicode Byte-Order-Mark (BOM), the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically.\n- If no BOM is present, the default encoding specified in the filter options is used.",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Multi-Parsers_Filter",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/multiparsers/src/main/java/net/sf/okapi/filters/multiparsers/Parameters.java",
+      "wiki:https://okapiframework.org/wiki/index.php/Multi-Parsers_Filter",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

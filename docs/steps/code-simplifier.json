@@ -1,6 +1,30 @@
 {
   "filterName": "Inline Codes Simplifier",
+  "stepId": "code-simplifier",
   "overview": "This step joins adjacent inline codes in text units, and optionally moves leading and trailing codes from the text unit to the skeleton. Only the source codes are affected, so it should be used **before** any target is created in the text unit. Takes filter events and sends filter events.",
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Only source codes are affected — this step should be placed in the pipeline **before** any step that creates target content in text units.",
+    "Leading/trailing code removal only works with `GenericSkeleton`-based content."
+  ],
+  "examples": [
+    {
+      "title": "Merge adjacent codes, keep boundary codes in place",
+      "description": "Collapse runs of adjacent inline codes into a single code while leaving leading and trailing codes inside the text unit. Useful when the goal is only to reduce code clutter mid-segment without altering the skeleton.",
+      "config": "```yaml\nmergeCodes: true\nremoveLeadingTrailingCodes: false\n```",
+      "input": null,
+      "output": null
+    },
+    {
+      "title": "Move boundary codes to the skeleton",
+      "description": "Apply the default behaviour: merge adjacent codes and push leading/trailing codes out of the text unit into the skeleton. Place this step before any target is created, since only source codes are affected and the skeleton must be `GenericSkeleton`-based.",
+      "config": "```yaml\nremoveLeadingTrailingCodes: true\nmergeCodes: true\n```",
+      "input": null,
+      "output": null
+    }
+  ],
   "parameters": {
     "removeLeadingTrailingCodes": {
       "help": "Removes leading and trailing inline codes from text units and places them into the skeleton. This reduces the number of codes translators need to deal with, making segments cleaner.\n\nOnly works with `GenericSkeleton`-based filters.",
@@ -15,15 +39,25 @@
       ]
     }
   },
-  "limitations": [
-    "None known."
-  ],
-  "processingNotes": [
-    "Only source codes are affected — this step should be placed in the pipeline **before** any step that creates target content in text units.",
-    "Leading/trailing code removal only works with `GenericSkeleton`-based content."
-  ],
-  "examples": [],
   "fullDoc": "# Inline Codes Simplifier\n\nThis step joins adjacent inline codes in text units, and optionally moves leading and trailing codes from the text unit to the skeleton. Only the source codes are affected, so it should be used **before** any target is created in the text unit. Takes filter events and sends filter events.\n\n## Parameters\n\n#### Move leading and trailing codes to skeleton\n\nRemoves leading and trailing inline codes from text units and places them into the skeleton. This reduces the number of codes translators need to deal with, making segments cleaner.\n\nOnly works with `GenericSkeleton`-based filters.\n\n> **Note:** Only affects source codes — apply this step **before** any target is created in the text unit.\n\n#### Merge adjacent codes\n\nMerges adjacent inline codes in text units into a single code. This simplifies segments where multiple codes appear next to each other with no translatable text between them.\n\n> **Note:** Only affects source codes — apply this step **before** any target is created in the text unit.\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- Only source codes are affected — this step should be placed in the pipeline **before** any step that creates target content in text units.\n- Leading/trailing code removal only works with `GenericSkeleton`-based content.",
-  "stepId": "code-simplifier",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Inline_Codes_Simplifier_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Inline_Codes_Simplifier_Step",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Inline_Codes_Simplifier_Step",
+      "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/codesimplifier/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.mergeCodes": "ai",
+      "parameters.removeLeadingTrailingCodes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

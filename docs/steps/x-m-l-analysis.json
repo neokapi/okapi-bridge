@@ -1,6 +1,18 @@
 {
   "filterName": "XML Analysis Step",
+  "stepId": "x-m-l-analysis",
   "overview": "Generates an analysis report on the elements present in a set of input XML documents. The report helps guess localization-related aspects of the input documents, such as which elements should have their content extracted, which elements are likely inline, and whether there are any CDATA sections. Expects raw documents and passes them through unchanged.",
+  "limitations": [],
+  "processingNotes": [
+    "This step passes raw documents through unchanged — it only reads documents to build the report, it does not modify them.",
+    "The output report is HTML format, summarizing XML element usage across all documents processed in the batch."
+  ],
+  "examples": [
+    {
+      "title": "Basic XML analysis",
+      "description": "Run the XML Analysis step to generate a report of element usage across a set of XML files, automatically opening the result."
+    }
+  ],
   "parameters": {
     "outputPath": {
       "help": "Full path where the HTML analysis report will be written. The report summarizes all XML elements found across the input documents, helping identify localization-relevant structures such as extractable content elements, inline elements, and CDATA sections.",
@@ -14,23 +26,28 @@
       "help": "Automatically opens the generated report file in the system's default browser or HTML viewer after the pipeline completes. Useful during interactive sessions; disable for batch or CI workflows."
     }
   },
-  "limitations": [],
-  "processingNotes": [
-    "This step passes raw documents through unchanged — it only reads documents to build the report, it does not modify them.",
-    "The output report is HTML format, summarizing XML element usage across all documents processed in the batch."
-  ],
-  "examples": [
-    {
-      "title": "Basic XML analysis",
-      "description": "Run the XML Analysis step to generate a report of element usage across a set of XML files, automatically opening the result."
-    }
-  ],
   "propertySuggestions": {
     "autoOpen": {
       "description": "Automatically open the result file after the process is complete."
     }
   },
   "fullDoc": "# XML Analysis Step\\n\\nGenerates an analysis report on the elements present in a set of input XML documents. The report helps guess localization-related aspects of the input documents, such as which elements should have their content extracted, which elements are likely inline, and whether there are any CDATA sections. Expects raw documents and passes them through unchanged.\\n\\n## Parameters\\n\\n#### Path of the result file\\n\\nFull path where the HTML analysis report will be written. The report summarizes all XML elements found across the input documents, helping identify localization-relevant structures such as extractable content elements, inline elements, and CDATA sections.\\n\\nThe path can be absolute or relative to the working directory, and should end in `.html`.\\n\\n**Examples:**\\n- `analysis.html` — writes to the current working directory\\n- `/tmp/reports/xml-analysis.html` — absolute path\\n\\n#### Open the result file after completion\\n\\nAutomatically opens the generated report file in the system's default browser or HTML viewer after the pipeline completes. Useful during interactive sessions; disable for batch or CI workflows.\\n\\n## Limitations\\n\\nNone known.\\n\\n## Notes\\n\\n- This step passes raw documents through unchanged — it only reads documents to build the report, it does not modify them.\\n- The output report is HTML format, summarizing XML element usage across all documents processed in the batch.",
-  "stepId": "x-m-l-analysis",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/XML_Analysis_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/XML_Analysis_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/XML_Analysis_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.autoOpen": "ai",
+      "parameters.outputPath": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

@@ -1,6 +1,35 @@
 {
   "filterName": "Segmentation Step",
+  "stepId": "segmentation",
   "overview": "Segments the content of extracted text units into smaller parts (typically sentences) using SRX 2.0 segmentation rules. The step processes filter events and applies regular-expression-based break/non-break patterns defined in an SRX document. Text units flagged as non-translatable, empty, or already segmented (unless overwrite is enabled) are skipped.",
+  "limitations": [
+    "Strict implementation of SRX syntax in Java is not possible — see the **SRX and Java** wiki page for details.",
+    "Using **Renumber code IDs** when creating a translation kit requires a separate Desegmentation Step when merging back, and may not be possible with segment-based formats like TTX.",
+    "Text units flagged as non-translatable or with no content are never segmented."
+  ],
+  "processingNotes": [
+    "Segmentation uses SRX 2.0 rules — regular expressions define break and non-break positions.",
+    "By default, already-segmented text units are not re-segmented. Use `overwriteSegmentation` or `deepenSegmentation` to change this behavior.",
+    "The three pre-segmented behaviors (keep, overwrite, deepen) are mutually exclusive — `overwriteSegmentation` and `deepenSegmentation` are both false by default, meaning existing segmentation is kept.",
+    "When `forceSegmentedOutput` is enabled, it modifies the downstream filter's output option to represent segments even if the filter would not normally do so."
+  ],
+  "examples": [
+    {
+      "title": "Default sentence segmentation",
+      "description": "Segments source text into sentences using SRX rules, verifying target segments match. This is the default configuration.",
+      "config": "```yaml\nsegmentSource: true\nsegmentTarget: false\ncheckSegments: true\nforceSegmentedOutput: true\n```"
+    },
+    {
+      "title": "Re-segment with new rules",
+      "description": "Overwrites any existing segmentation with new SRX rules, useful when migrating to updated segmentation standards.",
+      "config": "```yaml\nsegmentSource: true\noverwriteSegmentation: true\nforceSegmentedOutput: true\n```"
+    },
+    {
+      "title": "Deepen existing segmentation",
+      "description": "Keeps existing segmentation but applies finer-grained SRX rules to split segments further where possible.",
+      "config": "```yaml\nsegmentSource: true\ndeepenSegmentation: true\nforceSegmentedOutput: true\n```"
+    }
+  ],
   "parameters": {
     "segmentSource": {
       "help": "Controls whether the source text of each text unit is segmented using the configured SRX rules.\n\nThe SRX document path is specified separately and supports `${rootDir}` and `${inputRootDir}` variables.",
@@ -70,34 +99,6 @@
       "help": "Skips segmentation entirely for text units that already have target content. Useful when pre-translated content should be preserved as-is without being broken into segments."
     }
   },
-  "limitations": [
-    "Strict implementation of SRX syntax in Java is not possible — see the **SRX and Java** wiki page for details.",
-    "Using **Renumber code IDs** when creating a translation kit requires a separate Desegmentation Step when merging back, and may not be possible with segment-based formats like TTX.",
-    "Text units flagged as non-translatable or with no content are never segmented."
-  ],
-  "processingNotes": [
-    "Segmentation uses SRX 2.0 rules — regular expressions define break and non-break positions.",
-    "By default, already-segmented text units are not re-segmented. Use `overwriteSegmentation` or `deepenSegmentation` to change this behavior.",
-    "The three pre-segmented behaviors (keep, overwrite, deepen) are mutually exclusive — `overwriteSegmentation` and `deepenSegmentation` are both false by default, meaning existing segmentation is kept.",
-    "When `forceSegmentedOutput` is enabled, it modifies the downstream filter's output option to represent segments even if the filter would not normally do so."
-  ],
-  "examples": [
-    {
-      "title": "Default sentence segmentation",
-      "description": "Segments source text into sentences using SRX rules, verifying target segments match. This is the default configuration.",
-      "config": "```yaml\nsegmentSource: true\nsegmentTarget: false\ncheckSegments: true\nforceSegmentedOutput: true\n```"
-    },
-    {
-      "title": "Re-segment with new rules",
-      "description": "Overwrites any existing segmentation with new SRX rules, useful when migrating to updated segmentation standards.",
-      "config": "```yaml\nsegmentSource: true\noverwriteSegmentation: true\nforceSegmentedOutput: true\n```"
-    },
-    {
-      "title": "Deepen existing segmentation",
-      "description": "Keeps existing segmentation but applies finer-grained SRX rules to split segments further where possible.",
-      "config": "```yaml\nsegmentSource: true\ndeepenSegmentation: true\nforceSegmentedOutput: true\n```"
-    }
-  ],
   "propertySuggestions": {
     "segmentSource": {
       "title": "Segment Source Text",
@@ -153,6 +154,34 @@
     }
   },
   "fullDoc": "# Segmentation Step\n\nSegments the content of extracted text units into smaller parts (typically sentences) using SRX 2.0 segmentation rules. The step processes filter events and applies regular-expression-based break/non-break patterns defined in an SRX document. Text units flagged as non-translatable, empty, or already segmented (unless overwrite is enabled) are skipped.\n\nThe separation between text units is based on the structure of the original file format (e.g., two `<p>` elements in HTML produce two text units). This step breaks down the content within those text units into segments.\n\n## Parameters\n\n### Source\n\n#### Segment Source Text\nControls whether the source text of each text unit is segmented using the configured SRX rules. The SRX document path supports `${rootDir}` and `${inputRootDir}` variables.\n\n> Text units flagged as non-translatable or with no content are never segmented, regardless of this setting.\n\n### Target\n\n#### Segment Target Text\nControls whether existing target text is segmented using SRX rules. Only target locales currently being processed are affected — other locales in the document remain untouched. The target SRX document can be the same as the source SRX document.\n\n### Options\n\n#### Overwrite Existing Segmentation\nWhen a text unit is already segmented, re-segments it using the current SRX rules. The previous segmentation is completely replaced. Conflicts with **Deepen Existing Segmentation**.\n\n#### Deepen Existing Segmentation\nKeeps existing segmentation but attempts to split existing segments further using the current SRX rules. Creates additional segments only if the new rules provide higher granularity. Conflicts with **Overwrite Existing Segmentation**.\n\n#### Skip Segmentation if Target Exists\nSkips segmentation entirely for text units that already have target content. Useful when pre-translated content should be preserved as-is.\n\n#### Force Segmented Output\nForces file formats that support segmentation representation to show segments in the output, overriding the filter's own configuration. For example, the XLIFF Filter normally only outputs segments for entries that had segments in the input — this option forces segments to be shown for all text units.\n\n#### Verify Segment Alignment\nVerifies that each source segment has a corresponding target segment when target content exists. Checks segment count and ID matching but does **not** verify translation correctness.\n\n#### Renumber Code IDs\nReassigns inline code IDs within each segment so they start at `1`. Useful with translation memories that expect sequential IDs per segment. Use the **Restore original IDs** option in the Desegmentation Step to reverse this.\n\n> **Warning:** Cannot work with documents where code ID values are not numeric or not sequential.\n\n#### Trim Source Leading Whitespace\nMaximum leading whitespace characters to trim from source segments. Use `-1` for default behavior, `0` to disable trimming.\n\n#### Trim Source Trailing Whitespace\nMaximum trailing whitespace characters to trim from source segments. Use `-1` for default behavior, `0` to disable trimming.\n\n#### Trim Target Leading Whitespace\nMaximum leading whitespace characters to trim from target segments. Use `-1` for default behavior, `0` to disable trimming.\n\n#### Trim Target Trailing Whitespace\nMaximum trailing whitespace characters to trim from target segments. Use `-1` for default behavior, `0` to disable trimming.\n\n#### Treat Isolated Codes as Whitespace\nTreats isolated inline codes (not part of a paired open/close sequence) as whitespace for segmentation purposes.\n\n## Limitations\n\n- Strict implementation of SRX syntax in Java is not possible — see the **SRX and Java** page for details.\n- Using **Renumber Code IDs** when creating a translation kit requires a separate Desegmentation Step when merging back, and may not be possible with segment-based formats like TTX.\n- Text units flagged as non-translatable or with no content are never segmented.\n\n## Notes\n\n- Segmentation uses SRX 2.0 rules — regular expressions define break and non-break positions.\n- By default, already-segmented text units are not re-segmented. Use `overwriteSegmentation` or `deepenSegmentation` to change this.\n- The three pre-segmented behaviors (keep, overwrite, deepen) are mutually exclusive.\n- When `forceSegmentedOutput` is enabled, it modifies the downstream filter's output option to represent segments.\n\n## Examples\n\n### Default sentence segmentation\nSegments source text into sentences using SRX rules with segment verification enabled:\n```yaml\nsegmentSource: true\nsegmentTarget: false\ncheckSegments: true\nforceSegmentedOutput: true\n```\n\n### Re-segment with new rules\nOverwrites existing segmentation with new SRX rules:\n```yaml\nsegmentSource: true\noverwriteSegmentation: true\nforceSegmentedOutput: true\n```\n\n### Deepen existing segmentation\nApplies finer-grained rules to split segments further:\n```yaml\nsegmentSource: true\ndeepenSegmentation: true\nforceSegmentedOutput: true\n```",
-  "stepId": "segmentation",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Segmentation_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Segmentation_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Segmentation_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.checkSegments": "ai",
+      "parameters.deepenSegmentation": "ai",
+      "parameters.doNotSegmentIfHasTarget": "ai",
+      "parameters.forceSegmentedOutput": "ai",
+      "parameters.overwriteSegmentation": "ai",
+      "parameters.renumberCodes": "ai",
+      "parameters.segmentSource": "ai",
+      "parameters.segmentTarget": "ai",
+      "parameters.treatIsolatedCodesAsWhitespace": "ai",
+      "parameters.trimSrcLeadingWS": "ai",
+      "parameters.trimSrcTrailingWS": "ai",
+      "parameters.trimTrgLeadingWS": "ai",
+      "parameters.trimTrgTrailingWS": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

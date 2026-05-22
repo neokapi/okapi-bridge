@@ -1,0 +1,31 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "phrase-assembled-word-count",
+  "kind": "step",
+  "name": "Phrase Assembled Word Count Step",
+  "overview": "Counts the words in text units whose top alternate translation is a `PHRASE_ASSEMBLED` match — a result assembled from individual phrases held in the translation memory or other resources, rather than retrieved as a single stored segment. The count is recorded as a word-count metric in a `MetricsAnnotation` so that scoping and pricing steps can report assembled-from-fragments volume as its own category, distinct from whole-segment fuzzy or exact matches.",
+  "limitations": [
+    "The Okapi source notes that, as of its writing, no leveraging step yet annotates segments with the `PHRASE_ASSEMBLED` match type, so in practice this counter typically reports zero unless an upstream component supplies such matches."
+  ],
+  "processingNotes": [
+    "Operates per segment: it inspects the first (top-ranked) `AltTranslation` on each target segment's `AltTranslationsAnnotation` and counts a segment only when that match type is exactly `PHRASE_ASSEMBLED`.",
+    "Counting is performed on the **source** text, not the target — the word total reflects the source volume leveraged at this match level.",
+    "Words are counted with the GMX-V word counter; the parallel character-count variant counts characters instead.",
+    "Counts only translatable text units; empty text units and non-translatable ones are skipped.",
+    "Results are stored as annotations on filter events and aggregated to the configured levels (text unit, group, document, sub-document, batch item, batch); the step produces no output document of its own.",
+    "Belongs to the `OKAPI_WORD_COUNTS` category group. The `CategoryResolver` keeps only the highest-ranked matching category per segment — `PHRASE_ASSEMBLED` ranks below all fuzzy categories and above `MT` and `CONCORDANCE`."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/PhraseAssembledWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+      "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

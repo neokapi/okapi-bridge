@@ -1,6 +1,35 @@
 {
   "filterName": "Tokenization Step",
+  "stepId": "tokenization",
   "overview": "The Tokenization step creates annotations containing different tokenized forms of text units in a document. It recognizes 18+ token types (words, numbers, URLs, emails, emoji, CJK characters, etc.) using Unicode-aware and language-specific rules. Tokenization annotations are attached to filter events and can be consumed by downstream pipeline steps or external tools.",
+  "limitations": [
+    "Only the `MM/DD/YYYY` date format is recognized by the DATE token type.",
+    "ABBREVIATION recognition is limited to English-style patterns.",
+    "The wiki mentions COMPANY and STOPWORD token types that are not exposed in the current schema — these may be available only in certain Okapi versions or through direct configuration."
+  ],
+  "processingNotes": [
+    "Token annotations are attached to the filter events and passed downstream — they do not modify the text content itself.",
+    "All token type booleans default to `false`. If no token types are selected, all available token types are generated.",
+    "The step requires both source and target languages to be configured in the pipeline.",
+    "The wiki documents additional token types (`COMPANY`, `STOPWORD`) and a locale filter parameter not present in the current schema."
+  ],
+  "examples": [
+    {
+      "title": "Extract words and numbers from source",
+      "description": "Tokenize the source content to extract word and number tokens for downstream analysis.",
+      "config": "```yaml\ntokenizeSource: true\ntokenizeTargets: false\nWORD: true\nNUMBER: true\n```"
+    },
+    {
+      "title": "Full tokenization of source and targets",
+      "description": "Enable all common token types on both source and target content for quality assurance or alignment.",
+      "config": "```yaml\ntokenizeSource: true\ntokenizeTargets: true\nWORD: true\nNUMBER: true\nPUNCTUATION: true\nWHITESPACE: true\nINTERNET: true\nEMAIL: true\nEMOJI: true\n```"
+    },
+    {
+      "title": "CJK-focused tokenization",
+      "description": "Tokenize Japanese/Chinese content focusing on ideographic and kana script detection.",
+      "config": "```yaml\ntokenizeSource: true\nWORD: true\nKANA: true\nIDEOGRAM: true\n```"
+    }
+  ],
   "parameters": {
     "tokenizeSource": {
       "help": "Tokenizes the content of the **source** locale. At least one of `tokenizeSource` or `tokenizeTargets` should be enabled for the step to produce output."
@@ -83,40 +112,46 @@
       "help": "Matches ideographic characters as defined by Unicode — primarily CJK unified ideographs (Chinese characters / Kanji). Each ideogram is typically a single token."
     }
   },
-  "limitations": [
-    "Only the `MM/DD/YYYY` date format is recognized by the DATE token type.",
-    "ABBREVIATION recognition is limited to English-style patterns.",
-    "The wiki mentions COMPANY and STOPWORD token types that are not exposed in the current schema — these may be available only in certain Okapi versions or through direct configuration."
-  ],
-  "processingNotes": [
-    "Token annotations are attached to the filter events and passed downstream — they do not modify the text content itself.",
-    "All token type booleans default to `false`. If no token types are selected, all available token types are generated.",
-    "The step requires both source and target languages to be configured in the pipeline.",
-    "The wiki documents additional token types (`COMPANY`, `STOPWORD`) and a locale filter parameter not present in the current schema."
-  ],
-  "examples": [
-    {
-      "title": "Extract words and numbers from source",
-      "description": "Tokenize the source content to extract word and number tokens for downstream analysis.",
-      "config": "```yaml\ntokenizeSource: true\ntokenizeTargets: false\nWORD: true\nNUMBER: true\n```"
-    },
-    {
-      "title": "Full tokenization of source and targets",
-      "description": "Enable all common token types on both source and target content for quality assurance or alignment.",
-      "config": "```yaml\ntokenizeSource: true\ntokenizeTargets: true\nWORD: true\nNUMBER: true\nPUNCTUATION: true\nWHITESPACE: true\nINTERNET: true\nEMAIL: true\nEMOJI: true\n```"
-    },
-    {
-      "title": "CJK-focused tokenization",
-      "description": "Tokenize Japanese/Chinese content focusing on ideographic and kana script detection.",
-      "config": "```yaml\ntokenizeSource: true\nWORD: true\nKANA: true\nIDEOGRAM: true\n```"
-    }
-  ],
   "propertySuggestions": {
     "OTHER_SYMBOL": {
       "description": "Various Unicode symbols (mathematical, technical, etc.)."
     }
   },
   "fullDoc": "# Tokenization Step\n\nThe Tokenization step creates annotations containing different tokenized forms of text units in a document. It recognizes 18+ token types (words, numbers, URLs, emails, emoji, CJK characters, etc.) using Unicode-aware and language-specific rules. Tokenization annotations are attached to filter events and can be consumed by downstream pipeline steps or external tools.\n\nTakes: Filter events. Sends: Filter events.\n\n## Parameters\n\n### Scope\n\n#### Tokenize Source\nTokenizes the content of the **source** locale. At least one of `tokenizeSource` or `tokenizeTargets` should be enabled for the step to produce output.\n\n#### Tokenize Targets\nTokenizes the content of all **target** locales. Useful when you need token-level analysis of translated content for quality checks or alignment.\n\n### Token Types\n\nAll token type booleans default to `false`. If no token types are selected, all available token types are generated.\n\n#### WORD\nMatches runs of characters that constitute a word in the given language. Word boundaries are determined by the locale's tokenizer rules, so results vary by language.\n\n#### HYPHENATED_WORD\nMatches words that include hyphens of various types (e.g., `well-known`, `state-of-the-art`). Captures the entire hyphenated compound as a single token.\n\n#### NUMBER\nMatches numeric values including those with comma or period separators (e.g., `1,234.56`, `3.14`).\n\n#### PUNCTUATION\nMatches punctuation characters as classified by Unicode general category `P`.\n\n#### WHITESPACE\nMatches whitespace characters as classified by Unicode — spaces, tabs, line breaks, and other separator characters.\n\n#### ABBREVIATION\nMatches a limited set of English-style abbreviations such as `pct` in `3.3pct`, `U.S.`, and `USD`.\n\n> **Note:** Recognition is limited to English abbreviation patterns.\n\n#### INTERNET\nMatches Internet addresses including URIs and IP addresses (e.g., `http://www.somesite.org/foo/index.html`, `192.168.0.5`).\n\n#### EMAIL\nMatches e-mail address patterns (e.g., `user@example.com`).\n\n#### EMOTICON\nMatches text-based emoticon sequences like `:-)`.\n\n#### EMOJI\nMatches all emoji characters as defined in the Unicode standard, including multi-codepoint sequences.\n\n#### DATE\nMatches dates in `MM/DD/YYYY` format only.\n\n> **Note:** Only US-style `MM/DD/YYYY` dates are recognized. International date formats are not matched.\n\n#### CURRENCY\nMatches monetary sums. The wiki documentation mentions this is limited to US dollars, though coverage may vary by Okapi version.\n\n#### TIME\nMatches time expressions separated by `:` or `.` in both 24-hour and 12-hour (AM/PM) formats.\n\n#### MARKUP\nMatches runs of text that begin with `<` and end with `>`, capturing HTML/XML-style tags as single tokens.\n\n#### OTHER_SYMBOL\nMatches Unicode symbols — mathematical operators, technical symbols, and other miscellaneous symbols not covered by other token types.\n\n#### KANA\nMatches Japanese Hiragana and Katakana character runs.\n\n#### IDEOGRAM\nMatches ideographic characters as defined by Unicode — primarily CJK unified ideographs.\n\n## Limitations\n\n- Only the `MM/DD/YYYY` date format is recognized by the DATE token type.\n- ABBREVIATION recognition is limited to English-style patterns.\n- The wiki mentions COMPANY and STOPWORD token types not exposed in the current schema.\n\n## Notes\n\n- Token annotations are attached to the filter events and passed downstream — they do not modify the text content.\n- The step requires both source and target languages to be configured in the pipeline.\n- The wiki documents a locale filter parameter for fine-grained control over which locales are tokenized, not present in the current schema.\n\n## Examples\n\n### Extract words and numbers from source\n```yaml\ntokenizeSource: true\ntokenizeTargets: false\nWORD: true\nNUMBER: true\n```\n\n### CJK-focused tokenization\n```yaml\ntokenizeSource: true\nWORD: true\nKANA: true\nIDEOGRAM: true\n```",
-  "stepId": "tokenization",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Tokenization_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Tokenization_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Tokenization_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.ABBREVIATION": "ai",
+      "parameters.CURRENCY": "ai",
+      "parameters.DATE": "ai",
+      "parameters.EMAIL": "ai",
+      "parameters.EMOJI": "ai",
+      "parameters.EMOTICON": "ai",
+      "parameters.HYPHENATED_WORD": "ai",
+      "parameters.IDEOGRAM": "ai",
+      "parameters.INTERNET": "ai",
+      "parameters.KANA": "ai",
+      "parameters.MARKUP": "ai",
+      "parameters.NUMBER": "ai",
+      "parameters.OTHER_SYMBOL": "ai",
+      "parameters.PUNCTUATION": "ai",
+      "parameters.TIME": "ai",
+      "parameters.WHITESPACE": "ai",
+      "parameters.WORD": "ai",
+      "parameters.tokenizeSource": "ai",
+      "parameters.tokenizeTargets": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

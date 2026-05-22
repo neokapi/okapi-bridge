@@ -46,7 +46,3 @@ Restores the original file names of the split output documents instead of using 
 - All content outside `<file>` elements (e.g. `<header>`, processing instructions) is copied as-is to each split document.
 - The default DOM-based parser requires the entire file to fit in memory; use **Process big file** for very large inputs.
 - Use the **XLIFF Joiner Step** to reassemble files that were split with this step.
-
-## Examples
-
-No worked examples available for this step.

@@ -1,6 +1,31 @@
 {
   "filterName": "Archive Filter",
+  "filterId": "okf_archive",
   "overview": "The Archive Filter processes files stored inside ZIP archive files (e.g. `.zip` or `.jar` files). It extracts files matching specified name patterns from the archive and processes each one using a designated Okapi filter configuration. This enables localization of translatable content embedded within archive formats.",
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Files inside the archive are matched by name pattern against entries in **any directory** within the ZIP structure.",
+    "Each file name pattern is paired positionally with a filter configuration ID — the first pattern uses the first config ID, the second pattern uses the second config ID, etc."
+  ],
+  "examples": [
+    {
+      "title": "Extract properties files from a JAR",
+      "description": "Process all `.properties` files inside a JAR archive using the Properties filter.",
+      "config": "```yaml\nidentification:\n  fileNames: \"*.properties\"\n  configIds: \"okf_properties\"\n  mimeType: \"application/x-archive\"\n```"
+    },
+    {
+      "title": "Multiple file types in a ZIP",
+      "description": "Extract and process both TMX and XLIFF files from a ZIP archive, each with its appropriate filter.",
+      "config": "```yaml\nidentification:\n  fileNames: \"*.tmx,*.xlf,*.xlff\"\n  configIds: \"okf_tmx,okf_xliff,okf_xliff\"\n  mimeType: \"application/x-archive\"\n```"
+    },
+    {
+      "title": "Named file in archive",
+      "description": "Extract only files named exactly `Res.properties` from the archive.",
+      "config": "```yaml\nidentification:\n  fileNames: \"Res.properties\"\n  configIds: \"okf_properties\"\n```"
+    }
+  ],
   "parameters": {
     "identification.mimeType": {
       "help": "The MIME type identifying the **archive container** format itself, not the files inside it.\n\nThe default `application/x-archive` is appropriate for standard ZIP files. Only change this if you are processing a specialized archive format that requires a different MIME type.",
@@ -30,30 +55,6 @@
       ]
     }
   },
-  "limitations": [
-    "None known."
-  ],
-  "processingNotes": [
-    "Files inside the archive are matched by name pattern against entries in **any directory** within the ZIP structure.",
-    "Each file name pattern is paired positionally with a filter configuration ID — the first pattern uses the first config ID, the second pattern uses the second config ID, etc."
-  ],
-  "examples": [
-    {
-      "title": "Extract properties files from a JAR",
-      "description": "Process all `.properties` files inside a JAR archive using the Properties filter.",
-      "config": "```yaml\nidentification:\n  fileNames: \"*.properties\"\n  configIds: \"okf_properties\"\n  mimeType: \"application/x-archive\"\n```"
-    },
-    {
-      "title": "Multiple file types in a ZIP",
-      "description": "Extract and process both TMX and XLIFF files from a ZIP archive, each with its appropriate filter.",
-      "config": "```yaml\nidentification:\n  fileNames: \"*.tmx,*.xlf,*.xlff\"\n  configIds: \"okf_tmx,okf_xliff,okf_xliff\"\n  mimeType: \"application/x-archive\"\n```"
-    },
-    {
-      "title": "Named file in archive",
-      "description": "Extract only files named exactly `Res.properties` from the archive.",
-      "config": "```yaml\nidentification:\n  fileNames: \"Res.properties\"\n  configIds: \"okf_properties\"\n```"
-    }
-  ],
   "propertySuggestions": {
     "identification": {
       "title": "File Identification",
@@ -61,6 +62,24 @@
     }
   },
   "fullDoc": "# Archive Filter\\n\\nThe Archive Filter processes files stored inside ZIP archive files (e.g. `.zip` or `.jar` files). It extracts files matching specified name patterns from the archive and processes each one using a designated Okapi filter configuration. This enables localization of translatable content embedded within archive formats.\\n\\n## Parameters\\n\\n### Identification\\n\\n#### MIME Type of the Filter's Container Format\\n\\nThe MIME type identifying the **archive container** format itself, not the files inside it. The default `application/x-archive` is appropriate for standard ZIP files. Only change this if you are processing a specialized archive format that requires a different MIME type.\\n\\n#### File Names\\n\\nComma-separated list of file name patterns to match against entries **inside** the archive. Files matching any pattern will be extracted and processed with the corresponding filter.\\n\\n- Patterns match file names in **any directory** within the archive\\n- Supports wildcard characters: `?` (single character) and `*` (any characters)\\n- The number of patterns must match the number of entries in **Filter configuration ids**\\n\\nExamples:\\n- `Res.properties` — matches files named exactly `Res.properties`\\n- `*.tmx,*.xlf` — matches all TMX and XLIFF files\\n\\n#### Filter Configuration IDs\\n\\nComma-separated list of Okapi filter configuration identifiers, one for each file name pattern.\\n\\n- Must have **exactly as many entries** as file name patterns, in the **same order**\\n- Each config ID specifies which filter processes the files matched by the corresponding pattern\\n- Use default filter IDs (e.g. `okf_properties`, `okf_html`) for standard configurations\\n\\n### Inline Codes\\n\\nStandard inline code detection settings. Enable pattern-based detection of inline codes (placeholders, tags, etc.) within extracted text.\\n\\n## Limitations\\n\\n- None known.\\n\\n## Notes\\n\\n- Files inside the archive are matched by name pattern against entries in any directory within the ZIP structure.\\n- Each file name pattern is paired positionally with a filter configuration ID.\\n\\n## Examples\\n\\n### Extract properties files from a JAR\\n\\nProcess all `.properties` files inside a JAR archive:\\n\\n```yaml\\nidentification:\\n  fileNames: \\\"*.properties\\\"\\n  configIds: \\\"okf_properties\\\"\\n  mimeType: \\\"application/x-archive\\\"\\n```\\n\\n### Multiple file types in a ZIP\\n\\nExtract and process both TMX and XLIFF files:\\n\\n```yaml\\nidentification:\\n  fileNames: \\\"*.tmx,*.xlf,*.xlff\\\"\\n  configIds: \\\"okf_tmx,okf_xliff,okf_xliff\\\"\\n  mimeType: \\\"application/x-archive\\\"\\n```\"",
-  "filterId": "okf_archive",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Archive_Filter"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Archive_Filter",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Archive_Filter",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.identification.configIds": "ai",
+      "parameters.identification.fileNames": "ai",
+      "parameters.identification.mimeType": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

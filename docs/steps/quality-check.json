@@ -1,6 +1,37 @@
 {
   "filterName": "Quality Check Step",
+  "stepId": "quality-check",
   "overview": "The Quality Check step compares source and target text units to generate a report of potential translation issues. It supports both filter events and raw document input, performing checks on whitespace, empty segments, inline codes, character patterns, length ratios, terminology, and more. When used with filter events, the report is generated at batch end; with raw documents, the session opens in CheckMate for interactive review.",
+  "limitations": [
+    "No checks are performed on entries flagged as non-translatable.",
+    "Corrupted character detection only catches common patterns — not all possible encoding issues.",
+    "LanguageTool integration may significantly increase processing time.",
+    "Length checks use character count excluding inline codes and must be tuned per language pair."
+  ],
+  "processingNotes": [
+    "With filter events input: events pass through to the next step; the report is generated at batch end with no interactive UI.",
+    "With raw documents input: documents are added to a CheckMate session; at batch end CheckMate opens for interactive review.",
+    "The step shares its parameter module with CheckMate — configuration is interchangeable.",
+    "A *text unit* may contain multiple *segments*; some checks operate at the text-unit level (whitespace) while others at the segment level (empty target, same as source).",
+    "When target-same-as-source is detected, patterns with `<same>` as expected target are cross-referenced — matching patterns suppress the warning."
+  ],
+  "examples": [
+    {
+      "title": "Basic QA with default patterns",
+      "description": "Run quality checks with default settings — whitespace, empty segments, code differences, and the 8 built-in pattern rules (parentheses, brackets, emails, URLs, IPs, printf codes, tripled letters).",
+      "config": "```yaml\noutputPath: ${rootDir}/qa-report.html\nautoOpen: true\ncheckPatterns: true\ncodeDifference: true\ndoubledWord: true\n```"
+    },
+    {
+      "title": "Length-focused QA for UI strings",
+      "description": "Check for target translations that are too long for UI display, using strict absolute max and percentage-based checks.",
+      "config": "```yaml\ncheckMaxCharLength: true\nmaxCharLengthBreak: 30\nmaxCharLengthAbove: 50\nmaxCharLengthBelow: 20\ncheckAbsoluteMaxCharLength: true\nabsoluteMaxCharLength: 128\ncheckMinCharLength: false\n```"
+    },
+    {
+      "title": "Pattern with <same> keyword",
+      "description": "The `<same>` keyword in a target pattern means the exact match found in the source must also appear in the target. This is the default for URLs, emails, and IP addresses.",
+      "config": "```yaml\nusePattern4: true\nfromSourcePattern4: true\nsourcePattern4: \"https?:[\\\\w/\\\\.:;+\\\\-~\\\\%#\\\\$?=&,()]+\"\ntargetPattern4: \"<same>\"\ndescPattern4: \"URLs\"\nseverityPattern4: 1\n```"
+    }
+  ],
   "parameters": {
     "includeTextContainers": {
       "help": "Controls whether text containers (non-segment parts between segments in a text unit) are included in the verification scope."
@@ -542,36 +573,6 @@
       ]
     }
   },
-  "limitations": [
-    "No checks are performed on entries flagged as non-translatable.",
-    "Corrupted character detection only catches common patterns — not all possible encoding issues.",
-    "LanguageTool integration may significantly increase processing time.",
-    "Length checks use character count excluding inline codes and must be tuned per language pair."
-  ],
-  "processingNotes": [
-    "With filter events input: events pass through to the next step; the report is generated at batch end with no interactive UI.",
-    "With raw documents input: documents are added to a CheckMate session; at batch end CheckMate opens for interactive review.",
-    "The step shares its parameter module with CheckMate — configuration is interchangeable.",
-    "A *text unit* may contain multiple *segments*; some checks operate at the text-unit level (whitespace) while others at the segment level (empty target, same as source).",
-    "When target-same-as-source is detected, patterns with `<same>` as expected target are cross-referenced — matching patterns suppress the warning."
-  ],
-  "examples": [
-    {
-      "title": "Basic QA with default patterns",
-      "description": "Run quality checks with default settings — whitespace, empty segments, code differences, and the 8 built-in pattern rules (parentheses, brackets, emails, URLs, IPs, printf codes, tripled letters).",
-      "config": "```yaml\noutputPath: ${rootDir}/qa-report.html\nautoOpen: true\ncheckPatterns: true\ncodeDifference: true\ndoubledWord: true\n```"
-    },
-    {
-      "title": "Length-focused QA for UI strings",
-      "description": "Check for target translations that are too long for UI display, using strict absolute max and percentage-based checks.",
-      "config": "```yaml\ncheckMaxCharLength: true\nmaxCharLengthBreak: 30\nmaxCharLengthAbove: 50\nmaxCharLengthBelow: 20\ncheckAbsoluteMaxCharLength: true\nabsoluteMaxCharLength: 128\ncheckMinCharLength: false\n```"
-    },
-    {
-      "title": "Pattern with <same> keyword",
-      "description": "The `<same>` keyword in a target pattern means the exact match found in the source must also appear in the target. This is the default for URLs, emails, and IP addresses.",
-      "config": "```yaml\nusePattern4: true\nfromSourcePattern4: true\nsourcePattern4: \"https?:[\\\\w/\\\\.:;+\\\\-~\\\\%#\\\\$?=&,()]+\"\ntargetPattern4: \"<same>\"\ndescPattern4: \"URLs\"\nseverityPattern4: 1\n```"
-    }
-  ],
   "propertySuggestions": {
     "includeTextContainers": {
       "title": "Include Text Containers",
@@ -1024,6 +1025,134 @@
     }
   },
   "fullDoc": "# Quality Check Step\n\nThe Quality Check step compares source and target text units to generate a report of potential translation issues. It supports both filter events and raw document input, performing checks on whitespace, empty segments, inline codes, character patterns, length ratios, terminology, and more. When used with filter events, the report is generated at batch end; with raw documents, the session opens in CheckMate for interactive review.\n\nNo checks are performed on entries flagged as non-translatable.\n\n## Parameters\n\n### Report Settings\n\n#### Report Output Path\nPath of the HTML report file. Supports `${rootDir}` variable for the input root directory.\n\n#### Report Output Type\nFormat of the generated report.\n\n#### Open Report After Completion\nAutomatically opens the report in the default browser after processing.\n\n#### Show Full File Path\nDisplays full file paths in the report instead of filenames only.\n\n#### Save Session\nSaves the QA session to a `.qcs` file for later review in CheckMate.\n\n#### Session File Path\nPath for the saved session file. Supports `${rootDir}`.\n\n### Text Unit Checks\n\n#### Check Leading Whitespace\nFlags text units where leading whitespace differs between source and target.\n\n#### Check Trailing Whitespace\nFlags text units where trailing whitespace differs between source and target.\n\n### Segment Checks\n\n#### Check Empty Target\nFlags segments where the target is empty but the source has content.\n\n#### Check Empty Source\nFlags segments where the source is empty but the target has content.\n\n#### Check Target Same as Source\nFlags segments where target is identical to source. Only applies when the source contains at least one word character (`[\\p{Ll}\\p{Lu}\\p{Lt}\\p{Lo}\\p{Nd}]`). Inline codes are excluded from comparison.\n\n> **Note:** When a target-same-as-source is detected, pattern rules with `<same>` as expected target are cross-referenced. If the text matches such a pattern, no warning is generated.\n\n#### Include Codes in Comparison\nIncludes inline codes in the identity comparison. If the only difference is a code, the segment is not flagged.\n\n#### Include Numbers in Comparison\nIncludes numeric values in the identity comparison.\n\n#### Check Doubled Words\nFlags consecutive repeated words in the target (case-insensitive). Configure exceptions with a semicolon-separated list (no spaces around delimiters).\n\n### Inline Code Checks\n\n#### Check Code Differences\nVerifies source and target have the same inline codes. Reports missing and extra codes. Order differences alone do not trigger warnings unless strict order is enabled.\n\n#### Strict Code Order\nAlso flags code reordering, not just missing/extra codes.\n\n#### Guess Open/Close Codes\nInfers opening/closing status of codes when not explicitly marked.\n\n#### Extra Codes Allowed / Missing Codes Allowed\nNumber of codes allowed to differ without triggering a warning.\n\n#### Code Types to Ignore\nSemicolon-separated code types to skip (e.g., `mrk;x-df-s;`).\n\n### Length Checks\n\n#### Check Maximum Length\nFlags targets longer than a percentage of source length. Uses separate thresholds for short and long text based on a character-count breakpoint. Length excludes inline codes and should be tuned per language pair.\n\n#### Check Minimum Length\nSame logic as maximum length but for targets that are too short.\n\n#### Check Absolute Max Length\nFlags any target exceeding a fixed character count regardless of source length.\n\n#### Check Storage Size\nVerifies target fits within format-defined storage limits (e.g., XLIFF `maxwidth`).\n\n### Character Checks\n\n#### Check Corrupted Characters\nDetects patterns indicating encoding corruption (e.g., UTF-8 opened as ISO-8859-1). Only catches common patterns.\n\n#### Check Against Charset\nValidates target characters against a specified encoding (e.g., `ISO-8859-1`). Characters not representable are flagged. Use `extraCharsAllowed` regex to whitelist additional characters.\n\n### Pattern Checks\n\nUp to 8 pattern rules (0–7) can be defined. Each rule has:\n- **Enable** — toggle the rule on/off\n- **Direction** — source→target (`true`) or target→source (`false`, for detecting extras)\n- **Single Match** — expect only one occurrence\n- **Severity** — 0 (low), 1 (medium), 2 (high)\n- **Source/Target Regex** — Java regular expressions; use `<same>` in target to expect identical content\n- **Description** — shown in the report\n\nDefault patterns check: parentheses, brackets, email addresses, URLs, IP addresses, C-style printf codes, and tripled letters.\n\n### Terminology\n\n#### Check Terminology\nVerifies terms from a glossary file are correctly translated. Use `stringMode` for substring matching and `betweenCodes` to restrict to text between inline codes.\n\n### Blacklist\n\n#### Check Blacklist\nChecks target (and optionally source) against a file of forbidden terms. `allowBlacklistSub` enables substring matching.\n\n### LanguageTool Integration\n\n#### Check with LanguageTool\nRuns grammar/style checks via a LanguageTool server. Requires a running instance at the configured URL.\n\n> **Warning:** LanguageTool may significantly increase processing time.\n\n### Processing Scope\n\nControls which entries are checked: all entries, approved only, or non-approved only. Non-translatable entries are always skipped.\n\n### XLIFF Validation\n\n#### Validate XLIFF Schema\nValidates input against Transitional or Strict XLIFF schema.\n\n## Limitations\n\n- No checks on non-translatable entries.\n- Corrupted character detection only catches common encoding patterns.\n- LanguageTool integration significantly increases processing time.\n- Length checks exclude inline codes and must be tuned per language pair.\n\n## Notes\n\n- With filter events input, events pass through; report generates at batch end.\n- With raw documents, a CheckMate session opens for interactive review.\n- A *text unit* contains one or more *segments*; whitespace checks are at text-unit level, most other checks at segment level.\n- This step shares its configuration module with CheckMate.\n\n## Examples\n\n### Basic QA with default patterns\n```yaml\noutputPath: ${rootDir}/qa-report.html\nautoOpen: true\ncheckPatterns: true\ncodeDifference: true\ndoubledWord: true\n```\n\n### Length-focused QA for UI strings\n```yaml\ncheckMaxCharLength: true\nmaxCharLengthBreak: 30\nmaxCharLengthAbove: 50\nmaxCharLengthBelow: 20\ncheckAbsoluteMaxCharLength: true\nabsoluteMaxCharLength: 128\n```",
-  "stepId": "quality-check",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Quality_Check_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Quality_Check_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Quality_Check_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.absoluteMaxCharLength": "ai",
+      "parameters.allowBlacklistSub": "ai",
+      "parameters.autoOpen": "ai",
+      "parameters.betweenCodes": "ai",
+      "parameters.blacklistPath": "ai",
+      "parameters.blacklistSrc": "ai",
+      "parameters.charset": "ai",
+      "parameters.checkAbsoluteMaxCharLength": "ai",
+      "parameters.checkAllowedCharacters": "ai",
+      "parameters.checkBlacklist": "ai",
+      "parameters.checkCharacters": "ai",
+      "parameters.checkMaxCharLength": "ai",
+      "parameters.checkMinCharLength": "ai",
+      "parameters.checkPatterns": "ai",
+      "parameters.checkStorageSize": "ai",
+      "parameters.checkTerms": "ai",
+      "parameters.checkWithLT": "ai",
+      "parameters.checkXliffSchema": "ai",
+      "parameters.codeDifference": "ai",
+      "parameters.corruptedCharacters": "ai",
+      "parameters.descPattern0": "ai",
+      "parameters.descPattern1": "ai",
+      "parameters.descPattern2": "ai",
+      "parameters.descPattern3": "ai",
+      "parameters.descPattern4": "ai",
+      "parameters.descPattern5": "ai",
+      "parameters.descPattern6": "ai",
+      "parameters.descPattern7": "ai",
+      "parameters.doubledWord": "ai",
+      "parameters.doubledWordExceptions": "ai",
+      "parameters.emptySource": "ai",
+      "parameters.emptyTarget": "ai",
+      "parameters.extraCharsAllowed": "ai",
+      "parameters.extraCodesAllowed": "ai",
+      "parameters.fromSourcePattern0": "ai",
+      "parameters.fromSourcePattern1": "ai",
+      "parameters.fromSourcePattern2": "ai",
+      "parameters.fromSourcePattern3": "ai",
+      "parameters.fromSourcePattern4": "ai",
+      "parameters.fromSourcePattern5": "ai",
+      "parameters.fromSourcePattern6": "ai",
+      "parameters.fromSourcePattern7": "ai",
+      "parameters.guessOpenClose": "ai",
+      "parameters.includeTextContainers": "ai",
+      "parameters.leadingWS": "ai",
+      "parameters.ltBilingualMode": "ai",
+      "parameters.maxCharLengthAbove": "ai",
+      "parameters.maxCharLengthBelow": "ai",
+      "parameters.maxCharLengthBreak": "ai",
+      "parameters.minCharLengthAbove": "ai",
+      "parameters.minCharLengthBelow": "ai",
+      "parameters.minCharLengthBreak": "ai",
+      "parameters.missingCodesAllowed": "ai",
+      "parameters.outputPath": "ai",
+      "parameters.outputType": "ai",
+      "parameters.patternCount": "ai",
+      "parameters.saveSession": "ai",
+      "parameters.scope": "ai",
+      "parameters.serverURL": "ai",
+      "parameters.sessionPath": "ai",
+      "parameters.severityPattern0": "ai",
+      "parameters.severityPattern1": "ai",
+      "parameters.severityPattern2": "ai",
+      "parameters.severityPattern3": "ai",
+      "parameters.severityPattern4": "ai",
+      "parameters.severityPattern5": "ai",
+      "parameters.severityPattern6": "ai",
+      "parameters.severityPattern7": "ai",
+      "parameters.showFullPath": "ai",
+      "parameters.showOnlyPatternDescription": "ai",
+      "parameters.singlePattern0": "ai",
+      "parameters.singlePattern1": "ai",
+      "parameters.singlePattern2": "ai",
+      "parameters.singlePattern3": "ai",
+      "parameters.singlePattern4": "ai",
+      "parameters.singlePattern5": "ai",
+      "parameters.singlePattern6": "ai",
+      "parameters.singlePattern7": "ai",
+      "parameters.sourcePattern0": "ai",
+      "parameters.sourcePattern1": "ai",
+      "parameters.sourcePattern2": "ai",
+      "parameters.sourcePattern3": "ai",
+      "parameters.sourcePattern4": "ai",
+      "parameters.sourcePattern5": "ai",
+      "parameters.sourcePattern6": "ai",
+      "parameters.sourcePattern7": "ai",
+      "parameters.strictCodeOrder": "ai",
+      "parameters.stringMode": "ai",
+      "parameters.targetPattern0": "ai",
+      "parameters.targetPattern1": "ai",
+      "parameters.targetPattern2": "ai",
+      "parameters.targetPattern3": "ai",
+      "parameters.targetPattern4": "ai",
+      "parameters.targetPattern5": "ai",
+      "parameters.targetPattern6": "ai",
+      "parameters.targetPattern7": "ai",
+      "parameters.targetSameAsSource": "ai",
+      "parameters.targetSameAsSourceForSameLanguage": "ai",
+      "parameters.targetSameAsSourceWithCodes": "ai",
+      "parameters.targetSameAsSourceWithNumbers": "ai",
+      "parameters.termsPath": "ai",
+      "parameters.trailingWS": "ai",
+      "parameters.typesToIgnore": "ai",
+      "parameters.useGenericCodes": "ai",
+      "parameters.usePattern0": "ai",
+      "parameters.usePattern1": "ai",
+      "parameters.usePattern2": "ai",
+      "parameters.usePattern3": "ai",
+      "parameters.usePattern4": "ai",
+      "parameters.usePattern5": "ai",
+      "parameters.usePattern6": "ai",
+      "parameters.usePattern7": "ai",
+      "parameters.xliffSchemaType": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

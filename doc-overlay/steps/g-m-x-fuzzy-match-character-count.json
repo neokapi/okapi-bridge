@@ -1,0 +1,25 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "g-m-x-fuzzy-match-character-count",
+  "kind": "step",
+  "name": "Fuzzy Match Character Count Step",
+  "overview": "Tallies the [GMX-V 2.0](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html) `FuzzyMatchedCharacterCount` category — the character count for text units fuzzy matched against a leveraged translation memory database. It reads the `AltTranslationsAnnotation` left by a leveraging step and counts a target segment or text container only when its top match falls into the fuzzy band: `FUZZY`, `FUZZY_UNIQUE_ID`, `FUZZY_PREVIOUS_VERSION`, `FUZZY_REPAIRED`, or one of the text-only exact types (`EXACT_TEXT_ONLY`, `EXACT_TEXT_ONLY_UNIQUE_ID`, `EXACT_TEXT_ONLY_PREVIOUS_VERSION`, `EXACT_REPAIRED`). Characters are counted in the corresponding source in canonical form — whitespace and punctuation are excluded (hyphens and apostrophes inside words are kept) — and stored as GMX-V metrics annotations for downstream consumption (for example by the Scoping Report Step). This is the character-count counterpart of the fuzzy-match word-count step.",
+  "processingNotes": [
+    "Only the top-ranked alternate translation of each segment is examined; it qualifies when its match type is one of the fuzzy or text-only/repaired-exact types.",
+    "Counts are computed over the source content of qualifying units; only translatable text units are counted, and a target must be present.",
+    "Character counting excludes whitespace and punctuation per GMX-V, but retains hyphens and apostrophes that occur inside a word."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXFuzzyMatchCharacterCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXFuzzyMatchWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

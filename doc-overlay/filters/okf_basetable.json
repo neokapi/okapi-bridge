@@ -1,0 +1,138 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "okf_basetable",
+  "kind": "filter",
+  "name": "Base Table Filter",
+  "aliasOf": "okf_table",
+  "overview": "The Base Table Filter is the generic, delimiter-agnostic foundation of the table filter family. It treats input as line-oriented records and column-based fields, but does not itself split lines into cells — each concrete table format (CSV, TSV, fixed-width columns) supplies that splitting. Used directly, it reads the whole line as a single field, so it is normally configured through one of its specialisations rather than on its own. The column-role settings (`sourceColumns`, `targetColumns`, `commentColumns`, ID columns), header handling, and whitespace controls documented here are shared by every table configuration.",
+  "processingNotes": [
+    "Records are lines; fields are columns. The base filter emits the entire line as one cell — a derived format (CSV/TSV/fixed-width) overrides cell extraction.",
+    "Each extracted cell carries `line_number`, `column_number`, and `row_number` properties; header rows report `row_number` 0.",
+    "In `listed` column mode, source cells are emitted as referents and a document part carries the row skeleton, so delimiters and non-extracted cells round-trip on output.",
+    "When a source or target column has no assigned locale and the column-names line holds a valid locale code, the filter parses it and updates the pipeline source/target locale."
+  ],
+  "examples": [
+    {
+      "title": "Generic two-column source/target table",
+      "description": "The default base-table layout extracts column 1 as source and pairs column 2 as its target (a bilingual configuration). Because the base filter does not split lines, this is most useful as a starting point that a delimiter-aware sub-config refines.",
+      "config": "```yaml\nconfigId: okf_basetable\ncolumns:\n  sourceColumns: \"1\"\n  targetColumns: \"2\"\n  sendColumnsMode: 1   # listed columns only\nreferences:\n  targetSourceRefs: \"1\"  # target column 2 translates source column 1\n```"
+    },
+    {
+      "title": "Header with a column-names line",
+      "description": "Treat line 1 as column names and start data on line 2, extracting only the column names from the header.",
+      "config": "```yaml\nconfigId: okf_basetable\ncolumns:\n  columnNamesLineNum: 1\n  valuesStartLineNum: 2\n  sendHeaderMode: 1    # column names only\n```"
+    }
+  ],
+  "parameters": {
+    "columns.columnNamesLineNum": {
+      "help": "The 1-based line number that holds the column captions. The filter reads that line to learn column names, which label comment metadata and can be parsed as locale codes to set the pipeline source/target locale. Leave at `0` when the file has no column-name line.",
+      "values": "1-based line number; `0` = none (default `0`)"
+    },
+    "columns.valuesStartLineNum": {
+      "help": "The 1-based line number where data rows begin. Lines before it form the header area, handled per `columns.sendHeaderMode`.",
+      "values": "1-based line number (default `1`)"
+    },
+    "columns.detectColumnsMode": {
+      "help": "How the column count per row is decided: per-row (no detection), from the count of names on the column-names line, or a fixed `columns.numColumns`. A fixed count pads short rows with empty cells and truncates long ones.",
+      "values": "`0` = none, `1` = from column names, `2` = fixed `numColumns` (default `0`)"
+    },
+    "columns.numColumns": {
+      "help": "The fixed number of columns expected per row. Consulted only when `columns.detectColumnsMode` is set to fixed-number.",
+      "values": "Integer (default `2`)",
+      "dependsOn": [
+        { "property": "columns.detectColumnsMode", "condition": "only active when set to 2 (fixed number)" }
+      ]
+    },
+    "columns.sendHeaderMode": {
+      "help": "Which header-area lines are extracted as translatable text: none, the column-names line only, or all header lines.",
+      "values": "`0` = none, `1` = column names only, `2` = all (default `0`)"
+    },
+    "columns.sendColumnsMode": {
+      "help": "Which columns of each data row are extracted: none, only the columns listed in the column-role settings, or all columns as source. `listed` mode is what enables bilingual extraction, IDs, and notes.",
+      "values": "`0` = none, `1` = listed, `2` = all (default `1`)"
+    },
+    "columns.sourceColumns": {
+      "help": "Comma-separated 1-based indices of the columns extracted as source (translatable) text. Consulted in `listed` mode.",
+      "values": "e.g. `1` or `1,3,5` (default `1`)"
+    },
+    "columns.targetColumns": {
+      "help": "Comma-separated 1-based indices of columns holding existing target text. Each is tied to a source column via `references.targetSourceRefs` and a locale via `columns.targetLanguages`; supplying them makes the configuration bilingual.",
+      "values": "Comma-separated 1-based indices (default `2`)"
+    },
+    "columns.targetLanguages": {
+      "help": "Locale of each target column, aligned position-by-position with `columns.targetColumns`. A single value applies to all target columns; otherwise the pipeline target locale is used.",
+      "values": "Comma-separated locale codes, e.g. `fr,de` (default empty)"
+    },
+    "columns.commentColumns": {
+      "help": "Comma-separated 1-based indices of columns whose values attach as notes (or metadata, see `references.exposeCommentsAsMetadata`) to the source column they annotate via `references.commentSourceRefs`, rather than being extracted as translatable text.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "columns.sourceIdColumns": {
+      "help": "Comma-separated 1-based indices of columns whose values become the resource names (IDs) of source text units. Each is linked to its source column via `references.sourceIdSourceRefs`; an empty ID cell falls back to `columns.recordIdColumn` + `references.sourceIdSuffixes`.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "columns.recordIdColumn": {
+      "help": "The 1-based index of the column whose value identifies the row. Combined with `references.sourceIdSuffixes` to synthesise an ID for source columns lacking an explicit ID cell.",
+      "values": "1-based column index; `0` = none (default `0`)"
+    },
+    "parser.preserveWS": {
+      "help": "Inherited from the plain-text base. When enabled, whitespace inside extracted cell values is preserved; cell-edge trimming is governed separately by `parser.trimMode`, `parser.trimLeading`, and `parser.trimTrailing`.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "parser.trimMode": {
+      "help": "How leading/trailing whitespace is removed from cells: none, non-qualified fields only (matters only for qualifier-aware formats), or all fields. Any value other than none forces `parser.trimLeading` and `parser.trimTrailing` on.",
+      "values": "`0` = none, `1` = non-qualified only, `2` = all (default `1`)"
+    },
+    "parser.trimLeading": {
+      "help": "Removes leading spaces and tabs from each extracted cell value. Forced on whenever `parser.trimMode` is not none.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "parser.trimTrailing": {
+      "help": "Removes trailing spaces and tabs from each extracted cell value. Forced on whenever `parser.trimMode` is not none.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "parser.unescapeSource": {
+      "help": "Inherited from the plain-text base. When enabled, `\\t`, `\\n`, `\\\\`, and `\\uXXXX` escape sequences in extracted cell values are converted to the characters they represent.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "parser.wrapMode": {
+      "help": "How a cell value spanning multiple physical lines is represented: `NONE` joins wrapped lines with a line feed, `SPACES` joins with a single space, `PLACEHOLDERS` inserts an inline placeholder at each internal break so wrapping can be reproduced on output.",
+      "values": "`NONE`, `SPACES`, `PLACEHOLDERS` (default `NONE`)"
+    },
+    "references.commentSourceRefs": {
+      "help": "Maps each column in `columns.commentColumns` to the source column it annotates, as a comma-separated list of 1-based source-column indices aligned position-by-position. The comment becomes a read-only note on that source text unit.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "references.sourceIdSourceRefs": {
+      "help": "Maps each column in `columns.sourceIdColumns` to the source column it names, as a comma-separated list of 1-based source-column indices aligned position-by-position.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "references.sourceIdSuffixes": {
+      "help": "Suffixes appended to the `columns.recordIdColumn` value to build an ID for a source column that has no explicit ID cell. Aligned position-by-position with `columns.sourceColumns`.",
+      "values": "Comma-separated strings (default empty)"
+    },
+    "references.targetSourceRefs": {
+      "help": "Maps each column in `columns.targetColumns` to the source column it translates, as a comma-separated list of 1-based source-column indices aligned position-by-position. A target whose reference cannot be resolved is sent to the skeleton.",
+      "values": "Comma-separated 1-based indices (default `1`)"
+    },
+    "references.exposeCommentsAsMetadata": {
+      "help": "When enabled, comment-column values attach to the source text unit as metadata keyed by column name instead of as translator notes. Use it when downstream tooling consumes structured metadata.",
+      "values": "`true` / `false` (default `false`)",
+      "dependsOn": [
+        { "property": "columns.commentColumns", "condition": "only meaningful when comment columns are defined" }
+      ]
+    }
+  },
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Table_Filter",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/Parameters.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/BaseTableFilter.java",
+      "okapi-source:okapi/filters/plaintext/src/main/java/net/sf/okapi/filters/plaintext/base/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

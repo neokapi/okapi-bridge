@@ -1,0 +1,70 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "terminology-leveraging",
+  "kind": "step",
+  "name": "Terminology Leveraging",
+  "overview": "This step leverages glossary terms into extracted text units by querying a terminology resource connector. It sends segment content to the resource, which returns matching glossary entries that are then annotated onto source and/or target segments. Non-translatable text units are automatically skipped. Requires both source and target languages to be set.",
+  "limitations": [
+    "It is **not** possible to chain several steps to leverage against multiple terminology resources."
+  ],
+  "processingNotes": [
+    "Text units flagged as non-translatable are automatically skipped.",
+    "Source annotation occurs when a glossary term is found within the source segment text.",
+    "Target annotation occurs when a translation of a glossary term is found within the target segment text.",
+    "The terminology resource connector defines its own strategy for generating glossary entry IDs and glossary translation IDs."
+  ],
+  "examples": [
+    {
+      "title": "Annotate source segments from a connector",
+      "description": "Enable leveraging and annotate source text where glossary terms are found, naming the terminology connector to query. The connector class must extend `BaseTerminologyConnector` or implement `ITerminologyQuery`.",
+      "config": "```yaml\nleverage: true\nannotateSource: true\nconnectorClassName: net.sf.okapi.connectors.example.GlossaryConnector\n```",
+      "input": null,
+      "output": null
+    },
+    {
+      "title": "Annotate both sides with connector parameters",
+      "description": "Annotate source and target segments, passing the connector its own settings as a serialized parameter string. Target annotation is applied when a translation of a term is found in the target text.",
+      "config": "```yaml\nleverage: true\nannotateSource: true\nannotateTarget: true\nconnectorClassName: net.sf.okapi.connectors.example.GlossaryConnector\nconnectorParameters: \"endpoint=https://terms.example.org/api\"\n```",
+      "input": null,
+      "output": null
+    }
+  ],
+  "parameters": {
+    "leverage": {
+      "help": "Enables or disables terminology leveraging for the step. When disabled, the step is a no-op, which allows it to be left in a pipeline and toggled on or off without removing it.\n\nWhen enabled, segment content is sent to the configured connector and matching glossary entries are annotated onto the segments."
+    },
+    "annotateSource": {
+      "help": "Annotates the source segment text where a glossary term is found. The connector locates terms within the source content and the matching glossary entries are attached as inline annotations on the source.\n\nEnable this when downstream steps or output formats need source-side terminology markup."
+    },
+    "annotateTarget": {
+      "help": "Annotates the target segment text where a translation of a glossary term is found. Annotation is applied when the connector locates a known term translation within the target content.\n\nRequires a target to be present on the text unit; non-translatable units are skipped."
+    },
+    "connectorClassName": {
+      "help": "Fully qualified class name of the terminology resource connector to query. The connector must extend `BaseTerminologyConnector` or implement the `ITerminologyQuery` interface, and the class must be available on the runtime classpath.",
+      "examples": [
+        "`net.sf.okapi.connectors.example.GlossaryConnector`"
+      ]
+    },
+    "connectorParameters": {
+      "help": "Serialized parameter string passed to the connector named by `connectorClassName`. The format and meaning of the string are defined entirely by that connector (for example, endpoint URLs or credentials).",
+      "dependsOn": [
+        {
+          "property": "connectorClassName",
+          "condition": "interpreted by the connector named here"
+        }
+      ]
+    }
+  },
+  "fullDoc": "# Terminology Leveraging\n\nThis step leverages glossary terms into extracted text units by querying a terminology resource connector. It sends segment content to the resource, which returns matching glossary entries that are then annotated onto source and/or target segments. Non-translatable text units are automatically skipped.\n\nRequires both source and target languages to be configured.\n\n## Parameters\n\n#### Leverage\nEnables or disables the step. Allows keeping the step in a pipeline while toggling it on and off without removing it.\n\n#### Annotate Source\nEnables annotation of source segment text with found glossary entries. Annotation is applied when a term is found within the source segment text.\n\n#### Annotate Target\nEnables annotation of target segment text with found glossary entries. Annotation is applied when a translation of the term is found within the target segment text.\n\n#### Connector Class Name\nSelects the terminology resource connector. Must be a subclass of `BaseTerminologyConnector` or a custom implementation of the `ITerminologyQuery` interface.\n\n#### Connector Parameters\nSerialized parameters passed to the selected terminology resource connector; the format is defined by that connector.\n\n## Limitations\n\n- It is **not** possible to chain several steps to leverage against multiple terminology resources.\n\n## Notes\n\n- Text units flagged as non-translatable are skipped.\n- The terminology resource connector defines its own strategy for generating glossary entry IDs and glossary translation IDs.\n- The connector splits segments into source terms or applies other techniques to find matching glossary entries.",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Terminology_Leveraging_Step",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Terminology_Leveraging_Step",
+      "okapi-source:okapi/steps/terminologyleveraging/src/main/java/net/sf/okapi/steps/terminologyleveraging/TerminologyParameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "filter-events-writer",
+  "kind": "step",
+  "name": "Filter Events Writer Step",
+  "overview": "The Filter Events Writer step turns a stream of filter events back into an output document or stream using a filter writer. It is the write counterpart of extraction: as start-document, text-unit, group, and other events flow past, the writer reconstructs the document in the original format, applying any translations carried on the events. Each event and its resource are forwarded to the next step so the pipeline can continue after the document has been written.",
+  "processingNotes": [
+    "On the start-document event the step obtains a filter writer — either a writer supplied to it directly, or one created from the filter configuration mapper and configuration id — and sets its target locale and output encoding.",
+    "Output is directed to a supplied output stream when present, otherwise to the path from the output URI; when writing to an existing file the step may prompt before overwriting unless prompting is suppressed by the execution context.",
+    "All event types between start-document and end-document are passed to the filter writer; on the end-document event the writer is closed.",
+    "Filter configuration, target locale, output encoding, output URI, and execution context are supplied by the pipeline rather than configured as step parameters."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/FilterEventsWriterStep.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

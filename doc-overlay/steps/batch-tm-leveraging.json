@@ -1,0 +1,25 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "batch-tm-leveraging",
+  "kind": "step",
+  "name": "Batch TM Leveraging Step",
+  "overview": "The Batch TM Leveraging step queries a translation-memory connector for matches, but sends text units in batches rather than one at a time. It accumulates text units, dispatches them to the connector's batch-leverage call once a fixed number have been collected (and again for any remainder at the end of each document), attaches the returned matches as alternate-translation annotations, and can fill the target with the best match above a threshold. It is a simpler and faster alternative to the per-segment Leveraging step for connectors that support batch queries.",
+  "processingNotes": [
+    "Text units are buffered and leveraged in batches; the buffer is flushed when it reaches the internal batch size and at the end of each document, so events are emitted as multi-events rather than strictly in place.",
+    "Non-translatable text units, entries with no source text, entries already approved (target `approved` property set to `yes`), and entries already handled by Diff Leveraging are skipped.",
+    "When target filling is enabled, the best match for a segment is copied into the target only if its combined score meets `fillTargetThreshold` and the existing target is eligible (per `fillIfTargetIsEmpty` / `fillIfTargetIsSameAsSource`).",
+    "When `copySourceOnNoText` is enabled, segments whose source has no text (codes/whitespace only) have their source copied into the corresponding target segment.",
+    "The connector is instantiated by class name and configured from the step's resource parameters; if it is a TM query it is opened with a fixed maximum of five hits per entry.",
+    "Requires source and target locales and the pipeline root directory; these are supplied by the pipeline rather than configured on the step."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/leveraging/src/main/java/net/sf/okapi/steps/leveraging/BatchTmLeveragingStep.java",
+      "okapi-source:okapi/steps/leveraging/src/main/java/net/sf/okapi/steps/leveraging/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

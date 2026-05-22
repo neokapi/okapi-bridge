@@ -1,0 +1,24 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "g-m-x-repetition-matched-word-count",
+  "kind": "step",
+  "name": "GMX Repetition Matched Word Count Step",
+  "overview": "Tallies the [GMX-V 2.0](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html) `RepetitionMatchedWordCount` category — the word count for repeating text units that have not been matched in any other form, repetition matching taking precedence over fuzzy matching. It reads the `AltTranslationsAnnotation` left by a leveraging step and counts a target segment or text container only when its top match is of type `EXACT_DOCUMENT_CONTEXT`, counting the words in the corresponding source. Counts are stored as GMX-V metrics annotations on segments, targets, and aggregate resources for downstream consumption (for example by the Scoping Report Step). This is the word-count variant; a companion step counts characters for the same category.",
+  "processingNotes": [
+    "Only the top-ranked alternate translation of each segment is examined; it qualifies when its match type is `EXACT_DOCUMENT_CONTEXT`.",
+    "Counts are computed over the source content of qualifying units; only translatable text units are counted, and a target must be present.",
+    "Requires a prior leveraging step to have populated the alternate-translation annotations with categorised match types."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXRepetitionMatchedWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

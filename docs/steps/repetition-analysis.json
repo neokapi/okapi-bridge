@@ -1,7 +1,7 @@
 {
   "filterName": "Repetition Analysis",
+  "stepId": "repetition-analysis",
   "overview": "Analyzes repetitions across input documents, performing either exact or configurable fuzzy matching on source segments. For each group of repetitive segments, it attaches `RepetitiveSegmentAnnotation` to the source and `AltTranslationsAnnotation` to the corresponding target, enabling downstream steps (like leveraging or counting) to act on repeated content.",
-  "parameters": {},
   "limitations": [
     "No known limitations per the Okapi documentation."
   ],
@@ -11,7 +11,22 @@
     "Fuzzy threshold controls whether matching is exact (100) or fuzzy (lower values). Leave at 100 for exact repetitions only."
   ],
   "examples": [],
+  "parameters": {},
   "fullDoc": "# Repetition Analysis\n\nAnalyzes repetitions across input documents, performing either exact or configurable fuzzy matching on source segments. For each group of repetitive segments, it attaches `RepetitiveSegmentAnnotation` to the source and `AltTranslationsAnnotation` to the corresponding target, enabling downstream steps (like leveraging or counting) to act on repeated content.\n\n**Takes:** Filter events | **Sends:** Filter events\n\n## Annotations\n\nTwo types of annotations are created for found repetitive segments:\n\n- **RepetitiveSegmentAnnotation** — attached to a repetitive source segment.\n- **AltTranslationsAnnotation** — attached to the target segment corresponding to a repetitive source segment. Not attached for the first repetitive segment in its group, to avoid being counted twice as repetitive with itself.\n\n## Parameters\n\n#### Fuzzy Threshold\n\nFuzzy threshold for fuzzy repetitions. Leave at 100 for exact repetitions only. Lower values enable fuzzy matching with decreasing similarity requirements.\n\n## Limitations\n\nNo known limitations.\n\n## Notes\n\n- The first segment in each repetition group is intentionally excluded from `AltTranslationsAnnotation` to prevent double-counting by downstream counting steps.\n- This step expects filter events and passes them through, making it suitable for insertion into a filter-event pipeline between extraction and merging stages.",
-  "stepId": "repetition-analysis",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Repetition_Analysis_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Repetition_Analysis_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Repetition_Analysis_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

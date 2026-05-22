@@ -1,6 +1,35 @@
 {
   "filterName": "Term Extraction Step",
+  "stepId": "term-extraction",
   "overview": "Generates an output file containing a list of possible term candidates found in the source content of processed text units. Terms can be discovered through three methods: Terminology annotations, Text Analysis annotations, or simple statistical analysis on groups of tokens. The step processes all input documents before creating the candidate term list, and passes filter events through unchanged to the next step.",
+  "limitations": [
+    "None known (per wiki documentation)."
+  ],
+  "processingNotes": [
+    "The step processes **all** input documents before creating the term list — results are not available until the entire batch completes.",
+    "Non-translatable entries are skipped — no term extraction is performed on them.",
+    "Filter events pass through to the next step **unchanged**.",
+    "The output file is always **UTF-8 encoded**, tab-delimited.",
+    "The three extraction methods (Terminology annotations, Text Analysis annotations, tokens-grouping statistics) are independent and can be combined — results are merged into a single output."
+  ],
+  "examples": [
+    {
+      "title": "Basic statistical term extraction",
+      "description": "Extract multi-word terms appearing at least 3 times, using default English stop words.",
+      "config": "```yaml\noutputPath: ${rootDir}/terms.txt\nuseStatistics: true\nuseTerminologyAnnotations: false\nuseTextAnalysisAnnotations: false\nminWordsPerTerm: 2\nmaxWordsPerTerm: 5\nminOccurrences: 3\nremoveSubTerms: true\nsortByOccurrence: true\n```"
+    },
+    {
+      "title": "Output format",
+      "description": "The generated tab-delimited file lists occurrence count and term on each line.",
+      "output": "```\n12\tuser interface\n8\tsource document\n5\tfile format\n3\ttranslation memory\n```"
+    },
+    {
+      "title": "Sub-term removal behavior",
+      "description": "Demonstrates how `removeSubTerms` adjusts counts and removes fully-accounted-for sub-sequences.",
+      "input": "```\n6\tgnu free\n6\tgnu free document\n5\tgnu free document license\n```",
+      "output": "```\n1\tgnu free document\n5\tgnu free document license\n```"
+    }
+  ],
   "parameters": {
     "outputPath": {
       "help": "The generated file is **tab-delimited UTF-8** with one candidate term per line: occurrence count in the first column, term text in the second column.\n\nSupports the `${rootDir}` variable in the path.",
@@ -111,34 +140,6 @@
       ]
     }
   },
-  "limitations": [
-    "None known (per wiki documentation)."
-  ],
-  "processingNotes": [
-    "The step processes **all** input documents before creating the term list — results are not available until the entire batch completes.",
-    "Non-translatable entries are skipped — no term extraction is performed on them.",
-    "Filter events pass through to the next step **unchanged**.",
-    "The output file is always **UTF-8 encoded**, tab-delimited.",
-    "The three extraction methods (Terminology annotations, Text Analysis annotations, tokens-grouping statistics) are independent and can be combined — results are merged into a single output."
-  ],
-  "examples": [
-    {
-      "title": "Basic statistical term extraction",
-      "description": "Extract multi-word terms appearing at least 3 times, using default English stop words.",
-      "config": "```yaml\noutputPath: ${rootDir}/terms.txt\nuseStatistics: true\nuseTerminologyAnnotations: false\nuseTextAnalysisAnnotations: false\nminWordsPerTerm: 2\nmaxWordsPerTerm: 5\nminOccurrences: 3\nremoveSubTerms: true\nsortByOccurrence: true\n```"
-    },
-    {
-      "title": "Output format",
-      "description": "The generated tab-delimited file lists occurrence count and term on each line.",
-      "output": "```\n12\tuser interface\n8\tsource document\n5\tfile format\n3\ttranslation memory\n```"
-    },
-    {
-      "title": "Sub-term removal behavior",
-      "description": "Demonstrates how `removeSubTerms` adjusts counts and removes fully-accounted-for sub-sequences.",
-      "input": "```\n6\tgnu free\n6\tgnu free document\n5\tgnu free document license\n```",
-      "output": "```\n1\tgnu free document\n5\tgnu free document license\n```"
-    }
-  ],
   "propertySuggestions": {
     "autoOpen": {
       "description": "Automatically open the result file in the default application after completion"
@@ -163,6 +164,35 @@
     }
   },
   "fullDoc": "# Term Extraction Step\n\nGenerates an output file containing a list of possible term candidates found in the source content of processed text units. Terms can be discovered through three independent methods: Terminology annotations, Text Analysis annotations, or simple statistical analysis on groups of tokens. The step processes all input documents before creating the candidate term list, and passes filter events through unchanged to the next step.\n\n## Parameters\n\n### Output\n\n#### Output path\n\nThe generated file is **tab-delimited UTF-8** with one candidate term per line: occurrence count in the first column, term text in the second column. Supports the `${rootDir}` variable in the path.\n\n#### Open the result file after completion\n\nAutomatically opens the generated result file in the system default application after the extraction process completes.\n\n#### Sort the results by the number of occurrences\n\nControls the sort order of the output term list. Results are sorted by descending occurrence count. If not enabled, results are listed **alphabetically**.\n\n### Extraction Methods\n\n#### Use Terminology annotations\n\nExtracts terms from `TermsAnnotation` annotations attached to text unit sources. These annotations are created by filters or other steps — for example, by ITS Terminology data category rules when using the XML Filter.\n\n#### Use Text Analysis annotations\n\nExtracts terms from spans annotated with the Text Analysis annotation on text unit source content. Such annotations are created by steps like the Enrycher Step.\n\n#### Use tokens-grouping statistics\n\nFinds term candidates using simple statistical analysis on groups of tokens (word sequences). A \"term\" is defined as a sequence of words meeting the configured minimum/maximum word count and minimum occurrence thresholds.\n\n> **Note:** No stemming or lemmatization is performed — purely frequency-based extraction.\n\n### Statistical Method Settings\n\nThese parameters are only used when **Use tokens-grouping statistics** is enabled.\n\n#### Minimum number of words per term\n\nSets the lower bound on word count for a token sequence to qualify as a term candidate.\n\n#### Maximum number of words per term\n\nSets the upper bound on word count for a token sequence to qualify as a term candidate. Keep this to a reasonable maximum — **6 or 7, or less** is recommended.\n\n#### Minimum number of occurrences per term\n\nA word sequence must appear at least this many times across **all input files** to be retained as a term candidate.\n\n#### Preserve case differences\n\nControls whether case differences are preserved during token analysis. When enabled, `Term` and `term` are treated as **different** words. When disabled, they are treated as the same word and grouped together.\n\n#### Remove entries that seem to be sub-strings of longer entries\n\nPerforms an extra post-processing pass that removes candidate terms that appear to be sub-sequences of longer candidates. For example:\n\nInput:\n- `gnu free` = 6\n- `gnu free document` = 6\n- `gnu free document license` = 5\n\nOutput after removal:\n- `gnu free document` = 1\n- `gnu free document license` = 5\n\n> **Warning:** May cause loss of valid entries when they only appear as sub-sequences of longer, less relevant entries.\n\n### Word Lists\n\nThese parameters are only used when **Use tokens-grouping statistics** is enabled. Leave paths empty to use the built-in English defaults.\n\n#### Path of the file with stop words\n\nPath to a plain-text file with one stop word per line. Stop words **break** a word sequence even if the maximum word count has not been reached.\n\n> **Note:** The default English lists are embedded in the compiled resources at `net/sf/okapi/steps/termextraction` inside `okapi-lib-VERSION.jar`.\n\n#### Path of the file with not-start words\n\nPath to a plain-text file with one word per line. Not-start words are **excluded from the beginning** of a term but may appear within or at the end.\n\n#### Path of the file with not-end words\n\nPath to a plain-text file with one word per line. Not-end words are **excluded from the end** of a term but may appear within or at the beginning.\n\n## Limitations\n\n- None known.\n\n## Notes\n\n- The step processes **all** input documents before creating the term list — results are not available until the entire batch completes.\n- Non-translatable entries are skipped.\n- Filter events pass through to the next step unchanged.\n- The output file is always UTF-8 encoded, tab-delimited.\n- The three extraction methods are independent and can be combined.\n\n## Examples\n\n### Basic statistical term extraction\n\n```yaml\noutputPath: ${rootDir}/terms.txt\nuseStatistics: true\nuseTerminologyAnnotations: false\nuseTextAnalysisAnnotations: false\nminWordsPerTerm: 2\nmaxWordsPerTerm: 5\nminOccurrences: 3\nremoveSubTerms: true\nsortByOccurrence: true\n```\n\n### Output format\n\n```\n12\tuser interface\n8\tsource document\n5\tfile format\n3\ttranslation memory\n```",
-  "stepId": "term-extraction",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Term_Extraction_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Term_Extraction_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Term_Extraction_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.autoOpen": "ai",
+      "parameters.keepCase": "ai",
+      "parameters.maxWordsPerTerm": "ai",
+      "parameters.minOccurrences": "ai",
+      "parameters.minWordsPerTerm": "ai",
+      "parameters.notEndWordsPath": "ai",
+      "parameters.notStartWordsPath": "ai",
+      "parameters.outputPath": "ai",
+      "parameters.removeSubTerms": "ai",
+      "parameters.sortByOccurrence": "ai",
+      "parameters.stopWordsPath": "ai",
+      "parameters.useStatistics": "ai",
+      "parameters.useTerminologyAnnotations": "ai",
+      "parameters.useTextAnalysisAnnotations": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

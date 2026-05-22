@@ -1,6 +1,28 @@
 {
   "filterName": "Leveraging Step",
+  "stepId": "leveraging",
   "overview": "The Leveraging step sends extracted text units (or segments) to a translation resource — either a TM engine or an MT system — and retrieves matching translations. Matches above a configurable threshold are attached as annotations to the target, and optionally the best match can be copied directly into the target content. Non-translatable and approved text units are automatically skipped. Multiple Leveraging steps can be chained to query several resources in sequence (e.g., TM first, then MT for unmatched entries).",
+  "limitations": [],
+  "processingNotes": [
+    "Non-translatable text units are automatically skipped.",
+    "Text units with the `approved` property set to `yes` are automatically skipped.",
+    "Multiple Leveraging steps can be chained in a pipeline to query several translation resources in sequence (e.g., TM first, then MT for unmatched entries).",
+    "Matches are attached as annotations to the target container or target segments regardless of the fill-target settings.",
+    "Internet-based translation resources (e.g., cloud MT) may result in lengthy processing time.",
+    "A single TMX output document is generated across all input files when TMX generation is enabled."
+  ],
+  "examples": [
+    {
+      "title": "TM leveraging with fuzzy prefix",
+      "description": "Leverage from a Pensieve TM, fill target for 95%+ matches, and prefix fuzzy matches for translator review.",
+      "config": "```yaml\nleverage: true\nresourceClassName: net.sf.okapi.connectors.pensieve.PensieveTMConnector\nthreshold: 70\nfillTarget: true\nfillTargetThreshold: 95\nuseTargetPrefix: true\ntargetPrefix: \"FUZZY__\"\ntargetPrefixThreshold: 99\n```"
+    },
+    {
+      "title": "Chained TM + MT leveraging",
+      "description": "Use two Leveraging steps in sequence: the first queries a TM and the second uses MT only for entries without an existing good match. Set `noQueryThreshold` on the second step to skip entries already matched by the TM.",
+      "config": "```yaml\n# Step 1 — TM\nleverage: true\nresourceClassName: net.sf.okapi.connectors.pensieve.PensieveTMConnector\nthreshold: 70\nfillTarget: true\nfillTargetThreshold: 95\nnoQueryThreshold: 101\n\n# Step 2 — MT (only for unmatched)\nleverage: true\nresourceClassName: net.sf.okapi.connectors.microsoft.MicrosoftMTConnector\nthreshold: 0\nfillTarget: true\nfillTargetThreshold: 0\nnoQueryThreshold: 95\nuseMTPrefix: true\n```"
+    }
+  ],
   "parameters": {
     "leverage": {
       "help": "Master switch for the step. Allows you to keep the step configured in your pipeline while toggling it on and off without removing it."
@@ -141,27 +163,6 @@
       "help": "Copies the source content into the target when the source contains no translatable text (only whitespace and/or inline codes). This copy overwrites any existing target content."
     }
   },
-  "limitations": [],
-  "processingNotes": [
-    "Non-translatable text units are automatically skipped.",
-    "Text units with the `approved` property set to `yes` are automatically skipped.",
-    "Multiple Leveraging steps can be chained in a pipeline to query several translation resources in sequence (e.g., TM first, then MT for unmatched entries).",
-    "Matches are attached as annotations to the target container or target segments regardless of the fill-target settings.",
-    "Internet-based translation resources (e.g., cloud MT) may result in lengthy processing time.",
-    "A single TMX output document is generated across all input files when TMX generation is enabled."
-  ],
-  "examples": [
-    {
-      "title": "TM leveraging with fuzzy prefix",
-      "description": "Leverage from a Pensieve TM, fill target for 95%+ matches, and prefix fuzzy matches for translator review.",
-      "config": "```yaml\nleverage: true\nresourceClassName: net.sf.okapi.connectors.pensieve.PensieveTMConnector\nthreshold: 70\nfillTarget: true\nfillTargetThreshold: 95\nuseTargetPrefix: true\ntargetPrefix: \"FUZZY__\"\ntargetPrefixThreshold: 99\n```"
-    },
-    {
-      "title": "Chained TM + MT leveraging",
-      "description": "Use two Leveraging steps in sequence: the first queries a TM and the second uses MT only for entries without an existing good match. Set `noQueryThreshold` on the second step to skip entries already matched by the TM.",
-      "config": "```yaml\n# Step 1 — TM\nleverage: true\nresourceClassName: net.sf.okapi.connectors.pensieve.PensieveTMConnector\nthreshold: 70\nfillTarget: true\nfillTargetThreshold: 95\nnoQueryThreshold: 101\n\n# Step 2 — MT (only for unmatched)\nleverage: true\nresourceClassName: net.sf.okapi.connectors.microsoft.MicrosoftMTConnector\nthreshold: 0\nfillTarget: true\nfillTargetThreshold: 0\nnoQueryThreshold: 95\nuseMTPrefix: true\n```"
-    }
-  ],
   "propertySuggestions": {
     "leverage": {
       "title": "Leverage Text Units",
@@ -229,6 +230,36 @@
     }
   },
   "fullDoc": "# Leveraging Step\n\nThe Leveraging step sends extracted text units (or segments) to a translation resource — either a TM engine or an MT system — and retrieves matching translations. Matches above a configurable threshold are attached as annotations to the target, and optionally the best match can be copied directly into the target content. Non-translatable and approved text units are automatically skipped. Multiple Leveraging steps can be chained to query several resources in sequence (e.g., TM first, then MT for unmatched entries).\n\n## Parameters\n\n### General\n\n#### Leverage Text Units\nMaster switch for the step. Allows you to keep the step configured in your pipeline while toggling it on and off without removing it.\n\n#### Translation Resource\nFully qualified Java class name of the translation resource connector to use. Can be a TM connector (e.g., Pensieve) or an MT connector. The list of available connectors depends on your installation. Internet-based resources may be slow and result in lengthy processing time. See the Okapi **Connectors** documentation for available options.\n\n#### No-Query Threshold\nIf a text unit already has a translation candidate with a score equal to or above this value, no query is sent to the translation resource. This avoids unnecessary (and potentially costly) lookups when a good-enough match already exists. Set to **101** to always query the resource regardless of existing candidates.\n\n#### Minimum Match Score\nMinimum match score for a translation to be accepted and attached as an annotation to the text unit. Matches below this score are discarded entirely.\n\n#### Downgrade Identical Exact Matches\nReduces the score of identical exact matches by 1%. Some connectors return multiple exact matches that differ only in their translation. Because downstream components may trigger automated processes on exact matches, this prevents such triggers when the best match is ambiguous.\n\n#### Copy Source If No Text\nCopies the source content into the target when the source contains no translatable text (only whitespace and/or inline codes). This copy overwrites any existing target content.\n\n### Fill Target\n\n#### Fill Target with Translation\nCopies the best translation candidate directly into the target content of the text unit, provided its score meets the fill target threshold. The match is still added as an annotation regardless of this setting.\n\n#### Fill Target Threshold\nMinimum match score for copying the best candidate into the target content. If the best match scores below this value, the translation is **not** copied into the target — but it is still attached as an annotation/candidate.\n\n#### Only If Target Is Empty\nRestricts target filling to only text units where the target is currently empty. Prevents overwriting existing translations.\n\n#### Also If Target Equals Source\nAllows overwriting target content when it is identical (text and codes) to the source. Useful for catching untranslated entries that were initialized with source content. Only available when \"Only If Target Is Empty\" is enabled.\n\n### Target Prefix\n\n#### Add Prefix to Translation\nAdds a configurable prefix to the front of leveraged translations copied into the target, based on the match score. Useful for flagging fuzzy matches so translators can identify them.\n\n#### Target Prefix Text\nThe prefix string inserted at the front of leveraged translations when their match score is at or below the prefix threshold. Default: `FUZZY__`.\n\n#### Prefix Score Threshold\nThe prefix is added to the leveraged translation only when the best match score is **equal to or below** this value. Matches above this threshold are copied without a prefix.\n\n### MT Prefix\n\n#### Add MT Prefix to Source\nAdds an MT-specific prefix to the source text when the match originates from an MT engine. This ensures the entry is treated as a fuzzy match in tools that cannot identify MT origin via the `creationid` attribute.\n\n### TMX Output\n\n#### Generate TMX Document\nCreates a single TMX document containing all entries for which a match was found across all input files.\n\n#### TMX Output Path\nFull path for the generated TMX document. Supports variables: `${rootDir}`, `${inputRootDir}`, and locale variables (`${srcLoc}`, `${trgLoc}`, etc.).\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- Non-translatable text units are automatically skipped.\n- Text units with the `approved` property set to `yes` are automatically skipped.\n- Multiple Leveraging steps can be chained in a pipeline to query several translation resources in sequence (e.g., TM first, then MT for unmatched entries).\n- Matches are attached as annotations to the target container or target segments regardless of the fill-target settings.\n- Internet-based translation resources (e.g., cloud MT) may result in lengthy processing time.\n- A single TMX output document is generated across all input files when TMX generation is enabled.\n\n## Examples\n\n### TM leveraging with fuzzy prefix\n\nLeverage from a Pensieve TM, fill target for 95%+ matches, and prefix fuzzy matches for translator review.\n\n```yaml\nleverage: true\nresourceClassName: net.sf.okapi.connectors.pensieve.PensieveTMConnector\nthreshold: 70\nfillTarget: true\nfillTargetThreshold: 95\nuseTargetPrefix: true\ntargetPrefix: \"FUZZY__\"\ntargetPrefixThreshold: 99\n```\n\n### Chained TM + MT leveraging\n\nUse two Leveraging steps in sequence: the first queries a TM and the second uses MT only for entries without an existing good match. Set `noQueryThreshold` on the second step to skip entries already matched by the TM.\n\n```yaml\n# Step 1 — TM\nleverage: true\nresourceClassName: net.sf.okapi.connectors.pensieve.PensieveTMConnector\nthreshold: 70\nfillTarget: true\nfillTargetThreshold: 95\nnoQueryThreshold: 101\n\n# Step 2 — MT (only for unmatched)\nleverage: true\nresourceClassName: net.sf.okapi.connectors.microsoft.MicrosoftMTConnector\nthreshold: 0\nfillTarget: true\nfillTargetThreshold: 0\nnoQueryThreshold: 95\nuseMTPrefix: true\n```",
-  "stepId": "leveraging",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Leveraging_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Leveraging_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Leveraging_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.copySourceOnNoText": "ai",
+      "parameters.downgradeIdenticalBestMatches": "ai",
+      "parameters.fillIfTargetIsEmpty": "ai",
+      "parameters.fillIfTargetIsSameAsSource": "ai",
+      "parameters.fillTarget": "ai",
+      "parameters.fillTargetThreshold": "ai",
+      "parameters.leverage": "ai",
+      "parameters.makeTMX": "ai",
+      "parameters.noQueryThreshold": "ai",
+      "parameters.resourceClassName": "ai",
+      "parameters.targetPrefix": "ai",
+      "parameters.targetPrefixThreshold": "ai",
+      "parameters.threshold": "ai",
+      "parameters.tmxPath": "ai",
+      "parameters.useMTPrefix": "ai",
+      "parameters.useTargetPrefix": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

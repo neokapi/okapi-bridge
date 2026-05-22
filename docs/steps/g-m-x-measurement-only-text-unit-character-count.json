@@ -1,0 +1,27 @@
+{
+  "filterName": "GMX Measurement Only Character Count Step",
+  "stepId": "g-m-x-measurement-only-text-unit-character-count",
+  "overview": "Tallies the [GMX-V 2.0](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html) `MeasurementOnlyTextUnitCharacterCount` category — the character count from measurement-only text units. Each text unit's source is tokenised and a unit qualifies as measurement-only based on its `DATE`, `TIME`, and `CURRENCY` tokens; units that also contain other content contribute zero, after which characters are counted over the `DATE`, `TIME`, and `CURRENCY` tokens. Characters are counted in canonical form — whitespace and punctuation are excluded (hyphens and apostrophes inside words are kept) — and stored as GMX-V metrics annotations for downstream consumption (for example by the Scoping Report Step). This is the character-count counterpart of the measurement-only word-count step.",
+  "processingNotes": [
+    "Qualification keys on the `DATE`, `TIME`, and `CURRENCY` token kinds; a unit containing other non-whitespace content yields zero.",
+    "Counts are computed over the source content; only translatable text units are counted.",
+    "Character counting excludes whitespace and punctuation per GMX-V, but retains hyphens and apostrophes that occur inside a word."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXMeasurementOnlyTextUnitCharacterCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/TokenCharacterCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

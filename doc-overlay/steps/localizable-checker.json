@@ -1,0 +1,28 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "localizable-checker",
+  "kind": "step",
+  "name": "Localizable Quality Check",
+  "overview": "This step checks that all localizables (dates, times, and numbers) exist in the target and are localized correctly for the target locale. It compares source and target number, date, and time patterns, adding issue annotations if a target localizable is missing or not properly localized. Both source and target languages must be set for the step to function.",
+  "limitations": [
+    "Numbers that use different units in the source and target will be flagged as false positives (e.g., imperial vs. metric measurements, currency conversions)."
+  ],
+  "processingNotes": [
+    "Requires both source and target language to be set in the pipeline for locale-aware checking.",
+    "Produces issue annotations on segments where target localizables are missing or incorrectly localized — does not modify content.",
+    "Checks dates, times (in various formats), and numbers."
+  ],
+  "examples": [],
+  "parameters": {},
+  "fullDoc": "# Localizable Quality Check\n\nThis step checks that all localizables (dates, times, and numbers) exist in the target and are localized correctly for the target locale. It compares source and target number, date, and time patterns, adding issue annotations if a target localizable is missing or not properly localized. Both source and target languages must be set for the step to function.\n\n## Parameters\n\nThis step has no configurable parameters.\n\n## Limitations\n\n- Numbers that use different units in the source and target will be flagged as false positives (e.g., imperial vs. metric measurements, currency conversions).\n\n## Notes\n\n- Requires both source and target language to be set in the pipeline.\n- Produces issue annotations on segments — does not modify content.\n- Checks dates, times (in various formats), and numbers.",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Localizables_Check_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Localizables_Check_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false
+  }
+}

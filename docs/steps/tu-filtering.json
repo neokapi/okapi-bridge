@@ -1,0 +1,26 @@
+{
+  "filterName": "Text Unit Filtering Step",
+  "stepId": "tu-filtering",
+  "overview": "The Text Unit Filtering step applies a pluggable text-unit filter to each text unit and, by default, marks the accepted ones as non-translatable. The filter is supplied as a Java class name implementing the framework's text-unit filter interface, letting a pipeline exclude text units that match arbitrary criteria from later translation steps. It expects filter events and passes them through unchanged apart from clearing the translatable flag on matching text units.",
+  "processingNotes": [
+    "Each text unit is offered to the configured filter; accepted units have their translatable flag cleared (set non-translatable), while rejected units are passed through unmodified.",
+    "The filter is instantiated by class name (`tuFilterClassName`); if no class is configured the step fails at the start of the batch.",
+    "Subclasses can override the handling of accepted text units to do more than clear the translatable flag (for example drop the event or replace it), but the default behaviour is the non-translatable marking described above."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/tufiltering/TuFilteringStep.java",
+      "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/tufiltering/Parameters.java",
+      "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/tufiltering/ITextUnitFilter.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

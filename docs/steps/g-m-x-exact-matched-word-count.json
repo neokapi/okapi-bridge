@@ -1,0 +1,27 @@
+{
+  "filterName": "GMX Exact Matched Word Count Step",
+  "stepId": "g-m-x-exact-matched-word-count",
+  "overview": "Tallies the [GMX-V 2.0](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html) `ExactMatchedWordCount` category — the word count for text units matched unambiguously with a prior translation and thus requiring no translator input. It reads the `AltTranslationsAnnotation` left by a leveraging step and counts a target segment or text container only when its top match is of type `EXACT_UNIQUE_ID` or `EXACT_PREVIOUS_VERSION`, counting the words in the corresponding source. Counts are stored as GMX-V metrics annotations on segments, targets, and aggregate resources for downstream consumption (for example by the Scoping Report Step). This is the word-count variant; a companion step counts characters for the same category.",
+  "processingNotes": [
+    "Only the top-ranked alternate translation of each segment is examined; it qualifies when its match type is `EXACT_UNIQUE_ID` or `EXACT_PREVIOUS_VERSION`.",
+    "Counts are computed over the source content of qualifying units; only translatable text units are counted, and a target must be present.",
+    "Requires a prior leveraging step to have populated the alternate-translation annotations with categorised match types."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXExactMatchedWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

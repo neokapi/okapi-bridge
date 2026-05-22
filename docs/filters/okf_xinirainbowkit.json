@@ -1,0 +1,43 @@
+{
+  "filterName": "XINI RainbowKit Filter",
+  "filterId": "okf_xinirainbowkit",
+  "overview": "The XINI RainbowKit Filter is a variant of the XINI Filter for **XINI documents packaged as Rainbow translation kits** (ONTRAM T-Kits). It reads a XINI document and, when used to merge a kit, emits only the pages whose page name matches the original document being reconstructed, so each source document recovers its own content from a kit that may bundle several documents. It complements the standard XINI filter within the Rainbow translation-kit (T-Kit) round-trip rather than serving as a general-purpose XINI reader.",
+  "limitations": [
+    "This filter is intended for the Rainbow T-Kit workflow (kit creation and merging of XINI files), not for ad-hoc reading of arbitrary XINI documents — for that, use the `okf_xini` filter.",
+    "It exposes no configurable parameters."
+  ],
+  "processingNotes": [
+    "When merging a kit, the reader selects pages by matching each page's name against the relative document name being reconstructed, so unrelated pages in a multi-document kit are skipped.",
+    "A target locale is taken from the input document's target locales and used when reading the kit.",
+    "Output is XML-encoded using the XML encoder for the `text/x-xini` media type.",
+    "The filter has no configurable parameters; behaviour is fixed."
+  ],
+  "examples": [
+    {
+      "title": "Reconstructing a document from a T-Kit",
+      "description": "When merging a Rainbow translation kit, the filter reads the packaged XINI and yields only the pages whose page name corresponds to the document being reconstructed.",
+      "config": null,
+      "input": "```\nA T-Kit XINI containing pages for several source documents.\n```",
+      "output": "```\nOnly the pages whose page name matches the requested document are emitted as translatable content; pages belonging to other documents in the kit are skipped.\n```"
+    }
+  ],
+  "parameters": {},
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/rainbowkit/XINIRainbowkitFilter.java",
+      "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/rainbowkit/XINIRainbowkitReader.java",
+      "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/rainbowkit/XINIRainbowkitWriter.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

@@ -1,6 +1,30 @@
 {
   "filterName": "IDML Filter",
+  "filterId": "okf_idml",
   "overview": "The IDML Filter processes Adobe InDesign IDML documents (InDesign Markup Language), an XML-based format introduced in InDesign CS4. The filter extracts text by spread, gathering stories from `<TextFrame>` and `<TextPath>` elements in spread order. IDML documents are ZIP packages (UCF) containing multiple sub-documents, each treated as a separate sub-document by the filter. The [IDML specification](http://www.adobe.com/content/dam/Adobe/en/devnet/indesign/cs5_docs/idml/idml-specification.pdf) is available on the Adobe Web site.",
+  "limitations": [
+    "IDML filter is marked as **ALPHA** in the Okapi help documentation."
+  ],
+  "processingNotes": [
+    "The input encoding is **automatically detected**; any user-specified encoding is ignored. The filter always uses UTF-8.",
+    "Output line-breaks are always set to simple linefeed (LF).",
+    "An IDML document is a ZIP package (UCF — Universal Container Format) containing multiple embedded documents. Each embedded file is treated as a **sub-document** — e.g., in XLIFF output, a single IDML produces multiple `<file>` elements.",
+    "Text is extracted **by spread**: for each spread, stories from `<TextFrame>` and `<TextPath>` elements are gathered and extracted in the order they appear.",
+    "Stories embedded inside other stories and not declared at a spread level are extracted in a special group.",
+    "The filter is actually a wrapper around `IDMLContentFilter` — the inner filter handles raw IDML XML (Story XML) files directly, while the outer `IDMLFilter` handles the full IDML package."
+  ],
+  "examples": [
+    {
+      "title": "Extract with hidden layers and master spreads",
+      "description": "Configuration to extract all content including hidden layers and master spreads, useful for comprehensive translation of an InDesign document.",
+      "config": "```yaml\nextractMasterSpreads: true\nextractHiddenLayers: true\nextractNotes: true\n```"
+    },
+    {
+      "title": "Clean extraction with reduced inline codes",
+      "description": "Configuration that minimizes inline code clutter by merging adjacent codes and ignoring formatting-only differences.",
+      "config": "```yaml\nmergeAdjacentCodes: true\nignoreCharacterKerning: true\nignoreCharacterTracking: true\nignoreCharacterLeading: true\nignoreCharacterBaselineShift: true\n```"
+    }
+  ],
   "parameters": {
     "maxAttributeSize": {
       "help": "Controls the attribute buffer size in MB. Increase this if processing IDML documents with very large XML attributes that exceed the default 4 MB limit.",
@@ -64,31 +88,88 @@
     },
     "ignoreCharacterBaselineShift": {
       "help": "Prevents baseline shift differences from creating separate inline codes. Useful when characters have varying baseline offsets (e.g., for visual alignment) that should not affect segmentation."
+    },
+    "formatting.kerningMin": {
+      "help": "Lower bound (inclusive) of the kerning-value window within which kerning differences are ignored. Only has effect when **Ignore Character Kerning** is enabled — otherwise the setter discards the value. When set, adjacent runs are merged only if both their kerning values are at least this threshold; runs whose kerning falls below it still produce separate inline codes. Leaving both min and max empty (the default) ignores every kerning difference unconditionally.",
+      "values": "Decimal number as a string (parsed as a Java `double`). Default is empty (no lower bound).",
+      "dependsOn": [
+        {
+          "property": "ignoreCharacterKerning",
+          "condition": "must be enabled for this threshold to take effect"
+        }
+      ]
+    },
+    "formatting.kerningMax": {
+      "help": "Upper bound (inclusive) of the kerning-value window within which kerning differences are ignored. Only has effect when **Ignore Character Kerning** is enabled. When set, adjacent runs are merged only if both their kerning values are at most this threshold. Combined with the min threshold, it defines a closed range `[min, max]`: only differences where both values fall inside the range are folded into the same run.",
+      "values": "Decimal number as a string (parsed as a Java `double`). Default is empty (no upper bound).",
+      "dependsOn": [
+        {
+          "property": "ignoreCharacterKerning",
+          "condition": "must be enabled for this threshold to take effect"
+        }
+      ]
+    },
+    "formatting.trackingMin": {
+      "help": "Lower bound (inclusive) of the tracking (letter-spacing) window within which tracking differences are ignored. Only has effect when **Ignore Character Tracking** is enabled. Adjacent runs merge only when both tracking values are at least this threshold; otherwise they remain separate inline codes. Empty min and max (the default) ignore all tracking differences.",
+      "values": "Decimal number as a string (parsed as a Java `double`). Default is empty (no lower bound).",
+      "dependsOn": [
+        {
+          "property": "ignoreCharacterTracking",
+          "condition": "must be enabled for this threshold to take effect"
+        }
+      ]
+    },
+    "formatting.trackingMax": {
+      "help": "Upper bound (inclusive) of the tracking (letter-spacing) window within which tracking differences are ignored. Only has effect when **Ignore Character Tracking** is enabled. With both min and max set, tracking differences are folded into a single run only when both values lie within `[min, max]`.",
+      "values": "Decimal number as a string (parsed as a Java `double`). Default is empty (no upper bound).",
+      "dependsOn": [
+        {
+          "property": "ignoreCharacterTracking",
+          "condition": "must be enabled for this threshold to take effect"
+        }
+      ]
+    },
+    "formatting.leadingMin": {
+      "help": "Lower bound (inclusive) of the leading (line-spacing) window within which leading differences are ignored. Only has effect when **Ignore Character Leading** is enabled. Adjacent runs merge only when both leading values are at least this threshold.",
+      "values": "Decimal number as a string (parsed as a Java `double`). Default is empty (no lower bound).",
+      "dependsOn": [
+        {
+          "property": "ignoreCharacterLeading",
+          "condition": "must be enabled for this threshold to take effect"
+        }
+      ]
+    },
+    "formatting.leadingMax": {
+      "help": "Upper bound (inclusive) of the leading (line-spacing) window within which leading differences are ignored. Only has effect when **Ignore Character Leading** is enabled. Together with the min threshold it constrains the ignore behaviour to values inside the range `[min, max]`.",
+      "values": "Decimal number as a string (parsed as a Java `double`). Default is empty (no upper bound).",
+      "dependsOn": [
+        {
+          "property": "ignoreCharacterLeading",
+          "condition": "must be enabled for this threshold to take effect"
+        }
+      ]
+    },
+    "formatting.baselineShiftMin": {
+      "help": "Lower bound (inclusive) of the baseline-shift window within which baseline-shift differences are ignored. Only has effect when **Ignore Character Baseline Shift** is enabled. Adjacent runs merge only when both baseline-shift values are at least this threshold; otherwise they stay as separate inline codes.",
+      "values": "Decimal number as a string (parsed as a Java `double`). Default is empty (no lower bound).",
+      "dependsOn": [
+        {
+          "property": "ignoreCharacterBaselineShift",
+          "condition": "must be enabled for this threshold to take effect"
+        }
+      ]
+    },
+    "formatting.baselineShiftMax": {
+      "help": "Upper bound (inclusive) of the baseline-shift window within which baseline-shift differences are ignored. Only has effect when **Ignore Character Baseline Shift** is enabled. Combined with the min threshold it limits the ignore behaviour to values within the range `[min, max]`; differences outside the range continue to create distinct inline codes.",
+      "values": "Decimal number as a string (parsed as a Java `double`). Default is empty (no upper bound).",
+      "dependsOn": [
+        {
+          "property": "ignoreCharacterBaselineShift",
+          "condition": "must be enabled for this threshold to take effect"
+        }
+      ]
     }
   },
-  "processingNotes": [
-    "The input encoding is **automatically detected**; any user-specified encoding is ignored. The filter always uses UTF-8.",
-    "Output line-breaks are always set to simple linefeed (LF).",
-    "An IDML document is a ZIP package (UCF — Universal Container Format) containing multiple embedded documents. Each embedded file is treated as a **sub-document** — e.g., in XLIFF output, a single IDML produces multiple `<file>` elements.",
-    "Text is extracted **by spread**: for each spread, stories from `<TextFrame>` and `<TextPath>` elements are gathered and extracted in the order they appear.",
-    "Stories embedded inside other stories and not declared at a spread level are extracted in a special group.",
-    "The filter is actually a wrapper around `IDMLContentFilter` — the inner filter handles raw IDML XML (Story XML) files directly, while the outer `IDMLFilter` handles the full IDML package."
-  ],
-  "limitations": [
-    "IDML filter is marked as **ALPHA** in the Okapi help documentation."
-  ],
-  "examples": [
-    {
-      "title": "Extract with hidden layers and master spreads",
-      "description": "Configuration to extract all content including hidden layers and master spreads, useful for comprehensive translation of an InDesign document.",
-      "config": "```yaml\nextractMasterSpreads: true\nextractHiddenLayers: true\nextractNotes: true\n```"
-    },
-    {
-      "title": "Clean extraction with reduced inline codes",
-      "description": "Configuration that minimizes inline code clutter by merging adjacent codes and ignoring formatting-only differences.",
-      "config": "```yaml\nmergeAdjacentCodes: true\nignoreCharacterKerning: true\nignoreCharacterTracking: true\nignoreCharacterLeading: true\nignoreCharacterBaselineShift: true\n```"
-    }
-  ],
   "propertySuggestions": {
     "maxAttributeSize": {
       "title": "Maximum Attribute Size",
@@ -172,6 +253,52 @@
     }
   },
   "fullDoc": "# IDML Filter\n\nThe IDML Filter processes Adobe InDesign IDML documents (InDesign Markup Language), an XML-based format introduced in InDesign CS4. The filter extracts text by spread, gathering stories from `<TextFrame>` and `<TextPath>` elements in spread order. IDML documents are ZIP packages (UCF) containing multiple sub-documents, each treated as a separate sub-document by the filter.\n\n## Parameters\n\n### General\n\n#### Maximum Attribute Size\nControls the attribute buffer size in MB. Increase this if processing IDML documents with very large XML attributes that exceed the default 4 MB limit. Default: **4 MB**.\n\n#### Special Character Pattern\nRegex pattern matching characters that should be treated as **inline codes** rather than translatable text. The default pattern matches various Unicode special characters including zero-width spaces, zero-width non-joiners, soft hyphens, non-breaking hyphens, and BOM characters.\n\n#### Untag XML Structures\nStrips embedded XML structural information from the extracted content. Use this when the IDML document contains XML tagging that is not relevant for translation.\n\n#### Merge Adjacent Codes\nCombines consecutive inline codes into a single code, reducing tag clutter for translators. Default: **false**.\n\n### Extraction\n\n#### Extract Notes\nIncludes content from `<Note>` elements in the extraction. Default: **false**.\n\n#### Extract Master Spreads\nIncludes content from master spreads in the extraction. Enable this if master spreads contain translatable text (e.g., headers, footers, recurring labels). Default: **false**.\n\n#### Extract Hidden Layers\nIncludes content from hidden layers in the extraction. Default: **false**.\n\n#### Extract Hidden Pasteboard Items\nIncludes content from items on the pasteboard (outside the visible page area) that are hidden. Default: **false**.\n\n#### Extract Breaks Inline\nTreats break elements as inline codes within text units rather than creating separate segments. Default: **false**.\n\n#### Extract Hyperlink Text Sources Inline\nControls how hyperlink text sources are represented:\n- **Enabled**: Hyperlink text sources are extracted as inline elements within the surrounding text.\n- **Disabled** (default): Hyperlink text sources are represented as referencing groups of separate textual units.\n\n#### Extract Custom Text Variables\nIncludes custom text variables defined in the InDesign document. Default: **false**.\n\n#### Extract Index Topics\nIncludes index topic entries in the extraction. Default: **false**.\n\n#### Extract External Hyperlinks\nIncludes external hyperlink URLs/text for translation. Enable when hyperlink destinations need to be localized. Default: **false**.\n\n#### Extract Math Zones\nIncludes math zone content for translation. Default: **true**.\n\n#### Excluded Styles\nSpecifies paragraph or character style names whose content should be excluded from extraction. Use this to skip non-translatable styled content such as code listings or product IDs.\n\n### Formatting\n\n#### Skip Discretionary Hyphens\nOmits discretionary (soft) hyphens from extracted text. Default: **false**.\n\n#### Ignore Character Kerning\nPrevents kerning differences from creating separate inline codes. Default: **false**.\n\n#### Ignore Character Tracking\nPrevents tracking (letter-spacing) differences from creating separate inline codes. Default: **false**.\n\n#### Ignore Character Leading\nPrevents leading (line-spacing) differences from creating separate inline codes. Default: **false**.\n\n#### Ignore Character Baseline Shift\nPrevents baseline shift differences from creating separate inline codes. Default: **false**.\n\n## Processing Notes\n\n- Input encoding is **automatically detected**; user-specified encoding is ignored. Always uses UTF-8.\n- Output line-breaks are always simple linefeed (LF).\n- IDML documents are ZIP packages (UCF). Each embedded file is treated as a sub-document.\n- Text is extracted by spread, with stories gathered from `<TextFrame>` and `<TextPath>` elements.\n- Stories embedded inside other stories and not declared at spread level are extracted in a special group.\n- The filter wraps `IDMLContentFilter` — the inner filter handles raw Story XML files directly.\n\n## Limitations\n\n- The IDML filter is marked as **ALPHA** in the Okapi help documentation.\n\n## Examples\n\n### Clean extraction with reduced inline codes\n\nMinimize inline code clutter by merging adjacent codes and ignoring formatting-only differences:\n\n```yaml\nmergeAdjacentCodes: true\nignoreCharacterKerning: true\nignoreCharacterTracking: true\nignoreCharacterLeading: true\nignoreCharacterBaselineShift: true\n```\n\n### Full content extraction\n\nExtract all content including hidden layers, master spreads, and notes:\n\n```yaml\nextractMasterSpreads: true\nextractHiddenLayers: true\nextractNotes: true\nextractCustomTextVariables: true\nextractIndexTopics: true\n```",
-  "filterId": "okf_idml",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/IDML_Filter"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/IDML_Filter",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/IDML_Filter",
+      "okapi-source:okapi/filters/idml/src/main/java/net/sf/okapi/filters/idml/Parameters.java",
+      "okapi-source:okapi/filters/idml/src/main/java/net/sf/okapi/filters/idml/StyleIgnorances.java",
+      "okapi-source:okapi/filters/idml/src/main/java/net/sf/okapi/filters/idml/StoryChildElementsMerger.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.excludedStyles": "ai",
+      "parameters.extractBreaksInline": "ai",
+      "parameters.extractCustomTextVariables": "ai",
+      "parameters.extractExternalHyperlinks": "ai",
+      "parameters.extractHiddenLayers": "ai",
+      "parameters.extractHiddenPasteboardItems": "ai",
+      "parameters.extractHyperlinkTextSourcesInline": "ai",
+      "parameters.extractIndexTopics": "ai",
+      "parameters.extractMasterSpreads": "ai",
+      "parameters.extractMathZones": "ai",
+      "parameters.extractNotes": "ai",
+      "parameters.formatting.baselineShiftMax": "ai",
+      "parameters.formatting.baselineShiftMin": "ai",
+      "parameters.formatting.kerningMax": "ai",
+      "parameters.formatting.kerningMin": "ai",
+      "parameters.formatting.leadingMax": "ai",
+      "parameters.formatting.leadingMin": "ai",
+      "parameters.formatting.trackingMax": "ai",
+      "parameters.formatting.trackingMin": "ai",
+      "parameters.ignoreCharacterBaselineShift": "ai",
+      "parameters.ignoreCharacterKerning": "ai",
+      "parameters.ignoreCharacterLeading": "ai",
+      "parameters.ignoreCharacterTracking": "ai",
+      "parameters.maxAttributeSize": "ai",
+      "parameters.mergeAdjacentCodes": "ai",
+      "parameters.skipDiscretionaryHyphens": "ai",
+      "parameters.specialCharacterPattern": "ai",
+      "parameters.untagXmlStructures": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

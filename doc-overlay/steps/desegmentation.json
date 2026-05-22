@@ -1,0 +1,74 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "desegmentation",
+  "kind": "step",
+  "name": "Desegmentation Step",
+  "overview": "This step joins all segments of each source and/or target text unit into a single content, effectively reversing the segmentation process. Non-segmented entries and text units flagged as non-translatable are left untouched. It operates on filter events and is typically used after processing to recombine segments that were split by the Segmentation step.",
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Non-segmented entries are passed through untouched.",
+    "Text units flagged as non-translatable are passed through untouched."
+  ],
+  "examples": [
+    {
+      "title": "Rejoin segments before writing output",
+      "description": "Join the source and target segments of each text unit back into single content. Run this after translation and any segment-level processing, so the output document is written with whole paragraphs rather than per-sentence segments.",
+      "config": "```yaml\ndesegmentSource: true\ndesegmentTarget: true\n```",
+      "input": null,
+      "output": null
+    },
+    {
+      "title": "Desegment and restore original code IDs",
+      "description": "When the upstream Segmentation step renumbered inline-code IDs per segment, enable `renumberCodes` so the joined content is rebuilt with a single original ID sequence. This option is only meaningful when at least one of `desegmentSource`/`desegmentTarget` is enabled.",
+      "config": "```yaml\ndesegmentSource: true\ndesegmentTarget: true\nrenumberCodes: true\n```",
+      "input": null,
+      "output": null
+    }
+  ],
+  "parameters": {
+    "desegmentSource": {
+      "help": "Joins all segments within each source text unit back into a single content.\n\nNon-segmented entries and non-translatable text units are left untouched regardless of this setting."
+    },
+    "desegmentTarget": {
+      "help": "Joins all segments within each target text unit back into a single content. Only applies when a target text exists.\n\nNon-segmented entries and non-translatable text units are left untouched regardless of this setting."
+    },
+    "renumberCodes": {
+      "help": "Restores the original inline code IDs after desegmentation. When content was segmented using the **Renumber code IDs** option in the Segmentation step, code IDs were renumbered per-segment starting at `1`. This option reverses that renumbering by reconstructing the original single sequence of IDs across the joined content.",
+      "notes": [
+        "This option is only meaningful when content was previously segmented with the **Renumber code IDs** option in the Segmentation step."
+      ],
+      "dependsOn": [
+        {
+          "property": "desegmentSource",
+          "condition": "only meaningful when at least one of desegmentSource or desegmentTarget is enabled"
+        }
+      ],
+      "seeAlso": "Segmentation_Step"
+    }
+  },
+  "propertySuggestions": {
+    "desegmentSource": {
+      "description": "Joins all segments of each source text unit into a single content."
+    },
+    "desegmentTarget": {
+      "description": "Joins all segments of each target text unit into a single content, if a target exists."
+    },
+    "renumberCodes": {
+      "description": "Restores original code IDs that were renumbered during segmentation."
+    }
+  },
+  "fullDoc": "# Desegmentation Step\n\nThis step joins all segments of each source and/or target text unit into a single content, effectively reversing the segmentation process. Non-segmented entries and text units flagged as non-translatable are left untouched. It operates on filter events and is typically used after processing to recombine segments that were split by the Segmentation step.\n\n## Parameters\n\n#### Join all segments of the source text\n\nJoins all segments within each source text unit back into a single content.\n\nNon-segmented entries and non-translatable text units are left untouched regardless of this setting.\n\n#### Join all segments of the target text\n\nJoins all segments within each target text unit back into a single content. Only applies when a target text exists.\n\nNon-segmented entries and non-translatable text units are left untouched regardless of this setting.\n\n#### Restore original IDs to renumbered codes\n\nRestores the original inline code IDs after desegmentation. When content was segmented using the **Renumber code IDs** option in the Segmentation step, code IDs were renumbered per-segment starting at `1`. This option reverses that renumbering by reconstructing the original single sequence of IDs across the joined content.\n\n> **Note:** This option is only meaningful when content was previously segmented with the **Renumber code IDs** option in the Segmentation step.\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- Non-segmented entries are passed through untouched.\n- Text units flagged as non-translatable are passed through untouched.\n- This step is typically paired with the Segmentation step in a pipeline — segmentation before processing and desegmentation after.",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Desegmentation_Step",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Desegmentation_Step",
+      "okapi-source:okapi/steps/segmentation/src/main/java/net/sf/okapi/steps/desegmentation/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false
+  }
+}

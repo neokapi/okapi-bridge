@@ -1,0 +1,2126 @@
+{
+  "generatedAt": "2026-05-22T22:32:28Z",
+  "summary": {
+    "total": 181,
+    "filters": 59,
+    "steps": 122,
+    "reviewed": 0,
+    "unreviewedAi": 181,
+    "wikiParse": 74,
+    "aliasDerived": 6
+  },
+  "capabilities": [
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Archive_Filter",
+        "schema"
+      ],
+      "aiFields": 7
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/autoxliff/src/main/java/net/sf/okapi/filters/autoxliff/AutoXLIFFFilter.java",
+        "okapi-source:okapi/filters/autoxliff/src/main/java/net/sf/okapi/filters/autoxliff/AutoXLIFFParameters.java",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "filter",
+      "generator": "alias",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_plaintext",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/Plain_Text_Filter"
+      ],
+      "aiFields": 17
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_table",
+        "okapi-source:okapi/filters/plaintext/src/main/java/net/sf/okapi/filters/plaintext/base/Parameters.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/BaseTableFilter.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/Parameters.java",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/Table_Filter"
+      ],
+      "aiFields": 55
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_table",
+        "okapi-source:okapi/filters/plaintext/src/main/java/net/sf/okapi/filters/plaintext/base/Parameters.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/BaseTableFilter.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/Parameters.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/csv/CommaSeparatedValuesFilter.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/csv/Parameters.java",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/Table_Filter"
+      ],
+      "aiFields": 37
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Doxygen_Filter",
+        "okapi-source:okapi/filters/doxygen/src/main/java/net/sf/okapi/filters/doxygen/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 7
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/DTD_Filter",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/EPUB_Filter",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_table",
+        "okapi-source:okapi/filters/plaintext/src/main/java/net/sf/okapi/filters/plaintext/base/Parameters.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/BaseTableFilter.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/Parameters.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/fwc/FixedWidthColumnsFilter.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/fwc/Parameters.java",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/Table_Filter"
+      ],
+      "aiFields": 34
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/HTML_Filter",
+        "schema"
+      ],
+      "aiFields": 11
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/HTML5-ITS_Filter",
+        "schema"
+      ],
+      "aiFields": 8
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/ICML_Filter",
+        "schema"
+      ],
+      "aiFields": 14
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/IDML_Filter",
+        "okapi-source:okapi/filters/idml/src/main/java/net/sf/okapi/filters/idml/Parameters.java",
+        "okapi-source:okapi/filters/idml/src/main/java/net/sf/okapi/filters/idml/StyleIgnorances.java",
+        "okapi-source:okapi/filters/idml/src/main/java/net/sf/okapi/filters/idml/StoryChildElementsMerger.java",
+        "schema"
+      ],
+      "aiFields": 32
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/JSON_Filter",
+        "schema"
+      ],
+      "aiFields": 21
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/markdown/src/main/java/net/sf/okapi/filters/markdown/Parameters.java",
+        "okapi-source:okapi/filters/markdown/src/main/java/net/sf/okapi/filters/markdown/parser/MarkdownParser.java",
+        "okapi-source:okapi/filters/markdown/src/main/java/net/sf/okapi/filters/markdown/MarkdownFilter.java",
+        "wiki:https://okapiframework.org/wiki/index.php/Markdown_Filter",
+        "schema"
+      ],
+      "aiFields": 19
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Message_Format_Filter",
+        "schema"
+      ],
+      "aiFields": 7
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/MIF_Filter",
+        "okapi-source:okapi/filters/mif/src/main/java/net/sf/okapi/filters/mif/Parameters.java",
+        "okapi-source:okapi/filters/mif/src/main/java/net/sf/okapi/filters/mif/MIFFilter.java",
+        "schema"
+      ],
+      "aiFields": 15
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Moses_Text_Filter",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/multiparsers/src/main/java/net/sf/okapi/filters/multiparsers/Parameters.java",
+        "wiki:https://okapiframework.org/wiki/index.php/Multi-Parsers_Filter",
+        "schema"
+      ],
+      "aiFields": 9
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/openoffice/src/main/java/net/sf/okapi/filters/openoffice/Parameters.java",
+        "okapi-source:okapi/filters/openoffice/src/main/java/net/sf/okapi/filters/openoffice/ODFFilter.java",
+        "wiki:https://okapiframework.org/wiki/index.php/OpenOffice_Filter",
+        "schema"
+      ],
+      "aiFields": 8
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_odf",
+        "okapi-source:okapi/filters/openoffice/src/main/java/net/sf/okapi/filters/openoffice/ODFFilter.java",
+        "okapi-source:okapi/filters/openoffice/src/main/java/net/sf/okapi/filters/openoffice/OpenOfficeFilter.java",
+        "okapi-source:okapi/filters/openoffice/src/main/java/net/sf/okapi/filters/openoffice/Parameters.java",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/OpenOffice_Filter"
+      ],
+      "aiFields": 8
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/OpenXML_Filter",
+        "schema"
+      ],
+      "aiFields": 64
+    },
+    {
+      "kind": "filter",
+      "generator": "alias",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_plaintext",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/Plain_Text_Filter"
+      ],
+      "aiFields": 17
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/PDF_Filter",
+        "okapi-source:okapi/filters/pdf/src/main/java/net/sf/okapi/filters/pdf/Parameters.java",
+        "okapi-source:okapi/filters/pdf/src/main/java/net/sf/okapi/filters/pdf/PdfFilter.java",
+        "schema"
+      ],
+      "aiFields": 8
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Pensieve_TM_Filter",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/PHP_Content_Filter",
+        "schema"
+      ],
+      "aiFields": 8
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Plain_Text_Filter",
+        "schema"
+      ],
+      "aiFields": 17
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/PO_Filter",
+        "schema"
+      ],
+      "aiFields": 15
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Properties_Filter",
+        "schema"
+      ],
+      "aiFields": 16
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/rainbowkit/src/main/java/net/sf/okapi/filters/rainbowkit/Parameters.java",
+        "okapi-source:okapi/filters/rainbowkit/src/main/java/net/sf/okapi/filters/rainbowkit/RainbowKitFilter.java",
+        "wiki:https://okapiframework.org/wiki/index.php/Rainbow_Translation_Kit_Filter",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Regex_Filter",
+        "okapi-source:okapi/filters/regex/src/main/java/net/sf/okapi/filters/regex/Parameters.java",
+        "okapi-source:okapi/filters/regex/src/main/java/net/sf/okapi/filters/regex/RegexFilter.java",
+        "schema"
+      ],
+      "aiFields": 15
+    },
+    {
+      "kind": "filter",
+      "generator": "alias",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_plaintext",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/Plain_Text_Filter"
+      ],
+      "aiFields": 17
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/rtf/src/main/java/net/sf/okapi/filters/rtf/RTFFilter.java",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/SDL_Trados_Package_Filter",
+        "okapi-source:okapi/filters/sdlpackage/src/main/java/net/sf/okapi/filters/sdlpackage/SdlPackageFilter.java",
+        "okapi-source:okapi/filters/archive/src/main/java/net/sf/okapi/filters/archive/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Simplification_Filter",
+        "schema"
+      ],
+      "aiFields": 7
+    },
+    {
+      "kind": "filter",
+      "generator": "alias",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_plaintext",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/Plain_Text_Filter"
+      ],
+      "aiFields": 17
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Table_Filter",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/Parameters.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/BaseTableFilter.java",
+        "okapi-source:okapi/filters/plaintext/src/main/java/net/sf/okapi/filters/plaintext/base/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 32
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_table",
+        "okapi-source:okapi/filters/plaintext/src/main/java/net/sf/okapi/filters/plaintext/base/Parameters.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/BaseTableFilter.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/Parameters.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/tsv/Parameters.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/tsv/TabSeparatedValuesFilter.java",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/Table_Filter"
+      ],
+      "aiFields": 32
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/tex/src/main/java/net/sf/okapi/filters/tex/TEXFilter.java",
+        "okapi-source:okapi/filters/tex/src/main/java/net/sf/okapi/filters/tex/parser/TEXParser.java",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/tmx/src/main/java/net/sf/okapi/filters/tmx/Parameters.java",
+        "okapi-source:okapi/filters/tmx/src/main/java/net/sf/okapi/filters/tmx/TmxFilter.java",
+        "okapi-source:okapi/filters/tmx/src/main/java/net/sf/okapi/filters/tmx/TmxTu.java",
+        "wiki:https://okapiframework.org/wiki/index.php/TMX_Filter",
+        "schema"
+      ],
+      "aiFields": 10
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Trados-Tagged_RTF_Filter",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/transifex/src/main/java/net/sf/okapi/filters/transifex/Parameters.java",
+        "okapi-source:okapi/filters/transifex/src/main/java/net/sf/okapi/filters/transifex/TransifexFilter.java",
+        "wiki:https://okapiframework.org/wiki/index.php/Transifex_Filter",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "filter",
+      "generator": "alias",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_table",
+        "okapi-source:okapi/filters/plaintext/src/main/java/net/sf/okapi/filters/plaintext/base/Parameters.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/BaseTableFilter.java",
+        "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/Parameters.java",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/Table_Filter"
+      ],
+      "aiFields": 32
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/ts/src/main/java/net/sf/okapi/filters/ts/Parameters.java",
+        "okapi-source:okapi/filters/ts/src/main/java/net/sf/okapi/filters/ts/TsFilter.java",
+        "wiki:https://okapiframework.org/wiki/index.php/TS_Filter",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/ttml/TTMLParameters.java",
+        "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/subtitles/SubtitleParameters.java",
+        "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/subtitles/SubtitleFilter.java",
+        "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/ttml/TTMLSkeletonWriter.java",
+        "schema"
+      ],
+      "aiFields": 9
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/TTX_Filter",
+        "okapi-source:okapi/filters/ttx/src/main/java/net/sf/okapi/filters/ttx/Parameters.java",
+        "okapi-source:okapi/filters/ttx/src/main/java/net/sf/okapi/filters/ttx/TTXFilter.java",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/TXML_Filter",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "filter",
+      "generator": "alias",
+      "reviewed": false,
+      "grounding": [
+        "alias-parent:okf_plaintext",
+        "schema",
+        "wiki:https://okapiframework.org/wiki/index.php/Plain_Text_Filter"
+      ],
+      "aiFields": 17
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/vignette/src/main/java/net/sf/okapi/filters/vignette/Parameters.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/encoder/XMLEncoder.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/encoder/QuoteMode.java",
+        "wiki:https://okapiframework.org/wiki/index.php/Vignette_Filter",
+        "schema"
+      ],
+      "aiFields": 11
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/vtt/VTTParameters.java",
+        "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/vtt/VTTFilter.java",
+        "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/vtt/VTTSkeletonWriter.java",
+        "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/subtitles/SubtitleParameters.java",
+        "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/subtitles/SubtitleFilter.java",
+        "schema"
+      ],
+      "aiFields": 11
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Wiki_Filter",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/WSXZ_Package_Filter",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/XINIFilter.java",
+        "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/Parameters.java",
+        "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/XINIReader.java",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/rainbowkit/XINIRainbowkitFilter.java",
+        "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/rainbowkit/XINIRainbowkitReader.java",
+        "okapi-source:okapi/filters/xini/src/main/java/net/sf/okapi/filters/xini/rainbowkit/XINIRainbowkitWriter.java",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/XLIFF_Filter",
+        "schema"
+      ],
+      "aiFields": 46
+    },
+    {
+      "kind": "filter",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/XLIFF-2_Filter",
+        "okapi-source:okapi/filters/xliff2/src/main/java/net/sf/okapi/filters/xliff2/Parameters.java",
+        "okapi-source:okapi/filters/xliff2/src/main/java/net/sf/okapi/filters/xliff2/XLIFF2Filter.java",
+        "okapi-source:okapi/filters/xliff2/src/main/java/net/sf/okapi/filters/xliff2/XLIFF2FilterWriter.java",
+        "schema"
+      ],
+      "aiFields": 11
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/XML_Filter",
+        "schema"
+      ],
+      "aiFields": 13
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/XML_Stream_Filter",
+        "schema"
+      ],
+      "aiFields": 15
+    },
+    {
+      "kind": "filter",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/YAML_Filter",
+        "schema"
+      ],
+      "aiFields": 17
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/BOM_Conversion_Step",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/leveraging/src/main/java/net/sf/okapi/steps/leveraging/BatchTmLeveragingStep.java",
+        "okapi-source:okapi/steps/leveraging/src/main/java/net/sf/okapi/steps/leveraging/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Batch_Translation_Step",
+        "schema"
+      ],
+      "aiFields": 17
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Used_Characters_Listing_Step",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Character_Count_Step",
+        "schema"
+      ],
+      "aiFields": 9
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/characterschecker/CharactersCheckerStep.java",
+        "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/characterschecker/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Cleanup_Step",
+        "okapi-source:okapi/steps/cleanup/src/main/java/net/sf/okapi/steps/cleanup/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 11
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Inline_Codes_Simplifier_Step",
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/codesimplifier/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Inline_Codes_Removal_Step",
+        "schema"
+      ],
+      "aiFields": 9
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ConcordanceCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ConcordanceWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ConcordanceWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Segments_to_Text_Units_Converter_Step",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Copy_Or_Move_Step",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/copysource/CopySourceOnEmptyTargetStep.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Create_Target_Step",
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/createtarget/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 8
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Desegmentation_Step",
+        "okapi-source:okapi/steps/segmentation/src/main/java/net/sf/okapi/steps/desegmentation/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 7
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Diff_Leverage_Step",
+        "schema"
+      ],
+      "aiFields": 8
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Encoding_Conversion_Step",
+        "schema"
+      ],
+      "aiFields": 13
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Enrycher_Step",
+        "okapi-source:okapi/steps/enrycher/src/main/java/net/sf/okapi/steps/enrycher/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactDocumentContextMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactDocumentContextMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactDocumentContextMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactLocalContextMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactLocalContextMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactLocalContextMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactPreviousVersionMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactPreviousVersionMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactPreviousVersionMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactRepairedCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactRepairedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactRepairedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactStructuralMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactStructuralMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactStructuralMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactTextOnlyCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactTextOnlyWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactTextOnlyPreviousVersionMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactTextOnlyPreviousVersionMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactTextOnlyPreviousVersionMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactTextOnlyUniqueIdMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactTextOnlyUniqueIdMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactTextOnlyUniqueIdMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactTextOnlyWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactUniqueIdMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactUniqueIdMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/ExactUniqueIdMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/External_Command_Step",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Extraction_Verification_Step",
+        "schema"
+      ],
+      "aiFields": 9
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Rainbow_Translation_Kit_Creation_Step",
+        "schema"
+      ],
+      "aiFields": 12
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Filter_Events_to_Raw_Document_Step",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/FilterEventsWriterStep.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Format_Conversion_Step",
+        "schema"
+      ],
+      "aiFields": 13
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Full-Width_Conversion_Step",
+        "schema"
+      ],
+      "aiFields": 11
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyPreviousVersionMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyPreviousVersionMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyPreviousVersionMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyRepairedCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyRepairedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyRepairedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyUniqueIdMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyUniqueIdMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyUniqueIdMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXAlphanumericOnlyTextUnitCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/TokenCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXAlphanumericOnlyTextUnitWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/TokenCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXExactMatchedCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXExactMatchedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXExactMatchedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXFuzzyMatchCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXFuzzyMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXFuzzyMatchWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXLeveragedMatchedCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXLeveragedMatchedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXLeveragedMatchedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXMeasurementOnlyTextUnitCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/TokenCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXMeasurementOnlyTextUnitWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/TokenCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXNumericOnlyTextUnitCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/TokenCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXNumericOnlyTextUnitWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/TokenCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXProtectedCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXProtectedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXProtectedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/WordCounter.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXRepetitionMatchedCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXRepetitionMatchedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXRepetitionMatchedWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/generalchecker/GeneralCheckerStep.java",
+        "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/generalchecker/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Id-Based_Aligner_Step",
+        "schema"
+      ],
+      "aiFields": 11
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Id-Based_Copy_Step",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Image_Modification_Step",
+        "schema"
+      ],
+      "aiFields": 8
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Inconsistency_Check_Step",
+        "schema"
+      ],
+      "aiFields": 9
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/inlinescodeschecker/InlineCodesCheckerStep.java",
+        "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/inlinescodeschecker/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/lengthchecker/LengthCheckerStep.java",
+        "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/lengthchecker/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Leveraging_Step",
+        "schema"
+      ],
+      "aiFields": 19
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Line-Break_Conversion_Step",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Localizables_Check_Step",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Microsoft_Batch_Translation_Step",
+        "schema"
+      ],
+      "aiFields": 20
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/MTCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/MTWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/MTWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Rainbow_Translation_Kit_Merging_Step",
+        "schema"
+      ],
+      "aiFields": 10
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Paragraph_Alignment_Step",
+        "okapi-source:okapi/steps/aligner/src/main/java/net/sf/okapi/steps/paraaligner/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/patternschecker/PatternsCheckerStep.java",
+        "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/patternschecker/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/PhraseAssembledCharacterCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/PhraseAssembledWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/PhraseAssembledWordCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+        "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+        "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Post-segmentation_Inline_Codes_Removal_Step",
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/codesimplifier/Parameters.java",
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/codesimplifier/PostSegmentationCodeSimplifierStep.java",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Quality_Check_Step",
+        "schema"
+      ],
+      "aiFields": 117
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/RTF_Conversion_Step",
+        "schema"
+      ],
+      "aiFields": 7
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Raw_Document_to_Filter_Events_Step",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/RawDocumentToOutputStreamStep.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/RawDocumentWriterStep.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Remove_Target_Step",
+        "schema"
+      ],
+      "aiFields": 8
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Repetition_Analysis_Step",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Resource_Simplifier_Step",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Scoping_Report_Step",
+        "schema"
+      ],
+      "aiFields": 32
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Search_and_Replace_Step",
+        "schema"
+      ],
+      "aiFields": 15
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Segmentation_Step",
+        "schema"
+      ],
+      "aiFields": 17
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Sentence_Alignment_Step",
+        "okapi-source:okapi/steps/aligner/src/main/java/net/sf/okapi/steps/sentencealigner/Parameters.java",
+        "schema"
+      ],
+      "aiFields": 15
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Simple_Word_Count_Step",
+        "schema"
+      ],
+      "aiFields": 4
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Space_Check_Step",
+        "schema"
+      ],
+      "aiFields": 3
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/TM_Import_Step",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/TTX_Joiner_Step",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/TTX_Splitter_Step",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Term_Extraction_Step",
+        "schema"
+      ],
+      "aiFields": 18
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Terminology_Leveraging_Step",
+        "okapi-source:okapi/steps/terminologyleveraging/src/main/java/net/sf/okapi/steps/terminologyleveraging/TerminologyParameters.java",
+        "schema"
+      ],
+      "aiFields": 9
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Text_Modification_Step",
+        "schema"
+      ],
+      "aiFields": 16
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Tokenization_Step",
+        "schema"
+      ],
+      "aiFields": 23
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Translation_Comparison_Step",
+        "schema"
+      ],
+      "aiFields": 21
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/tufiltering/TuFilteringStep.java",
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/tufiltering/Parameters.java",
+        "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/tufiltering/ITextUnitFilter.java",
+        "schema"
+      ],
+      "aiFields": 2
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/URI_Conversion_Step",
+        "schema"
+      ],
+      "aiFields": 7
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Whitespace_Correction_Step",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/Word_Count_Step",
+        "schema"
+      ],
+      "aiFields": 10
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/XML_Analysis_Step",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/XML_Characters_Fixing_Step",
+        "schema"
+      ],
+      "aiFields": 5
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/XML_Validation_Step",
+        "schema"
+      ],
+      "aiFields": 8
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/XSL_Transformation_Step",
+        "schema"
+      ],
+      "aiFields": 10
+    },
+    {
+      "kind": "step",
+      "generator": "claude/wiki-parse",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/XLIFF_Joiner_Step",
+        "schema"
+      ],
+      "aiFields": 6
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "wiki:https://okapiframework.org/wiki/index.php/XLIFF_Splitter_Step",
+        "okapi-source:okapi/steps/xliffsplitter/src/main/java/net/sf/okapi/steps/xliffsplitter/XliffSplitterParameters.java",
+        "schema"
+      ],
+      "aiFields": 10
+    },
+    {
+      "kind": "step",
+      "generator": "claude-opus-4-7",
+      "reviewed": false,
+      "grounding": [
+        "okapi-source:okapi/steps/xliffsplitter/src/main/java/net/sf/okapi/steps/xliffsplitter/XliffWCSplitterStep.java",
+        "okapi-source:okapi/steps/xliffsplitter/src/main/java/net/sf/okapi/steps/xliffsplitter/XliffWCSplitter.java",
+        "okapi-source:okapi/steps/xliffsplitter/src/main/java/net/sf/okapi/steps/xliffsplitter/XliffWCSplitterParameters.java",
+        "schema"
+      ],
+      "aiFields": 4
+    }
+  ]
+}

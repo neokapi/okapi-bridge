@@ -1,6 +1,30 @@
 {
   "filterName": "Create Target Step",
+  "stepId": "create-target",
   "overview": "Creates the target segment container for each text unit in the pipeline. Optionally copies source content and/or source properties into the newly created target. This step operates on filter events and is typically placed early in a pipeline before any translation or leveraging steps.",
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Operates on filter events — must be placed after a filter step in the pipeline.",
+    "Requires both source and target languages to be set in the pipeline context."
+  ],
+  "examples": [
+    {
+      "title": "Seed targets with source content",
+      "description": "Create a target for each text unit, pre-filled with the source text and its properties. This is the common preparation before machine translation or TM leveraging that expects an existing target to write into.",
+      "config": "```yaml\ncopyContent: true\ncopyProperties: true\n```",
+      "input": null,
+      "output": null
+    },
+    {
+      "title": "Create empty targets, skip non-translatable units",
+      "description": "Create empty target containers for translatable units only, leaving non-translatable units without a target. Disable content and property copying when a later step supplies the target text from scratch.",
+      "config": "```yaml\ncopyContent: false\ncopyProperties: false\ncreateOnNonTranslatable: false\n```",
+      "input": null,
+      "output": null
+    }
+  ],
   "parameters": {
     "copyContent": {
       "help": "Copies the source text into the newly created target container. This is useful when you want the target to start as a copy of the source — for example, before applying translation memory leveraging or machine translation.\n\nIf disabled, the target container is created empty."
@@ -32,15 +56,27 @@
       "description": "Create a target container even for non-translatable text units."
     }
   },
-  "limitations": [
-    "None known."
-  ],
-  "processingNotes": [
-    "Operates on filter events — must be placed after a filter step in the pipeline.",
-    "Requires both source and target languages to be set in the pipeline context."
-  ],
-  "examples": [],
   "fullDoc": "# Create Target Step\n\nCreates the target segment container for each text unit in the pipeline. Optionally copies source content and/or source properties into the newly created target. This step operates on filter events and is typically placed early in a pipeline before any translation or leveraging steps.\n\n## Parameters\n\n#### Copy the source content to the target\n\nCopies the source text into the newly created target container. This is useful when you want the target to start as a copy of the source — for example, before applying translation memory leveraging or machine translation.\n\nIf disabled, the target container is created empty.\n\n**Default:** enabled\n\n#### Copy the source properties to the target\n\nCopies source-level properties (metadata attributes on the text unit) into the target. Properties may include state information, notes, or other metadata attached to the source entry.\n\nIf disabled, the target is created with no properties.\n\n**Default:** enabled\n\n#### Overwrite the current target content\n\nForces the source content and/or properties to be copied into the target **even when a target already exists**. Without this option, existing targets are left untouched.\n\nUseful when re-processing bilingual files where you want to reset all targets back to source content.\n\n> **Warning:** Enabling this will discard any existing translations in the target. Use with care on bilingual files that already contain translated content.\n\n**Default:** disabled\n\n#### Creates target for non-translatable text units\n\nControls whether a target container is created for text units marked as non-translatable. Some downstream steps may still need a target entry to exist even for non-translatable segments (e.g., for consistent output structure).\n\nDisable this to skip target creation for non-translatable text units.\n\n**Default:** enabled\n\n## Limitations\n\n- None known.\n\n## Notes\n\n- This step requires both source and target languages to be configured in the pipeline.\n- Operates on filter events — must appear after a filter step in the pipeline.\n- Typically placed early in the pipeline, before leveraging or translation steps.",
-  "stepId": "create-target",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Create_Target_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Create_Target_Step",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Create_Target_Step",
+      "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/createtarget/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.copyContent": "ai",
+      "parameters.copyProperties": "ai",
+      "parameters.createOnNonTranslatable": "ai",
+      "parameters.overwriteExisting": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

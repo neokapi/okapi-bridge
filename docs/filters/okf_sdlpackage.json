@@ -1,7 +1,7 @@
 {
   "filterName": "SDL Trados Package Filter",
+  "filterId": "okf_sdlpackage",
   "overview": "The SDL Trados Package Filter processes SDL Trados SDLPPX (project package) and SDLRPX (return package) files. It extends the Archive Filter, detecting SDLXLIFF files for the specified language pair within the package and processing them using the XLIFF Filter with the `okf_xliff-sdl` configuration. Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events.",
-  "parameters": {},
   "limitations": [
     "Reading an SDLPPX file and writing it back produces another SDLPPX file, not an SDLRPX file.",
     "All limitations of the XLIFF Filter also apply, since SDLXLIFF content is processed via the `okf_xliff-sdl` configuration."
@@ -12,8 +12,43 @@
     "Each SDLXLIFF file inside the package maps to a separate sub-document in the filter event stream.",
     "Only SDLXLIFF files matching the specified language pair are detected and processed."
   ],
-  "fullDoc": "# SDL Trados Package Filter\n\nThe SDL Trados Package Filter processes SDL Trados SDLPPX (project package) and SDLRPX (return package) files. It extends the Archive Filter, detecting SDLXLIFF files for the specified language pair within the package and processing them using the XLIFF Filter with the `okf_xliff-sdl` configuration. Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events.\n\n## Processing Details\n\nThis filter is an extension of the Archive Filter. It reads the input package, detects the SDLXLIFF files for the specified language pair, and uses the XLIFF Filter (with `okf_xliff-sdl`) to process the content. Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events.\n\n## Parameters\n\nThis filter has no configurable parameters. It uses the Archive Filter infrastructure with built-in SDLXLIFF detection and the `okf_xliff-sdl` XLIFF Filter configuration.\n\n## Limitations\n\n- Reading an SDLPPX file and writing it back produces another SDLPPX file, not an SDLRPX file.\n- All limitations of the XLIFF Filter also apply, since SDLXLIFF content is processed via the `okf_xliff-sdl` configuration.\n\n## Notes\n\n- The filter implementation class is `net.sf.okapi.filters.sdlpackage.SdlPackageFilter`.\n- For XLIFF-level configuration details, see the XLIFF Filter documentation.",
-  "examples": [],
-  "filterId": "okf_sdlpackage",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/SDL_Trados_Package_Filter"
+  "examples": [
+    {
+      "title": "Process an SDLPPX project package",
+      "description": "Open an SDL Trados project package for a French target. The filter resolves the SDLXLIFF files under the target-language folder and processes each with the XLIFF Filter; no MIME type override is needed because the filter sets `application/x-sdlpackage` itself.",
+      "config": "```yaml\n# No parameters are required for normal use.\n# The target language is supplied by the pipeline, not the filter config;\n# the filter then looks for <lang>/*.sdlxliff (and one sub-folder level deeper).\n```"
+    },
+    {
+      "title": "Override the container MIME type",
+      "description": "Set the MIME type the filter reports for the container. The filter inherits this field from the Archive Filter and defaults it to `application/x-sdlpackage` at construction; override it only when a downstream component needs a different identifier.",
+      "config": "```yaml\nidentification:\n  mimeType: \"application/x-sdlpackage\"\n```"
+    }
+  ],
+  "parameters": {
+    "identification.mimeType": {
+      "help": "MIME type the filter reports for the package container. Inherited from the Archive Filter, which this filter extends. Although the published schema shows the Archive base default `application/x-archive`, the SDL package filter overrides it in its constructor to `application/x-sdlpackage`, so that is the effective value unless you set it explicitly. The MIME type identifies the outer container only; the SDLXLIFF sub-documents inside are processed by the XLIFF Filter (`okf_xliff-sdl`) and carry their own XLIFF MIME type.",
+      "values": "MIME type string. Effective default `application/x-sdlpackage` (schema-level default inherited from Archive is `application/x-archive`)."
+    }
+  },
+  "fullDoc": "# SDL Trados Package Filter\n\nThe SDL Trados Package Filter processes SDL Trados SDLPPX (project package) and SDLRPX (return package) files. It extends the Archive Filter, detecting SDLXLIFF files for the specified language pair within the package and processing them using the XLIFF Filter with the `okf_xliff-sdl` configuration. Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events.\n\n## Processing Details\n\nThis filter is an extension of the Archive Filter. It reads the input package, detects the SDLXLIFF files for the specified language pair, and uses the XLIFF Filter (with `okf_xliff-sdl`) to process the content. Each SDLXLIFF file inside the package corresponds to a sub-document in the Okapi filter events.\n\n## Parameters\n\nThe filter exposes only the Archive Filter's container **MIME type** (`mimeType`), which it overrides to `application/x-sdlpackage` at construction. SDLXLIFF detection (target-language folder pattern and the `okf_xliff-sdl` configuration) is set internally and is not exposed as a parameter.\n\n## Limitations\n\n- Reading an SDLPPX file and writing it back produces another SDLPPX file, not an SDLRPX file.\n- All limitations of the XLIFF Filter also apply, since SDLXLIFF content is processed via the `okf_xliff-sdl` configuration.\n\n## Notes\n\n- The filter implementation class is `net.sf.okapi.filters.sdlpackage.SdlPackageFilter`.\n- For XLIFF-level configuration details, see the XLIFF Filter documentation.",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/SDL_Trados_Package_Filter",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/SDL_Trados_Package_Filter",
+      "okapi-source:okapi/filters/sdlpackage/src/main/java/net/sf/okapi/filters/sdlpackage/SdlPackageFilter.java",
+      "okapi-source:okapi/filters/archive/src/main/java/net/sf/okapi/filters/archive/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.identification.mimeType": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

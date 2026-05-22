@@ -1,0 +1,39 @@
+{
+  "filterName": "XLIFF Word-Count Splitter Step",
+  "stepId": "xliff-w-c-splitter",
+  "overview": "The XLIFF Word-Count Splitter step divides a single XLIFF 1.2 document into several smaller documents according to a source word-count threshold. It streams the input, tallies the source words of each trans-unit, and once the running count reaches the configured maximum it closes the current part and opens the next, reproducing the surrounding element structure so each part is a well-formed XLIFF file. It expects a raw document and passes it through, writing the numbered part files alongside the input.",
+  "limitations": [
+    "Supports XLIFF 1.2 input only, and the source must be a URI-backed raw document — in-memory raw documents are not accepted.",
+    "A split occurs only at a trans-unit boundary once the threshold is reached, so an individual part may exceed the threshold if a single trans-unit pushes the count past it."
+  ],
+  "processingNotes": [
+    "Word counting uses the source content of each trans-unit; trans-units marked `translate=\"no\"` and those with a `state-qualifier` of `x-numeric`, `x-alphanum`, or `x-punctuation` are excluded from the count.",
+    "Output parts are written as `<input>_PART###.xlf` next to the input, each encoded as UTF-8 with a leading byte-order mark, and DTD processing is disabled on the XML reader for safety.",
+    "The source locale is taken from the incoming raw document rather than configured on the step."
+  ],
+  "examples": [
+    {
+      "title": "Split a large XLIFF into ~200,000-word parts",
+      "description": "Splits the input XLIFF 1.2 document at trans-unit boundaries into sequential `_PART###.xlf` files, starting a new part once the accumulated translatable word count crosses the threshold. Units marked `translate=\"no\"` and numeric/alphanumeric/punctuation-only units are excluded from the count.",
+      "config": "```yaml\nthreshold: 200000\n```"
+    }
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/xliffsplitter/src/main/java/net/sf/okapi/steps/xliffsplitter/XliffWCSplitterStep.java",
+      "okapi-source:okapi/steps/xliffsplitter/src/main/java/net/sf/okapi/steps/xliffsplitter/XliffWCSplitter.java",
+      "okapi-source:okapi/steps/xliffsplitter/src/main/java/net/sf/okapi/steps/xliffsplitter/XliffWCSplitterParameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

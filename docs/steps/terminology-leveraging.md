@@ -6,8 +6,6 @@ Requires both source and target languages to be configured.
 
 ## Parameters
 
-This step's parameters (leverage toggle, source/target annotation, connector class and connector parameters) are not exposed in the JSON schema and are configured through Okapi's native UI.
-
 #### Leverage
 Enables or disables the step. Allows keeping the step in a pipeline while toggling it on and off without removing it.
 
@@ -21,7 +19,7 @@ Enables annotation of target segment text with found glossary entries. Annotatio
 Selects the terminology resource connector. Must be a subclass of `BaseTerminologyConnector` or a custom implementation of the `ITerminologyQuery` interface.
 
 #### Connector Parameters
-Opens settings for the selected terminology resource connector.
+Serialized parameters passed to the selected terminology resource connector; the format is defined by that connector.
 
 ## Limitations
 

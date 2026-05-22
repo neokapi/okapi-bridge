@@ -1,0 +1,21 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "raw-document-to-output-stream",
+  "kind": "step",
+  "name": "Raw Document To Output Stream Step",
+  "overview": "The Raw Document To Output Stream step copies the bytes of a raw document to a provided output stream. It is typically the last step in a pipeline that ends with a raw document and needs to be written somewhere other than a file on disk. After copying the content it consumes the raw-document event so nothing is forwarded to a following step.",
+  "processingNotes": [
+    "Copies the raw document's stream verbatim to the destination output stream without interpreting or transforming the content.",
+    "Consumes (eats) the raw-document event after writing and emits a no-op event, so it should normally be the final step in the pipeline.",
+    "The destination output stream is supplied programmatically rather than through step parameters."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/RawDocumentToOutputStreamStep.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

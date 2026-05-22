@@ -1,23 +1,7 @@
 {
   "filterName": "HTML5-ITS Filter",
+  "filterId": "okf_html5",
   "overview": "Processes **HTML5** documents, including those containing **ITS 2.0** (Internationalization Tag Set) markup. Input documents are expected to be valid HTML5. The filter supports global and local ITS rules and most ITS 2.0 data categories, enabling fine-grained control over translatable content, terminology, language information, and directionality.",
-  "parameters": {
-    "path": {
-      "help": "Path to an **ITS rules file** that overrides the default HTML5 processing behavior.\n\nThe default behavior includes:\n- `lang` attribute → Language Information\n- `id` attribute → Id Value\n- Phrasing content elements treated as inline (`withinText=\"yes\"`)\n- `translate` attribute → Translate data category (using HTML5-specific behavior, not XML)\n\nProvide a custom ITS document to override any of these defaults. See the [ITS specification](http://www.w3.org/TR/its20/) for the rule format.",
-      "values": "Path to an ITS 2.0 XML rules document (`.its` or `.xml`)",
-      "seeAlso": "ITS"
-    },
-    "simplifierRules": {
-      "help": "Rules that control how inline codes are simplified for translation. These rules map HTML inline elements to shorter placeholder representations, making segments easier to translate.",
-      "seeAlso": "ITS_Components"
-    },
-    "moveLeadingAndTrailingCodesToSkeleton": {
-      "help": "Inline codes (e.g., `<b>`, `<span>`) that appear at the very start or end of a segment are moved out of the translatable content and into the skeleton. This simplifies segments for translators when boundary tags don't affect the translatable text."
-    },
-    "mergeAdjacentCodes": {
-      "help": "When multiple inline codes appear next to each other with no text between them (e.g., `</b><i>`), they are combined into a single placeholder code. This reduces visual clutter in segments presented to translators."
-    }
-  },
   "limitations": [
     "This filter is **BETA**."
   ],
@@ -41,6 +25,23 @@
       "config": "```properties\nquoteModeDefined=true\nquoteMode=3\n```"
     }
   ],
+  "parameters": {
+    "path": {
+      "help": "Path to an **ITS rules file** that overrides the default HTML5 processing behavior.\n\nThe default behavior includes:\n- `lang` attribute → Language Information\n- `id` attribute → Id Value\n- Phrasing content elements treated as inline (`withinText=\"yes\"`)\n- `translate` attribute → Translate data category (using HTML5-specific behavior, not XML)\n\nProvide a custom ITS document to override any of these defaults. See the [ITS specification](http://www.w3.org/TR/its20/) for the rule format.",
+      "values": "Path to an ITS 2.0 XML rules document (`.its` or `.xml`)",
+      "seeAlso": "ITS"
+    },
+    "simplifierRules": {
+      "help": "Rules that control how inline codes are simplified for translation. These rules map HTML inline elements to shorter placeholder representations, making segments easier to translate.",
+      "seeAlso": "ITS_Components"
+    },
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "help": "Inline codes (e.g., `<b>`, `<span>`) that appear at the very start or end of a segment are moved out of the translatable content and into the skeleton. This simplifies segments for translators when boundary tags don't affect the translatable text."
+    },
+    "mergeAdjacentCodes": {
+      "help": "When multiple inline codes appear next to each other with no text between them (e.g., `</b><i>`), they are combined into a single placeholder code. This reduces visual clutter in segments presented to translators."
+    }
+  },
   "propertySuggestions": {
     "path": {
       "title": "ITS Parameters File",
@@ -48,6 +49,25 @@
     }
   },
   "fullDoc": "# HTML5-ITS Filter\n\nProcesses **HTML5** documents, including those containing **ITS 2.0** (Internationalization Tag Set) markup. Input documents are expected to be valid HTML5. The filter supports global and local ITS rules and most ITS 2.0 data categories, enabling fine-grained control over translatable content, terminology, language information, and directionality.\n\n## Parameters\n\n### ITS Parameters File (`path`)\n\nPath to an **ITS rules file** that overrides the default HTML5 processing behavior.\n\nThe default behavior includes:\n- `lang` attribute → Language Information\n- `id` attribute → Id Value\n- Phrasing content elements treated as inline (`withinText=\"yes\"`)\n- `translate` attribute → Translate data category (using HTML5-specific behavior, not XML)\n\nProvide a custom ITS document to override any of these defaults.\n\n### Simplifier Rules (`simplifierRules`)\n\nRules that control how inline codes are simplified for translation. These rules map HTML inline elements to shorter placeholder representations, making segments easier to translate.\n\n### Move Boundary Codes to Skeleton (`moveLeadingAndTrailingCodesToSkeleton`)\n\nInline codes (e.g., `<b>`, `<span>`) that appear at the very start or end of a segment are moved out of the translatable content and into the skeleton. This simplifies segments for translators when boundary tags don't affect the translatable text.\n\n### Merge Adjacent Codes (`mergeAdjacentCodes`)\n\nWhen multiple inline codes appear next to each other with no text between them (e.g., `</b><i>`), they are combined into a single placeholder code. This reduces visual clutter in segments presented to translators.\n\n## Quote Mode\n\nEscaping of quote and apostrophe characters can be configured via config file properties:\n\n| Mode | Value | Behavior |\n|------|-------|----------|\n| `0` | UNESCAPED | Do not escape single or double quotes |\n| `1` | ALL | Escape both to named entities |\n| `2` | NUMERIC_SINGLE_QUOTES | Named entity for double quotes, numeric for single |\n| `3` | DOUBLE_QUOTES_ONLY | Escape double quotes only |\n\n## ITS Support\n\nThe filter processes HTML5 documents based on ITS defaults:\n\n- The `lang` attribute maps to the **Language Information** data category\n- The `id` attribute maps to the **Id Value** data category\n- Phrasing content elements are treated as inline (`withinText=\"yes\"`)\n- The `translate` attribute maps to the **Translate** data category (HTML5-specific behavior)\n\nDefault behavior can be overridden by ITS markup in the input document or by specifying a custom ITS parameters file.\n\nThe filter supports ITS 2.0 — see the [W3C ITS 2.0 specification](http://www.w3.org/TR/its20/) for details.\n\n## Limitations\n\n- This filter is **BETA**.\n\n## Notes\n\n- Input encoding is auto-detected per the HTML5 specification\n- Output encoding matches input unless overridden by the calling tool\n- Line-breaks in output match the original input style\n- HTML5 `translate` attribute behavior differs from XML ITS — see the [HTML5 spec](http://www.w3.org/TR/2013/CR-html5-20130806/dom.html#the-translate-attribute)\n\n## Examples\n\n### Default ITS Rules\n\nThe default configuration defines standard HTML5 behavior:\n\n```xml\n<its:rules xmlns:its=\"http://www.w3.org/2005/11/its\" version=\"2.0\"\n xmlns:h=\"http://www.w3.org/1999/xhtml\">\n  <its:translateRule selector=\"//h:script|//h:style\" translate=\"no\"/>\n  <its:translateRule selector=\"//h:*/@alt|//h:*/@title\" translate=\"yes\"/>\n  <its:translateRule selector=\"//h:meta[@name='keywords']/@content\" translate=\"yes\"/>\n  <its:preserveSpaceRule selector=\"//h:pre|//h:textarea\" space=\"preserve\"/>\n</its:rules>\n```\n\n### Quote Mode Configuration\n\n```properties\nquoteModeDefined=true\nquoteMode=3\n```",
-  "filterId": "okf_html5",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/HTML5-ITS_Filter"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/HTML5-ITS_Filter",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/HTML5-ITS_Filter",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.mergeAdjacentCodes": "ai",
+      "parameters.moveLeadingAndTrailingCodesToSkeleton": "ai",
+      "parameters.path": "ai",
+      "parameters.simplifierRules": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

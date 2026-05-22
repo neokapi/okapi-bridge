@@ -1,0 +1,16 @@
+{
+  "_comment": "Sub-configuration formats and the parent filter overlay they specialise. compose-docs starts from the parent's composed doc and deep-merges the sub-config's own doc-overlay/filters/<id>.json (its tailored overview + any param-help deltas) on top. A sub-config SHOULD still ship its own overlay file with aliasOf set and a tailored overview; if none exists, it inherits the parent verbatim. Orphan formats with no parent are NOT listed here — they get a standalone overlay.",
+  "filters": {
+    "okf_basetable": "okf_table",
+    "okf_commaseparatedvalues": "okf_table",
+    "okf_tabseparatedvalues": "okf_table",
+    "okf_fixedwidthcolumns": "okf_table",
+    "okf_transtable": "okf_table",
+    "okf_baseplaintext": "okf_plaintext",
+    "okf_paraplaintext": "okf_plaintext",
+    "okf_splicedlines": "okf_plaintext",
+    "okf_regexplaintext": "okf_plaintext",
+    "okf_versifiedtext": "okf_plaintext",
+    "okf_openoffice": "okf_odf"
+  }
+}

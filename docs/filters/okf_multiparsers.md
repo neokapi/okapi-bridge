@@ -4,7 +4,20 @@ The Multi-Parsers Filter extracts translatable text from two-level complex forma
 
 ## Parameters
 
-Parameters are not yet documented for this filter.
+#### Columns Not Extracted (`csvNoExtractCols`)
+Comma-separated list of 0-based column indexes whose content is sent to the skeleton rather than extracted. Empty by default (all columns extracted). Ignored when auto-detection is enabled.
+
+#### Column Sub-Filters (`csvFormatCols`)
+Comma-separated `index:filterId` pairs mapping a 0-based column index to the sub-filter that parses that column (e.g. `1:okf_markdown, 5:okf_html`). Columns not listed are treated as plain text. Ignored when auto-detection is enabled.
+
+#### Starting Row (`csvStartingRow`)
+1-based row number at which extraction begins. Set to `2` to skip a single header row. Default `1`.
+
+#### Auto-Detect Column Types (`csvAutoDetectColumnTypes`)
+When enabled, per-column extraction types are read from a designated row of each input file rather than from the static configuration. Default `false`.
+
+#### Auto-Detect Column Types Row (`csvAutoDetectColumnTypesRow`)
+1-based row number holding the per-column type tokens (e.g. `notrans,text,okf_html,okf_markdown,text`) when auto-detection is enabled. Default `2`.
 
 ## Limitations
 
@@ -14,7 +27,3 @@ Parameters are not yet documented for this filter.
 
 - If the input file has a Unicode Byte-Order-Mark (BOM), the corresponding encoding (UTF-8, UTF-16, etc.) is used automatically.
 - If no BOM is present, the default encoding specified in the filter options is used.
-
-## Examples
-
-No examples are available for this filter.

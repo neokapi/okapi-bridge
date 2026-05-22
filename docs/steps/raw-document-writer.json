@@ -1,0 +1,25 @@
+{
+  "filterName": "Raw Document Writer Step",
+  "stepId": "raw-document-writer",
+  "overview": "The Raw Document Writer step writes the bytes of a raw document to an output file. It is typically the last step in a pipeline that ends with a raw document and needs to produce a file on disk. The output location is taken from the pipeline's output URI; after copying the content it consumes the raw-document event so nothing is forwarded to a following step.",
+  "processingNotes": [
+    "Copies the raw document's stream verbatim to the output file without interpreting or transforming the content.",
+    "Creates any missing parent directories for the output path before writing.",
+    "Consumes (eats) the raw-document event after writing and emits a no-op event, so it should normally be the final step in the pipeline.",
+    "The output location is supplied by the pipeline as an output URI rather than through step parameters."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/RawDocumentWriterStep.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

@@ -292,12 +292,22 @@ parse-filter-docs:
 parse-filter-docs-force:
 	@FORCE=1 ./scripts/parse-filter-docs.sh $(FILTER_DOCS_DIR)
 
-# Bundle parsed docs into docs/ directory for plugin release
+# Compose docs/ from the committed AI overlay (doc-overlay/). This is the
+# canonical producer of docs/ — assemble/transform read docs/ for doc.json.
+# Provenance: docs/ is a build product; doc-overlay/ is the committed source.
+compose-docs:
+	@./scripts/compose-docs.sh
+
+# One-time migration of legacy wiki-parsed docs/ into doc-overlay/ (Tier 2).
+migrate-overlay:
+	@./scripts/migrate-docs-to-overlay.sh
+
+# Legacy: parse the Okapi wiki into filter-docs/. Use this to SEED new overlay
+# files (then promote into doc-overlay/ and author on top); it no longer writes
+# docs/ directly — compose-docs owns docs/.
 bundle-docs:
 	@./scripts/bundle-docs.sh $(FILTER_DOCS_DIR)
-	@rm -rf docs
-	@cp -r $(FILTER_DOCS_DIR)/docs docs
-	@echo "Copied to docs/ (commit this directory)"
+	@echo "Wiki parse bundled under $(FILTER_DOCS_DIR)/docs/ (seed for doc-overlay/; run 'make compose-docs' to (re)build docs/)"
 
 # Bundle parsed docs into a single JSON file for UI consumption (legacy)
 bundle-filter-docs:

@@ -1,7 +1,7 @@
 {
   "filterName": "Moses Text Filter",
+  "filterId": "okf_mosestext",
   "overview": "The Moses Text Filter processes InlineText files used by the [Moses MT system](http://www.statmt.org/moses/). Each line in the file is read as a separate text unit. Inline codes are represented using `<g>`, `<x>`, `<bx>`, and `<ex>` elements with numeric identifiers, and line-breaks within entries are represented by `<lb/>`.",
-  "parameters": {},
   "limitations": [],
   "processingNotes": [
     "If the document has a BOM, it is used to determine the input encoding; otherwise **UTF-8** is used regardless of any specified default encoding.",
@@ -17,7 +17,22 @@
       "input": "```\nText in the first entry.\nText of the second entry<lb/>which spans<lb/>several lines\nThird entry.\nFourth entry with <g id=\"1\">bold words</g> and some code:<x id=\"2\"/>\n```"
     }
   ],
+  "parameters": {},
   "fullDoc": "# Moses Text Filter\n\nThe Moses Text Filter processes InlineText files used by the [Moses MT system](http://www.statmt.org/moses/). Each line in the file is read as a separate text unit. Inline codes are represented using `<g>`, `<x>`, `<bx>`, and `<ex>` elements with numeric identifiers, and line-breaks within entries are represented by `<lb/>`.\n\n## Parameters\n\nThis filter has no parameters.\n\n## Processing Notes\n\n- If the document has a BOM, it is used to determine the input encoding; otherwise **UTF-8** is used regardless of any specified default encoding.\n- Output encoding is always forced to **UTF-8**.\n- Output line-break style matches the original input.\n- Reading a Moses InlineText file may produce more text units than the original document because each segment is extracted as a single entry, and the Moses format has no way to mark that multiple entries belong to the same text unit.\n- Use the **Moses InlineText Extraction Step** to create Moses files from other formats (including XLIFF), and the **Moses InlineText Leveraging Step** to re-group entries back into their original text units.\n\n## Inline Code Format\n\nInline codes use the following elements:\n\n| Element | Description |\n|---------|-------------|\n| `<g id=\"N\">...</g>` | Paired inline code (e.g., bold, italic) |\n| `<x id=\"N\"/>` | Standalone inline code |\n| `<bx id=\"N\"/>` | Beginning of paired code |\n| `<ex id=\"N\"/>` | End of paired code |\n| `<lb/>` | Line-break within an entry |\n\n## Limitations\n\nNone known.\n\n## Examples\n\n### Moses InlineText file\n\n```\nText in the first entry.\nText of the second entry<lb/>which spans<lb/>several lines\nThird entry.\nFourth entry with <g id=\"1\">bold words</g> and some code:<x id=\"2\"/>\n```\n\nEach line is read as a separate text unit. The second entry spans multiple lines in the original document, joined by `<lb/>` codes.",
-  "filterId": "okf_mosestext",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Moses_Text_Filter"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Moses_Text_Filter",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Moses_Text_Filter",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai",
+      "examples": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

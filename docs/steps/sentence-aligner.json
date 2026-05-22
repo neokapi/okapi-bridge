@@ -1,6 +1,33 @@
 {
   "filterName": "Sentence Alignment Step",
+  "stepId": "sentence-aligner",
   "overview": "This step aligns sentences within text units (paragraphs) from two synchronized documents. It uses a character-length-based algorithm that accounts for language-specific expansion/contraction ratios, producing alignment match types such as 1-1, 2-1, 1-2, 0-1, 1-0, 2-3, 3-2, etc. The step can optionally segment content using default or custom SRX rules before alignment, and outputs either bilingual text units or a TMX file.",
+  "limitations": [
+    "Currently the events sent by this step are the same as the events it received — aligned text units are not yet passed through the pipeline (only written to TMX). This may be implemented in a future version.",
+    "Source and target text units **must be perfectly synchronized** (paragraph-aligned). If the source document has more text units than the target, an error will be generated.",
+    "Entries set as non-translatable are not processed."
+  ],
+  "processingNotes": [
+    "The alignment algorithm uses character-length ratios with internal parameters that account for language-specific expansion/contraction.",
+    "When processing bilingual documents (e.g., TMX, PO), use only a single input list.",
+    "The default SRX segmentation rules are **hard-coded within the step** — they are not the rules from the `config` sub-directory of the installation directory."
+  ],
+  "examples": [
+    {
+      "title": "Align and export a TMX",
+      "description": "Segment both sides with the built-in rules, align sentences, and write the aligned pairs to a TMX file. The original events pass through unchanged apart from re-segmentation; the aligned data goes only to the TMX.",
+      "config": "```yaml\ngenerateTMX: true\ntmxOutputPath: ./aligned.tmx\nsegmentSource: true\nsegmentTarget: true\n```",
+      "input": null,
+      "output": null
+    },
+    {
+      "title": "High-confidence pairs with custom source rules",
+      "description": "Use a project-specific SRX file for the source, collapse inconsistent whitespace before aligning, and keep only 1-to-1 sentence matches. The custom-rules path only takes effect when both `segmentSource` and `useCustomSourceRules` are enabled.",
+      "config": "```yaml\ngenerateTMX: true\ntmxOutputPath: ./aligned.tmx\nsegmentSource: true\nuseCustomSourceRules: true\ncustomSourceRulesPath: ./rules/source.srx\ncollapseWhitespace: true\noutputOneTOneMatchesOnly: true\n```",
+      "input": null,
+      "output": null
+    }
+  ],
   "parameters": {
     "generateTMX": {
       "help": "Controls the output mode of the step:\n\n- **Enabled (default)**: Produces a TMX file at the specified path. The step passes through the original events (possibly re-segmented).\n- **Disabled**: The step returns bilingual text units corresponding to the alignment (also segmented), replacing the original events in the pipeline.",
@@ -99,17 +126,6 @@
       ]
     }
   },
-  "limitations": [
-    "Currently the events sent by this step are the same as the events it received — aligned text units are not yet passed through the pipeline (only written to TMX). This may be implemented in a future version.",
-    "Source and target text units **must be perfectly synchronized** (paragraph-aligned). If the source document has more text units than the target, an error will be generated.",
-    "Entries set as non-translatable are not processed."
-  ],
-  "processingNotes": [
-    "The alignment algorithm uses character-length ratios with internal parameters that account for language-specific expansion/contraction.",
-    "When processing bilingual documents (e.g., TMX, PO), use only a single input list.",
-    "The default SRX segmentation rules are **hard-coded within the step** — they are not the rules from the `config` sub-directory of the installation directory."
-  ],
-  "examples": [],
   "propertySuggestions": {
     "segmentSource": {
       "title": "Segment Source Content",
@@ -129,6 +145,33 @@
     }
   },
   "fullDoc": "# Sentence Alignment Step\n\nThis step aligns sentences within text units (paragraphs) from two synchronized documents. It uses a character-length-based algorithm that accounts for language-specific expansion/contraction ratios, producing alignment match types such as 1-1, 2-1, 1-2, 0-1, 1-0, 2-3, 3-2, etc. The step can optionally segment content using default or custom SRX rules before alignment, and outputs either bilingual text units or a TMX file.\n\n## Parameters\n\n### Output\n\n#### Generate the following TMX document\n\nControls the output mode of the step:\n\n- **Enabled (default)**: Produces a TMX file at the specified path. The step passes through the original events (possibly re-segmented).\n- **Disabled**: The step returns bilingual text units corresponding to the alignment (also segmented), replacing the original events in the pipeline.\n\n> **Note:** When generating TMX, the original filter events are passed through unchanged (except for possible re-segmentation). The aligned data goes only to the TMX file.\n\n#### TMX output path\n\nPath where the aligned TMX document will be written. If the file already exists it will be **overwritten**. Default: `aligned.tmx`.\n\n> **Warning:** Existing files at this path will be overwritten without confirmation.\n\n### Source Segmentation\n\n#### Segment the source content\n\nSegments source content before alignment using SRX rules. If disabled, the content is expected to be already segmented. If enabled and the content is already segmented, the existing segmentation will be reset and replaced.\n\n#### Use custom source segmentation rules\n\nUses a specified SRX file instead of the built-in default rules for source segmentation.\n\n> **Note:** The default rules are hard-coded within the step — they are NOT the rules from the `config` sub-directory of the installation directory.\n\n#### SRX path for the source\n\nFull path to an SRX document defining segmentation rules for the source language.\n\n### Target Segmentation\n\n#### Segment the target content\n\nSegments target content before alignment using SRX rules. If disabled, the content is expected to be already segmented. If enabled and the content is already segmented, the existing segmentation will be reset and replaced.\n\n#### Use custom target segmentation rules\n\nUses a specified SRX file instead of the built-in default rules for target segmentation.\n\n> **Note:** The default rules are hard-coded within the step — they are NOT the rules from the `config` sub-directory of the installation directory.\n\n#### SRX path for the target\n\nFull path to an SRX document defining segmentation rules for the target language.\n\n### Alignment Options\n\n#### Collapse whitespace\n\nNormalizes all whitespace characters (spaces, newlines, tabs, etc.) to a single space before segmentation and alignment. This can improve alignment accuracy when source and target documents have inconsistent whitespace formatting.\n\n#### Output 1-1 matches only\n\nFilters the output to include only 1-to-1 sentence alignments, discarding all other match types (2-1, 1-2, 0-1, 1-0, etc.). Useful when you need high-confidence aligned pairs for TM building.\n\n#### Force Simple One to One Alignment\n\nFor each paragraph: if source and target have the same number of sentences, aligns them 1-to-1. If the counts differ, joins all sentences in the paragraph back together and outputs the aligned paragraph as a single unit.\n\n> **Note:** When enabled, this overrides the *Output 1-1 matches only* option.\n\n## Limitations\n\n- Currently the events sent by this step are the same as the events it received — aligned text units are not yet passed through the pipeline (only written to TMX).\n- Source and target text units **must be perfectly synchronized** (paragraph-aligned). Mismatched text unit counts will cause an error.\n- Entries set as non-translatable are not processed.\n\n## Notes\n\n- The alignment algorithm uses character-length ratios with internal parameters that account for language-specific expansion/contraction.\n- When processing bilingual documents (e.g., TMX, PO), use only a single input list.\n- The default SRX segmentation rules are hard-coded within the step — they are not the rules from the `config` sub-directory of the installation directory.",
-  "stepId": "sentence-aligner",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Sentence_Alignment_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Sentence_Alignment_Step",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Sentence_Alignment_Step",
+      "okapi-source:okapi/steps/aligner/src/main/java/net/sf/okapi/steps/sentencealigner/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.collapseWhitespace": "ai",
+      "parameters.customSourceRulesPath": "ai",
+      "parameters.customTargetRulesPath": "ai",
+      "parameters.forceSimpleOneToOneAlignment": "ai",
+      "parameters.generateTMX": "ai",
+      "parameters.outputOneTOneMatchesOnly": "ai",
+      "parameters.segmentSource": "ai",
+      "parameters.segmentTarget": "ai",
+      "parameters.tmxOutputPath": "ai",
+      "parameters.useCustomSourceRules": "ai",
+      "parameters.useCustomTargetRules": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

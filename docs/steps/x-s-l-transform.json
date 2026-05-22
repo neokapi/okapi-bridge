@@ -1,6 +1,32 @@
 {
   "filterName": "XSL Transformation Step",
+  "stepId": "x-s-l-transform",
   "overview": "Applies an XSLT template to input XML documents, producing a transformed raw document for the next pipeline step. Input documents must be well-formed XML. The step supports parameterized templates with built-in variables for input/output paths and locale information.",
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "Input documents must be well-formed XML — malformed XML will cause the transformation to fail.",
+    "The default XSLT processor is determined by the JVM's `TransformerFactory.newInstance()` lookup, which typically provides XSLT 1.0 only. Use a custom transformer (e.g. Saxon) for XSLT 2.0/3.0 support.",
+    "The step operates on raw documents — it does not use Okapi's filter event model."
+  ],
+  "examples": [
+    {
+      "title": "Basic XSLT transformation",
+      "description": "Apply a simple XSLT template to transform XML documents with language parameters passed to the stylesheet.",
+      "config": "```yaml\nxsltPath: /path/to/transform.xslt\nparamList: |\n  Lang=en\n  tmFile=myTM.tmx\n```"
+    },
+    {
+      "title": "Using Saxon for XSLT 2.0",
+      "description": "Configure the step to use Saxon as the XSLT processor, enabling XSLT 2.0/3.0 features.",
+      "config": "```yaml\nxsltPath: /path/to/transform-v2.xslt\nuseCustomTransformer: true\nfactoryClass: net.sf.saxon.TransformerFactoryImpl\nxpathClass: net.sf.saxon.xpath.XPathFactoryImpl\n```"
+    },
+    {
+      "title": "Using pipeline variables in parameters",
+      "description": "Pass document paths and locale information to the XSLT template using built-in variables.",
+      "config": "```yaml\nxsltPath: /path/to/merge.xslt\nparamList: |\n  inputFile=${inputPath2}\n  sourceLang=${srcLang}\n  targetLang=${trgLang}\n```"
+    }
+  ],
   "parameters": {
     "xsltPath": {
       "help": "Full path to the XSLT stylesheet (`.xsl` or `.xslt`) to apply to each input document. The template is applied to the raw XML input and the transformation result replaces the document for subsequent pipeline steps."
@@ -45,31 +71,6 @@
       "help": "Controls whether the transformation output is passed forward as the raw document for subsequent pipeline steps. When enabled (default), the transformed result replaces the input document in the pipeline."
     }
   },
-  "limitations": [
-    "None known."
-  ],
-  "processingNotes": [
-    "Input documents must be well-formed XML — malformed XML will cause the transformation to fail.",
-    "The default XSLT processor is determined by the JVM's `TransformerFactory.newInstance()` lookup, which typically provides XSLT 1.0 only. Use a custom transformer (e.g. Saxon) for XSLT 2.0/3.0 support.",
-    "The step operates on raw documents — it does not use Okapi's filter event model."
-  ],
-  "examples": [
-    {
-      "title": "Basic XSLT transformation",
-      "description": "Apply a simple XSLT template to transform XML documents with language parameters passed to the stylesheet.",
-      "config": "```yaml\nxsltPath: /path/to/transform.xslt\nparamList: |\n  Lang=en\n  tmFile=myTM.tmx\n```"
-    },
-    {
-      "title": "Using Saxon for XSLT 2.0",
-      "description": "Configure the step to use Saxon as the XSLT processor, enabling XSLT 2.0/3.0 features.",
-      "config": "```yaml\nxsltPath: /path/to/transform-v2.xslt\nuseCustomTransformer: true\nfactoryClass: net.sf.saxon.TransformerFactoryImpl\nxpathClass: net.sf.saxon.xpath.XPathFactoryImpl\n```"
-    },
-    {
-      "title": "Using pipeline variables in parameters",
-      "description": "Pass document paths and locale information to the XSLT template using built-in variables.",
-      "config": "```yaml\nxsltPath: /path/to/merge.xslt\nparamList: |\n  inputFile=${inputPath2}\n  sourceLang=${srcLang}\n  targetLang=${trgLang}\n```"
-    }
-  ],
   "propertySuggestions": {
     "xsltPath": {
       "title": "XSLT Template Path",
@@ -97,6 +98,27 @@
     }
   },
   "fullDoc": "# XSL Transformation Step\n\nApplies an XSLT template to input XML documents, producing a transformed raw document for the next pipeline step. Input documents must be well-formed XML. The step supports parameterized templates with built-in variables for input/output paths and locale information.\n\n## Parameters\n\n#### XSLT Template Path\nFull path to the XSLT stylesheet (`.xsl` or `.xslt`) to apply to each input document. The template is applied to the raw XML input and the transformation result replaces the document for subsequent pipeline steps.\n\n#### Template Parameters\nParameters passed to the XSLT template, one per line in `name=value` format.\n\nAvailable variables for parameter values:\n\n| Variable | Description |\n|---|---|\n| `${inputPath}` | Full path of the first input document |\n| `${inputURI}` | URI of the first input document |\n| `${outputPath}` | Full path of the first output document |\n| `${srcLang}` | Source language code (e.g. `de` from `de-ch`) |\n| `${trgLang}` | Target language code (e.g. `ja` from `ja-jp`) |\n| `${inputPath2}`, `${inputPath3}` | Paths of 2nd/3rd input documents |\n| `${inputURI2}`, `${inputURI3}` | URIs of 2nd/3rd input documents |\n\n`${inputPath1}`, `${inputURI1}`, and `${outputPath1}` are aliases for the non-numbered variants.\n\nExample:\n```\nLang=en\ntmFile=myTM.tmx\ninputFile=${inputPath2}\n```\n\n#### Use Custom Transformer\nOverrides the default JVM XSLT transformer and optionally the XPath engine with custom factory classes. The default transformer depends on your JVM implementation (see `TransformerFactory.newInstance()` for the lookup mechanism). Enable this to use a specific XSLT processor such as **Saxon**, which provides XSLT 2.0/3.0 support.\n\n#### Transformer Factory Class\nFully qualified Java class name of the `TransformerFactory` implementation to use. The class must be on the Java classpath. Only applies when **Use Custom Transformer** is enabled.\n\nExample: `net.sf.saxon.TransformerFactoryImpl`\n\n#### XPath Factory Class\nFully qualified Java class name of the `XPathFactory` implementation to use. Allows overriding the default JVM XPath engine alongside the custom transformer. Only applies when **Use Custom Transformer** is enabled.\n\nExample: `net.sf.saxon.xpath.XPathFactoryImpl`\n\n#### Pass Output to Next Step\nControls whether the transformation output is passed forward as the raw document for subsequent pipeline steps. Enabled by default.\n\n## Limitations\n\n- None known.\n\n## Notes\n\n- Input documents must be well-formed XML — malformed XML will cause the transformation to fail.\n- The default XSLT processor is determined by the JVM's `TransformerFactory.newInstance()` lookup, which typically provides XSLT 1.0 only. Use a custom transformer (e.g. Saxon) for XSLT 2.0/3.0 support.\n- The step operates on raw documents — it does not use Okapi's filter event model.\n\n## Examples\n\n### Basic XSLT transformation\nApply a simple XSLT template with language parameters:\n```yaml\nxsltPath: /path/to/transform.xslt\nparamList: |\n  Lang=en\n  tmFile=myTM.tmx\n```\n\n### Using Saxon for XSLT 2.0\nConfigure Saxon as the XSLT processor for XSLT 2.0/3.0 features:\n```yaml\nxsltPath: /path/to/transform-v2.xslt\nuseCustomTransformer: true\nfactoryClass: net.sf.saxon.TransformerFactoryImpl\nxpathClass: net.sf.saxon.xpath.XPathFactoryImpl\n```\n\n### Using pipeline variables in parameters\nPass document paths and locale information to the stylesheet:\n```yaml\nxsltPath: /path/to/merge.xslt\nparamList: |\n  inputFile=${inputPath2}\n  sourceLang=${srcLang}\n  targetLang=${trgLang}\n```",
-  "stepId": "x-s-l-transform",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/XSL_Transformation_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/XSL_Transformation_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/XSL_Transformation_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.factoryClass": "ai",
+      "parameters.paramList": "ai",
+      "parameters.passOnOutput": "ai",
+      "parameters.useCustomTransformer": "ai",
+      "parameters.xpathClass": "ai",
+      "parameters.xsltPath": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

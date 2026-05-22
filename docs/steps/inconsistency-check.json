@@ -1,6 +1,31 @@
 {
   "filterName": "Inconsistency Check",
+  "stepId": "inconsistency-check",
   "overview": "Generates a report of potential inconsistencies found by comparing source and target segments across multiple input documents. It checks for cases where the same source text has different translations, and where the same target text corresponds to different sources. The XML report groups findings by \"key text\" for easy review. Comparisons are case-sensitive, whitespace-sensitive, and ignore inline codes.",
+  "limitations": [
+    "May run out of memory when processing a large number of segments across many files. Use the per-file option to mitigate.",
+    "Inline codes are ignored during comparisons — differences only in inline codes will not be flagged.",
+    "Comparisons are case-sensitive and whitespace-sensitive — `Hello` and `hello` are treated as different texts.",
+    "Text units or segments with no target are excluded from the check.",
+    "Empty text units or segments are included in the check."
+  ],
+  "processingNotes": [
+    "The step collects all segments in memory (unless per-file mode is enabled) before generating the report, so memory usage scales with the total number of segments.",
+    "The step is a pass-through for filter events — it reads and analyzes segments but does not modify them.",
+    "The report is XML format, grouping inconsistencies by their \"key text\" with all corresponding source or target variants listed."
+  ],
+  "examples": [
+    {
+      "title": "Basic inconsistency check with default settings",
+      "description": "Runs inconsistency checking across all input documents and writes the report to the pipeline root directory.",
+      "config": "```yaml\ncheckInconststencies: true\ncheckPerFile: false\noutputPath: ${rootDir}/inconsistency-report.xml\ndisplayOption: generic\nautoOpen: true\n```"
+    },
+    {
+      "title": "Large-scale batch check with reduced memory",
+      "description": "For processing a large number of files where cross-file memory usage is a concern, enable per-file checking and disable auto-open for automated pipelines.",
+      "config": "```yaml\ncheckInconststencies: true\ncheckPerFile: true\noutputPath: ${rootDir}/qa/inconsistency-report.xml\ndisplayOption: generic\nautoOpen: false\n```"
+    }
+  ],
   "parameters": {
     "checkInconststencies": {
       "help": "Master toggle for the inconsistency checking functionality. Disabling this effectively turns the step into a pass-through, allowing you to disable it in a pipeline without removing it.",
@@ -36,30 +61,6 @@
       "help": "Automatically opens the generated XML report file in the system's default application after processing completes.\n\nThis is useful for interactive/desktop usage but should typically be disabled in automated pipelines or server environments."
     }
   },
-  "limitations": [
-    "May run out of memory when processing a large number of segments across many files. Use the per-file option to mitigate.",
-    "Inline codes are ignored during comparisons — differences only in inline codes will not be flagged.",
-    "Comparisons are case-sensitive and whitespace-sensitive — `Hello` and `hello` are treated as different texts.",
-    "Text units or segments with no target are excluded from the check.",
-    "Empty text units or segments are included in the check."
-  ],
-  "processingNotes": [
-    "The step collects all segments in memory (unless per-file mode is enabled) before generating the report, so memory usage scales with the total number of segments.",
-    "The step is a pass-through for filter events — it reads and analyzes segments but does not modify them.",
-    "The report is XML format, grouping inconsistencies by their \"key text\" with all corresponding source or target variants listed."
-  ],
-  "examples": [
-    {
-      "title": "Basic inconsistency check with default settings",
-      "description": "Runs inconsistency checking across all input documents and writes the report to the pipeline root directory.",
-      "config": "```yaml\ncheckInconststencies: true\ncheckPerFile: false\noutputPath: ${rootDir}/inconsistency-report.xml\ndisplayOption: generic\nautoOpen: true\n```"
-    },
-    {
-      "title": "Large-scale batch check with reduced memory",
-      "description": "For processing a large number of files where cross-file memory usage is a concern, enable per-file checking and disable auto-open for automated pipelines.",
-      "config": "```yaml\ncheckInconststencies: true\ncheckPerFile: true\noutputPath: ${rootDir}/qa/inconsistency-report.xml\ndisplayOption: generic\nautoOpen: false\n```"
-    }
-  ],
   "propertySuggestions": {
     "checkInconststencies": {
       "title": "Check Inconsistencies",
@@ -83,6 +84,26 @@
     }
   },
   "fullDoc": "# Inconsistency Check\n\nGenerates a report of potential inconsistencies found by comparing source and target segments across multiple input documents. It checks for cases where the same source text has different translations, and where the same target text corresponds to different sources. The XML report groups findings by \"key text\" for easy review. Comparisons are case-sensitive, whitespace-sensitive, and ignore inline codes.\n\n## Parameters\n\n#### Check Inconsistencies\nMaster toggle for the inconsistency checking functionality. Disabling this effectively turns the step into a pass-through, allowing you to disable it in a pipeline without removing it.\n\n> **Note:** This is a convenience toggle to disable the step within a pipeline configuration without removing it entirely.\n\n#### Per-File Checking\nProcesses each input file individually rather than comparing segments across all files.\n\nBy default, segments are compared across **all** input documents, which requires keeping all segments in memory. Enabling this option limits comparison scope to a single file at a time, significantly reducing memory usage at the cost of not detecting cross-file inconsistencies.\n\n> **Note:** Consider enabling this option if you experience memory issues with large document sets.\n\n#### Report File Path\nFull path for the generated XML inconsistency report.\n\nSupported variables:\n- `${rootDir}` — the pipeline root directory\n- `${inputRootDir}` — the input root directory\n\nExamples:\n- `${rootDir}/inconsistency-report.xml` — default, writes to the pipeline root\n- `${inputRootDir}/qa/inconsistencies.xml` — writes to a qa subfolder under the input root\n\n#### Inline Code Display\nControls how inline codes are rendered in the generated report.\n\n- **Original codes**: Inline codes appear as they do in the source documents\n- **Generic markers**: Codes are replaced with numbered markers like `<1>``</1>` or `<2/>`\n- **Plain text**: All inline codes are stripped from the report output\n\n#### Auto-Open Report\nAutomatically opens the generated XML report file in the system's default application after processing completes. Useful for interactive/desktop usage but should typically be disabled in automated pipelines or server environments.\n\n## Limitations\n\n- May run out of memory when processing a large number of segments across many files. Use the per-file option to mitigate.\n- Inline codes are ignored during comparisons — differences only in inline codes will not be flagged.\n- Comparisons are case-sensitive and whitespace-sensitive — `Hello` and `hello` are treated as different texts.\n- Text units or segments with no target are excluded from the check.\n- Empty text units or segments are included in the check.\n\n## Notes\n\n- The step collects all segments in memory (unless per-file mode is enabled) before generating the report, so memory usage scales with the total number of segments.\n- The step is a pass-through for filter events — it reads and analyzes segments but does not modify them.\n- The report is XML format, grouping inconsistencies by their \"key text\" with all corresponding source or target variants listed.\n\n## Examples\n\n### Basic inconsistency check\nRuns inconsistency checking across all input documents with default settings:\n\n```yaml\ncheckInconststencies: true\ncheckPerFile: false\noutputPath: ${rootDir}/inconsistency-report.xml\ndisplayOption: generic\nautoOpen: true\n```\n\n### Large-scale batch check\nFor processing many files with reduced memory usage in an automated pipeline:\n\n```yaml\ncheckInconststencies: true\ncheckPerFile: true\noutputPath: ${rootDir}/qa/inconsistency-report.xml\ndisplayOption: generic\nautoOpen: false\n```",
-  "stepId": "inconsistency-check",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Inconsistency_Check_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Inconsistency_Check_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Inconsistency_Check_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.autoOpen": "ai",
+      "parameters.checkInconststencies": "ai",
+      "parameters.checkPerFile": "ai",
+      "parameters.displayOption": "ai",
+      "parameters.outputPath": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

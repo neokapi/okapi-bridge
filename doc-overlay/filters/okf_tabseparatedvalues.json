@@ -1,0 +1,147 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "okf_tabseparatedvalues",
+  "kind": "filter",
+  "name": "Tab-Separated Values Filter",
+  "aliasOf": "okf_table",
+  "overview": "The Tab-Separated Values Filter extracts translatable text from tab-delimited tables, where each record is a line and columns are separated by one or more tab characters. Unlike a single-character CSV delimiter, runs of consecutive tabs are treated as one separator, so empty columns are not produced by extra tabs and the layout tolerates aligned, multi-tab spacing. It has no text qualifier or escaping machinery of its own; it reuses the table family's column-role model, header handling, and whitespace controls. It is well suited to simple bilingual files (source tab target) and to tab-aligned exports.",
+  "limitations": [
+    "Consecutive tabs collapse into a single separator, so a run of tabs cannot represent an empty intermediate column.",
+    "Column roles are addressed by 1-based index, not by header name.",
+    "There is no text qualifier; a tab cannot be embedded within a field value."
+  ],
+  "processingNotes": [
+    "Lines are split into cells on runs of one or more tab characters; leading whitespace before the first printable character is skipped when locating a cell.",
+    "Empty lines are rejected (produce no record).",
+    "Cells carry `line_number`, `column_number`, and `row_number` properties; header rows report `row_number` 0."
+  ],
+  "examples": [
+    {
+      "title": "Two-column source/target",
+      "description": "A simple bilingual file: column 1 is source, column 2 is target, separated by a tab. No header line.",
+      "config": "```yaml\nconfigId: okf_table_tsv\nsourceColumns: \"1\"\ntargetColumns: \"2\"\ntargetSourceRefs: \"1\"\nvaluesStartLineNum: 1\n```",
+      "input": "```\nHello world\tBonjour le monde\nGoodbye\tAu revoir\n```"
+    },
+    {
+      "title": "Header line with column names",
+      "description": "Treat line 1 as column names and start data on line 2, extracting only the named columns.",
+      "config": "```yaml\ncolumnNamesLineNum: 1\nvaluesStartLineNum: 2\nsendHeaderMode: 1\nsendColumnsMode: 1\n```"
+    },
+    {
+      "title": "Protect printf variables as inline codes",
+      "description": "Enable the code finder so printf-style placeholders and escape sequences in cell values are treated as inline codes rather than translatable words.",
+      "config": "```yaml\nuseCodeFinder: true\n```"
+    }
+  ],
+  "parameters": {
+    "useCodeFinder": {
+      "help": "Inherited from the plain-text base. When enabled, the configured code-finder rules are applied to extracted cell text and matching runs become inline codes rather than translatable words. The default rules cover printf-style format specifiers and common backslash escape sequences — useful for tab-separated resource exports that embed variables.",
+      "values": "`true` / `false` (default `false`)"
+    },
+    "columnNamesLineNum": {
+      "help": "The 1-based line number holding the column captions. The line is split into cells to read the names, which label comment metadata and may set the pipeline locale when a column name is a locale code. Use `0` when there is no column-name line.",
+      "values": "1-based line number; `0` = none (default `0`)"
+    },
+    "valuesStartLineNum": {
+      "help": "The 1-based line where data rows begin. Lines before it form the header area, handled per `sendHeaderMode`.",
+      "values": "1-based line number (default `1`)"
+    },
+    "detectColumnsMode": {
+      "help": "How the column count per row is decided: per-row, from the number of names on the column-names line, or a fixed count.",
+      "values": "`0` = none, `1` = from column names, `2` = fixed (default `0`)"
+    },
+    "sendHeaderMode": {
+      "help": "Which header-area lines are extracted as translatable text: none, the column-names line only, or all header lines.",
+      "values": "`0` = none, `1` = column names only, `2` = all (default `0`)"
+    },
+    "sendColumnsMode": {
+      "help": "Which columns of each data row are extracted: none, only the columns named in the column-role settings, or all columns as source. `listed` mode enables bilingual extraction, IDs, and notes.",
+      "values": "`0` = none, `1` = listed, `2` = all (default `1`)"
+    },
+    "recordIdColumn": {
+      "help": "The 1-based index of the column whose value identifies the row. Combined with `sourceIdSuffixes` to synthesise an ID for source columns lacking an explicit ID cell.",
+      "values": "1-based column index; `0` = none (default `0`)"
+    },
+    "sourceColumns": {
+      "help": "Comma-separated 1-based indices of the columns extracted as source (translatable) text. Consulted when `sendColumnsMode` is `listed`.",
+      "values": "e.g. `1` or `1,3` (default `1`)"
+    },
+    "targetColumns": {
+      "help": "Comma-separated 1-based indices of columns holding existing target text. Each is tied to a source column via `targetSourceRefs` and a locale via `targetLanguages`; supplying them makes the configuration bilingual.",
+      "values": "Comma-separated 1-based indices (default `2`)"
+    },
+    "targetLanguages": {
+      "help": "Locale of each target column, aligned position-by-position with `targetColumns`. A single value applies to all target columns; otherwise the pipeline target locale is used.",
+      "values": "Comma-separated locale codes, e.g. `fr,de` (default empty)"
+    },
+    "commentColumns": {
+      "help": "Comma-separated 1-based indices of columns whose values attach as notes (or metadata, see `exposeCommentsAsMetadata`) to the source column they annotate via `commentSourceRefs`, rather than being extracted as translatable text.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "sourceIdColumns": {
+      "help": "Comma-separated 1-based indices of columns whose values become the resource names (IDs) of source text units, linked to their source column via `sourceIdSourceRefs`. An empty ID cell falls back to `recordIdColumn` + `sourceIdSuffixes`.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "commentSourceRefs": {
+      "help": "Maps each column in `commentColumns` to the source column it annotates, as a comma-separated list of 1-based source-column indices aligned position-by-position. The comment becomes a read-only note on that source text unit.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "sourceIdSourceRefs": {
+      "help": "Maps each column in `sourceIdColumns` to the source column it names, as a comma-separated list of 1-based source-column indices aligned position-by-position.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "sourceIdSuffixes": {
+      "help": "Suffixes appended to the `recordIdColumn` value to build an ID for a source column that has no explicit ID cell. Aligned position-by-position with `sourceColumns`.",
+      "values": "Comma-separated strings (default empty)"
+    },
+    "targetSourceRefs": {
+      "help": "Maps each column in `targetColumns` to the source column it translates, as a comma-separated list of 1-based source-column indices aligned position-by-position. A target whose reference cannot be resolved is sent to the skeleton.",
+      "values": "Comma-separated 1-based indices (default `1`)"
+    },
+    "exposeCommentsAsMetadata": {
+      "help": "When enabled, comment-column values attach to the source text unit as metadata keyed by column name instead of as translator notes.",
+      "values": "`true` / `false` (default `false`)",
+      "dependsOn": [
+        { "property": "commentColumns", "condition": "only meaningful when comment columns are defined" }
+      ]
+    },
+    "preserveWS": {
+      "help": "Inherited from the plain-text base. When enabled, whitespace inside extracted values is preserved; cell-edge trimming is governed by `trimMode`, `trimLeading`, and `trimTrailing`.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "trimMode": {
+      "help": "How leading/trailing whitespace is removed from cells: none, non-qualified only, or all. TSV has no text qualifier, so the non-qualified option behaves like trimming all cells. Any non-none value forces `trimLeading` and `trimTrailing` on.",
+      "values": "`0` = none, `1` = non-qualified only, `2` = all (default `1`)"
+    },
+    "trimLeading": {
+      "help": "Removes leading spaces and tabs from each extracted cell value. Forced on whenever `trimMode` is not none.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "trimTrailing": {
+      "help": "Removes trailing spaces and tabs from each extracted cell value. Forced on whenever `trimMode` is not none.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "unescapeSource": {
+      "help": "Inherited from the plain-text base. When enabled, `\\t`, `\\n`, `\\\\`, and `\\uXXXX` escape sequences in extracted values are converted to the characters they represent.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "wrapMode": {
+      "help": "How a value spanning multiple physical lines is represented: `NONE` joins wrapped lines with a line feed, `SPACES` joins with a single space, `PLACEHOLDERS` inserts an inline placeholder at each internal break so the wrapping can be reproduced on output.",
+      "values": "`NONE`, `SPACES`, `PLACEHOLDERS` (default `NONE`)"
+    }
+  },
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Table_Filter",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/tsv/Parameters.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/tsv/TabSeparatedValuesFilter.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/Parameters.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/BaseTableFilter.java",
+      "okapi-source:okapi/filters/plaintext/src/main/java/net/sf/okapi/filters/plaintext/base/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

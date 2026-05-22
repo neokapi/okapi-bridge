@@ -1,0 +1,153 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "okf_html",
+  "kind": "filter",
+  "name": "HTML Filter",
+  "overview": "The HTML Filter implements the `IFilter` interface for **HTML and XHTML** documents. It processes character and numeric entities (converting them to Unicode), handles encoding detection from document declarations, and preserves original line-break types. The filter is primarily configured through YAML configuration files that define element rules, translatable attributes, and structural groupings.",
+  "limitations": [
+    "Content of `<style>` and `<script>` elements is not extracted.",
+    "Tags from server-side scripts (PHP, ASPX, JSP, etc.) are not formally supported and are treated as non-translatable."
+  ],
+  "processingNotes": [
+    "If the document has an encoding declaration, it is used; otherwise the default encoding from filter options is used.",
+    "For UTF-8 output: a BOM is included only if the input was also UTF-8 and had a BOM.",
+    "If the input file has no declared encoding, the filter tries to add a `<meta>` tag (HTML) or `<meta />` tag (XHTML) in output, but only if a `<head>` element exists.",
+    "Output line-breaks match the original input line-break type.",
+    "Character and numeric entities are converted to Unicode; DTD/schema-defined entities pass through unchanged.",
+    "By default, the filter uses a minimalist configuration with no structural groupings. The `okf_html-wellFormed` configuration enables structural groupings but requires well-formed start/end tags.",
+    "All element and attribute names in configuration files must be **lowercase**, regardless of document casing.",
+    "Elements or attributes with a prefix (e.g., `xml:lang`) must be declared with the prefix and enclosed in single quotes in the configuration."
+  ],
+  "examples": [
+    {
+      "title": "Inline code finder for variables",
+      "description": "Protects `VAR1`, `VAR2`, etc. from translation by marking them as inline codes.",
+      "config": "```yaml\nuseCodeFinder: true\ncodeFinderRules: |-\n    #v1\n    count.i=1\n    rule0=\\bVAR\\d\\b\n```",
+      "input": "```html\n<p>Number of files = VAR1</p>\n```",
+      "output": "```\nThe text \"VAR1\" is marked as an inline code in the extracted text unit.\n```"
+    },
+    {
+      "title": "Character entity references in output",
+      "description": "Forces specific extended characters to be output as HTML named entity references. Characters without a defined HTML entity (like `Ą`) are output as-is.",
+      "config": "```yaml\nescapeCharacters: \"© €µÆĄ\"\n```",
+      "input": "```html\n<p>© €µÆĄ</p>\n```",
+      "output": "```html\n<p>&copy;&nbsp;&euro;&micro;&AElig;Ą</p>\n```"
+    },
+    {
+      "title": "Exclude-by-default configuration",
+      "description": "Inverts the default inclusion behavior so only explicitly configured elements are extracted. Useful for extracting only specific elements like `<title>`.",
+      "config": "```yaml\nexclude_by_default: true\nelements:\n    title:\n      ruleTypes: [TEXTUNIT]\n```",
+      "input": "```html\n<html><head><title>My Page</title></head><body><p>Not extracted</p></body></html>\n```",
+      "output": "```\nOnly \"My Page\" from the <title> element is extracted for translation.\n```"
+    },
+    {
+      "title": "Conditional translatable attributes",
+      "description": "Configures `<input>` element attributes to be translatable only when the `type` attribute is not one of `file`, `hidden`, `image`, or `password`.",
+      "config": "```yaml\nelements:\n  input:\n    ruleTypes: [INLINE]\n    translatableAttributes:\n      alt: [type, NOT_EQUALS, [file, hidden, image, password]]\n      value: [type, NOT_EQUALS, [file, hidden, image, password]]\n      accesskey: [type, NOT_EQUALS, [file, hidden, image, password]]\n      title: [type, NOT_EQUALS, [file, hidden, image, password]]\n```",
+      "input": "```html\n<input type=\"text\" value=\"Submit\" alt=\"Send form\">\n<input type=\"hidden\" value=\"secret_token\">\n```",
+      "output": "```\nOnly the first <input>'s value and alt attributes are extracted; the hidden input is skipped.\n```"
+    },
+    {
+      "title": "Inline CDATA handling",
+      "description": "Treats CDATA sections as inline elements so they don't break text flow during extraction.",
+      "config": "```yaml\ninlineCdata: true\n```",
+      "input": "```html\n<p>Text with <![CDATA[inline]]> CDATA</p>\n```",
+      "output": "```\nExtracted as a single text unit: \"Text with {inline} CDATA\" with CDATA markers as inline codes.\n```"
+    }
+  ],
+  "parameters": {
+    "useCodeFinder": {
+      "help": "Activates the inline code finder, which uses regular expressions defined in `codeFinderRules` to identify spans of extracted text that should be protected as inline codes.\n\nUseful when element content contains variables or placeholders (e.g., `VAR1`) that must not be modified during translation."
+    },
+    "codeFinderRules": {
+      "help": "Defines regular expression rules for identifying inline codes within extracted text. Uses the Okapi `#v1` code finder format.\n\nBackslashes must be **double-escaped** in single-line YAML notation. Use the YAML block scalar (`|-`) syntax to avoid double-escaping.",
+      "values": "Okapi `#v1` code finder format: header line `#v1`, then `count.i=N` (number of rules), then `rule0=...` through `ruleN-1=...` with Java regex patterns. In single-line YAML, use `\\\\` for regex `\\`. In block scalar (`|-`) syntax, use single `\\`.",
+      "notes": [
+        "The regular expression `\\bVAR\\d\\b` must be written as `\\\\bVAR\\\\d\\\\b` in single-line YAML string notation."
+      ],
+      "examples": [
+        "Single-line: `codeFinderRules: \"#v1\\ncount.i=1\\nrule0=\\\\bVAR\\\\d\\\\b\"`",
+        "Block scalar:\n```yaml\ncodeFinderRules: |-\n    #v1\n    count.i=1\n    rule0=\\bVAR\\d\\b\n```"
+      ],
+      "seeAlso": "HTML_Filter#Inline_Code_Finder"
+    },
+    "escapeCharacters": {
+      "help": "A string containing all characters that should be output as **HTML character entity references** (e.g., `&copy;` instead of ©).\n\nBy default, extended characters are output as-is (no entity references). Any character in this string that has no defined HTML entity or is not an extended character is output normally.",
+      "values": "A string of Unicode characters. Each character in the string will be converted to its HTML named entity reference in output, if one exists.",
+      "examples": [
+        "`escapeCharacters: \"© €µÆ\"` — outputs `&copy;`, `&nbsp;`, `&euro;`, `&micro;`, `&AElig;` in place of the literal characters"
+      ],
+      "seeAlso": "HTML_Filter#Character_Entity_References_in_Output"
+    },
+    "inlineCdata": {
+      "help": "Treats `<![CDATA[...]]>` sections as inline elements rather than breaking the text flow. The CDATA opening marker is treated like an inline opening tag and the closing marker like an inline closing tag.\n\nUseful for formats that embed CDATA in ways that would otherwise split translatable text into separate segments.",
+      "examples": [
+        "With `inlineCdata: true`, `<p>Text with <![CDATA[inline]]> CDATA</p>` is extracted as a single text unit with inline codes."
+      ]
+    },
+    "quoteModeDefined": {
+      "help": "Must be set to `true` to activate the custom `quoteMode` setting. Without this flag, the default quoting behavior is used.",
+      "dependsOn": [
+        {
+          "property": "quoteMode",
+          "condition": "only meaningful when quoteModeDefined is true"
+        }
+      ]
+    },
+    "quoteMode": {
+      "help": "Controls how quote and apostrophe characters are escaped in the output.\n\n- **0** (`UNESCAPED`) — Do not escape single or double quotes\n- **1** (`ALL`) — Escape both single and double quotes to named entities\n- **2** (`NUMERIC_SINGLE_QUOTES`) — Escape double quotes to named entity, single quotes to numeric entity\n- **3** (`DOUBLE_QUOTES_ONLY`) — Escape double quotes only",
+      "values": "Integer `0`–3: `0` = UNESCAPED, `1` = ALL, `2` = NUMERIC_SINGLE_QUOTES, `3` = DOUBLE_QUOTES_ONLY",
+      "dependsOn": [
+        {
+          "property": "quoteModeDefined",
+          "condition": "must be true for quoteMode to take effect"
+        }
+      ],
+      "seeAlso": "HTML_Filter#Quote_Mode"
+    },
+    "cleanupHtml": {
+      "help": "Controls post-processing cleanup of common HTML syntax errors (e.g., unquoted attributes) in the input file. Set to `false` to disable this automatic cleanup."
+    }
+  },
+  "propertySuggestions": {
+    "useCodeFinder": {
+      "title": "Use Code Finder",
+      "description": "Enable regular expression-based inline code detection in extracted text."
+    },
+    "codeFinderRules": {
+      "title": "Code Finder Rules",
+      "description": "Regular expression rules in Okapi #v1 format for identifying inline codes."
+    },
+    "escapeCharacters": {
+      "title": "Escape Characters as Entities",
+      "description": "Characters to output as HTML named character entity references."
+    },
+    "inlineCdata": {
+      "title": "Inline CDATA",
+      "description": "Treat CDATA sections as inline elements instead of breaking text flow."
+    },
+    "quoteModeDefined": {
+      "title": "Custom Quote Mode Enabled",
+      "description": "Enable the custom quoteMode setting for quote/apostrophe escaping."
+    },
+    "quoteMode": {
+      "title": "Quote Escape Mode",
+      "description": "Controls how quote and apostrophe characters are escaped in output."
+    },
+    "cleanupHtml": {
+      "title": "Clean Up HTML",
+      "description": "Automatically fix common HTML syntax errors such as unquoted attributes."
+    }
+  },
+  "fullDoc": "# HTML Filter\n\nThe HTML Filter implements the `IFilter` interface for **HTML and XHTML** documents. It processes character and numeric entities (converting them to Unicode), handles encoding detection from document declarations, and preserves original line-break types. The filter is primarily configured through YAML configuration files that define element rules, translatable attributes, and structural groupings.\n\n## Parameters\n\n### Built-in Configuration\n\nThe HTML filter uses a minimalist configuration by default that does not create structural groupings (no table groups, list groups, etc.). The predefined `okf_html-wellFormed` configuration enables structural groupings, but requires all structural tags to be well-formed with matching start and end tags.\n\nCustom YAML configuration files can define element rules (`INLINE`, `GROUP`, `EXCLUDE`, `INCLUDE`, `TEXTUNIT`, `PRESERVE_WHITESPACE`, `ATTRIBUTES_ONLY`), translatable attributes with optional conditions, and other processing options.\n\n**Important:** All element and attribute names in configuration files must be **lowercase**. Prefixed attributes (e.g., `xml:lang`) must be enclosed in single quotes.\n\n### Inline Code Finder\n\n#### useCodeFinder\nActivates the inline code finder, which uses regular expressions defined in `codeFinderRules` to identify spans of extracted text that should be protected as inline codes.\n\n#### codeFinderRules\nDefines regular expression rules for identifying inline codes. Uses the Okapi `#v1` code finder format. Backslashes must be double-escaped in single-line YAML notation; use block scalar (`|-`) syntax to avoid this.\n\n### Output Options\n\n#### escapeCharacters\nA string containing all characters that should be output as HTML named character entity references. By default, extended characters are output as-is. Characters without a defined HTML entity are output normally.\n\n#### quoteModeDefined\nMust be set to `true` to activate the custom `quoteMode` setting.\n\n#### quoteMode\nControls how quote and apostrophe characters are escaped in output:\n- **0** (UNESCAPED) — No escaping\n- **1** (ALL) — Escape both to named entities\n- **2** (NUMERIC_SINGLE_QUOTES) — Named entity for double quotes, numeric for single\n- **3** (DOUBLE_QUOTES_ONLY) — Escape double quotes only\n\nRequires `quoteModeDefined: true`.\n\n### Processing Options\n\n#### inlineCdata\nTreats `<![CDATA[...]]>` sections as inline elements rather than breaking text flow.\n\n#### cleanupHtml\nControls automatic cleanup of common HTML syntax errors (e.g., unquoted attributes). Set to `false` to disable.\n\n## Limitations\n\n- Content of `<style>` and `<script>` elements is not extracted.\n- Tags from server-side scripts (PHP, ASPX, JSP, etc.) are not formally supported and are treated as non-translatable.\n\n## Notes\n\n- If the document has an encoding declaration, it is used; otherwise the default encoding from filter options applies.\n- For UTF-8 output, a BOM is included only if the input was also UTF-8 and had a BOM.\n- If the input has no declared encoding, the filter tries to add a `<meta>` (HTML) or `<meta />` (XHTML) tag in output when a `<head>` element exists.\n- Output line-breaks match the original input.\n- Character and numeric entities are converted to Unicode; DTD/schema-defined entities pass through unchanged.\n- Text entity declarations can be processed by the DTD Filter.\n\n## Examples\n\n### Inline Code Finder for Variables\n\nProtects `VAR1`, `VAR2`, etc. from translation:\n\n```yaml\nuseCodeFinder: true\ncodeFinderRules: |-\n    #v1\n    count.i=1\n    rule0=\\\\bVAR\\\\d\\\\b\n```\n\nInput: `<p>Number of files = VAR1</p>`\n\n### Character Entity References\n\n```yaml\nescapeCharacters: \"\\u00a9 \\u20ac\\u00b5\\u00c6\"\n```\n\nInput: `<p>\\u00a9 \\u20ac\\u00b5\\u00c6\\u0104</p>` \\u2192 Output: `<p>&amp;copy;&amp;nbsp;&amp;euro;&amp;micro;&amp;AElig;\\u0104</p>`\n\n### Exclude-by-Default\n\n```yaml\nexclude_by_default: true\nelements:\n    title:\n      ruleTypes: [TEXTUNIT]\n```\n\nOnly the `<title>` element content is extracted for translation.",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/HTML_Filter",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/HTML_Filter",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false
+  }
+}

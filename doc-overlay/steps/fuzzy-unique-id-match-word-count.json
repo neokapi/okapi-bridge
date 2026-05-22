@@ -1,0 +1,28 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "fuzzy-unique-id-match-word-count",
+  "kind": "step",
+  "name": "Fuzzy Unique Id Match Word Count Step",
+  "overview": "Counts the words in text units whose top alternate translation is a `FUZZY_UNIQUE_ID` match — a fuzzy (partial) match that additionally matches on a unique identifier, giving extra confidence that the leveraged segment corresponds to the same logical unit. The count is recorded as a word-count metric in a `MetricsAnnotation` so that scoping and pricing steps can rate id-confirmed fuzzy leverage separately from plain fuzzy matches.",
+  "processingNotes": [
+    "Operates per segment: it inspects the first (top-ranked) `AltTranslation` on each target segment's `AltTranslationsAnnotation` and counts a segment only when that match type is exactly `FUZZY_UNIQUE_ID`.",
+    "Counting is performed on the **source** text, not the target — the word total reflects the source volume leveraged at this match level.",
+    "Words are counted with the GMX-V word counter; the parallel character-count variant counts characters instead.",
+    "Counts only translatable text units; empty text units and non-translatable ones are skipped.",
+    "Results are stored as annotations on filter events and aggregated to the configured levels (text unit, group, document, sub-document, batch item, batch); the step produces no output document of its own.",
+    "Belongs to the `OKAPI_WORD_COUNTS` category group. The `CategoryResolver` keeps only the highest-ranked matching category per segment — `FUZZY_UNIQUE_ID` is the highest-ranked of the fuzzy categories, above `FUZZY_PREVIOUS_VERSION` and plain `FUZZY`, but ranks below all exact categories."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/FuzzyUniqueIdMatchWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+      "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

@@ -1,7 +1,7 @@
 {
   "filterName": "Resource Simplifier",
+  "stepId": "resource-simplifier",
   "overview": "Simplifies the resources of filter events by splitting generic skeletons into parts that contain no references. Original references are converted to skeleton parts or `TEXT_UNIT` events, and the resulting sequence is packed into a single `MULTI_EVENT` event. This step is format-specific and operates on filter events.",
-  "parameters": {},
   "limitations": [
     "None known."
   ],
@@ -12,7 +12,22 @@
     "The simplification algorithm is format-specific — behavior varies depending on the filter that produced the events."
   ],
   "examples": [],
+  "parameters": {},
   "fullDoc": "# Resource Simplifier\n\nSimplifies the resources of filter events by splitting generic skeletons into parts that contain no references. Original references are converted to skeleton parts or `TEXT_UNIT` events, and the resulting sequence is packed into a single `MULTI_EVENT` event. This step is format-specific and operates on filter events.\n\n## Parameters\n\nThis step has no parameters.\n\n## Processing Details\n\n- The skeleton parts are attached to newly created `DOCUMENT_PART` events.\n- Original references are converted either to skeleton parts or `TEXT_UNIT` events.\n- The sequence of `DOCUMENT_PART` and `TEXT_UNIT` events is packed into a single `MULTI_EVENT` event.\n- The simplification algorithm is format-specific — behavior varies depending on the filter that produced the events.\n\n## Limitations\n\nNone known.\n",
-  "stepId": "resource-simplifier",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Resource_Simplifier_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Resource_Simplifier_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Resource_Simplifier_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

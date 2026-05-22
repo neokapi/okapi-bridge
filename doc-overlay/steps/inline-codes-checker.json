@@ -1,0 +1,32 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "inline-codes-checker",
+  "kind": "step",
+  "name": "Inline Codes Checker Step",
+  "overview": "The Inline Codes Checker step compares the inline codes of each source and target and annotates differences. It reports codes present in the source but missing from the target, and codes present in the target but not in the source. It expects filter events and passes them through unchanged, attaching the detected issues for a downstream consumer to report. It is one of the granular quality checks that the aggregate Quality Check step combines into a single pass.",
+  "processingNotes": [
+    "Operates on filter events; events are forwarded unchanged and the detected issues are accumulated per document.",
+    "Delegates to the verification library's `InlineCodesChecker`; its step parameters are a subset of the full Quality Check / CheckMate configuration.",
+    "Code difference checking (`codeDifference`) and opening/closing inference (`guessOpenClose`) are enabled by default.",
+    "Codes of the types listed in `typesToIgnore` are excluded from comparison; the default is `mrk;x-df-s;`.",
+    "`extraCodesAllowed` and `missingCodesAllowed` whitelist specific codes so that their presence or absence is not flagged.",
+    "Requires source and target locales; these are supplied by the pipeline rather than configured on the step."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/inlinescodeschecker/InlineCodesCheckerStep.java",
+      "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/inlinescodeschecker/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  },
+  "examples": [
+    {
+      "title": "Verify inline codes are preserved between source and target",
+      "description": "Reports segments whose target adds or drops inline codes relative to the source, using open/close inference to pair tags. Annotation markers and the `x-df-s` type are ignored so they do not raise false positives.",
+      "config": "```yaml\ncodeDifference: true\nguessOpenClose: true\ntypesToIgnore: \"mrk;x-df-s;\"\n```"
+    }
+  ]
+}

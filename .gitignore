@@ -18,3 +18,6 @@ filter-docs/
 okapi-data/
 dist/
 *.versionsBackup
+
+# Transient fleet-authoring manifest (per-id gap list)
+.gap-manifest.json

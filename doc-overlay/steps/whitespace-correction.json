@@ -1,0 +1,65 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "whitespace-correction",
+  "kind": "step",
+  "name": "Whitespace Correction",
+  "overview": "Simplifies the addition or removal of inter-segment whitespace when translating to or from Chinese or Japanese scripts that do not typically use spaces. When translating from a space-delimited language (e.g., English) to a non-space-delimited language (e.g., Chinese, Japanese), whitespace following segment-ending punctuation is removed. In the reverse direction, whitespace is added. No action is performed between two space-delimited languages or between Chinese and Japanese.",
+  "limitations": [
+    "Relies on the assumption that each source segment contains a single sentence and has been translated to a single sentence in the target language.",
+    "No action is performed when both source and target are space-delimited languages (e.g., English to French).",
+    "No action is performed when translating between Chinese and Japanese (both non-space-delimited)."
+  ],
+  "processingNotes": [
+    "The step converts full-width CJK punctuation to/from ASCII equivalents as part of the whitespace adjustment — it does not only add/remove spaces.",
+    "Direction of correction (add vs. remove whitespace) is determined automatically from the source and target locale settings."
+  ],
+  "examples": [
+    {
+      "title": "English to Japanese (remove whitespace)",
+      "description": "When translating from English (space-delimited) to Japanese (non-space-delimited), trailing whitespace after segment-ending punctuation is removed and ASCII punctuation is converted to full-width equivalents.",
+      "input": "```\nHello world. Next sentence.\n```",
+      "output": "```\nこんにちは世界。次の文。\n```"
+    },
+    {
+      "title": "Japanese to English (add whitespace)",
+      "description": "When translating from Japanese to English, the step adds whitespace after segment-ending punctuation and converts full-width punctuation to ASCII equivalents.",
+      "input": "```\nこんにちは世界。次の文。\n```",
+      "output": "```\nHello world. Next sentence.\n```"
+    }
+  ],
+  "parameters": {
+    "punctuation": {
+      "help": "Comma-separated list of punctuation categories to apply whitespace correction to. Each category handles conversion between full-width CJK punctuation and their ASCII equivalents:\n\n- **FULL_STOP** — Ideographic Full Stop (U+3002) and Full-width Full Stop (U+FF0E) ↔ period (`.`)\n- **COMMA** — Ideographic Comma (U+3001) and Full-width Comma (U+FF0C) ↔ comma (`,`)\n- **EXCLAMATION_MARK** — Full-width Exclamation Mark (U+FF01) ↔ `!`\n- **QUESTION_MARK** — Full-width Question Mark (U+FF1F) ↔ `?`\n\nThe step both converts the punctuation characters and adjusts the trailing whitespace in one operation.",
+      "values": "Comma-separated combination of: `FULL_STOP`, `COMMA`, `EXCLAMATION_MARK`, `QUESTION_MARK`",
+      "examples": [
+        "`FULL_STOP,COMMA` — only correct whitespace after periods and commas",
+        "`FULL_STOP,COMMA,EXCLAMATION_MARK,QUESTION_MARK` — all supported punctuation (default)"
+      ]
+    },
+    "whitespace": {
+      "help": "Comma-separated list of Unicode whitespace character categories that the step will add or remove when adjusting inter-segment spacing. The default includes a comprehensive set of Unicode space characters.\n\nMost users should not need to modify this parameter. Adjust only if you need to restrict which whitespace characters are considered during correction.",
+      "values": "Comma-separated Unicode whitespace category names (e.g., `SPACE`, `NO_BREAK_SPACE`, `IDEOGRAPHIC_SPACE`, `ZERO_WIDTH_SPACE`, etc.)"
+    }
+  },
+  "propertySuggestions": {
+    "punctuation": {
+      "title": "Punctuation Types",
+      "description": "Punctuation categories to apply whitespace correction to, with full-width CJK to ASCII conversion."
+    },
+    "whitespace": {
+      "title": "Whitespace Characters",
+      "description": "Unicode whitespace character categories considered during spacing adjustment."
+    }
+  },
+  "fullDoc": "# Whitespace Correction\n\nSimplifies the addition or removal of inter-segment whitespace when translating to or from Chinese or Japanese scripts that do not typically use spaces. When translating from a space-delimited language (e.g., English) to a non-space-delimited language (e.g., Chinese, Japanese), whitespace following segment-ending punctuation is removed. In the reverse direction, whitespace is added. No action is performed between two space-delimited languages or between Chinese and Japanese.\n\n## Parameters\n\n#### Punctuation Types\n\nComma-separated list of punctuation categories to apply whitespace correction to. Each category handles conversion between full-width CJK punctuation and their ASCII equivalents:\n\n- **FULL_STOP** — Ideographic Full Stop (U+3002) and Full-width Full Stop (U+FF0E) ↔ period (`.`)\n- **COMMA** — Ideographic Comma (U+3001) and Full-width Comma (U+FF0C) ↔ comma (`,`)\n- **EXCLAMATION_MARK** — Full-width Exclamation Mark (U+FF01) ↔ `!`\n- **QUESTION_MARK** — Full-width Question Mark (U+FF1F) ↔ `?`\n\nThe step both converts the punctuation characters and adjusts the trailing whitespace in one operation.\n\nDefault: `FULL_STOP,COMMA,EXCLAMATION_MARK,QUESTION_MARK`\n\n#### Whitespace Characters\n\nComma-separated list of Unicode whitespace character categories that the step will add or remove when adjusting inter-segment spacing. The default includes a comprehensive set of Unicode space characters including regular spaces, non-breaking spaces, em/en spaces, ideographic spaces, and zero-width spaces.\n\nMost users should not need to modify this parameter. Adjust only if you need to restrict which whitespace characters are considered during correction.\n\n## Limitations\n\n- Relies on the assumption that each source segment contains a single sentence and has been translated to a single sentence in the target language.\n- No action is performed when both source and target are space-delimited languages (e.g., English to French).\n- No action is performed when translating between Chinese and Japanese (both non-space-delimited).\n\n## Notes\n\n- The step converts full-width CJK punctuation to/from ASCII equivalents as part of the whitespace adjustment — it does not only add/remove spaces.\n- Direction of correction (add vs. remove whitespace) is determined automatically from the source and target locale settings.\n\n## Examples\n\n### English to Japanese (remove whitespace)\n\nWhen translating from English (space-delimited) to Japanese (non-space-delimited), trailing whitespace after segment-ending punctuation is removed and ASCII punctuation is converted to full-width equivalents.\n\n### Japanese to English (add whitespace)\n\nWhen translating from Japanese to English, the step adds whitespace after segment-ending punctuation and converts full-width punctuation to ASCII equivalents.",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Whitespace_Correction_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Whitespace_Correction_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false
+  }
+}

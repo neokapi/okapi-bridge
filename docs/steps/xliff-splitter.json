@@ -1,6 +1,32 @@
 {
   "filterName": "XLIFF Splitter",
+  "stepId": "xliff-splitter",
   "overview": "Splits a single XLIFF document into multiple documents, one per `<file>` element. All content outside `<file>` elements is copied as-is into each split document. An XLIFF document with only one `<file>` element is written out unaltered. Use the **XLIFF Joiner Step** to reassemble split files.",
+  "limitations": [
+    "When using the **Process large files** option, any XML parts between `<file>` elements are ignored and not copied into the new files.",
+    "An XLIFF document with only one `<file>` element is written out unaltered (no splitting occurs)."
+  ],
+  "processingNotes": [
+    "The received event is unaltered — the step outputs multiple numbered XLIFF documents in the output path.",
+    "All content outside `<file>` elements (e.g. `<header>`, processing instructions) is copied as-is to each split document.",
+    "The default DOM-based parser requires the entire file to fit in memory; use **Process big file** for very large inputs."
+  ],
+  "examples": [
+    {
+      "title": "Split into numbered parts",
+      "description": "Split a multi-`<file>` XLIFF into one document per `<file>`, using a custom marker in the output names. With `fileMarker: _chunk`, `document.xlf` produces `document_chunk1.xlf`, `document_chunk2.xlf`, and so on.",
+      "config": "```yaml\nfileMarker: _chunk\n```",
+      "input": null,
+      "output": null
+    },
+    {
+      "title": "Stream a large file and stamp WorldServer status",
+      "description": "Use the stream-based parser for very large inputs and update the `<iws:status>` flags in each split document, which is specific to WorldServer XLIFF. Note that with `bigFile` enabled, XML parts between `<file>` elements are not copied into the outputs.",
+      "config": "```yaml\nbigFile: true\nupdateSDLTranslationStatus: true\ntranslationTypeValue: machine_translation\ntranslationStatusValue: unfinished\n```",
+      "input": null,
+      "output": null
+    }
+  ],
   "parameters": {
     "bigFile": {
       "help": "Uses a **stream-based parser** instead of the default DOM-based parser. This allows processing very large XLIFF input documents (e.g. several hundreds of MB) that would not fit into memory with the DOM parser.",
@@ -51,16 +77,6 @@
       "help": "Restores the original file names of the split output documents instead of using the generated numbered names with the file marker."
     }
   },
-  "limitations": [
-    "When using the **Process large files** option, any XML parts between `<file>` elements are ignored and not copied into the new files.",
-    "An XLIFF document with only one `<file>` element is written out unaltered (no splitting occurs)."
-  ],
-  "processingNotes": [
-    "The received event is unaltered — the step outputs multiple numbered XLIFF documents in the output path.",
-    "All content outside `<file>` elements (e.g. `<header>`, processing instructions) is copied as-is to each split document.",
-    "The default DOM-based parser requires the entire file to fit in memory; use **Process big file** for very large inputs."
-  ],
-  "examples": [],
   "propertySuggestions": {
     "bigFile": {
       "title": "Process Large Files",
@@ -79,7 +95,29 @@
       "description": "Use original file names for split output documents instead of generated numbered names."
     }
   },
-  "fullDoc": "# XLIFF Splitter\n\nSplits a single XLIFF document into multiple documents, one per `<file>` element. All content outside `<file>` elements is copied as-is into each split document. An XLIFF document with only one `<file>` element is written out unaltered. Use the **XLIFF Joiner Step** to reassemble split files.\n\nTakes: Raw document. Sends: Raw document.\n\n## Parameters\n\n#### Process Big File\nUses a **stream-based parser** instead of the default DOM-based parser. This allows processing very large XLIFF input documents (e.g. several hundreds of MB) that would not fit into memory with the DOM parser.\n\n> **Limitation:** When enabled, any XML parts between `<file>` elements are ignored and not copied into the new files.\n\n#### File Marker\nA marker string appended to the end of each generated output filename, just before the numeric counter.\n\n- `_PART` → `document_PART1.xlf`, `document_PART2.xlf`\n- `_split` → `document_split1.xlf`, `document_split2.xlf`\n\nDefault: `_PART`\n\n#### Update WorldServer Translation Status\nUpdates the `translation_type` and `translation_status` flags in `<iws:status>` elements of the output documents. This also **removes** the `target_content` attribute. This is specific to **WorldServer XLIFF** documents.\n\n#### Value for 'translation_type'\nThe value written into the `translation_type` attribute of `<iws:status>` elements in each output document. Only used when **Update WorldServer Translation Status** is enabled.\n\nDefault: `manual_translation`\n\n#### Value for 'translation_status'\nThe value written into the `translation_status` attribute of `<iws:status>` elements in each output document. Only used when **Update WorldServer Translation Status** is enabled.\n\nDefault: `finished`\n\n#### Restore Original File Names\nRestores the original file names of the split output documents instead of using the generated numbered names with the file marker.\n\n## Limitations\n\n- When using the **Process large files** option, any XML parts between `<file>` elements are ignored and not copied into the new files.\n- An XLIFF document with only one `<file>` element is written out unaltered (no splitting occurs).\n\n## Notes\n\n- The received event is unaltered — the step outputs multiple numbered XLIFF documents in the output path.\n- All content outside `<file>` elements (e.g. `<header>`, processing instructions) is copied as-is to each split document.\n- The default DOM-based parser requires the entire file to fit in memory; use **Process big file** for very large inputs.\n- Use the **XLIFF Joiner Step** to reassemble files that were split with this step.\n\n## Examples\n\nNo worked examples available for this step.",
-  "stepId": "xliff-splitter",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/XLIFF_Splitter_Step"
+  "fullDoc": "# XLIFF Splitter\n\nSplits a single XLIFF document into multiple documents, one per `<file>` element. All content outside `<file>` elements is copied as-is into each split document. An XLIFF document with only one `<file>` element is written out unaltered. Use the **XLIFF Joiner Step** to reassemble split files.\n\nTakes: Raw document. Sends: Raw document.\n\n## Parameters\n\n#### Process Big File\nUses a **stream-based parser** instead of the default DOM-based parser. This allows processing very large XLIFF input documents (e.g. several hundreds of MB) that would not fit into memory with the DOM parser.\n\n> **Limitation:** When enabled, any XML parts between `<file>` elements are ignored and not copied into the new files.\n\n#### File Marker\nA marker string appended to the end of each generated output filename, just before the numeric counter.\n\n- `_PART` → `document_PART1.xlf`, `document_PART2.xlf`\n- `_split` → `document_split1.xlf`, `document_split2.xlf`\n\nDefault: `_PART`\n\n#### Update WorldServer Translation Status\nUpdates the `translation_type` and `translation_status` flags in `<iws:status>` elements of the output documents. This also **removes** the `target_content` attribute. This is specific to **WorldServer XLIFF** documents.\n\n#### Value for 'translation_type'\nThe value written into the `translation_type` attribute of `<iws:status>` elements in each output document. Only used when **Update WorldServer Translation Status** is enabled.\n\nDefault: `manual_translation`\n\n#### Value for 'translation_status'\nThe value written into the `translation_status` attribute of `<iws:status>` elements in each output document. Only used when **Update WorldServer Translation Status** is enabled.\n\nDefault: `finished`\n\n#### Restore Original File Names\nRestores the original file names of the split output documents instead of using the generated numbered names with the file marker.\n\n## Limitations\n\n- When using the **Process large files** option, any XML parts between `<file>` elements are ignored and not copied into the new files.\n- An XLIFF document with only one `<file>` element is written out unaltered (no splitting occurs).\n\n## Notes\n\n- The received event is unaltered — the step outputs multiple numbered XLIFF documents in the output path.\n- All content outside `<file>` elements (e.g. `<header>`, processing instructions) is copied as-is to each split document.\n- The default DOM-based parser requires the entire file to fit in memory; use **Process big file** for very large inputs.\n- Use the **XLIFF Joiner Step** to reassemble files that were split with this step.",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/XLIFF_Splitter_Step",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/XLIFF_Splitter_Step",
+      "okapi-source:okapi/steps/xliffsplitter/src/main/java/net/sf/okapi/steps/xliffsplitter/XliffSplitterParameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.bigFile": "ai",
+      "parameters.fileMarker": "ai",
+      "parameters.restoreOriginalNames": "ai",
+      "parameters.translationStatusValue": "ai",
+      "parameters.translationTypeValue": "ai",
+      "parameters.updateSDLTranslationStatus": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

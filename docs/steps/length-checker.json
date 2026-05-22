@@ -1,0 +1,40 @@
+{
+  "filterName": "Length Checker Step",
+  "stepId": "length-checker",
+  "overview": "The Length Checker step compares the length of the source and target of each text unit and annotates those whose ratio appears mismatched. It supports a maximum-length check and a minimum-length check, each expressed as a percentage of source length with separate thresholds for short and long text, an absolute maximum character count, and a storage-size check against limits declared by the document format. It expects filter events and passes them through unchanged, attaching the detected issues for a downstream consumer to report. It is one of the granular quality checks that the aggregate Quality Check step combines into a single pass.",
+  "limitations": [
+    "Length is measured in characters, so the percentage thresholds must be tuned per language pair to avoid false positives.",
+    "The storage-size check only applies to formats that declare a size limit (for example the XLIFF `maxwidth` attribute)."
+  ],
+  "processingNotes": [
+    "Operates on filter events; events are forwarded unchanged and the detected issues are accumulated per document.",
+    "Delegates to the verification library's `LengthChecker`; its step parameters are a subset of the full Quality Check / CheckMate configuration.",
+    "By default the maximum-length check, minimum-length check, and storage-size check are enabled, while the absolute maximum-length check is disabled.",
+    "The percentage thresholds switch at a source-length break of 20 characters: for the maximum-length check, a source of 20 characters or fewer allows the target up to 350% of its length, while a longer source allows up to 200%; for the minimum-length check, a short source requires the target to be at least 30% of its length and a longer source at least 45%. The absolute maximum-length check defaults to 255 characters.",
+    "Requires source and target locales; these are supplied by the pipeline rather than configured on the step."
+  ],
+  "examples": [
+    {
+      "title": "Flag over-long translations with a hard character cap",
+      "description": "Checks target length against source length: for sources up to 20 characters the target may reach 350% of the source, and for longer sources up to 200%; any target over 255 characters outright is also flagged.",
+      "config": "```yaml\ncheckMaxCharLength: true\nmaxCharLengthBreak: 20\nmaxCharLengthBelow: 350\nmaxCharLengthAbove: 200\ncheckAbsoluteMaxCharLength: true\nabsoluteMaxCharLength: 255\n```"
+    }
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/lengthchecker/LengthCheckerStep.java",
+      "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/lengthchecker/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

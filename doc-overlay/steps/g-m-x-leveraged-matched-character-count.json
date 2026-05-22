@@ -1,0 +1,25 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "g-m-x-leveraged-matched-character-count",
+  "kind": "step",
+  "name": "GMX Leveraged Character Count Step",
+  "overview": "Tallies the [GMX-V 2.0](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html) `LeveragedMatchedCharacterCount` category — the character count for text units matched against a leveraged translation memory database. It reads the `AltTranslationsAnnotation` left by a leveraging step and counts a target segment or text container only when its top match is of type `EXACT`, `EXACT_LOCAL_CONTEXT`, or `EXACT_STRUCTURAL`, counting characters in the corresponding source. Characters are counted in canonical form — whitespace and punctuation are excluded (hyphens and apostrophes inside words are kept) — and stored as GMX-V metrics annotations for downstream consumption (for example by the Scoping Report Step). This is the character-count counterpart of the leveraged-matched word-count step.",
+  "processingNotes": [
+    "Only the top-ranked alternate translation of each segment is examined; it qualifies when its match type is `EXACT`, `EXACT_LOCAL_CONTEXT`, or `EXACT_STRUCTURAL`.",
+    "Counts are computed over the source content of qualifying units; only translatable text units are counted, and a target must be present.",
+    "Character counting excludes whitespace and punctuation per GMX-V, but retains hyphens and apostrophes that occur inside a word."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXLeveragedMatchedCharacterCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXLeveragedMatchedWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

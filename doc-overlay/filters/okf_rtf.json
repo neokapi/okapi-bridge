@@ -1,0 +1,37 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "okf_rtf",
+  "kind": "filter",
+  "name": "Trados-Tagged RTF Filter",
+  "overview": "The RTF Filter reads **Trados-tagged bilingual RTF** documents — the segmented RTF exchange format produced by legacy Trados Workbench / TagEditor workflows, in which each translation segment is wrapped in `{0>source<}n*{>target<0}` markup. The filter parses the RTF token stream (control words and groups), recognises the Trados bilingual markers, and extracts the source text from each segment as a translatable text unit. It is a reading-only filter: it is intended for harvesting source content from existing tagged RTF, not for producing tagged RTF output.",
+  "limitations": [
+    "This is a **read-only** filter (its display name is \"Trados-Tagged RTF Filter - READING ONLY\"). It is meant for extracting source segments from Trados-tagged bilingual RTF, not for writing translated RTF.",
+    "The input is expected to follow the Trados bilingual segment markup (`{0>...<}n*{>...<0}`). Plain RTF without this tagging will not yield bilingual segments; if the stream does not look like RTF at all, the filter logs a warning.",
+    "Hidden text appearing in target content is detected and reported; it is not treated as translatable source."
+  ],
+  "processingNotes": [
+    "The parser walks RTF control words and groups, extracting text from segment runs while skipping non-translatable destinations such as the font table, colour table, stylesheet, document info, pictures, and field instructions.",
+    "Common RTF escapes are decoded on read: `\\uN` Unicode escapes, `\\'HH` hex escapes, and special-character control words including `\\par`, `\\tab`, `\\line`, `\\endash`/`\\emdash`, the smart-quote words (`\\lquote`/`\\rquote`/`\\ldblquote`/`\\rdblquote`), and `\\bullet`.",
+    "The `tw4winInternal` character style and field destinations are used to distinguish Trados tag markup from translatable text.",
+    "The filter has no configurable parameters; behaviour is fixed."
+  ],
+  "examples": [
+    {
+      "title": "Extracting a Trados bilingual segment",
+      "description": "A Trados-tagged RTF segment wraps source and target text in `{0>...<}n*{>...<0}` markup. The filter recognises the markers and extracts the source text as a translatable unit.",
+      "config": null,
+      "input": "```\n{0>Hello, world.<}100{>Hallo, Welt.<0}\n```",
+      "output": "```\nThe source text \"Hello, world.\" is extracted as a translatable text unit; the Trados markup and the existing target are treated as non-translatable structure.\n```"
+    }
+  ],
+  "parameters": {},
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/rtf/src/main/java/net/sf/okapi/filters/rtf/RTFFilter.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

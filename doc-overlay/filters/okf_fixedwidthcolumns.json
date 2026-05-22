@@ -1,0 +1,152 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "okf_fixedwidthcolumns",
+  "kind": "filter",
+  "name": "Fixed-Width Columns Filter",
+  "aliasOf": "okf_table",
+  "overview": "The Fixed-Width Columns Filter extracts translatable text from tables in which each column occupies a fixed character span and is padded with whitespace, rather than being marked by a delimiter. Column boundaries are declared explicitly through paired start and end positions — there is no auto-detection of the layout. Each declared column is cut from the line by character position, the slice between its end and the next column's start is kept as skeleton padding so the layout round-trips, and the resulting cell is processed under the table family's column-role, header, and whitespace settings. By default it trims all cells to remove the alignment padding.",
+  "limitations": [
+    "The column layout must be declared explicitly via `columns.columnStartPositions` and `columns.columnEndPositions`; there is no auto-detection of boundaries.",
+    "Positions are counted in characters, 1-based; multibyte characters occupy one position each.",
+    "Column roles are addressed by 1-based index, not by header name."
+  ],
+  "processingNotes": [
+    "Only as many columns are read as the shorter of the two position lists; a column whose start is not before its end, or whose start is past the line length, is skipped.",
+    "The text between a column's end position and the next column's start position is preserved as skeleton padding, so the fixed-width layout is reproduced on output.",
+    "Each cell records a `column_width` property alongside the usual line/column/row numbers.",
+    "The default trim mode is `all` so the surrounding alignment whitespace is stripped from extracted values."
+  ],
+  "examples": [
+    {
+      "title": "Two fixed-width columns",
+      "description": "An 8-character ID column followed by a 40-character label column. Column 1 spans positions 1-8 and column 2 spans 9-48; the label column is the source.",
+      "config": "```yaml\nconfigId: okf_table_fwc\ncolumns:\n  columnStartPositions: \"1,9\"\n  columnEndPositions: \"8,48\"\nsourceColumns: \"2\"\nsendColumnsMode: 1\n```",
+      "input": "```\nID0001  Open the main valve\nID0002  Close the bypass\n```"
+    },
+    {
+      "title": "Header line above fixed-width data",
+      "description": "Skip a header line and start the fixed-width records on line 2.",
+      "config": "```yaml\ncolumns:\n  columnStartPositions: \"1,11\"\n  columnEndPositions: \"10,60\"\nvaluesStartLineNum: 2\nsendHeaderMode: 0\n```"
+    }
+  ],
+  "parameters": {
+    "columns.columnStartPositions": {
+      "help": "The 1-based character position at which each fixed-width column begins, as a comma-separated list aligned position-by-position with `columns.columnEndPositions`. A position counts characters from the start of the line. Only as many columns are read as the shorter of the start and end lists.",
+      "values": "Comma-separated 1-based character positions, e.g. `1,9,49` (default empty)",
+      "dependsOn": [
+        { "property": "columns.columnEndPositions", "condition": "each start must be paired with a matching end position" }
+      ]
+    },
+    "columns.columnEndPositions": {
+      "help": "The 1-based character position at which each fixed-width column ends, as a comma-separated list aligned position-by-position with `columns.columnStartPositions`. The slice taken for a column runs from its start up to (but not including) its end; the gap between this end and the next column's start is preserved as skeleton padding.",
+      "values": "Comma-separated 1-based character positions, e.g. `8,48,80` (default empty)",
+      "dependsOn": [
+        { "property": "columns.columnStartPositions", "condition": "each end must be paired with a matching start position" }
+      ]
+    },
+    "columnNamesLineNum": {
+      "help": "The 1-based line number holding the column captions. The line is cut into cells by the declared column positions to read the names, which label comment metadata and may set the pipeline locale when a column name is a locale code. Use `0` when there is no column-name line.",
+      "values": "1-based line number; `0` = none (default `0`)"
+    },
+    "valuesStartLineNum": {
+      "help": "The 1-based line where data rows begin. Lines before it form the header area, handled per `sendHeaderMode`.",
+      "values": "1-based line number (default `1`)"
+    },
+    "detectColumnsMode": {
+      "help": "How the column count per row is decided. For fixed-width input the column count is effectively governed by the declared position lists; this setting is consulted in the same way as for other table formats.",
+      "values": "`0` = none, `1` = from column names, `2` = fixed (default `0`)"
+    },
+    "sendHeaderMode": {
+      "help": "Which header-area lines are extracted as translatable text: none, the column-names line only, or all header lines.",
+      "values": "`0` = none, `1` = column names only, `2` = all (default `0`)"
+    },
+    "sendColumnsMode": {
+      "help": "Which columns of each data row are extracted: none, only the columns named in the column-role settings, or all columns as source. `listed` mode enables bilingual extraction, IDs, and notes.",
+      "values": "`0` = none, `1` = listed, `2` = all (default `1`)"
+    },
+    "recordIdColumn": {
+      "help": "The 1-based index of the column whose value identifies the row. Combined with `sourceIdSuffixes` to synthesise an ID for source columns lacking an explicit ID cell.",
+      "values": "1-based column index; `0` = none (default `0`)"
+    },
+    "sourceColumns": {
+      "help": "Comma-separated 1-based indices of the columns extracted as source (translatable) text. The index refers to the column's position in the declared start/end lists. Consulted when `sendColumnsMode` is `listed`.",
+      "values": "e.g. `1` or `2,3` (default `1`)"
+    },
+    "targetColumns": {
+      "help": "Comma-separated 1-based indices of columns holding existing target text. Each is tied to a source column via `targetSourceRefs` and a locale via `targetLanguages`; supplying them makes the configuration bilingual.",
+      "values": "Comma-separated 1-based indices (default `2`)"
+    },
+    "targetLanguages": {
+      "help": "Locale of each target column, aligned position-by-position with `targetColumns`. A single value applies to all target columns; otherwise the pipeline target locale is used.",
+      "values": "Comma-separated locale codes, e.g. `fr,de` (default empty)"
+    },
+    "commentColumns": {
+      "help": "Comma-separated 1-based indices of columns whose values attach as notes (or metadata, see `exposeCommentsAsMetadata`) to the source column they annotate via `commentSourceRefs`, rather than being extracted as translatable text.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "sourceIdColumns": {
+      "help": "Comma-separated 1-based indices of columns whose values become the resource names (IDs) of source text units, linked to their source column via `sourceIdSourceRefs`. An empty ID cell falls back to `recordIdColumn` + `sourceIdSuffixes`.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "commentSourceRefs": {
+      "help": "Maps each column in `commentColumns` to the source column it annotates, as a comma-separated list of 1-based source-column indices aligned position-by-position. The comment becomes a read-only note on that source text unit.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "sourceIdSourceRefs": {
+      "help": "Maps each column in `sourceIdColumns` to the source column it names, as a comma-separated list of 1-based source-column indices aligned position-by-position.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "sourceIdSuffixes": {
+      "help": "Suffixes appended to the `recordIdColumn` value to build an ID for a source column that has no explicit ID cell. Aligned position-by-position with `sourceColumns`.",
+      "values": "Comma-separated strings (default empty)"
+    },
+    "targetSourceRefs": {
+      "help": "Maps each column in `targetColumns` to the source column it translates, as a comma-separated list of 1-based source-column indices aligned position-by-position. A target whose reference cannot be resolved is sent to the skeleton.",
+      "values": "Comma-separated 1-based indices (default `1`)"
+    },
+    "exposeCommentsAsMetadata": {
+      "help": "When enabled, comment-column values attach to the source text unit as metadata keyed by column name instead of as translator notes.",
+      "values": "`true` / `false` (default `false`)",
+      "dependsOn": [
+        { "property": "commentColumns", "condition": "only meaningful when comment columns are defined" }
+      ]
+    },
+    "preserveWS": {
+      "help": "Inherited from the plain-text base. When enabled, whitespace inside extracted values is preserved; cell-edge trimming is governed by `trimMode`, `trimLeading`, and `trimTrailing`. For fixed-width input the alignment padding is normally removed by the default trim mode.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "trimMode": {
+      "help": "How leading/trailing whitespace is removed from cells. For fixed-width columns the default is `all`, so the whitespace padding that aligns the columns is stripped from extracted values. Any non-none value forces `trimLeading` and `trimTrailing` on.",
+      "values": "`0` = none, `1` = non-qualified only, `2` = all (default `2` for fixed-width)"
+    },
+    "trimLeading": {
+      "help": "Removes leading spaces and tabs from each extracted cell value. Forced on whenever `trimMode` is not none.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "trimTrailing": {
+      "help": "Removes trailing spaces and tabs from each extracted cell value. Forced on whenever `trimMode` is not none.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "unescapeSource": {
+      "help": "Inherited from the plain-text base. When enabled, `\\t`, `\\n`, `\\\\`, and `\\uXXXX` escape sequences in extracted values are converted to the characters they represent.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "wrapMode": {
+      "help": "How a value spanning multiple physical lines is represented: `NONE` joins wrapped lines with a line feed, `SPACES` joins with a single space, `PLACEHOLDERS` inserts an inline placeholder at each internal break so the wrapping can be reproduced on output.",
+      "values": "`NONE`, `SPACES`, `PLACEHOLDERS` (default `NONE`)"
+    }
+  },
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Table_Filter",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/fwc/Parameters.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/fwc/FixedWidthColumnsFilter.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/Parameters.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/BaseTableFilter.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

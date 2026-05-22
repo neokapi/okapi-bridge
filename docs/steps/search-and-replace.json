@@ -1,6 +1,30 @@
 {
   "filterName": "Search and Replace Step",
+  "stepId": "search-and-replace",
   "overview": "This step performs search and replace actions on either the text units or the full content of input documents. It can process both raw documents (whole-file text replacement) and filter events (text unit content replacement). Patterns are processed in the order they are declared, and both literal and Java regular expression modes are supported.",
+  "limitations": [
+    "When working with a raw document as input, the **entire content** is loaded into memory. This may cause problems with very large documents.",
+    "The external replacements file (`replacementsPath`) is limited to literal (non-regex) substring searches only.",
+    "Patterns are processed sequentially in declared order — longer patterns must be placed **first** if there is a chance of overlapping matches."
+  ],
+  "processingNotes": [
+    "Patterns are processed in the order they appear in the list. Ensure longer patterns come before shorter overlapping ones.",
+    "When receiving **filter events**, search/replace operates on text unit content. When receiving a **raw document**, it operates on the entire file as plain text (no escaped character conversion).",
+    "The external replacements file is processed **after** all table expressions.",
+    "The `source` and `target` options are only relevant in filter events mode; they are ignored in raw document mode."
+  ],
+  "examples": [
+    {
+      "title": "Escape sequences in search and replace",
+      "description": "Both literal and regex modes support escape sequences in search and replace strings. The available sequences differ slightly between modes.",
+      "config": "```yaml\n# Literal mode escapes (regEx: false)\n# Search: \\n \\r \\t \\\\ \\uHHHH\n# Replace: \\n \\r \\t \\\\ \\uHHHH\n\n# Regex mode additional replace escapes (regEx: true)\n# Replace: $1 $2 ... $N (group references)\n# Replace: \\$ (literal dollar sign)\n```"
+    },
+    {
+      "title": "External replacements file format",
+      "description": "The tab-delimited replacements file uses two columns separated by a tab character. Each line defines one search/replace pair.",
+      "input": "```\nold term\\tnew term\nfoo\\tbar\n```"
+    }
+  ],
   "parameters": {
     "regEx": {
       "help": "Enables [Java regular expression](http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html) mode for all search patterns.\n\nWhen enabled, use `$1`, `$2`, etc. in replacement strings to reference captured groups from the search pattern (see [`Matcher.replaceAll()`](http://java.sun.com/javase/6/docs/api/java/util/regex/Matcher.html#replaceAll(java.lang.String))).\n\nIn **both** modes, search and replace strings support these escape sequences:\n- `\\n` = line-feed\n- `\\r` = carriage-return\n- `\\t` = tab\n- `\\\\` = literal backslash\n- `\\uHHHH` = Unicode character (hex)\n\nAdditionally, when regex is **on**, replacement strings support:\n- `$N` = match of search group N\n- `\\$` = literal dollar sign",
@@ -78,29 +102,6 @@
       "help": "Tracks the total number of replacements performed. Typically used as an output counter rather than a user-configured input."
     }
   },
-  "limitations": [
-    "When working with a raw document as input, the **entire content** is loaded into memory. This may cause problems with very large documents.",
-    "The external replacements file (`replacementsPath`) is limited to literal (non-regex) substring searches only.",
-    "Patterns are processed sequentially in declared order — longer patterns must be placed **first** if there is a chance of overlapping matches."
-  ],
-  "processingNotes": [
-    "Patterns are processed in the order they appear in the list. Ensure longer patterns come before shorter overlapping ones.",
-    "When receiving **filter events**, search/replace operates on text unit content. When receiving a **raw document**, it operates on the entire file as plain text (no escaped character conversion).",
-    "The external replacements file is processed **after** all table expressions.",
-    "The `source` and `target` options are only relevant in filter events mode; they are ignored in raw document mode."
-  ],
-  "examples": [
-    {
-      "title": "Escape sequences in search and replace",
-      "description": "Both literal and regex modes support escape sequences in search and replace strings. The available sequences differ slightly between modes.",
-      "config": "```yaml\n# Literal mode escapes (regEx: false)\n# Search: \\n \\r \\t \\\\ \\uHHHH\n# Replace: \\n \\r \\t \\\\ \\uHHHH\n\n# Regex mode additional replace escapes (regEx: true)\n# Replace: $1 $2 ... $N (group references)\n# Replace: \\$ (literal dollar sign)\n```"
-    },
-    {
-      "title": "External replacements file format",
-      "description": "The tab-delimited replacements file uses two columns separated by a tab character. Each line defines one search/replace pair.",
-      "input": "```\nold term\\tnew term\nfoo\\tbar\n```"
-    }
-  ],
   "propertySuggestions": {
     "regEx": {
       "title": "Use Regular Expressions",
@@ -148,6 +149,32 @@
     }
   },
   "fullDoc": "# Search and Replace Step\n\nThis step performs search and replace actions on either the text units or the full content of input documents. It can process both raw documents (whole-file text replacement) and filter events (text unit content replacement). Patterns are processed in the order they are declared, and both literal and Java regular expression modes are supported.\n\n## Input Modes\n\n- **Filter events**: Search and replace operates on the content of text units. Updated filter events are sent to the next step.\n- **Raw document**: Search and replace operates on the whole file as plain text. The document is treated exactly as it would appear in a text editor — no conversion of escaped characters is performed. An updated raw document is sent to the next step.\n\n## Parameters\n\n### Search Mode\n\n#### Use Regular Expressions\nEnable [Java regular expression](http://download.oracle.com/javase/6/docs/api/java/util/regex/Pattern.html) mode for all search patterns. When enabled, use `$1`, `$2`, etc. in replacement strings to reference captured groups.\n\nIn **both** modes, these escape sequences are supported:\n- `\\n` = line-feed, `\\r` = carriage-return, `\\t` = tab\n- `\\\\` = literal backslash\n- `\\uHHHH` = Unicode character (hex)\n\nIn **regex** mode, replacements additionally support:\n- `$N` = match of search group N\n- `\\$` = literal dollar sign\n\n> **Note:** You must use `\\\\` to represent a literal backslash. For `\\C` where `C` is not a special character, the result is the literal character (e.g., `\\*` → `*`).\n\n#### Dot Also Matches Line-Feed\nChanges the meaning of `.` so it matches every character including `\\n`. Only available when regular expressions are enabled.\n\n#### Ignore Case Differences\nMakes all pattern matching case-insensitive. For example, `bear` matches `Bearcat`, `BEARCAT`, and `bearcat`. Only available when regular expressions are enabled.\n\n#### Multiline Mode\nChanges `^` and `$` to match at the beginning and end of any line, not just the whole string. Only available when regular expressions are enabled.\n\n### Scope\n\n#### Replace in Target Content\nPerforms search and replace on the **target** content of text units. Ignored in raw document mode.\n\n> **Note:** When working on target content, you may need to use the **Create Target Step** before this step to ensure target content exists.\n\n#### Replace in Source Content\nPerforms search and replace on the **source** content of text units. Ignored in raw document mode.\n\n#### Replace All Instances\nReplaces all matches found. If disabled, only the first match is replaced. In text unit mode, this applies per text unit; in raw document mode, it applies to the whole file.\n\n### External Replacements\n\n#### Replacements File Path\nPath to a tab-delimited, UTF-8-encoded text file with two columns: search strings and replacement strings. Processed **after** the table expressions. Supports `${rootDir}` and `${inputRootDir}` variables.\n\n> **Note:** Replacements from this file are limited to literal (non-regex) substring matching only.\n\n### Logging\n\n#### Save Replacement Log\nEnables logging of all replacements performed.\n\n#### Replacement Log File Path\nPath where the replacement log will be saved. Supports `${rootDir}` and `${inputRootDir}` variables. Default: `${rootDir}/replacementsLog.txt`.\n\n#### Replacement Count\nTotal number of replacements performed (output counter).\n\n## Limitations\n\n- When working with a raw document as input, the **entire content** is loaded into memory. This may cause problems with very large documents.\n- The external replacements file is limited to literal (non-regex) substring searches only.\n- Patterns are processed sequentially — longer patterns must be placed **first** if overlapping matches are possible.\n\n## Notes\n\n- Patterns are processed in declared order. Ensure longer patterns precede shorter overlapping ones.\n- The external replacements file is processed **after** all inline table expressions.\n- The `source` and `target` scope options only apply in filter events mode; they are ignored in raw document mode.\n\n## Examples\n\n### Escape Sequences\n\n```\n# Literal mode (regEx: false)\nSearch:  \\n \\r \\t \\\\ \\uHHHH\nReplace: \\n \\r \\t \\\\ \\uHHHH\n\n# Regex mode adds (regEx: true)\nReplace: $1 $2 ... $N (group refs), \\$ (literal dollar)\n```\n\n### External Replacements File\n\nTab-delimited UTF-8 file with two columns:\n```\nold term\tnew term\nfoo\tbar\n```",
-  "stepId": "search-and-replace",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Search_and_Replace_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Search_and_Replace_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Search_and_Replace_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.count": "ai",
+      "parameters.dotAll": "ai",
+      "parameters.ignoreCase": "ai",
+      "parameters.logPath": "ai",
+      "parameters.multiLine": "ai",
+      "parameters.regEx": "ai",
+      "parameters.replaceALL": "ai",
+      "parameters.replacementsPath": "ai",
+      "parameters.saveLog": "ai",
+      "parameters.source": "ai",
+      "parameters.target": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

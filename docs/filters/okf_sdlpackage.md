@@ -8,7 +8,7 @@ This filter is an extension of the Archive Filter. It reads the input package, d
 
 ## Parameters
 
-This filter has no configurable parameters. It uses the Archive Filter infrastructure with built-in SDLXLIFF detection and the `okf_xliff-sdl` XLIFF Filter configuration.
+The filter exposes only the Archive Filter's container **MIME type** (`mimeType`), which it overrides to `application/x-sdlpackage` at construction. SDLXLIFF detection (target-language folder pattern and the `okf_xliff-sdl` configuration) is set internally and is not exposed as a parameter.
 
 ## Limitations
 

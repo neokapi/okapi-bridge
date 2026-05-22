@@ -1,0 +1,27 @@
+{
+  "filterName": "GMX Alphanumeric Only Word Count Step",
+  "stepId": "g-m-x-alphanumeric-only-text-unit-word-count",
+  "overview": "Tallies the [GMX-V 2.0](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html) `AlphanumericOnlyTextUnitWordCount` category — the word count for text units that contain only alphanumeric words. Each text unit's source is tokenised and a unit qualifies only when every non-whitespace token is one of the recognised alphanumeric kinds (`ABBREVIATION`, `EMAIL`, `INTERNET`, `COMPANY`, `EMOTICON`, `MARKUP`); units mixing in any other token type contribute zero. Counts are stored as GMX-V metrics annotations on segments, text containers, and aggregate resources for downstream consumption (for example by the Scoping Report Step). This is the word-count variant; a companion step counts characters for the same category.",
+  "processingNotes": [
+    "A text unit is counted only if all of its tokens are alphanumeric-kind tokens plus whitespace; otherwise the unit yields zero.",
+    "Counts are computed over the source content; only translatable text units are counted.",
+    "For locales the GMX-V spec treats as logographic, the word count is derived from the character count divided by the per-language factor rather than from token counts."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXAlphanumericOnlyTextUnitWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/TokenCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

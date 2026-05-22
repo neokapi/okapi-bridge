@@ -1,0 +1,35 @@
+{
+  "filterName": "Patterns Checker Step",
+  "stepId": "patterns-checker",
+  "overview": "The Patterns Checker step verifies that content matching a configured regular-expression pattern in one side of a segment has its expected counterpart in the other side. Each pattern rule pairs a source regex with a target regex (or the `<same>` keyword, meaning the exact source match must reappear in the target), and a direction that decides which side is searched first. It expects filter events and passes them through unchanged, attaching the detected issues for a downstream consumer to report. It is one of the granular quality checks that the aggregate Quality Check step combines into a single pass.",
+  "processingNotes": [
+    "Operates on filter events; events are forwarded unchanged and the detected issues are accumulated per document.",
+    "Delegates to the verification library's `PatternsChecker`; its step parameters are a subset of the full Quality Check / CheckMate configuration.",
+    "Pattern checking is enabled by default and ships with a built-in rule set: opening parentheses, closing parentheses, other bracketing characters, email addresses, URLs, IP addresses, C-style printf codes, and tripled letters.",
+    "Each rule carries a severity (low, medium, or high); the built-in URL, email, IP and printf rules expect `<same>`, while the tripled-letter rule is checked from the target side rather than the source.",
+    "Requires source and target locales; these are supplied by the pipeline rather than configured on the step."
+  ],
+  "examples": [
+    {
+      "title": "Require numbers in the source to appear in the target",
+      "description": "Adds a custom rule alongside the built-in pattern set: every run of digits found in the source (`fromSource: true`) must also occur in the target, otherwise the segment is flagged at warning severity.",
+      "config": "```yaml\ncheckPatterns: true\npatterns:\n  - enabled: true\n    fromSource: true\n    source: \"\\\\d+\"\n    target: \"\\\\d+\"\n    severity: 1\n    description: \"Numbers must be preserved in the target\"\n```"
+    }
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/patternschecker/PatternsCheckerStep.java",
+      "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/patternschecker/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai",
+      "examples": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

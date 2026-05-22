@@ -1,0 +1,113 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "okf_vtt",
+  "kind": "filter",
+  "name": "VTT Filter",
+  "overview": "The VTT Filter reads and writes **WebVTT** (Web Video Text Tracks) subtitle and caption files (`.vtt`, and `.srt` under the default configuration). Each cue's text is extracted as a translatable unit, while the `WEBVTT` header, cue identifiers, and timecode lines are preserved as structure. On output the filter can rewrite or discard each cue's positioning settings and apply the shared subtitle line-wrapping and timecode controls. It builds on the common subtitle filter, so the `output.*` parameters are shared with the TTML filter.",
+  "processingNotes": [
+    "A WebVTT cue is `[identifier]` + timecode line (`HH:MM:SS.mmm --> HH:MM:SS.mmm` plus optional positioning settings) + one or more lines of cue text. The cue text is the translatable unit.",
+    "Cue settings (the positioning tokens after the timecode, e.g. `align:start position:10%`) are governed on output by `extraction.cueSettings` and `extraction.discardCues`: a non-empty `cueSettings` value replaces them; otherwise `discardCues` removes them; otherwise the original settings are kept.",
+    "The default `okf_vtt` configuration ships with non-zero line limits (`maxLinesPerCaption` 2, `maxCharsPerLine` 47, `cjkCharsPerLine` 18); the underlying parameter defaults when set programmatically are `0` (no limit).",
+    "Output time strings are formatted with the `output.timeFormat` pattern; the parameter default is `HH:mm:ss.SSS`."
+  ],
+  "examples": [
+    {
+      "title": "Normalise cue positioning",
+      "description": "Replaces every cue's positioning settings with a single fixed alignment, useful when consolidating subtitles authored with inconsistent positioning.",
+      "config": "```yaml\nextraction:\n  cueSettings: \"align:center line:90%\"\n```",
+      "input": "```\nWEBVTT\n\n00:00:01.000 --> 00:00:04.000 align:start position:10%\nHello there.\n```",
+      "output": "```\nOn output the cue timecode is followed by \"align:center line:90%\" in place of the original \"align:start position:10%\".\n```"
+    },
+    {
+      "title": "Strip cue settings and cap line length",
+      "description": "Discards all positioning settings and constrains caption text to two lines of at most 37 characters.",
+      "config": "```yaml\nextraction:\n  discardCues: true\noutput:\n  maxLinesPerCaption: 2\n  maxCharsPerLine: 37\n```",
+      "input": null,
+      "output": null
+    }
+  ],
+  "parameters": {
+    "extraction.cueSettings": {
+      "help": "When set to a non-empty string, the given text replaces the positioning settings of every cue on output. It takes precedence over `discardCues`. Leave empty to preserve each cue's original settings (or to let `discardCues` remove them).",
+      "values": "A WebVTT cue-settings string, or empty (default). Empty means the original settings are kept unless `discardCues` is enabled.",
+      "examples": [
+        "`align:center line:90%`",
+        "`position:50% size:80%`"
+      ],
+      "dependsOn": [
+        {
+          "property": "discardCues",
+          "condition": "a non-empty cueSettings overrides discardCues"
+        }
+      ]
+    },
+    "extraction.discardCues": {
+      "help": "When enabled, each cue's positioning settings are removed on output, leaving only the timecode. It has no effect if `cueSettings` is set to a non-empty replacement string, which takes precedence. When disabled (the default), the original cue settings are preserved.",
+      "values": "`true` / `false` (default `false`)",
+      "dependsOn": [
+        {
+          "property": "cueSettings",
+          "condition": "ignored when cueSettings provides a non-empty replacement"
+        }
+      ]
+    },
+    "output.keepTimecodes": {
+      "help": "Controls how timecodes are written when a cue was assembled from several timed source captions. When enabled, each original begin/end pair is written back verbatim. When disabled (the default), the combined cue's overall duration is divided evenly across its parts and re-emitted as recomputed timecodes.",
+      "values": "`true` / `false` (default `false`)"
+    },
+    "output.timeFormat": {
+      "help": "The pattern used to format begin/end times on output, following Java date-time formatting. It is applied whenever the writer emits a timecode line.",
+      "values": "A Java time-format pattern string. Parameter default `HH:mm:ss.SSS` (hours, minutes, seconds, milliseconds).",
+      "examples": [
+        "`HH:mm:ss.SSS` — `01:23:45.678` (WebVTT uses a dot decimal separator)"
+      ]
+    },
+    "output.maxCharsPerLine": {
+      "help": "The maximum number of characters per line of cue text on output. When greater than `0`, written cue text is wrapped to honour this limit; `0` means no limit. For CJK target locales, `cjkCharsPerLine` is used instead of this value.",
+      "values": "Integer `1`–9999999, or `0` for no limit. Parameter default `0`; the bundled `okf_vtt` configuration sets `47`.",
+      "dependsOn": [
+        {
+          "property": "cjkCharsPerLine",
+          "condition": "cjkCharsPerLine replaces this value for CJK target locales"
+        }
+      ]
+    },
+    "output.maxLinesPerCaption": {
+      "help": "The maximum number of text lines a single cue may occupy on output. When greater than `0`, cue text is distributed across at most this many lines; `0` means no limit.",
+      "values": "Integer `1`–9999999, or `0` for no limit. Parameter default `0`; the bundled `okf_vtt` configuration sets `2`."
+    },
+    "output.cjkCharsPerLine": {
+      "help": "A separate per-line character limit applied when the target locale is Chinese, Japanese, or Korean, where each character occupies more visual width. When the target is CJK, this value is used in place of `maxCharsPerLine`.",
+      "values": "Integer `1`–9999999, or `0` for no limit. Parameter default `0`; the bundled `okf_vtt` configuration sets `18`.",
+      "dependsOn": [
+        {
+          "property": "maxCharsPerLine",
+          "condition": "used instead of maxCharsPerLine when the target locale is CJK"
+        }
+      ]
+    },
+    "output.splitWords": {
+      "help": "Determines how the per-line character limit is enforced. When enabled (the default), words may be broken across lines so a line never exceeds the character limit. When disabled, line breaks fall only on word boundaries, even if that leaves a line shorter than the limit. Has effect only when a character limit is set.",
+      "values": "`true` / `false` (default `true`)",
+      "dependsOn": [
+        {
+          "property": "maxCharsPerLine",
+          "condition": "only relevant when a per-line character limit is in effect"
+        }
+      ]
+    }
+  },
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/vtt/VTTParameters.java",
+      "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/vtt/VTTFilter.java",
+      "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/vtt/VTTSkeletonWriter.java",
+      "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/subtitles/SubtitleParameters.java",
+      "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/subtitles/SubtitleFilter.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

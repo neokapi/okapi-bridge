@@ -1,6 +1,28 @@
 {
   "filterName": "Batch Translation Step",
+  "stepId": "batch-translation",
   "overview": "The Batch Translation step creates translation memory entries from text units extracted from a raw document, using an external command-line tool to provide translations. It extracts content into a temporary HTML document, invokes the external translator, then aligns source and translated segments into a Pensieve TM and/or TMX document. Large documents are handled by processing text units in configurable blocks.",
+  "limitations": [
+    "None known."
+  ],
+  "processingNotes": [
+    "The step extracts content into temporary HTML files where each `<p>` element is one source segment or text unit. The external tool must preserve this paragraph structure in its output.",
+    "Large documents are split into multiple temporary HTML files based on the **block size** setting, with the external tool invoked once per block.",
+    "The raw input document passes through the step unmodified (unless **Send TMX to next step** is enabled), so downstream steps see the original document.",
+    "Pensieve TM entries are indexed per-document, so downstream steps can only leverage TM entries from previously processed documents in the batch."
+  ],
+  "examples": [
+    {
+      "title": "Apertium MT on Linux",
+      "description": "Uses the open-source Apertium machine translation system to translate documents. Language pair is derived automatically from the pipeline's source and target locales.",
+      "config": "```yaml\ncommand: \"apertium -f html ${srcLang}-${trgLang} ${inputPath} ${outputPath}\"\nblockSize: 1000\nmarkAsMT: true\nmakeTMX: true\ntmxPath: \"${rootDir}/output.tmx\"\n```"
+    },
+    {
+      "title": "ProMT on Windows",
+      "description": "Uses the commercial ProMT application to translate temporary HTML documents on Windows.",
+      "config": "```yaml\ncommand: \"\\\"C:\\\\Program Files\\\\PRMT9\\\\FILETRANS\\\\FileTranslator.exe\\\" ${inputPath} /as /ac /d:${srcLangName}-${trgLangName} /o:${outputPath}\"\nblockSize: 500\nmarkAsMT: true\norigin: \"promt-9\"\nmakeTM: true\ntmDirectory: \"${rootDir}/tm\"\n```"
+    }
+  ],
   "parameters": {
     "command": {
       "help": "The command line that invokes your external translation tool. The step creates a temporary HTML file where each paragraph is a source segment, and your tool must read it and produce a translated HTML file in the same format.\n\nAvailable variables:\n\n| Variable | Description | Example |\n|---|---|---|\n| `${inputPath}` | Full path of the temp input HTML | |\n| `${inputURI}` | URI of the temp input HTML | |\n| `${outputPath}` | Full path where the tool must write translated HTML | |\n| `${outputURI}` | URI of the expected output | |\n| `${srcLangName}` | English name of source language | `de-ch` → `German` |\n| `${trgLangName}` | English name of target language | `ja-jp` → `Japanese` |\n| `${srcLang}` | Source language code | `de-ch` → `de` |\n| `${trgLang}` | Target language code | `ja-jp` → `ja` |\n| `${rootDir}` | Project/batch root directory | |\n| `${inputRootDir}` | Root directory for input files | |\n\nLocale-related variables are also available.",
@@ -111,28 +133,35 @@
       "title": "SRX rules path"
     }
   },
-  "processingNotes": [
-    "The step extracts content into temporary HTML files where each `<p>` element is one source segment or text unit. The external tool must preserve this paragraph structure in its output.",
-    "Large documents are split into multiple temporary HTML files based on the **block size** setting, with the external tool invoked once per block.",
-    "The raw input document passes through the step unmodified (unless **Send TMX to next step** is enabled), so downstream steps see the original document.",
-    "Pensieve TM entries are indexed per-document, so downstream steps can only leverage TM entries from previously processed documents in the batch."
-  ],
-  "limitations": [
-    "None known."
-  ],
-  "examples": [
-    {
-      "title": "Apertium MT on Linux",
-      "description": "Uses the open-source Apertium machine translation system to translate documents. Language pair is derived automatically from the pipeline's source and target locales.",
-      "config": "```yaml\ncommand: \"apertium -f html ${srcLang}-${trgLang} ${inputPath} ${outputPath}\"\nblockSize: 1000\nmarkAsMT: true\nmakeTMX: true\ntmxPath: \"${rootDir}/output.tmx\"\n```"
-    },
-    {
-      "title": "ProMT on Windows",
-      "description": "Uses the commercial ProMT application to translate temporary HTML documents on Windows.",
-      "config": "```yaml\ncommand: \"\\\"C:\\\\Program Files\\\\PRMT9\\\\FILETRANS\\\\FileTranslator.exe\\\" ${inputPath} /as /ac /d:${srcLangName}-${trgLangName} /o:${outputPath}\"\nblockSize: 500\nmarkAsMT: true\norigin: \"promt-9\"\nmakeTM: true\ntmDirectory: \"${rootDir}/tm\"\n```"
-    }
-  ],
   "fullDoc": "# Batch Translation Step\n\nThe Batch Translation step creates translation memory entries from text units extracted from a raw document, using an external command-line tool to provide translations. It extracts content into a temporary HTML document, invokes the external translator, then aligns source and translated segments into a Pensieve TM and/or TMX document. Large documents are handled by processing text units in configurable blocks.\n\n**Takes:** Raw document. **Sends:** Raw document (or TMX if configured).\n\n## How It Works\n\n1. The step extracts content from the raw document using its associated filter.\n2. Extracted segments are written to a temporary HTML file (one `<p>` per segment).\n3. The external tool is invoked via the configured command line — it must read `${inputPath}` and write translated HTML to `${outputPath}`.\n4. The step reads back the translated HTML and aligns source/target segments.\n5. Aligned entries are stored in a Pensieve TM and/or TMX document.\n6. The original raw document is passed to the next step (unless **Send TMX** is enabled).\n\n## Parameters\n\n### Translation\n\n#### Command Line\nThe command that invokes your external translation tool. The step creates a temporary HTML file where each paragraph is a source segment. Your tool must read it and produce a translated HTML file in the same format.\n\nAvailable variables: `${inputPath}`, `${inputURI}`, `${outputPath}`, `${outputURI}`, `${srcLang}`, `${trgLang}`, `${srcLangName}`, `${trgLangName}`, `${rootDir}`, `${inputRootDir}`, plus locale-related variables.\n\n#### Block Size\nMaximum number of text units grouped into each temporary HTML file. Allows processing very large documents with tools that have size limitations.\n\n#### Origin Identifier\nOptional string stored as a property on each translated entry. In TMX output, appears as `<prop type=\"Txt::Origin\">value</prop>`.\n\n#### Mark as Machine Translation\nMarks generated TM entries as machine translation by setting the `creationId` attribute to `\"MT!\"`.\n\n### Segmentation\n\n#### Segment Text Units\nSegments extracted text units into sentences using SRX rules before building the temporary HTML. When enabled, each HTML paragraph is a sentence; when disabled, each paragraph is an unsegmented text unit.\n\n> **Note:** Only entries processed by the external tool appear in TMX output. Entries found in existing TMs are not copied.\n\n#### SRX Rules Path\nFull path to the SRX segmentation rules file. Supports `${rootDir}`, `${inputRootDir}`, and locale variables.\n\n### Output — Pensieve TM\n\n#### Import into Pensieve TM\nImports translated entries into a Pensieve TM. If the TM does not exist, it is created; otherwise entries are appended. Entries are indexed per-document, so downstream steps only see entries from previously processed documents.\n\n#### Pensieve TM Directory\nDirectory of the Pensieve TM to create or populate.\n\n### Output — TMX\n\n#### Create TMX Document\nCreates a TMX document with all translated entries. A single file is generated across all input documents and is not written until the last document completes.\n\n#### TMX Output Path\nFull path of the TMX file to generate. Overwrites existing files.\n\n#### Send TMX to Next Step\nSends the generated TMX document as the raw document to the next pipeline step instead of the original input document.\n\n### Existing TM Lookup\n\n#### Check Existing TM\nLooks up each candidate entry in an existing Pensieve TM before translation. Entries with existing translations are skipped — not sent to the external tool and not included in TMX output.\n\n#### Existing TM Directory\nDirectory of the existing Pensieve TM to check for pre-existing translations.\n\n## Limitations\n\nNone known.\n\n## Notes\n\n- The temporary HTML preserves paragraph structure — the external tool must maintain the same number and order of paragraphs.\n- Large documents are split across multiple invocations based on block size.\n- The raw input document passes through unmodified unless **Send TMX** is enabled.\n- Pensieve TM indexing is per-document, so downstream steps can only access entries from earlier documents in the batch.\n\n## Examples\n\n### Apertium MT on Linux\n\n```yaml\ncommand: \"apertium -f html ${srcLang}-${trgLang} ${inputPath} ${outputPath}\"\nblockSize: 1000\nmarkAsMT: true\nmakeTMX: true\ntmxPath: \"${rootDir}/output.tmx\"\n```\n\n### ProMT on Windows\n\n```yaml\ncommand: \"\\\"C:\\\\Program Files\\\\PRMT9\\\\FILETRANS\\\\FileTranslator.exe\\\" ${inputPath} /as /ac /d:${srcLangName}-${trgLangName} /o:${outputPath}\"\nblockSize: 500\nmarkAsMT: true\norigin: \"promt-9\"\nmakeTM: true\ntmDirectory: \"${rootDir}/tm\"\n```",
-  "stepId": "batch-translation",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Batch_Translation_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Batch_Translation_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Batch_Translation_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.blockSize": "ai",
+      "parameters.checkExistingTm": "ai",
+      "parameters.command": "ai",
+      "parameters.existingTm": "ai",
+      "parameters.makeTM": "ai",
+      "parameters.makeTMX": "ai",
+      "parameters.markAsMT": "ai",
+      "parameters.origin": "ai",
+      "parameters.segment": "ai",
+      "parameters.sendTMX": "ai",
+      "parameters.srxPath": "ai",
+      "parameters.tmDirectory": "ai",
+      "parameters.tmxPath": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

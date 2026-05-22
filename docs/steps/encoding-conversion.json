@@ -1,6 +1,34 @@
 {
   "filterName": "Encoding Conversion Step",
+  "stepId": "encoding-conversion",
   "overview": "Converts the character set encoding of an input document and optionally updates encoding declarations in XML and HTML files. The step can un-escape various character reference notations (NCR, CER, Java-style) on input, and re-escape characters using configurable notation on output. It automatically detects and updates XML encoding declarations and HTML charset declarations in the first 1024 characters of each document.",
+  "limitations": [
+    "Encoding declaration detection operates on raw text (first 1024 chars) and is not XML/HTML-aware — it cannot distinguish declarations inside comments from real ones.",
+    "HTML charset insertion requires a `<head>` element or at minimum an `<html` string to anchor the insertion point.",
+    "The five XML-reserved character entities (`&amp;`, `&lt;`, `&gt;`, `&apos;`, `&quot;`) are never un-escaped by the CER option."
+  ],
+  "processingNotes": [
+    "Encoding declarations are detected and updated by scanning the **first 1024 characters** of each document — the routine is not XML/HTML-aware and cannot distinguish between normal code and comments.",
+    "XML documents are detected by encoding declarations, XML declarations, or `.xml` file extension — missing declarations may be inserted or added.",
+    "HTML documents are detected by charset declarations or file extensions starting with `.htm` — missing charset declarations may be inserted after `<head>` or `<html>`.",
+    "A document can be both XML and HTML and have both types of encoding/charset declarations updated."
+  ],
+  "examples": [
+    {
+      "title": "User-defined escape for Shift-JIS byte values",
+      "description": "Using a custom format expression with byte values to produce Shift-JIS byte-level escapes for CJK characters.",
+      "config": "```yaml\nescapeNotation: 6\nuserFormat: \"'\\'%x'\"\nuseBytes: true\n# Output encoding: Shift-JIS\n```",
+      "input": "```\n日本語\n```",
+      "output": "```\n\\'93\\'fa\\'96\\'7b\\'8c\\'ea\n```"
+    },
+    {
+      "title": "User-defined escape with decimal brackets",
+      "description": "Using a bracketed decimal format for characters unsupported by the output encoding.",
+      "config": "```yaml\nescapeNotation: 6\nuserFormat: \"[[%d]]\"\nuseBytes: false\n```",
+      "input": "```\ná\n```",
+      "output": "```\n[[225]]\n```"
+    }
+  ],
   "parameters": {
     "unescapeNCR": {
       "help": "Un-escapes all types of **numeric character references** (NCRs) when reading the input document. Converts decimal and hexadecimal forms to their actual characters.\n\n- `&#255;` → `ÿ`\n- `&#xE1;` → `á`\n- `&#e1;` → `á`\n\nIf disabled, NCRs in the input remain in their original form in the output.",
@@ -128,34 +156,31 @@
       "description": "Log all characters not supported by the output encoding."
     }
   },
-  "processingNotes": [
-    "Encoding declarations are detected and updated by scanning the **first 1024 characters** of each document — the routine is not XML/HTML-aware and cannot distinguish between normal code and comments.",
-    "XML documents are detected by encoding declarations, XML declarations, or `.xml` file extension — missing declarations may be inserted or added.",
-    "HTML documents are detected by charset declarations or file extensions starting with `.htm` — missing charset declarations may be inserted after `<head>` or `<html>`.",
-    "A document can be both XML and HTML and have both types of encoding/charset declarations updated."
-  ],
-  "limitations": [
-    "Encoding declaration detection operates on raw text (first 1024 chars) and is not XML/HTML-aware — it cannot distinguish declarations inside comments from real ones.",
-    "HTML charset insertion requires a `<head>` element or at minimum an `<html` string to anchor the insertion point.",
-    "The five XML-reserved character entities (`&amp;`, `&lt;`, `&gt;`, `&apos;`, `&quot;`) are never un-escaped by the CER option."
-  ],
-  "examples": [
-    {
-      "title": "User-defined escape for Shift-JIS byte values",
-      "description": "Using a custom format expression with byte values to produce Shift-JIS byte-level escapes for CJK characters.",
-      "config": "```yaml\nescapeNotation: 6\nuserFormat: \"'\\'%x'\"\nuseBytes: true\n# Output encoding: Shift-JIS\n```",
-      "input": "```\n日本語\n```",
-      "output": "```\n\\'93\\'fa\\'96\\'7b\\'8c\\'ea\n```"
-    },
-    {
-      "title": "User-defined escape with decimal brackets",
-      "description": "Using a bracketed decimal format for characters unsupported by the output encoding.",
-      "config": "```yaml\nescapeNotation: 6\nuserFormat: \"[[%d]]\"\nuseBytes: false\n```",
-      "input": "```\ná\n```",
-      "output": "```\n[[225]]\n```"
-    }
-  ],
   "fullDoc": "# Encoding Conversion Step\n\nConverts the character set encoding of an input document and optionally updates encoding declarations in XML and HTML files. The step can un-escape various character reference notations (NCR, CER, Java-style) on input, and re-escape characters using configurable notation on output. It automatically detects and updates XML encoding declarations and HTML charset declarations in the first 1024 characters of each document.\n\n**Takes:** Raw document. **Sends:** Raw document.\n\n## Encoding Declaration Updates\n\nThe step scans the first 1024 characters of each document to detect and update encoding declarations. Note that this scan is not XML/HTML-aware and cannot distinguish between declarations inside comments and real ones.\n\n### XML Documents\n\n- If an XML encoding declaration is found → the encoding value is updated\n- If an XML declaration exists without encoding → an encoding declaration is inserted\n- If the file has a `.xml` extension but no XML declaration → one is added at the top\n\n### HTML Documents\n\n- If an HTML charset declaration is found → the charset value is updated\n- If the file extension starts with `.htm` and no charset exists:\n  - If `<head>` is found → a charset declaration is added after it\n  - Otherwise if `<html` is found → `<head>` and charset are added after the opening tag\n\nA document can be both XML and HTML and have both types of declarations.\n\n## Parameters\n\n### Input\n\n#### Unescape Numeric Character References\n\nUn-escapes all types of numeric character references (NCRs) when reading the input. Converts decimal (`&#255;`), uppercase hex (`&#xE1;`), and lowercase hex (`&#e1;`) forms to their actual characters. If disabled, NCRs pass through unchanged.\n\n#### Unescape Character Entity References\n\nUn-escapes standard HTML character entity references (CERs) when reading the input (e.g., `&aacute;` → `á`).\n\n> **Note:** The five XML-reserved entities (`&amp;`, `&lt;`, `&gt;`, `&apos;`, `&quot;`) are never un-escaped, as they may need to be preserved regardless of encoding.\n\n#### Unescape Java-style Notation\n\nUn-escapes Java-style `\\uXXXX` escape sequences when reading the input. Both uppercase and lowercase hex digits are recognized (e.g., `\\u00e1` and `\\u00E1` both become `á`).\n\n### Output\n\n#### Escape All Extended Characters\n\nWhen enabled, all extended (non-ASCII) characters are escaped in the output. When disabled, only characters unsupported by the output encoding are escaped.\n\n#### Escape Notation\n\nSelects the notation format for escaping characters:\n\n| Value | Notation | Example (`á`) |\n|-------|----------|---------------|\n| 0 | Uppercase hex NCR | `&#xE1;` |\n| 1 | Lowercase hex NCR | `&#xe1;` |\n| 2 | Decimal NCR | `&#255;` |\n| 3 | Character entity reference | `&aacute;` |\n| 4 | Uppercase Java-style | `\\u00E1` |\n| 5 | Lowercase Java-style | `\\u00e1` |\n| 6 | User-defined notation | Uses User-Defined Format |\n\nWhen using CER (3), characters without a defined entity fall back to uppercase hex NCR.\n\n#### User-Defined Format\n\nA Java `String.format()` expression with one integer placeholder, used when Escape Notation is set to 6. The integer is the Unicode code point (or byte value if Use Byte Values is enabled). Examples: `[[%d]]` produces `[[255]]` for `ÿ`; `\\'%x` produces `\\'65e5\\'672c\\'8a9e` for `日本語`.\n\n#### Use Byte Values\n\nChanges the values passed to the user-defined format expression from Unicode code points to byte values of the output encoding. Useful for multi-byte encodings like Shift-JIS where individual bytes need to be escaped separately.\n\n#### BOM on UTF-8 Output\n\nAdds a Byte-Order-Mark (U+FEFF) at the beginning of UTF-8 output files. Only relevant when the output encoding is UTF-8. Some applications expect a BOM to identify UTF-8 files, while others may display it as an unwanted character.\n\n#### Report Unsupported Characters\n\nLogs all characters not supported by the output encoding to the pipeline log, helping identify potential data loss.\n\n## Limitations\n\n- Encoding declaration detection operates on raw text (first 1024 chars) and is not XML/HTML-aware — it cannot distinguish declarations inside comments from real ones.\n- HTML charset insertion requires a `<head>` element or at minimum an `<html` string to anchor the insertion point.\n- The five XML-reserved character entities (`&amp;`, `&lt;`, `&gt;`, `&apos;`, `&quot;`) are never un-escaped by the CER option.\n\n## Notes\n\n- A document can be both XML and HTML and have both types of encoding/charset declarations updated.\n- The step processes raw documents — it operates before or after filter-based extraction, not on segmented content.\n\n## Examples\n\n### User-defined escape for Shift-JIS\n\n```yaml\nescapeNotation: 6\nuserFormat: \"\\'%x\"\nuseBytes: true\n# Output encoding: Shift-JIS\n```\n\nInput: `日本語` → Output: `\\'93\\'fa\\'96\\'7b\\'8c\\'ea` (Shift-JIS byte values)\n\n### Bracketed decimal format\n\n```yaml\nescapeNotation: 6\nuserFormat: \"[[%d]]\"\nuseBytes: false\n```\n\nInput: `á` → Output: `[[225]]` (Unicode code point in decimal)",
-  "stepId": "encoding-conversion",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Encoding_Conversion_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Encoding_Conversion_Step",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Encoding_Conversion_Step",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.BOMonUTF8": "ai",
+      "parameters.escapeAll": "ai",
+      "parameters.escapeNotation": "ai",
+      "parameters.reportUnsupported": "ai",
+      "parameters.unescapeCER": "ai",
+      "parameters.unescapeJava": "ai",
+      "parameters.unescapeNCR": "ai",
+      "parameters.useBytes": "ai",
+      "parameters.userFormat": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

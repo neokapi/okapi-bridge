@@ -1,6 +1,32 @@
 {
   "filterName": "Paragraph Alignment",
+  "stepId": "paragraph-aligner",
   "overview": "Aligns paragraphs (TextUnits) from two documents — a source and a target. Internally uses `ResourceSimplifier` to flatten events and expand TextUnits so all are available for alignment. Only TextUnit events are passed along; all other event types are discarded. Sends a special `PIPELINE_PARAMETERS` event to inform subsequent steps (e.g., Sentence Aligner) that the target input has been consumed.",
+  "limitations": [
+    "Standard Gale & Church alignment is not accurate for long runs of paragraphs without additional anchoring.",
+    "Only TextUnit events are passed through — all other event types (document parts, skeleton, sub-documents) are lost.",
+    "The target input is consumed by this step and is no longer available to subsequent steps."
+  ],
+  "processingNotes": [
+    "`ResourceSimplifier` is called internally to flatten events and expand TextUnits before alignment.",
+    "A special `PIPELINE_PARAMETERS` event is sent downstream to inform subsequent steps (e.g., Sentence Aligner) that the target input has been consumed."
+  ],
+  "examples": [
+    {
+      "title": "Keep only clean 1-to-1 paragraph pairs",
+      "description": "Emit only paragraphs that aligned to exactly one counterpart, dropping many-to-many groupings. This is the default and produces the cleaner pairs typically wanted before sentence alignment.",
+      "config": "```yaml\noutputOneToOneMatchesOnly: true\n```",
+      "input": null,
+      "output": null
+    },
+    {
+      "title": "Use skeleton anchors for markup-rich input",
+      "description": "Enable the experimental skeleton alignment so structural markup (HTML/XML/DITA tags surrounding text) provides extra anchor points. This can reduce drift on long runs of paragraphs where length-based alignment alone is unreliable.",
+      "config": "```yaml\noutputOneToOneMatchesOnly: true\nuseSkeletonAlignment: true\n```",
+      "input": null,
+      "output": null
+    }
+  ],
   "parameters": {
     "outputOneToOneMatchesOnly": {
       "help": "Controls whether only cleanly paired (1-to-1) paragraph alignments are output, or whether many-to-many alignments are also included.\n\nWhen enabled, paragraphs that could not be matched to exactly one counterpart are dropped from the output. This produces a cleaner but potentially smaller set of aligned pairs."
@@ -12,17 +38,25 @@
       ]
     }
   },
-  "limitations": [
-    "Standard Gale & Church alignment is not accurate for long runs of paragraphs without additional anchoring.",
-    "Only TextUnit events are passed through — all other event types (document parts, skeleton, sub-documents) are lost.",
-    "The target input is consumed by this step and is no longer available to subsequent steps."
-  ],
-  "processingNotes": [
-    "`ResourceSimplifier` is called internally to flatten events and expand TextUnits before alignment.",
-    "A special `PIPELINE_PARAMETERS` event is sent downstream to inform subsequent steps (e.g., Sentence Aligner) that the target input has been consumed."
-  ],
   "fullDoc": "# Paragraph Alignment\n\nAligns paragraphs (TextUnits) from two documents — a source and a target. Internally uses `ResourceSimplifier` to flatten events and expand TextUnits so all are available for alignment. Only TextUnit events are passed along; all other event types are discarded. Sends a special `PIPELINE_PARAMETERS` event to inform subsequent steps (e.g., Sentence Aligner) that the target input has been consumed.\n\n## Parameters\n\n#### Output 1-1 Matches Only?\n\nControls whether only cleanly paired (1-to-1) paragraph alignments are output, or whether many-to-many alignments are also included. When enabled, paragraphs that could not be matched to exactly one counterpart are dropped from the output. This produces a cleaner but potentially smaller set of aligned pairs.\n\nDefault: `true`\n\n#### Use Skeleton Alignment? (Experimental)\n\nUses the document skeleton (structural markup surrounding text) as additional anchor points during alignment. Standard Gale & Church paragraph alignment can drift on long runs of paragraphs. Skeleton alignment exploits formatting cues to provide better anchoring, which may improve results for markup-rich formats (HTML, XML, DITA, etc.).\n\nDefault: `false`\n\n> **Note:** Experimental — results may vary depending on the document format and how much structural markup is present.\n\n## Limitations\n\n- Standard Gale & Church alignment is not accurate for long runs of paragraphs without additional anchoring.\n- Only TextUnit events are passed through — all other event types (document parts, skeleton, sub-documents) are lost.\n- The target input is consumed by this step and is no longer available to subsequent steps.\n\n## Notes\n\n- `ResourceSimplifier` is called internally to flatten events and expand TextUnits before alignment.\n- A special `PIPELINE_PARAMETERS` event is sent downstream to inform subsequent steps (e.g., Sentence Aligner) that the target input has been consumed.",
-  "examples": [],
-  "stepId": "paragraph-aligner",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/Paragraph_Alignment_Step"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Paragraph_Alignment_Step",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/Paragraph_Alignment_Step",
+      "okapi-source:okapi/steps/aligner/src/main/java/net/sf/okapi/steps/paraaligner/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.outputOneToOneMatchesOnly": "ai",
+      "parameters.useSkeletonAlignment": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

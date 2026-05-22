@@ -1,0 +1,38 @@
+{
+  "filterName": "Characters Checker Step",
+  "stepId": "characters-checker",
+  "overview": "The Characters Checker step inspects the target of each text unit for character-level problems. It can detect patterns that commonly indicate encoding corruption (for example a UTF-8 file decoded as ISO-8859-1) and can validate that every target character is representable in a chosen charset, with an optional regular expression listing additional characters to allow. It expects filter events and passes them through unchanged, attaching the detected issues for a downstream consumer to report. It is one of the granular quality checks that the aggregate Quality Check step combines into a single pass.",
+  "limitations": [
+    "Corrupted-character detection recognises only common patterns and will not catch every possible encoding fault."
+  ],
+  "processingNotes": [
+    "Operates on filter events; events are forwarded unchanged and the detected issues are accumulated per document.",
+    "Delegates to the verification library's `CharactersChecker`; its step parameters are a subset of the full Quality Check / CheckMate configuration.",
+    "Corrupted-character detection and the allowed-characters check are enabled by default, while the charset validation (`checkCharacters`) is disabled by default; the default charset is `ISO-8859-1` and the extra-characters regex is empty.",
+    "Requires source and target locales; these are supplied by the pipeline rather than configured on the step."
+  ],
+  "examples": [
+    {
+      "title": "Detect corrupted characters and restrict the target to a charset",
+      "description": "Leaves corrupted-character detection on (catching mojibake from encoding mismatches) and enables the allowed-character check so any target character outside ISO-8859-1 — apart from those listed in `extraCharsAllowed` — is reported.",
+      "config": "```yaml\ncorruptedCharacters: true\ncheckAllowedCharacters: true\ncharset: \"ISO-8859-1\"\nextraCharsAllowed: \"€\"\n```"
+    }
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/characterschecker/CharactersCheckerStep.java",
+      "okapi-source:okapi/steps/qualitycheck/src/main/java/net/sf/okapi/steps/characterschecker/Parameters.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

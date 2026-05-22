@@ -1,6 +1,39 @@
 {
   "filterName": "XLIFF Filter",
+  "filterId": "okf_xliff",
   "overview": "The XLIFF Filter processes **XLIFF 1.2** (XML Localisation Interchange File Format) documents, an OASIS standard for transporting translatable text between translation tools. It supports standard XLIFF, SDLXLIFF, and IWS XLIFF variants with dedicated writer modes for each. The filter handles `<seg-source>` segmentation, `<alt-trans>` translation matches, ITS annotations, and maps XLIFF metadata (`approved`, `resname`, `restype`, `coord`, `target-language`) to Okapi resource properties.",
+  "limitations": [
+    "The content of `<sub>` elements is not supported as text by default. Content inside `<bpt>`, `<ept>`, `<ph>`, and `<it>` (including `<sub>`) is included in the parent inline code. A warning is generated when `<sub>` is detected.",
+    "The `<mrk mtype='protected'>` marker is supported by converting content to an inline code. Nested `<mrk mtype='x-its-translate-yes'>` within protected markers is not supported — its content goes into the original data of the inline code.",
+    "For SDLXLIFF: SDL properties `locked`, `conf`, and `origin` are stored at the TextContainer level (not per-segment). With multiple segments, values come from the last segment. From M35, segment-level properties are also stored but are read-only.",
+    "The default Java XML parser can cause `StackOverflowError` on XLIFF documents with large element content chunks (e.g., SDLXLIFF files). Use the Woodstox custom parser to avoid this."
+  ],
+  "processingNotes": [
+    "**Encoding detection**: Uses the document's encoding declaration if present; defaults to UTF-8 otherwise (ignoring any externally specified default encoding).",
+    "**BOM handling**: For UTF-8 output, a BOM is written only if the input was UTF-8 and contained a BOM. No BOM is added when converting from other encodings to UTF-8.",
+    "**Line breaks**: Output preserves the same line-break style as the input document.",
+    "**Whitespace**: `<trans-unit>` elements with `xml:space=\"preserve\"` retain whitespace as-is. Without this attribute (or with a different value), source/target content is unwrapped.",
+    "**Segmentation validation**: If `<seg-source>` content (without segment markers) does not match `<source>` content, the segmentation is discarded.",
+    "**Alt-trans mapping**: `<alt-trans>` entries are sorted by match type and score. `match-quality` is used as score if it's an integer or percentage. `origin` defaults to `SourceDoc` if not present.",
+    "**maxbytes mapping**: The `maxbytes` attribute maps to `its-storageSize`. If `its:storageSizeEncoding` is present, that encoding is used; otherwise UTF-8 is the default. Note: `its:storageSize` (the ITS attribute) is not recognized — the size must use `maxbytes`."
+  ],
+  "examples": [
+    {
+      "title": "SDLXLIFF configuration",
+      "description": "The `okf_xliff-sdl` configuration enables SDL-specific handling with Woodstox parser to avoid stack overflow on large SDLXLIFF files.",
+      "config": "```json\n{\n  \"parser\": {\n    \"useCustomParser\": true,\n    \"factoryClass\": \"com.ctc.wstx.stax.WstxInputFactory\"\n  },\n  \"sdl\": {\n    \"useSdlXliffWriter\": true,\n    \"sdlSegConfValue\": \"Translated\"\n  },\n  \"extraction\": {\n    \"preserveSpaceByDefault\": true,\n    \"skipNoMrkSegSource\": true\n  }\n}\n```"
+    },
+    {
+      "title": "Template for multiple target languages",
+      "description": "Use `overrideTargetLanguage` to reuse a single XLIFF as a template for translating into multiple languages. The filter replaces all `target-language` and `xml:lang` values.",
+      "config": "```json\n{\n  \"output\": {\n    \"overrideTargetLanguage\": true,\n    \"addTargetLanguage\": true\n  }\n}\n```"
+    },
+    {
+      "title": "IWS XLIFF configuration",
+      "description": "The `okf_xliff-iws` configuration enables Idiom WorldServer-specific handling, blocking finished translations and using pending status for new translations.",
+      "config": "```json\n{\n  \"parser\": {\n    \"useCustomParser\": true,\n    \"factoryClass\": \"com.ctc.wstx.stax.WstxInputFactory\"\n  },\n  \"iws\": {\n    \"useIwsXliffWriter\": true,\n    \"iwsBlockFinished\": true,\n    \"iwsTransStatusValue\": \"pending\",\n    \"iwsTransTypeValue\": \"manual_translation\"\n  }\n}\n```"
+    }
+  ],
   "parameters": {
     "extraction.fallbackToID": {
       "help": "Uses the `id` attribute of `<trans-unit>` as the text unit name when `resname` is not present.\n\nUseful for XLIFF documents that use `resname`-like values for `id` but omit the `resname` attribute."
@@ -260,38 +293,6 @@
       "values": "An Okapi filter configuration ID (e.g. `okf_html`)"
     }
   },
-  "limitations": [
-    "The content of `<sub>` elements is not supported as text by default. Content inside `<bpt>`, `<ept>`, `<ph>`, and `<it>` (including `<sub>`) is included in the parent inline code. A warning is generated when `<sub>` is detected.",
-    "The `<mrk mtype='protected'>` marker is supported by converting content to an inline code. Nested `<mrk mtype='x-its-translate-yes'>` within protected markers is not supported — its content goes into the original data of the inline code.",
-    "For SDLXLIFF: SDL properties `locked`, `conf`, and `origin` are stored at the TextContainer level (not per-segment). With multiple segments, values come from the last segment. From M35, segment-level properties are also stored but are read-only.",
-    "The default Java XML parser can cause `StackOverflowError` on XLIFF documents with large element content chunks (e.g., SDLXLIFF files). Use the Woodstox custom parser to avoid this."
-  ],
-  "processingNotes": [
-    "**Encoding detection**: Uses the document's encoding declaration if present; defaults to UTF-8 otherwise (ignoring any externally specified default encoding).",
-    "**BOM handling**: For UTF-8 output, a BOM is written only if the input was UTF-8 and contained a BOM. No BOM is added when converting from other encodings to UTF-8.",
-    "**Line breaks**: Output preserves the same line-break style as the input document.",
-    "**Whitespace**: `<trans-unit>` elements with `xml:space=\"preserve\"` retain whitespace as-is. Without this attribute (or with a different value), source/target content is unwrapped.",
-    "**Segmentation validation**: If `<seg-source>` content (without segment markers) does not match `<source>` content, the segmentation is discarded.",
-    "**Alt-trans mapping**: `<alt-trans>` entries are sorted by match type and score. `match-quality` is used as score if it's an integer or percentage. `origin` defaults to `SourceDoc` if not present.",
-    "**maxbytes mapping**: The `maxbytes` attribute maps to `its-storageSize`. If `its:storageSizeEncoding` is present, that encoding is used; otherwise UTF-8 is the default. Note: `its:storageSize` (the ITS attribute) is not recognized — the size must use `maxbytes`."
-  ],
-  "examples": [
-    {
-      "title": "SDLXLIFF configuration",
-      "description": "The `okf_xliff-sdl` configuration enables SDL-specific handling with Woodstox parser to avoid stack overflow on large SDLXLIFF files.",
-      "config": "```json\n{\n  \"parser\": {\n    \"useCustomParser\": true,\n    \"factoryClass\": \"com.ctc.wstx.stax.WstxInputFactory\"\n  },\n  \"sdl\": {\n    \"useSdlXliffWriter\": true,\n    \"sdlSegConfValue\": \"Translated\"\n  },\n  \"extraction\": {\n    \"preserveSpaceByDefault\": true,\n    \"skipNoMrkSegSource\": true\n  }\n}\n```"
-    },
-    {
-      "title": "Template for multiple target languages",
-      "description": "Use `overrideTargetLanguage` to reuse a single XLIFF as a template for translating into multiple languages. The filter replaces all `target-language` and `xml:lang` values.",
-      "config": "```json\n{\n  \"output\": {\n    \"overrideTargetLanguage\": true,\n    \"addTargetLanguage\": true\n  }\n}\n```"
-    },
-    {
-      "title": "IWS XLIFF configuration",
-      "description": "The `okf_xliff-iws` configuration enables Idiom WorldServer-specific handling, blocking finished translations and using pending status for new translations.",
-      "config": "```json\n{\n  \"parser\": {\n    \"useCustomParser\": true,\n    \"factoryClass\": \"com.ctc.wstx.stax.WstxInputFactory\"\n  },\n  \"iws\": {\n    \"useIwsXliffWriter\": true,\n    \"iwsBlockFinished\": true,\n    \"iwsTransStatusValue\": \"pending\",\n    \"iwsTransTypeValue\": \"manual_translation\"\n  }\n}\n```"
-    }
-  ],
   "propertySuggestions": {
     "xtmAttributes": {
       "title": "XTM Attributes",
@@ -299,6 +300,63 @@
     }
   },
   "fullDoc": "# XLIFF Filter\n\nThe XLIFF Filter processes **XLIFF 1.2** (XML Localisation Interchange File Format) documents, an OASIS standard for transporting translatable text between translation tools. It supports standard XLIFF, SDLXLIFF, and IWS XLIFF variants with dedicated writer modes for each. The filter handles `<seg-source>` segmentation, `<alt-trans>` translation matches, ITS annotations, and maps XLIFF metadata to Okapi resource properties.\n\nSupported file extensions: `.xlf`, `.xlif`, `.xliff`, `.mxliff`, `.mqxliff`, `.sdlxliff`\n\n## Parameters\n\n### Extraction\n\n#### Preserve Whitespace by Default\nControls the default whitespace handling when `xml:space` is not specified on a `<trans-unit>`. When enabled, whitespace is preserved by default (as if `xml:space=\\\"preserve\\\"` were set). When disabled, content is unwrapped.\n\n#### Include XLIFF Extension Elements\nIncludes non-standard XLIFF extension elements from custom namespaces. Typically needed for vendor-specific XLIFF variants.\n\n#### Include ITS Annotations\nIncludes ITS (Internationalization Tag Set) and ITSXLF annotations in the extracted data.\n\n#### Treat CDATA as Inline\nTreats CDATA sections found within translatable content as inline codes rather than text content.\n\n#### Process Sub Elements as Text Units\nProcesses `<sub>` elements inside inline codes as separate text units rather than including them in the parent code's data. By default, `<sub>` content is included in the parent inline code and a warning is generated.\n\n#### Ignore Existing Segmentation\nDiscards all segmentation information (`<seg-source>` elements) from the input. Segmented content becomes unsegmented. **Warning:** Any `<alt-trans>` data attached to individual segments is lost.\n\n#### Skip Seg-Source Without Markers\nSkips `<seg-source>` elements that have no `<mrk mtype='seg'>` segment markers.\n\n#### Fall Back to Trans-Unit ID\nUses the `id` attribute of `<trans-unit>` as the text unit name when `resname` is not present. Useful for XLIFF documents that use `resname`-like values for `id` but omit the `resname` attribute.\n\n#### Force Unique Text Unit IDs\nEnsures all text unit IDs are unique across the document.\n\n### Output\n\n#### Add Target Language\nAdds the `target-language` attribute to `<file>` elements if not present.\n\n#### Override Target Language\nOverrides the target language throughout the document — sets `target-language` and `xml:lang` in all `<target>` elements to the user-specified language. Useful for template-based workflows.\n\n> **Note:** May result in `<alt-trans>` elements that no longer match the trans-unit's target language.\n\n#### Allow Empty Targets\nPrevents copying source text into empty `<target>` elements.\n\n#### Always Add Targets\nAlways adds `<target>` elements to trans-units, even when none existed in the input.\n\n#### Always Use Seg-Source\nAlways includes `<seg-source>` elements in output.\n\n#### Output Segmentation Type\nControls segmentation representation in output:\n- **0** — Preserve input segmentation\n- **1** — Always segment (add `<seg-source>` even for unsegmented input)\n- **2** — Never segment (remove all `<seg-source>`)\n- **3** — Segment only multi-segment entries\n\n### Translation States\n\n#### Target State Mode\nControls how the `state` attribute on `<target>` elements is handled.\n\n#### Target State Value\nThe value to set for the `state` attribute (e.g., `needs-translation`, `translated`, `final`).\n\n#### Use Translation Target State\nUses translation-specific target state handling.\n\n#### Add Alt-Trans Elements\nAllows adding new `<alt-trans>` elements. Used with the Leveraging Step to include TM matches.\n\n#### Use G Notation in Alt-Trans\nUses `<g>`/`<x>` notation instead of `<bpt>`/`<ept>`/`<ph>` in new alt-trans elements. Only applies when Add Alt-Trans is enabled.\n\n#### Edit Existing Alt-Trans\nAllows modification of existing `<alt-trans>` elements, treating them like added ones.\n\n### Inline Codes\n\n#### Enable Code Finder\nEnables regex-based detection of additional inline codes in text content. Standard XLIFF inline elements are handled natively — this is for detecting additional patterns in the text content itself.\n\n### Sub-Filters\n\n#### CDATA Sub-Filter\nAn Okapi filter configuration ID to apply to CDATA content (e.g., `okf_html`).\n\n#### PCDATA Sub-Filter\nAn Okapi filter configuration ID to apply to PCDATA content.\n\n### Parser\n\n#### Use Custom XML Parser\nUses Woodstox instead of the default JVM XML parser. **Recommended for SDLXLIFF** — the default parser can cause `StackOverflowError` on documents with large element content.\n\n#### Factory Class\nThe fully-qualified class name for the custom parser factory (e.g., `com.ctc.wstx.stax.WstxInputFactory`).\n\n### SDL XLIFF Extensions\n\n#### Use SDL XLIFF Writer\nEnables SDL-specific writer for proper SDLXLIFF round-tripping.\n\n> **Note:** SDL properties (`locked`, `conf`, `origin`) are stored at the container level. With multiple segments, values come from the last segment. From M35, segment-level properties exist but are read-only.\n\n#### Use Segments for SDL Properties\nReads SDL properties from individual segments rather than the text container level.\n\n#### SDL Segment Confirmation Value\nThe confirmation status for output segments (e.g., `Translated`, `Draft`, `ApprovedTranslation`).\n\n#### SDL Segment Locked Value\nThe locked status value for output segments.\n\n#### SDL Segment Origin Value\nThe origin value for output segments (e.g., the TM or MT source).\n\n### Idiom WorldServer Extensions\n\n#### Use IWS XLIFF Writer\nEnables IWS-specific writer for WorldServer XLIFF files.\n\n#### Block Finished\nBlocks trans-units with finished status, treating them as non-translatable.\n\n#### Block Lock Status\nBlocks trans-units with locked status.\n\n#### Block Multiple Exact\nBlocks trans-units with multiple exact TM matches.\n\n#### Block TM Score\nBlocks trans-units with TM scores at or above the threshold.\n\n#### TM Score Threshold\nThe TM score threshold value (e.g., `100.00`).\n\n#### Include Multiple Exact\nIncludes trans-units with multiple exact TM matches.\n\n#### Remove TM Origin\nRemoves TM origin metadata from output.\n\n#### Translation Status Value\nThe IWS status value to set (e.g., `finished`, `pending`).\n\n#### Translation Type Value\nThe IWS type value to set (e.g., `manual_translation`).\n\n### XTM Attributes\nProcess XTM-specific attributes in the XLIFF document.\n\n## Limitations\n\n- `<sub>` element content is not supported as translatable text by default — it is included in the parent inline code.\n- `<mrk mtype='protected'>` is converted to an inline code. Nested `<mrk mtype='x-its-translate-yes'>` within it is not supported.\n- For SDLXLIFF: SDL segment-level properties (`locked`, `conf`, `origin`) are read-only (from M35 onward).\n- The default Java XML parser can cause `StackOverflowError` on large XLIFF documents. Use Woodstox.\n\n## Notes\n\n- Encoding defaults to UTF-8 if no declaration is present.\n- BOM is preserved only when input was UTF-8 with BOM.\n- Line breaks match the input document style.\n- `<seg-source>` content must match `<source>` content (excluding markers) or segmentation is discarded.\n- `<alt-trans>` entries are sorted by match type and score. `match-quality` is used as score if numeric.\n- `maxbytes` maps to `its-storageSize` (note: `its:storageSize` is not recognized — use `maxbytes`).\n\n## Examples\n\n### SDLXLIFF Configuration\n```json\n{\n  \\\"parser\\\": {\n    \\\"useCustomParser\\\": true,\n    \\\"factoryClass\\\": \\\"com.ctc.wstx.stax.WstxInputFactory\\\"\n  },\n  \\\"sdl\\\": {\n    \\\"useSdlXliffWriter\\\": true,\n    \\\"sdlSegConfValue\\\": \\\"Translated\\\"\n  },\n  \\\"extraction\\\": {\n    \\\"preserveSpaceByDefault\\\": true,\n    \\\"skipNoMrkSegSource\\\": true\n  }\n}\n```\n\n### Template for Multiple Target Languages\n```json\n{\n  \\\"output\\\": {\n    \\\"overrideTargetLanguage\\\": true,\n    \\\"addTargetLanguage\\\": true\n  }\n}\n```\n\n### IWS XLIFF Configuration\n```json\n{\n  \\\"iws\\\": {\n    \\\"useIwsXliffWriter\\\": true,\n    \\\"iwsBlockFinished\\\": true,\n    \\\"iwsTransStatusValue\\\": \\\"pending\\\",\n    \\\"iwsTransTypeValue\\\": \\\"manual_translation\\\"\n  }\n}\n```",
-  "filterId": "okf_xliff",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/XLIFF_Filter"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/XLIFF_Filter",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/XLIFF_Filter",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.extraction.fallbackToID": "ai",
+      "parameters.extraction.forceUniqueIds": "ai",
+      "parameters.extraction.ignoreInputSegmentation": "ai",
+      "parameters.extraction.includeExtensions": "ai",
+      "parameters.extraction.includeIts": "ai",
+      "parameters.extraction.inlineCdata": "ai",
+      "parameters.extraction.preserveSpaceByDefault": "ai",
+      "parameters.extraction.skipNoMrkSegSource": "ai",
+      "parameters.extraction.subAsTextUnit": "ai",
+      "parameters.inlineCodes.enabled": "ai",
+      "parameters.iws.iwsBlockFinished": "ai",
+      "parameters.iws.iwsBlockLockStatus": "ai",
+      "parameters.iws.iwsBlockMultipleExact": "ai",
+      "parameters.iws.iwsBlockTmScore": "ai",
+      "parameters.iws.iwsBlockTmScoreValue": "ai",
+      "parameters.iws.iwsIncludeMultipleExact": "ai",
+      "parameters.iws.iwsRemoveTmOrigin": "ai",
+      "parameters.iws.iwsTransStatusValue": "ai",
+      "parameters.iws.iwsTransTypeValue": "ai",
+      "parameters.iws.useIwsXliffWriter": "ai",
+      "parameters.output.addTargetLanguage": "ai",
+      "parameters.output.allowEmptyTargets": "ai",
+      "parameters.output.alwaysAddTargets": "ai",
+      "parameters.output.alwaysUseSegSource": "ai",
+      "parameters.output.outputSegmentationType": "ai",
+      "parameters.output.overrideTargetLanguage": "ai",
+      "parameters.parser.factoryClass": "ai",
+      "parameters.parser.useCustomParser": "ai",
+      "parameters.sdl.sdlSegConfValue": "ai",
+      "parameters.sdl.sdlSegLockedValue": "ai",
+      "parameters.sdl.sdlSegOriginValue": "ai",
+      "parameters.sdl.useSdlXliffWriter": "ai",
+      "parameters.sdl.useSegsForSdlProps": "ai",
+      "parameters.states.addAltTrans": "ai",
+      "parameters.states.addAltTransGMode": "ai",
+      "parameters.states.editAltTrans": "ai",
+      "parameters.states.targetStateMode": "ai",
+      "parameters.states.targetStateValue": "ai",
+      "parameters.states.useTranslationTargetState": "ai",
+      "parameters.subfilters.cdataSubfilter": "ai",
+      "parameters.subfilters.pcdataSubfilter": "ai",
+      "parameters.xtmAttributes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

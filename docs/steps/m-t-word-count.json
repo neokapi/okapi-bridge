@@ -1,0 +1,31 @@
+{
+  "filterName": "MT Word Count Step",
+  "stepId": "m-t-word-count",
+  "overview": "Counts the words in text units whose top alternate translation is an `MT` match — a translation produced by a machine-translation engine rather than retrieved from a translation memory. The count is recorded as a word-count metric in a `MetricsAnnotation` so that scoping and pricing steps can report machine-translated volume separately from TM-leveraged content, which is usually rated under different terms.",
+  "processingNotes": [
+    "Operates per segment: it inspects the first (top-ranked) `AltTranslation` on each target segment's `AltTranslationsAnnotation` and counts a segment only when that match type is exactly `MT`.",
+    "Counting is performed on the **source** text, not the target — the word total reflects the source volume covered by machine translation.",
+    "Words are counted with the GMX-V word counter; the parallel character-count variant counts characters instead.",
+    "Counts only translatable text units; empty text units and non-translatable ones are skipped.",
+    "Results are stored as annotations on filter events and aggregated to the configured levels (text unit, group, document, sub-document, batch item, batch); the step produces no output document of its own.",
+    "Belongs to the `OKAPI_WORD_COUNTS` category group. The `CategoryResolver` keeps only the highest-ranked matching category per segment — `MT` ranks below all TM-derived categories (exact, fuzzy, phrase-assembled) and above `CONCORDANCE`."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/okapi/MTWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/AltAnnotationBasedCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/CategoryResolver.java",
+      "okapi-source:okapi/core/src/main/java/net/sf/okapi/common/query/MatchType.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

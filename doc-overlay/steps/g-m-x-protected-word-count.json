@@ -1,0 +1,24 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "g-m-x-protected-word-count",
+  "kind": "step",
+  "name": "GMX Protected Word Count Step",
+  "overview": "Tallies the [GMX-V 2.0](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html) `ProtectedWordCount` category — the word count for text that has been marked as protected, or otherwise not translatable (for example XLIFF text enclosed in `<mrk mtype=\"protected\">` elements). Unlike the match-based GMX steps, this step counts only the units flagged as non-translatable, counting the words in their source; for translatable units it removes any previously recorded protected metric. Counts are stored as GMX-V metrics annotations on segments, text containers, and aggregate resources for downstream consumption (for example by the Scoping Report Step). This is the word-count variant; a companion step counts characters for the same category.",
+  "processingNotes": [
+    "Counts only text units marked non-translatable; this is the one GMX count step that does not restrict itself to translatable units.",
+    "For translatable units the step actively removes any existing protected metric from the segment, source, and text unit.",
+    "For locales the GMX-V spec treats as logographic, the word count is derived from the character count divided by the per-language factor."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXProtectedWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/BaseCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/WordCounter.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

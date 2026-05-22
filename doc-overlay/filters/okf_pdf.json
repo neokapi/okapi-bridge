@@ -1,0 +1,60 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "okf_pdf",
+  "kind": "filter",
+  "name": "PDF Filter",
+  "overview": "The PDF Filter extracts text content from PDF files for processing. It does not handle complex formatting like tables or multi-level lists. The typical use case is scraping text from PDFs for quick word counts and leverage analysis. **Important:** This filter does not merge back into PDF format — it produces plain text output upon merging.",
+  "limitations": [
+    "This filter merges back in **plain text format**, not PDF.",
+    "Does not handle complex formatting like tables or multi-level lists.",
+    "Any encoding selected in tools like Rainbow will be ignored — the filter forces UTF-16."
+  ],
+  "processingNotes": [
+    "PDF files are binary and do not have a specific encoding. Okapi extracts all text as a Java string and forces the encoding to `UTF-16`.",
+    "TextUnits are created following the default rules of the Plain Text filter — any text followed by a newline creates a new TextUnit (paragraph).",
+    "Extraction is performed by Apache PDFBox's `PDFTextStripper`. The filter exposes the stripper's layout-detection thresholds and the separators it writes between lines and paragraphs."
+  ],
+  "examples": [
+    {
+      "title": "Tune paragraph detection for tightly-laid-out PDFs",
+      "description": "Lower the indent threshold so smaller indents still start a new paragraph, and tighten the spacing tolerance so closely-set glyphs are not joined into one word. Use this when the default heuristics merge separate paragraphs or run words together.",
+      "config": "```yaml\nparser:\n  indentThreshold: \"1.0\"\n  spacingTolerance: \"0.3\"\n```"
+    },
+    {
+      "title": "Use blank lines between paragraphs",
+      "description": "Emit an extra newline at the end of each detected paragraph so paragraph boundaries are visible in the extracted plain text, while keeping single newlines between wrapped lines.",
+      "config": "```yaml\noutput:\n  lineSeparator: \"\\n\"\n  paragraphSeparator: \"\\n\\n\"\n```"
+    }
+  ],
+  "parameters": {
+    "output.lineSeparator": {
+      "help": "The string written between consecutive lines of extracted text. Passed straight to Apache PDFBox `PDFTextStripper.setLineSeparator`. Change it to control how wrapped lines within a paragraph are joined in the plain-text output.",
+      "values": "String. Default is a single line feed (`\\n`)."
+    },
+    "output.paragraphSeparator": {
+      "help": "The string written at the end of each detected paragraph. Passed to Apache PDFBox `PDFTextStripper.setParagraphEnd`. Set it to a double line feed to make paragraph breaks visible in the output, distinct from line breaks within a paragraph.",
+      "values": "String. Default is a single line feed (`\\n`)."
+    },
+    "parser.indentThreshold": {
+      "help": "Minimum left-indent, measured in multiples of the space-character width, that PDFBox's layout analysis requires before it treats a line as the start of a new paragraph. Passed to `PDFTextStripper.setIndentThreshold` after parsing to a float. Lower it for documents with shallow indents that should still break paragraphs; raise it to merge slightly-indented lines into the preceding paragraph.",
+      "values": "Decimal number as a string (parsed as a Java `float`). Default `\"2.0\"`."
+    },
+    "parser.spacingTolerance": {
+      "help": "Spacing tolerance, as a fraction of the space-character width, that PDFBox uses to decide whether the gap between two glyphs is a word boundary (white space). Passed to `PDFTextStripper.setSpacingTolerance` after parsing to a float. Decrease it when glyphs are set close together and words run into each other; increase it when single words are split apart by spurious spaces.",
+      "values": "Decimal number as a string (parsed as a Java `float`). Default `\"0.5\"`."
+    }
+  },
+  "fullDoc": "# PDF Filter\n\nThe PDF Filter extracts text content from PDF files for processing. It does not handle complex formatting like tables or multi-level lists. The typical use case is scraping text from PDFs for quick word counts and leverage analysis. **Important:** This filter does not merge back into PDF format — it produces plain text output upon merging.\n\nExtraction is performed by Apache PDFBox's `PDFTextStripper`. The filter exposes the stripper's layout-detection thresholds (indent threshold, spacing tolerance) and the separators it writes between lines and paragraphs.\n\n## Parameters\n\n### Output\n\n#### Line separator\nThe string written between consecutive lines of extracted text (`PDFTextStripper.setLineSeparator`). Default: a single line feed (`\\n`).\n\n#### Paragraph separator\nThe string written at the end of each detected paragraph (`PDFTextStripper.setParagraphEnd`). Default: a single line feed (`\\n`).\n\n### Parser\n\n#### Indent threshold\nMinimum left-indent, in multiples of the space-character width, before PDFBox treats a line as starting a new paragraph (`PDFTextStripper.setIndentThreshold`). Default: `2.0`.\n\n#### Spacing tolerance\nSpacing tolerance, as a fraction of the space-character width, used to decide whether the gap between two glyphs is a word boundary (`PDFTextStripper.setSpacingTolerance`). Default: `0.5`.\n\n## Processing Details\n\n### Input Encoding\n\nPDF files are binary and do not have a specific encoding. Okapi extracts all text as a Java string and forces the encoding to `UTF-16`. Any encoding selected in tools like Rainbow will be ignored.\n\n### Segmentation\n\nTextUnits are created following the default rules of the Plain Text filter. Any text followed by a newline creates a new TextUnit (paragraph).\n\n## Limitations\n\n- This filter merges back in **plain text format**, not PDF.\n- Does not handle complex formatting like tables or multi-level lists.\n- Any encoding selected in tools like Rainbow will be ignored — the filter forces UTF-16.\n\n## Notes\n\n- The primary use case is text extraction for word counts and leverage analysis, not round-trip translation back to PDF.\n",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/PDF_Filter",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/PDF_Filter",
+      "okapi-source:okapi/filters/pdf/src/main/java/net/sf/okapi/filters/pdf/Parameters.java",
+      "okapi-source:okapi/filters/pdf/src/main/java/net/sf/okapi/filters/pdf/PdfFilter.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

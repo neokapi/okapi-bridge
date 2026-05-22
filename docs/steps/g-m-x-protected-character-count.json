@@ -1,0 +1,27 @@
+{
+  "filterName": "GMX Protected Character Count Step",
+  "stepId": "g-m-x-protected-character-count",
+  "overview": "Tallies the [GMX-V 2.0](http://www.xtm-intl.com/manuals/gmx-v/GMX-V-2.0.html) `ProtectedCharacterCount` category — the character count for text that has been marked as protected, or otherwise not translatable (for example XLIFF text enclosed in `<mrk mtype=\"protected\">` elements). Unlike the match-based GMX steps, this step counts only the units flagged as non-translatable, counting characters in their source; for translatable units it removes any previously recorded protected metric. Characters are counted in canonical form — whitespace and punctuation are excluded (hyphens and apostrophes inside words are kept) — and stored as GMX-V metrics annotations for downstream consumption (for example by the Scoping Report Step). This is the character-count counterpart of the protected word-count step.",
+  "processingNotes": [
+    "Counts only text units marked non-translatable; this is the one GMX count step that does not restrict itself to translatable units.",
+    "For translatable units the step actively removes any existing protected metric from the segment, source, and text unit.",
+    "Character counting excludes whitespace and punctuation per GMX-V, but retains hyphens and apostrophes that occur inside a word."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXProtectedCharacterCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/categorized/gmx/GMXProtectedWordCountStep.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/CharacterCounter.java",
+      "okapi-source:okapi/steps/wordcount/src/main/java/net/sf/okapi/steps/wordcount/common/GMX.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

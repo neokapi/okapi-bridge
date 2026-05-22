@@ -1,12 +1,17 @@
 {
-  "generatedAt": "2026-04-02T08:43:45Z",
+  "generatedAt": "2026-05-22T22:32:28Z",
   "wikiBaseUrl": "https://okapiframework.org/wiki/index.php/",
   "aliases": {
-    "okf_baseplaintext": "okf_plaintext",
     "okf_basetable": "okf_table",
     "okf_commaseparatedvalues": "okf_table",
+    "okf_tabseparatedvalues": "okf_table",
     "okf_fixedwidthcolumns": "okf_table",
+    "okf_transtable": "okf_table",
+    "okf_baseplaintext": "okf_plaintext",
     "okf_paraplaintext": "okf_plaintext",
-    "okf_tabseparatedvalues": "okf_table"
+    "okf_splicedlines": "okf_plaintext",
+    "okf_regexplaintext": "okf_plaintext",
+    "okf_versifiedtext": "okf_plaintext",
+    "okf_openoffice": "okf_odf"
   }
 }

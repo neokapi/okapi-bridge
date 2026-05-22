@@ -1,0 +1,40 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "okf_tex",
+  "kind": "filter",
+  "name": "TEX Filter",
+  "overview": "The TEX Filter extracts translatable prose from TeX and LaTeX source documents while leaving the command structure intact for round-trip writing. It tokenises the document into text, commands, comments, and newlines, then classifies each command to decide whether the text it introduces is translatable. Body paragraphs become translatable text units, separated by blank lines; the surrounding markup is preserved as skeleton.",
+  "limitations": [
+    "Comments (lines beginning with `%`) are treated as non-translatable document parts.",
+    "Structural commands and their braced arguments are not extracted — for example `\\begin`, `\\end`, `\\documentclass`, `\\usepackage`, `\\label`, `\\ref`, `\\cite`/`\\citealt`/`\\newcite`, `\\pageref`, `\\includegraphics`, `\\hspace`/`\\vspace`/`\\hskip`/`\\vskip`, `\\put`, `\\pagestyle`, and `\\thispagestyle`.",
+    "Command recognition is based on a fixed built-in list; commands outside that list are treated as unknown markup. The filter has no configurable parameters to extend or override this classification."
+  ],
+  "processingNotes": [
+    "Paragraph-level commands whose braced argument is translatable as its own unit include `\\title`, `\\author`, `\\chapter`/`\\Chapter`, `\\section`, `\\subsection`, `\\caption`, `\\titlerunning`, `\\index`, and `\\typeout`.",
+    "Inline formatting commands fold their text into the surrounding paragraph rather than starting a new unit — for example `\\textbf`, `\\textit`, `\\texttt`, `\\textsf`, `\\emph`/`\\em`, `\\bf`, `\\tt`, `\\footnote`, `\\hbox`/`\\mbox`/`\\vbox`.",
+    "Accent and national-symbol commands (`\\oe`, `\\AE`, `\\ss`, `\\o`, `\\l`, the text-mode accents `\\``, `\\'`, `\\^`, `\\\"`, `\\~`, `\\=`, `\\.`, and similar) are recognised as character markup, not as new units.",
+    "Two or more consecutive newlines end the current paragraph; a single newline is treated as part of the running paragraph.",
+    "Encoding is auto-detected via a BOM; a UTF-8 BOM and UTF-8 encoding are honoured on output.",
+    "The filter has no configurable parameters."
+  ],
+  "examples": [
+    {
+      "title": "Sectioning command and body paragraph",
+      "description": "A sectioning command argument and the following paragraph are each extracted as translatable units, while structural commands stay in the skeleton.",
+      "config": null,
+      "input": "```latex\n\\section{Introduction}\nThis is the first paragraph.\n\n\\label{sec:intro}\n```",
+      "output": "```\nTwo text units are extracted: \"Introduction\" (from \\section) and \"This is the first paragraph.\". The \\label command and its argument are preserved as non-translatable skeleton.\n```"
+    }
+  ],
+  "parameters": {},
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/tex/src/main/java/net/sf/okapi/filters/tex/TEXFilter.java",
+      "okapi-source:okapi/filters/tex/src/main/java/net/sf/okapi/filters/tex/parser/TEXParser.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

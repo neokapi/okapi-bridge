@@ -1,6 +1,29 @@
 {
   "filterName": "YAML Filter",
+  "filterId": "okf_yaml",
   "overview": "The YAML Filter processes [YAML files](http://www.yaml.org/) and supports [Ruby on Rails](http://rubyonrails.org/) message variables. It extracts translatable string values from YAML key-value pairs, lists, and maps, assigning each entry a name composed of its full parent key path (e.g., `fr/activerecord/errors/messages/exclusion`). The filter handles Unicode BOM detection for encoding and preserves original line-break types in output.",
+  "limitations": [
+    "Wrapped lines in the original source document will be **unwrapped** in the target document — all text will appear on a single line.",
+    "If an illegal character is introduced during translation, the user must manually add double or single quotes to make the target YAML file valid. A WARNING is issued by the filter when this scenario is detected.",
+    "Inline code detection (`inlineCodes.enabled`) cannot be used together with sub-filtering — they are mutually exclusive."
+  ],
+  "processingNotes": [
+    "**Encoding detection**: If a Unicode BOM is present, the corresponding encoding (UTF-8, UTF-16, etc.) is used. Otherwise, the default encoding specified when opening the document is applied.",
+    "**Line breaks**: The output preserves the same line-break type (CRLF, LF) as the original input.",
+    "**Entry naming**: Each extracted entry is named using the full path of its parent keys joined by `/` (e.g., `fr/activerecord/errors/messages/exclusion`)."
+  ],
+  "examples": [
+    {
+      "title": "Ruby on Rails i18n YAML",
+      "description": "A typical Rails locale file. All highlighted string values are extracted with full key paths as names.",
+      "input": "```yaml\nfr:\n  activerecord:\n    errors:\n      template:\n        header:\n          list: [one, two, three]\n          map: {key: value, key2: value2}\n          one: \"Impossible d'enregistrer {{model}}: 1 erreur\"\n          other: \"Impossible d'enregistrer {{model}}: {{count}} erreurs.\"\n        body: \"Veuillez vérifier les champs suivants :\"\n      messages:\n        inclusion: \"n'est pas inclus(e) dans la liste\"\n        exclusion: \"n'est pas disponible\"\n```"
+    },
+    {
+      "title": "Inline codes for Ruby interpolation",
+      "description": "Configure inline code detection to protect Ruby i18n `%{variable}` placeholders from translation.",
+      "config": "```yaml\ninlineCodes:\n  enabled: true\n  rules:\n    rules:\n      - pattern: \"%\\\\{[^}]+\\\\}\"\n    sample: \"Hello %{name}, you have %{count} messages\"\n```"
+    }
+  ],
   "parameters": {
     "extraction.extractAll": {
       "help": "Controls the default extraction behavior for key/string pairs.\n\n- **When enabled**: all key/string pairs are extracted, *except* those matching the `excludeKeys` pattern.\n- **When disabled**: no key/string pairs are extracted, *except* those matching the `excludeKeys` pattern (inverted logic).\n\nThis works as a toggle that flips the meaning of the `excludeKeys` regex — matching keys become exceptions to whichever default you choose."
@@ -79,28 +102,6 @@
       "help": "Rules for simplifying the representation of inline codes, reducing complexity for translators by combining or collapsing code patterns."
     }
   },
-  "limitations": [
-    "Wrapped lines in the original source document will be **unwrapped** in the target document — all text will appear on a single line.",
-    "If an illegal character is introduced during translation, the user must manually add double or single quotes to make the target YAML file valid. A WARNING is issued by the filter when this scenario is detected.",
-    "Inline code detection (`inlineCodes.enabled`) cannot be used together with sub-filtering — they are mutually exclusive."
-  ],
-  "processingNotes": [
-    "**Encoding detection**: If a Unicode BOM is present, the corresponding encoding (UTF-8, UTF-16, etc.) is used. Otherwise, the default encoding specified when opening the document is applied.",
-    "**Line breaks**: The output preserves the same line-break type (CRLF, LF) as the original input.",
-    "**Entry naming**: Each extracted entry is named using the full path of its parent keys joined by `/` (e.g., `fr/activerecord/errors/messages/exclusion`)."
-  ],
-  "examples": [
-    {
-      "title": "Ruby on Rails i18n YAML",
-      "description": "A typical Rails locale file. All highlighted string values are extracted with full key paths as names.",
-      "input": "```yaml\nfr:\n  activerecord:\n    errors:\n      template:\n        header:\n          list: [one, two, three]\n          map: {key: value, key2: value2}\n          one: \"Impossible d'enregistrer {{model}}: 1 erreur\"\n          other: \"Impossible d'enregistrer {{model}}: {{count}} erreurs.\"\n        body: \"Veuillez vérifier les champs suivants :\"\n      messages:\n        inclusion: \"n'est pas inclus(e) dans la liste\"\n        exclusion: \"n'est pas disponible\"\n```"
-    },
-    {
-      "title": "Inline codes for Ruby interpolation",
-      "description": "Configure inline code detection to protect Ruby i18n `%{variable}` placeholders from translation.",
-      "config": "```yaml\ninlineCodes:\n  enabled: true\n  rules:\n    rules:\n      - pattern: \"%\\\\{[^}]+\\\\}\"\n    sample: \"Hello %{name}, you have %{count} messages\"\n```"
-    }
-  ],
   "propertySuggestions": {
     "extraction.excludeKeys": {
       "title": "Key Exception Pattern",
@@ -116,6 +117,34 @@
     }
   },
   "fullDoc": "# YAML Filter\n\nThe YAML Filter processes [YAML files](http://www.yaml.org/) and supports [Ruby on Rails](http://rubyonrails.org/) message variables. It extracts translatable string values from YAML key-value pairs, lists, and maps, assigning each entry a name composed of its full parent key path (e.g., `fr/activerecord/errors/messages/exclusion`). The filter handles Unicode BOM detection for encoding and preserves original line-break types in output.\n\n## Parameters\n\n### Extraction\n\n#### Extract All Key/String Pairs\nControls the default extraction behavior for key/string pairs.\n\n- **When enabled**: all key/string pairs are extracted, *except* those matching the key exception pattern.\n- **When disabled**: no key/string pairs are extracted, *except* those matching the key exception pattern (inverted logic).\n\nThis works as a toggle that flips the meaning of the exception regex.\n\n#### Extract Isolated Strings\nExtracts strings that are **not associated with a key**, such as bare string values in YAML arrays or lists.\n\nFor example, in:\n```yaml\nlist: [one, two, three]\n```\nthe values `one`, `two`, `three` are isolated strings.\n\n#### Key Exception Pattern\nA regular expression matched against YAML keys. Matching keys behave **opposite** to the default extraction mode:\n\n- If extractAll is **enabled**: matching keys are **excluded** from extraction.\n- If extractAll is **disabled**: matching keys are **included** for extraction.\n\nWhen full key path is enabled, the regex is matched against the full path (e.g., `menu/value/popup/menuitem/value`).\n\n### Keys\n\n#### Use Key as Name\nUses the YAML key as the `resname` (resource name) of each extracted text unit. This maps to the `name` attribute in XLIFF output.\n\n#### Use Full Key Path\nUses the complete nested key path as the resource name instead of just the immediate key.\n\nFor example: `fr/activerecord/errors/messages/exclusion` instead of just `exclusion`.\n\n> **Note:** Requires \"Use Key as Name\" to be enabled.\n\n### Output\n\n#### Escape Non-ASCII\nEscapes non-ASCII characters in the output using Unicode escape sequences.\n\n#### Line Wrapping\nControls whether long lines are wrapped in the output YAML file.\n\n> **Warning:** Wrapped lines in the original source will be unwrapped in the target document regardless of this setting.\n\n#### Sub-filter Literal Blocks\nWhen sub-filtering is active, controls whether YAML literal block scalars (using `|` syntax) are processed through the sub-filter.\n\n### Inline Codes\n\n#### Enable Inline Code Detection\nActivates pattern-based detection of inline codes within extracted text. Matched patterns are converted to inline code placeholders.\n\n> **Note:** Cannot be used together with sub-filtering.\n\n#### Code Finder Rules\nRegular expression patterns that identify inline codes. Default patterns detect printf-style specifiers, escape sequences, and numbered placeholders.\n\nPresets available:\n- **Ruby i18n**: `%\\{[^}]+\\}` — matches `%{name}`, `%{count}`\n- **HTML**: `<[^>]+>` — matches `<b>`, `</a>`\n\n#### Merge Adjacent Codes\nMerges consecutive inline codes with no translatable text between them into a single placeholder.\n\n#### Move Boundary Codes\nMoves inline codes at the start or end of a segment into the skeleton (non-translatable content).\n\n#### Simplifier Rules\nRules for simplifying inline code representation for translators.\n\n## Limitations\n\n- Wrapped lines in the original source document will be **unwrapped** in the target document — all text appears on a single line.\n- If an illegal character is introduced during translation, the user must manually add quotes to keep the YAML valid. A WARNING is issued when detected.\n- Inline code detection cannot be used together with sub-filtering — they are mutually exclusive.\n\n## Notes\n\n- **Encoding**: Unicode BOM is detected automatically. Otherwise the default encoding specified when opening the document is used.\n- **Line breaks**: Output preserves the original line-break type (CRLF, LF).\n- **Entry naming**: Each entry is named by joining all parent keys with `/` (e.g., `fr/activerecord/errors/messages/exclusion`).\n\n## Examples\n\n### Ruby on Rails i18n file\n\n```yaml\nfr:\n  activerecord:\n    errors:\n      messages:\n        inclusion: \"n'est pas inclus(e) dans la liste\"\n        exclusion: \"n'est pas disponible\"\n        invalid: \"n'est pas valide\"\n```\n\nAll string values are extracted with full key paths as names (e.g., `fr/activerecord/errors/messages/exclusion`).\n\n### Inline code detection for Ruby interpolation\n\n```yaml\ninlineCodes:\n  enabled: true\n  rules:\n    rules:\n      - pattern: \"%\\\\{[^}]+\\\\}\"\n    sample: \"Hello %{name}, you have %{count} messages\"\n```\n\nThis protects `%{name}` and `%{count}` placeholders from translation.",
-  "filterId": "okf_yaml",
-  "wikiUrl": "https://okapiframework.org/wiki/index.php/YAML_Filter"
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/YAML_Filter",
+  "x-provenance": {
+    "generator": "claude/wiki-parse",
+    "grounding": [
+      "wiki:https://okapiframework.org/wiki/index.php/YAML_Filter",
+      "schema"
+    ],
+    "authoredAt": "2026-05-22",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.extraction.excludeKeys": "ai",
+      "parameters.extraction.extractAll": "ai",
+      "parameters.extraction.includeIsolatedStrings": "ai",
+      "parameters.inlineCodes.enabled": "ai",
+      "parameters.inlineCodes.mergeAdjacent": "ai",
+      "parameters.inlineCodes.moveBoundaryCodes": "ai",
+      "parameters.inlineCodes.rules": "ai",
+      "parameters.inlineCodes.simplifierRules": "ai",
+      "parameters.keys.useAsName": "ai",
+      "parameters.keys.useFullPath": "ai",
+      "parameters.output.escapeNonAscii": "ai",
+      "parameters.output.subFilterProcessLiteralAsBlock": "ai",
+      "parameters.output.wrap": "ai"
+    },
+    "schemaFields": "okapi"
+  }
 }

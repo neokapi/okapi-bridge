@@ -1,0 +1,99 @@
+{
+  "filterName": "TTML Filter",
+  "filterId": "okf_ttml",
+  "overview": "The TTML Filter reads and writes **W3C Timed Text Markup Language** caption and subtitle documents (`.ttml`). It extracts the text of each caption as a translatable unit while preserving the timing structure, and applies the shared subtitle output controls when re-emitting captions — caption-text line wrapping, line and character limits, and timecode handling. It builds on the common subtitle filter, so the `output.*` parameters are shared with the WebVTT filter.",
+  "processingNotes": [
+    "The default `okf_ttml` configuration ships with non-zero line limits (`maxLinesPerCaption` 2, `maxCharsPerLine` 47, `cjkCharsPerLine` 18) suited to broadcast captions; the underlying parameter defaults when set programmatically are `0` (no limit).",
+    "When a character/line limit is in effect, caption text is re-wrapped on output. The character limit chosen is `cjkCharsPerLine` for CJK target locales (Chinese, Japanese, Korean) and `maxCharsPerLine` otherwise.",
+    "Output time strings are formatted with the `output.timeFormat` pattern; the parameter default is `HH:mm:ss.SSS`.",
+    "The filter enables its inline code finder by default and, separately, controls `<br/>` handling via an `escapeBrMode` parameter (not part of the documented output set here)."
+  ],
+  "examples": [
+    {
+      "title": "Constrain caption layout for broadcast",
+      "description": "Limits captions to two lines of at most 37 characters and breaks only on word boundaries, so written captions stay within a typical on-screen budget.",
+      "config": "```yaml\noutput:\n  maxLinesPerCaption: 2\n  maxCharsPerLine: 37\n  splitWords: false\n```",
+      "input": "```xml\n<p begin=\"00:00:01.000\" end=\"00:00:04.000\">A single long line of caption text that exceeds the limit.</p>\n```",
+      "output": "```\nThe caption text is wrapped to at most two lines of 37 characters, breaking at spaces rather than mid-word.\n```"
+    },
+    {
+      "title": "Preserve original timecodes",
+      "description": "Keeps each caption's original begin/end times verbatim instead of redistributing time across merged sub-captions.",
+      "config": "```yaml\noutput:\n  keepTimecodes: true\n  timeFormat: \"HH:mm:ss.SSS\"\n```",
+      "input": null,
+      "output": null
+    }
+  ],
+  "parameters": {
+    "output.keepTimecodes": {
+      "help": "Controls how timecodes are written when a caption was assembled from several timed source captions. When enabled, each original begin/end pair is written back verbatim. When disabled (the default), the combined caption's overall duration is divided evenly across its parts and re-emitted as recomputed timecodes.",
+      "values": "`true` / `false` (default `false`)"
+    },
+    "output.timeFormat": {
+      "help": "The pattern used to format begin/end times on output, following Java date-time formatting. It is applied whenever the writer emits a timecode.",
+      "values": "A Java time-format pattern string. Parameter default `HH:mm:ss.SSS` (hours, minutes, seconds, milliseconds).",
+      "examples": [
+        "`HH:mm:ss.SSS` — `01:23:45.678`",
+        "`HH:mm:ss,SSS` — comma decimal separator, as used by SubRip-style timing"
+      ]
+    },
+    "output.maxCharsPerLine": {
+      "help": "The maximum number of characters per line of caption text on output. When greater than `0`, written caption text is wrapped to honour this limit; `0` means no limit. For CJK target locales, `cjkCharsPerLine` is used instead of this value.",
+      "values": "Integer `1`–9999999, or `0` for no limit. Parameter default `0`; the bundled `okf_ttml` configuration sets `47`.",
+      "dependsOn": [
+        {
+          "property": "cjkCharsPerLine",
+          "condition": "cjkCharsPerLine replaces this value for CJK target locales"
+        }
+      ]
+    },
+    "output.maxLinesPerCaption": {
+      "help": "The maximum number of text lines a single caption may occupy on output. When greater than `0`, caption text is distributed across at most this many lines; `0` means no limit.",
+      "values": "Integer `1`–9999999, or `0` for no limit. Parameter default `0`; the bundled `okf_ttml` configuration sets `2`."
+    },
+    "output.cjkCharsPerLine": {
+      "help": "A separate per-line character limit applied when the target locale is Chinese, Japanese, or Korean, where each character occupies more visual width. When the target is CJK, this value is used in place of `maxCharsPerLine`.",
+      "values": "Integer `1`–9999999, or `0` for no limit. Parameter default `0`; the bundled `okf_ttml` configuration sets `18`.",
+      "dependsOn": [
+        {
+          "property": "maxCharsPerLine",
+          "condition": "used instead of maxCharsPerLine when the target locale is CJK"
+        }
+      ]
+    },
+    "output.splitWords": {
+      "help": "Determines how the per-line character limit is enforced. When enabled (the default), words may be broken across lines so a line never exceeds the character limit. When disabled, line breaks fall only on word boundaries, even if that leaves a line shorter than the limit. Has effect only when a character limit is set.",
+      "values": "`true` / `false` (default `true`)",
+      "dependsOn": [
+        {
+          "property": "maxCharsPerLine",
+          "condition": "only relevant when a per-line character limit is in effect"
+        }
+      ]
+    }
+  },
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/ttml/TTMLParameters.java",
+      "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/subtitles/SubtitleParameters.java",
+      "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/subtitles/SubtitleFilter.java",
+      "okapi-source:okapi/filters/subtitles/src/main/java/net/sf/okapi/filters/ttml/TTMLSkeletonWriter.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.output.cjkCharsPerLine": "ai",
+      "parameters.output.keepTimecodes": "ai",
+      "parameters.output.maxCharsPerLine": "ai",
+      "parameters.output.maxLinesPerCaption": "ai",
+      "parameters.output.splitWords": "ai",
+      "parameters.output.timeFormat": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

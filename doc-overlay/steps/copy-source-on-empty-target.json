@@ -1,0 +1,22 @@
+{
+  "$schema": "../overlay.schema.json",
+  "id": "copy-source-on-empty-target",
+  "kind": "step",
+  "name": "Copy Source On Empty Target Step",
+  "overview": "Copies the source content into the target of a text unit when that target is missing or has no text. For each text unit whose source contains text, the step creates the target from the source (preserving segmentation) if no target exists, or sets the target content from the source if the target exists but is empty. Text units whose source has no text are left untouched, and existing non-empty targets are never overwritten. It expects filter events and passes them through unchanged apart from the targets it populates.",
+  "processingNotes": [
+    "A target is considered empty when it is absent or contains no text (codes and whitespace alone do not count as text).",
+    "When the target is absent it is created from the source as a copy of the segmented content; when present but empty its content is set from the source as a string.",
+    "Text units whose source has no text are skipped, and targets that already contain text are preserved.",
+    "Requires the target locale, which is supplied by the pipeline rather than configured on the step."
+  ],
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "okapi-source:okapi/steps/common/src/main/java/net/sf/okapi/steps/common/copysource/CopySourceOnEmptyTargetStep.java",
+      "schema"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false
+  }
+}

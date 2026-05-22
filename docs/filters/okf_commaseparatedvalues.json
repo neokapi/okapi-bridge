@@ -1,0 +1,304 @@
+{
+  "filterName": "Comma-Separated Values Filter",
+  "filterId": "okf_commaseparatedvalues",
+  "overview": "The Comma-Separated Values Filter extracts translatable text from CSV-style files, where each record is a line and fields are separated by a single delimiter character (a comma by default, but configurable to semicolon, pipe, or any other character). Field values may be wrapped in a text qualifier so that the delimiter, line breaks, and the qualifier itself can appear inside a value. The filter handles multi-line quoted fields, two qualifier-escaping conventions, and optional headers, and shares the table family's column-role model for selecting source, target, ID, and comment columns. The `format.*` parameters below are specific to CSV; the column, header, and whitespace settings are inherited from the table filter.",
+  "limitations": [
+    "Column roles are addressed by 1-based index, not by header name."
+  ],
+  "processingNotes": [
+    "Fields are split on the single `format.fieldDelimiter` character; an empty delimiter falls back to treating the whole line as one cell.",
+    "A qualified value whose opening qualifier is not closed on the same line triggers multi-line merging: subsequent lines are folded into the field until the qualifier balances.",
+    "Embedded line breaks inside a quoted field are reproduced according to `wrapMode`; line breaks between records are preserved.",
+    "Two adjacent qualifiers inside a value (or a backslash-escaped qualifier) are moved to the skeleton as an inline code, so the literal qualifier survives the round-trip."
+  ],
+  "examples": [
+    {
+      "title": "CSV with a header row",
+      "description": "Standard CSV: column names on line 1, data from line 2, comma delimiter, double-quote qualifier. By default columns are extracted as listed (source column 1, target column 2).",
+      "config": "```yaml\nconfigId: okf_table_csv\nformat:\n  fieldDelimiter: \",\"\n  textQualifier: '\"'\ncolumnNamesLineNum: 1\nvaluesStartLineNum: 2\nsendHeaderMode: 1\n```",
+      "input": "```csv\nName,Description\n\"Widget\",\"A small, useful device\"\n```"
+    },
+    {
+      "title": "Semicolon-delimited, no header",
+      "description": "Read a file whose fields are separated by semicolons and whose data starts on the first line.",
+      "config": "```yaml\nformat:\n  fieldDelimiter: \";\"\nvaluesStartLineNum: 1\ncolumnNamesLineNum: 0\n```"
+    },
+    {
+      "title": "Qualifier with embedded delimiter and escaped quote",
+      "description": "The text qualifier lets a field hold the delimiter; a literal qualifier inside the value is escaped by duplication (`\"\"`) under the default escaping mode.",
+      "input": "```csv\nName,Description\n\"Quote Test\",\"She said \"\"hello\"\"\"\n```"
+    }
+  ],
+  "parameters": {
+    "columnNamesLineNum": {
+      "help": "The 1-based line number holding the column captions. For CSV the names are read by splitting that line on the delimiter and stripping qualifiers; they label comment metadata and may set the pipeline locale when a column name is a locale code. Use `0` when the file has no column-name line.",
+      "values": "1-based line number; `0` = none (default `0`)",
+      "notes": [
+        "Lines are numbered from 1. For a CSV with a header on line 1 and data from line 2, set `columnNamesLineNum=1` and `valuesStartLineNum=2`."
+      ]
+    },
+    "valuesStartLineNum": {
+      "help": "The 1-based line where data rows begin. Lines before it form the header area, handled per `sendHeaderMode`. For a header on line 1, set this to 2.",
+      "values": "1-based line number (default `1`)"
+    },
+    "detectColumnsMode": {
+      "help": "How the column count per row is decided: per-row, from the number of names on the column-names line, or fixed. CSV rows already split cleanly on the delimiter, so this mainly matters when you need a guaranteed column count.",
+      "values": "`0` = none, `1` = from column names, `2` = fixed (default `0`)",
+      "dependsOn": [
+        {
+          "property": "numColumns",
+          "condition": "used only when set to 2 (fixed number)"
+        },
+        {
+          "property": "columnNamesLineNum",
+          "condition": "used only when set to 1 (from column names)"
+        }
+      ]
+    },
+    "numColumns": {
+      "help": "The fixed number of columns expected per row. Only consulted when `detectColumnsMode` is set to fixed-number. Rows with fewer cells are padded with empty cells; rows with more cells have the extras dropped.",
+      "values": "Integer (default `2`)",
+      "dependsOn": [
+        {
+          "property": "detectColumnsMode",
+          "condition": "only active when detectColumnsMode = 2 (fixed number)"
+        }
+      ]
+    },
+    "sendHeaderMode": {
+      "help": "Which header-area lines are extracted as translatable text: none, the column-names line only, or all header lines.",
+      "values": "`0` = none, `1` = column names only, `2` = all (default `0`)"
+    },
+    "sendColumnsMode": {
+      "help": "Which columns of each data row are extracted: none, only the columns named in the column-role settings, or all columns as source. `listed` mode enables bilingual extraction, IDs, and notes.",
+      "values": "`0` = none, `1` = listed, `2` = all (default `1`)",
+      "notes": [
+        "Bilingual extraction (source paired with target) is only available in `listed` mode with a non-empty `targetColumns`."
+      ]
+    },
+    "trimMode": {
+      "help": "How leading/trailing whitespace is removed from cells: none, non-qualified fields only (leaving the inside of quoted fields intact), or all fields. Any non-none value forces `trimLeading` and `trimTrailing` on. The non-qualified option is meaningful for CSV because it distinguishes quoted from unquoted fields.",
+      "values": "`0` = none, `1` = non-qualified only, `2` = all (default `1`)",
+      "notes": [
+        "`non-qualified only` matters only for formats that have a text qualifier (CSV); for TSV and fixed-width it behaves like trimming all cells."
+      ]
+    },
+    "recordIdColumn": {
+      "help": "The 1-based index of the column whose value identifies the row. Combined with `sourceIdSuffixes` to synthesise an ID for source columns lacking an explicit ID cell.",
+      "values": "1-based column index; `0` = none (default `0`)"
+    },
+    "sourceColumns": {
+      "help": "Comma-separated 1-based indices of the columns extracted as source (translatable) text. Consulted when `sendColumnsMode` is `listed`.",
+      "values": "e.g. `1` or `1,3` (default `1`)",
+      "examples": [
+        "`1,3` — extract columns 1 and 3 as source text"
+      ]
+    },
+    "targetColumns": {
+      "help": "Comma-separated 1-based indices of columns holding existing target text. Each is tied to a source column via `targetSourceRefs` and a locale via `targetLanguages`; supplying them makes the configuration bilingual.",
+      "values": "Comma-separated 1-based indices (default `2`)",
+      "dependsOn": [
+        {
+          "property": "targetSourceRefs",
+          "condition": "maps each target column to its source column"
+        },
+        {
+          "property": "targetLanguages",
+          "condition": "assigns the locale of each target column"
+        }
+      ]
+    },
+    "targetLanguages": {
+      "help": "Locale of each target column, aligned position-by-position with `targetColumns`. A single value applies to all target columns; otherwise the pipeline target locale is used.",
+      "values": "Comma-separated locale codes, e.g. `fr,de` (default empty)",
+      "examples": [
+        "`fr,de` — first target column is French, second is German"
+      ]
+    },
+    "commentColumns": {
+      "help": "Comma-separated 1-based indices of columns whose values attach as notes (or metadata, see `exposeCommentsAsMetadata`) to the source column they annotate via `commentSourceRefs`, rather than being extracted as translatable text.",
+      "values": "Comma-separated 1-based indices (default empty)",
+      "dependsOn": [
+        {
+          "property": "commentSourceRefs",
+          "condition": "maps each comment column to the source column it annotates"
+        }
+      ]
+    },
+    "sourceIdColumns": {
+      "help": "Comma-separated 1-based indices of columns whose values become the resource names (IDs) of source text units, linked to their source column via `sourceIdSourceRefs`. An empty ID cell falls back to `recordIdColumn` + `sourceIdSuffixes`.",
+      "values": "Comma-separated 1-based indices (default empty)",
+      "dependsOn": [
+        {
+          "property": "sourceIdSourceRefs",
+          "condition": "maps each ID column to the source column it names"
+        }
+      ]
+    },
+    "sourceIdSourceRefs": {
+      "help": "Maps each column in `sourceIdColumns` to the source column it names, as a comma-separated list of 1-based source-column indices aligned position-by-position.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "sourceIdSuffixes": {
+      "help": "Suffixes appended to the `recordIdColumn` value to build an ID for a source column that has no explicit ID cell. Aligned position-by-position with `sourceColumns`.",
+      "values": "Comma-separated strings (default empty)"
+    },
+    "targetSourceRefs": {
+      "help": "Maps each column in `targetColumns` to the source column it translates, as a comma-separated list of 1-based source-column indices aligned position-by-position. A target whose reference cannot be resolved is sent to the skeleton.",
+      "values": "Comma-separated 1-based indices (default `1`)"
+    },
+    "commentSourceRefs": {
+      "help": "Maps each column in `commentColumns` to the source column it annotates, as a comma-separated list of 1-based source-column indices aligned position-by-position. The comment becomes a read-only note on that source text unit.",
+      "values": "Comma-separated 1-based indices (default empty)"
+    },
+    "exposeCommentsAsMetadata": {
+      "help": "When enabled, comment-column values attach to the source text unit as metadata keyed by column name instead of as translator notes.",
+      "values": "`true` / `false` (default `false`)",
+      "dependsOn": [
+        {
+          "property": "commentColumns",
+          "condition": "only meaningful when comment columns are defined"
+        }
+      ]
+    },
+    "preserveWS": {
+      "help": "Inherited from the plain-text base. When enabled, whitespace inside extracted values is preserved; cell-edge trimming is governed by `trimMode`, `trimLeading`, and `trimTrailing`.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "trimLeading": {
+      "help": "Removes leading spaces and tabs from each extracted cell value. Forced on whenever `trimMode` is not none.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "trimTrailing": {
+      "help": "Removes trailing spaces and tabs from each extracted cell value. Forced on whenever `trimMode` is not none.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "unescapeSource": {
+      "help": "Inherited from the plain-text base. When enabled, `\\t`, `\\n`, `\\\\`, and `\\uXXXX` escape sequences in extracted values are converted to the characters they represent.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "wrapMode": {
+      "help": "How a value spanning multiple physical lines (a quoted multi-line field) is represented: `NONE` joins wrapped lines with a line feed, `SPACES` joins with a single space, `PLACEHOLDERS` inserts an inline placeholder at each internal break so the wrapping can be reproduced on output.",
+      "values": "`NONE`, `SPACES`, `PLACEHOLDERS` (default `NONE`)"
+    },
+    "useCodeFinder": {
+      "help": "Inherited from the plain-text base filter. When enabled, the regular expressions in `codeFinderRules` are applied to extracted cell text and matching runs are turned into inline codes rather than translatable words. Used to protect printf-style variables, escape sequences, and similar markup embedded in cell values.",
+      "values": "`true` / `false` (default `false`)",
+      "dependsOn": [
+        {
+          "property": "codeFinderRules",
+          "condition": "supplies the patterns applied when enabled"
+        }
+      ]
+    },
+    "codeFinderRules": {
+      "help": "The inline-code detection rules applied to extracted cell text, in Okapi `#v1` rule format. The defaults match printf-style format specifiers and common backslash escape sequences. Only applied when `useCodeFinder` is enabled.",
+      "values": "Okapi `#v1` rules string",
+      "dependsOn": [
+        {
+          "property": "useCodeFinder",
+          "condition": "must be enabled for these rules to apply"
+        }
+      ]
+    },
+    "simplifierRules": {
+      "help": "Define rules for simplifying inline code representation in extracted text. Uses the Okapi simplifier rules syntax to merge or reduce inline codes into simpler placeholders.\n\nThis is edited via a dedicated rules editor widget.",
+      "seeAlso": "Table_Filter"
+    },
+    "moveLeadingAndTrailingCodesToSkeleton": {
+      "help": "Inline codes appearing at the very beginning or end of a segment are moved into the skeleton (non-translatable portion). This reduces clutter in the translatable text when boundary codes carry no translational significance.\n\nFor example, if a segment starts with `<b>` and ends with `</b>`, those codes are moved to skeleton so translators see only the text content.",
+      "introducedIn": "1.48.0"
+    },
+    "mergeAdjacentCodes": {
+      "help": "When multiple inline codes appear consecutively with no text between them, they are combined into a single placeholder code. This simplifies the translatable content by reducing the number of inline codes translators must handle.\n\nFor example, `</b><i>` would become a single placeholder rather than two separate codes.",
+      "introducedIn": "1.48.0"
+    },
+    "format.fieldDelimiter": {
+      "help": "The character that separates fields within a row. Any single character may be used — comma for CSV, semicolon and pipe being common alternatives. When empty, the line is not split and the whole line is treated as a single cell.",
+      "values": "Single character (default `,`)",
+      "examples": [
+        "`;` — semicolon-delimited",
+        "`|` — pipe-delimited"
+      ]
+    },
+    "format.textQualifier": {
+      "help": "The character placed before and after a field value so the value may contain the field delimiter, line breaks, or the qualifier itself. Qualified content is detected during parsing; whether the qualifier characters are kept in the extracted text depends on `format.removeQualifiers`.",
+      "values": "Single character (default `\"`)"
+    },
+    "format.escapingMode": {
+      "help": "How a literal text qualifier embedded in a field value is escaped in the source. Duplication treats two consecutive qualifiers as one literal qualifier (the common CSV convention, e.g. `\"\"`). Backslash treats a backslash before the qualifier as the escape (e.g. `\\\"`). This setting governs both how qualified fields are detected and how escaped qualifiers are recognised and preserved.",
+      "values": "`1` = duplication (`\"\"`), `2` = backslash (`\\\"`) (default `1`)"
+    },
+    "format.removeQualifiers": {
+      "help": "When enabled (the default), the surrounding text qualifiers are stripped from extracted values and kept in the skeleton, so translators see only the field content. When disabled, the qualifiers remain part of the extracted text.",
+      "values": "`true` / `false` (default `true`)"
+    },
+    "format.addQualifiers": {
+      "help": "When enabled, the writer adds text qualifiers around output values that require them — values containing the delimiter, line breaks, or the qualifier — even if the corresponding source field was not qualified. Use it to guarantee well-formed CSV when translations introduce delimiters or newlines.",
+      "values": "`true` / `false` (default `false`)"
+    }
+  },
+  "propertySuggestions": {
+    "simplifierRules": {
+      "title": "Simplifier Rules",
+      "description": "Rules for simplifying inline code representation in extracted segments"
+    }
+  },
+  "fullDoc": "# Table Filter\n\nThe Table Filter handles plain-text tabular documents including CSV, TSV, and fixed-width column formats. It supports multiple table types with configurable column delimiters, text qualifiers, escaping modes, and column-based extraction rules. The filter ships with six built-in configurations covering common tabular formats.\n\n## Built-in Configurations\n\n| Config ID | Description |\n|-----------|-------------|\n| `okf_table` | Generic table files (default) |\n| `okf_table_csv` | Comma-Separated Values with optional header |\n| `okf_table_catkeys` | Haiku CatKeys resource files |\n| `okf_table_src-tab-trg` | 2-column tab-separated (source + target) |\n| `okf_table_fwc` | Fixed-Width Columns |\n| `okf_table_tsv` | Tab-Separated Values |\n\n## Parameters\n\n### Simplifier Rules\n\nRules for simplifying inline code representation in extracted segments. Uses the Okapi simplifier rules syntax to merge or reduce inline codes into simpler placeholders. Edited via a dedicated rules editor widget.\n\n### Move Boundary Codes to Skeleton\n\n*Introduced in Okapi 1.48.0*\n\nInline codes appearing at the very beginning or end of a segment are moved into the skeleton (non-translatable portion). This reduces clutter in translatable text when boundary codes carry no translational significance.\n\n### Merge Adjacent Codes\n\n*Introduced in Okapi 1.48.0*\n\nWhen multiple inline codes appear consecutively with no text between them, they are combined into a single placeholder code. This simplifies the translatable content by reducing the number of inline codes translators must handle.\n\n## Configuration Parameters (per configuration)\n\nEach built-in configuration embeds detailed parameters controlling table parsing behavior. These include:\n\n### Table Type\n- **CSV**: Columns separated by a single character (comma, semicolon, tab, etc.)\n- **TSV**: Columns separated by one or more tabs (consecutive tabs do NOT mark empty columns)\n- **Fixed-width columns**: Each column has a fixed character width\n\n### Table Properties\n- **valuesStartLineNum**: Line number where table data begins (default: 1, meaning from the start)\n- **columnNamesLineNum**: Line number containing column names (default: 0, meaning no column names)\n\nLines are numbered from 1. For typical CSV with a header, set `valuesStartLineNum=2` and `columnNamesLineNum=1`.\n\n### CSV Options\n- **fieldDelimiter**: Character separating fields in a row (default: `,`)\n- **textQualifier**: Character wrapping field values to allow delimiters inside (default: `\"`)\n\n### CSV Escaping Mode\n- **escapingMode=1**: Duplicate qualifier escaping — `\"Text, \"\"quoted text\"\"\"`\n- **escapingMode=2**: Backslash escaping — `\"Text, \\\"quoted text\\\"\"`\n\n### CSV Actions\n- **removeQualifiers**: Remove qualifiers from extracted text (moved to skeleton)\n- **trimMode**: Controls whitespace trimming:\n  - `0`: No trimming\n  - `1`: Only non-qualified fields trimmed\n  - `2`: All fields trimmed\n- **addQualifiers**: Add qualifiers to output values containing delimiters or line breaks\n\n### Extraction Mode\n- **sendHeaderMode**: `0` = don't extract header, `1` = column names only, `2` = all header lines\n- **sendColumnsMode**: `1` = extract by column definitions, `2` = extract from all columns\n\n### Column Detection\n- **detectColumnsMode**: `0` = defined by values per row, `1` = defined by column names count, `2` = fixed number\n- **numColumns**: Fixed column count (1-100, used when detectColumnsMode=2)\n\n### Column Definitions\n- **sourceColumns**: Comma-separated 1-based column indices for source text\n- **targetColumns**: Comma-separated 1-based column indices for target text\n- **sourceIdColumns**: Columns providing unique IDs for source columns\n- **commentColumns**: Columns containing comments\n- **recordIdColumn**: Column providing the record (row) ID\n\n### Text Processing\n- **trimLeading** / **trimTrailing**: Trim leading/trailing spaces and tabs\n- **unescapeSource**: Convert `\\t`, `\\n`, `\\\\`, `\\uXXXX` escape sequences to characters\n- **wrapMode**: Multi-line handling: `0` = separate with line feeds, `1` = unwrap (merge with space), `2` = inline codes for line breaks\n\n### Inline Codes\n- **useCodeFinder**: Enable regex-based inline code detection\n- **codeFinderRules**: Okapi `#v1` format code finder rules\n\n## Encoding Behavior\n\n- **Input**: Unicode BOM takes priority; otherwise uses the default encoding from filter options\n- **Output**: UTF-8 BOM is included only if input was UTF-8 with BOM; converting from non-UTF-8 produces no BOM\n- **Line breaks**: Output preserves the original input's line-break style\n\n## Limitations\n\nNone known.\n\n## Examples\n\n### CSV with header\n```csv\nName,Description,Comment\n\"Widget\",\"A small, useful device\",\"For testing\"\n\"Gadget\",\"Another item\",\"Optional\"\n```\nUse `okf_table_csv` — extracts Name and Description columns as translatable text.\n\n### Two-column source/target\n```\nHello world\tBonjour le monde\nGoodbye\tAu revoir\n```\nUse `okf_table_src-tab-trg` — column 1 is source, column 2 is target.",
+  "wikiUrl": "https://okapiframework.org/wiki/index.php/Table_Filter",
+  "x-provenance": {
+    "generator": "claude-opus-4-7",
+    "grounding": [
+      "alias-parent:okf_table",
+      "okapi-source:okapi/filters/plaintext/src/main/java/net/sf/okapi/filters/plaintext/base/Parameters.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/BaseTableFilter.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/base/Parameters.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/csv/CommaSeparatedValuesFilter.java",
+      "okapi-source:okapi/filters/table/src/main/java/net/sf/okapi/filters/table/csv/Parameters.java",
+      "schema",
+      "wiki:https://okapiframework.org/wiki/index.php/Table_Filter"
+    ],
+    "authoredAt": "2026-05-23",
+    "reviewed": false,
+    "fields": {
+      "overview": "ai",
+      "limitations": "ai",
+      "processingNotes": "ai",
+      "examples": "ai",
+      "parameters.codeFinderRules": "ai",
+      "parameters.columnNamesLineNum": "ai",
+      "parameters.commentColumns": "ai",
+      "parameters.commentSourceRefs": "ai",
+      "parameters.detectColumnsMode": "ai",
+      "parameters.exposeCommentsAsMetadata": "ai",
+      "parameters.format.addQualifiers": "ai",
+      "parameters.format.escapingMode": "ai",
+      "parameters.format.fieldDelimiter": "ai",
+      "parameters.format.removeQualifiers": "ai",
+      "parameters.format.textQualifier": "ai",
+      "parameters.mergeAdjacentCodes": "ai",
+      "parameters.moveLeadingAndTrailingCodesToSkeleton": "ai",
+      "parameters.numColumns": "ai",
+      "parameters.preserveWS": "ai",
+      "parameters.recordIdColumn": "ai",
+      "parameters.sendColumnsMode": "ai",
+      "parameters.sendHeaderMode": "ai",
+      "parameters.simplifierRules": "ai",
+      "parameters.sourceColumns": "ai",
+      "parameters.sourceIdColumns": "ai",
+      "parameters.sourceIdSourceRefs": "ai",
+      "parameters.sourceIdSuffixes": "ai",
+      "parameters.targetColumns": "ai",
+      "parameters.targetLanguages": "ai",
+      "parameters.targetSourceRefs": "ai",
+      "parameters.trimLeading": "ai",
+      "parameters.trimMode": "ai",
+      "parameters.trimTrailing": "ai",
+      "parameters.unescapeSource": "ai",
+      "parameters.useCodeFinder": "ai",
+      "parameters.valuesStartLineNum": "ai",
+      "parameters.wrapMode": "ai"
+    },
+    "schemaFields": "okapi"
+  }
+}

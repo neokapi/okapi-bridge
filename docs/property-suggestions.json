@@ -144,7 +144,7 @@
       "title": "Translate Hyperlink URLs",
       "description": "Extract URLs in link and image statements as translatable subflows."
     },
-    "urlToTranslatePattern": {
+    "urlPattern": {
       "title": "Translatable URL Pattern",
       "description": "Regex pattern to filter which URLs are extracted when URL translation is enabled."
     },
@@ -172,10 +172,6 @@
       "title": "Parse MDX Expressions",
       "description": "Parse out multi-line MDX export blocks as non-translatable skeleton."
     },
-    "htmlEntitesToEscape": {
-      "title": "HTML Entities to Escape",
-      "description": "Characters to encode as HTML entities on export."
-    },
     "unescapeBackslashCharacters": {
       "title": "Support Backslash Escaping",
       "description": "Parse backslash-escaped punctuation in source documents."
@@ -195,10 +191,6 @@
     "nonTranslateBlocks": {
       "title": "Non-Translatable Block Quotes",
       "description": "Comma-separated prefixes identifying block quotes to exclude from translation."
-    },
-    "useCodeFinder": {
-      "title": "Use Code Finder",
-      "description": "Enable the Inline Code Finder for identifying inline codes in translatable text."
     }
   },
   "okf_messageformat": {
@@ -261,10 +253,6 @@
     "extractMetadata": {
       "title": "Extract Metadata",
       "description": "Extract translatable metadata from meta.xml"
-    },
-    "encodeCharEntityReferenceGlyphs": {
-      "title": "Encode Character Entity Reference Glyphs",
-      "description": "Encode special glyphs as character entity references in the output"
     }
   },
   "okf_openxml": {
@@ -377,45 +365,7 @@
       "description": "Convert \\n and \\t escape sequences to actual line-breaks and tabs during processing."
     }
   },
-  "okf_rainbowkit": {
-    "openManifestBeforeProcessing": {
-      "title": "Open Manifest Before Processing",
-      "description": "Open the manifest file for review or modification before processing the translation kit."
-    }
-  },
   "okf_regex": {
-    "preserveWhiteSpaces": {
-      "title": "Preserve White Spaces",
-      "description": "Preserve all white spaces in extracted text instead of collapsing and trimming them."
-    },
-    "hasInlineCodes": {
-      "title": "Has Inline Codes",
-      "description": "Enable conversion of text patterns into inline codes."
-    },
-    "autoCloseSection": {
-      "title": "Auto-Close Sections",
-      "description": "Automatically close the previous section when a new one starts."
-    },
-    "dotAll": {
-      "title": "Dot Matches Line-Feed",
-      "description": "Enable the dot operator to match line-feed characters."
-    },
-    "multiLine": {
-      "title": "Multi-Line Mode",
-      "description": "Make ^ and $ match at line terminators, not just start and end of input."
-    },
-    "ignoreCase": {
-      "title": "Ignore Case",
-      "description": "Ignore letter case differences when matching patterns."
-    },
-    "useLocDir": {
-      "title": "Use Localization Directives",
-      "description": "Recognize and process localization directives in the input."
-    },
-    "extractOutsideLocDir": {
-      "title": "Extract Outside Directives",
-      "description": "Extract translatable items that are not within the scope of a localization directive."
-    },
     "startString": {
       "title": "Beginning of String",
       "description": "Character(s) marking the start of a string for string extraction."
@@ -424,10 +374,6 @@
       "title": "End of String",
       "description": "Character(s) marking the end of a string for string extraction."
     },
-    "useBackSlashEscape": {
-      "title": "Backslash Escape",
-      "description": "Use backslash prefix to escape characters in strings."
-    },
     "useDoubleCharEscape": {
       "title": "Double Character Escape",
       "description": "Use character doubling to escape characters in strings."
@@ -435,10 +381,6 @@
     "mimeType": {
       "title": "Document MIME Type",
       "description": "MIME type used to identify the document format during extraction."
-    },
-    "rules": {
-      "title": "Extraction Rules",
-      "description": "Ordered list of regex-based rules with actions and capturing group assignments."
     }
   },
   "okf_simplification": {
@@ -462,80 +404,12 @@
     }
   },
   "okf_tmx": {
-    "readAllTargets": {
-      "title": "Read All Target Entries",
-      "description": "Read all target <tuv> elements into the text unit instead of only the selected target."
-    },
     "consolidateDpSkeleton": {
       "title": "Consolidate Document Part Skeleton",
       "description": "Group all document part skeleton into a single resource to reduce pipeline events."
-    },
-    "exitOnInvalidTu": {
-      "title": "Exit on Invalid TUs",
-      "description": "Stop processing when encountering invalid <tu> elements instead of skipping them."
-    },
-    "segmentationType": {
-      "title": "Segment Creation Mode",
-      "description": "Controls whether and when segments are created for extracted <tu> entries based on segtype."
-    },
-    "escapeGt": {
-      "title": "Escape Greater-Than Characters",
-      "description": "Escape all > characters as &gt; in the output."
-    },
-    "duplicatePropertyValueSeparator": {
-      "title": "Duplicate Property Separator",
-      "description": "String used to separate values when duplicate TMX properties are found."
-    }
-  },
-  "okf_transifex": {
-    "openProjectFile": {
-      "title": "Open Project File Before Processing",
-      "description": "Opens the .txp project file in an editor dialog before processing, allowing resource selection and settings review."
-    },
-    "host": {
-      "title": "Host URL",
-      "description": "The URL of the Transifex server where the project is hosted."
-    },
-    "username": {
-      "title": "Username",
-      "description": "Transifex username for authentication."
-    },
-    "password": {
-      "title": "Password",
-      "description": "Password for the Transifex user account."
-    },
-    "projectId": {
-      "title": "Project ID",
-      "description": "The identifier of the Transifex project to work with."
-    },
-    "protectApproved": {
-      "title": "Protect Approved Entries",
-      "description": "Marks non-empty, non-fuzzy entries as non-translatable to protect approved translations."
-    },
-    "sourceLocale": {
-      "title": "Source Locale",
-      "description": "Fall-back source locale code used when not specified by the calling application."
-    },
-    "targetLocale": {
-      "title": "Target Locale",
-      "description": "Fall-back target locale code used when not specified by the calling application."
-    }
-  },
-  "okf_ts": {
-    "convertByteValues": {
-      "title": "Convert Byte Elements",
-      "description": "Convert <byte value=\"[value]\"/> elements to raw characters instead of treating them as inline codes."
-    },
-    "useCodeFinder": {
-      "title": "Has Inline Codes",
-      "description": "Enable pattern-based inline code detection using the defined regular expressions."
     }
   },
   "okf_ttx": {
-    "extractionMode": {
-      "title": "Extraction Mode",
-      "description": "Controls how existing segments affect text extraction — auto-detect, existing only, or extract all."
-    },
     "escapeGT": {
       "title": "Escape Greater-Than Characters",
       "description": "Escape all > characters as &gt; in the output."
@@ -548,11 +422,11 @@
     }
   },
   "okf_vignette": {
-    "elementNames": {
+    "partsNames": {
       "title": "Attribute Elements to Extract",
       "description": "Comma-separated list of name attribute values for the <attribute> elements to extract."
     },
-    "filterConfigurations": {
+    "partsConfigurations": {
       "title": "Filter Configurations",
       "description": "Comma-separated list of filter configurations corresponding to each extractable element."
     },
@@ -560,11 +434,11 @@
       "title": "Monolingual Mode",
       "description": "Process all importContentInstance elements without requiring source/target pairing."
     },
-    "sourceIdName": {
+    "sourceId": {
       "title": "Source ID Element Name",
       "description": "Name attribute value of the element containing the source ID that pairs source and target blocks."
     },
-    "localeIdName": {
+    "localeId": {
       "title": "Locale ID Element Name",
       "description": "Name attribute value of the element containing the locale identifier for a content block."
     }
