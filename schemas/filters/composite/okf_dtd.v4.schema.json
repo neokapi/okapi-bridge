@@ -39,6 +39,42 @@
       "description": "Rules for simplifying inline code representation",
       "x-widget": "simplifierRulesEditor",
       "title": "Simplifier Rules"
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Regular expressions in #v1 format defining patterns to treat as inline codes.",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder",
+      "title": "Code Finder Rules",
+      "x-editor": {
+        "widget": "codeFinderRules"
+      }
     }
   },
   "additionalProperties": false,
@@ -46,6 +82,6 @@
   "x-apiVersion": "v4",
   "x-baseVersion": 4,
   "x-introducedInOkapi": "1.47.0",
-  "x-baseHash": "f11cfe564c78",
-  "x-compositeHash": "02a5dda78ec2"
+  "x-baseHash": "cc1b0df4098d",
+  "x-compositeHash": "2537c3da9a02"
 }

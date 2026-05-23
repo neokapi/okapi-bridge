@@ -10,6 +10,7 @@
     },
     "codeFinderRules": {
       "title": "Code Finder Rules",
+      "widget": "codeFinderRules",
       "description": "Regular expressions in #v1 format defining patterns to treat as inline codes."
     }
   }

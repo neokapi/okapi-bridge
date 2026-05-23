@@ -702,6 +702,17 @@ public class ParameterIntrospector {
                     if (existing != null) {
                         existing.okapiFormat = "inlineCodeFinder";
                         existing.type = "object";  // Will be transformed to clean object format
+                    } else {
+                        // Some StringParameters filters (e.g. DTD) hold an
+                        // InlineCodeFinder and serialize it via
+                        // setGroup("codeFinderRules", ...) / getGroup(...) but
+                        // declare no String constant for it, so the constant
+                        // scan above never surfaces the parameter. Create it
+                        // here so the rich code-finder editor is exposed, on a
+                        // par with filters that do declare the constant.
+                        ParamInfo created = new ParamInfo("codeFinderRules", "object");
+                        created.okapiFormat = "inlineCodeFinder";
+                        result.put("codeFinderRules", created);
                     }
                 }
             } catch (Exception e) {

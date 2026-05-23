@@ -1,6 +1,6 @@
 {
   "$schema": "https://neokapi.dev/schemas/schema-versions.json",
-  "generatedAt": "2026-04-02T21:44:33Z",
+  "generatedAt": "2026-05-23T12:00:08Z",
   "filters": {
     "okf_archive": {
       "versions": [
@@ -805,7 +805,7 @@
           "version": 1,
           "baseVersion": 1,
           "baseHash": "82bec33a66fe",
-          "overrideHash": "826a9b465c4f",
+          "overrideHash": "2a8bac37a536",
           "compositeHash": "e593cc6cf822",
           "kind": "OkfDtdFilterConfig",
           "apiVersion": "v1",
@@ -825,7 +825,7 @@
           "version": 2,
           "baseVersion": 2,
           "baseHash": "f11cfe564c78",
-          "overrideHash": "826a9b465c4f",
+          "overrideHash": "2a8bac37a536",
           "compositeHash": "02a5dda78ec2",
           "kind": "OkfDtdFilterConfig",
           "apiVersion": "v2",
@@ -839,7 +839,7 @@
           "version": 3,
           "baseVersion": 3,
           "baseHash": "46daa29a2f55",
-          "overrideHash": "826a9b465c4f",
+          "overrideHash": "2a8bac37a536",
           "compositeHash": "e16846cda8c9",
           "kind": "OkfDtdFilterConfig",
           "apiVersion": "v3",
@@ -851,9 +851,9 @@
         {
           "version": 4,
           "baseVersion": 4,
-          "baseHash": "f11cfe564c78",
-          "overrideHash": "826a9b465c4f",
-          "compositeHash": "02a5dda78ec2",
+          "baseHash": "cc1b0df4098d",
+          "overrideHash": "2a8bac37a536",
+          "compositeHash": "2537c3da9a02",
           "kind": "OkfDtdFilterConfig",
           "apiVersion": "v4",
           "introducedInOkapi": "1.47.0",
