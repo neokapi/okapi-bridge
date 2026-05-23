@@ -34,6 +34,38 @@
       "type": "string",
       "description": "Simplifier rules for code type normalization",
       "x-widget": "simplifierRulesEditor"
+    },
+    "codeFinderRules": {
+      "type": "object",
+      "description": "Inline code detection configuration",
+      "properties": {
+        "rules": {
+          "type": "array",
+          "description": "List of regex patterns to detect inline codes",
+          "items": {
+            "type": "object",
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "description": "Regex pattern for inline code detection"
+              }
+            },
+            "required": [
+              "pattern"
+            ]
+          }
+        },
+        "sample": {
+          "type": "string",
+          "description": "Sample text to test patterns against"
+        },
+        "useAllRulesWhenTesting": {
+          "type": "boolean",
+          "default": true,
+          "description": "Test all rules together or individually"
+        }
+      },
+      "x-okapiFormat": "inlineCodeFinder"
     }
   },
   "additionalProperties": false
