@@ -334,58 +334,19 @@ public class EventConverter {
         List<SegmentDTO> segments = new ArrayList<>();
 
         if (tc.contentIsOneSegment()) {
-            // Single segment, no other parts: use the whole content.
+            // Single segment: use the whole content.
             SegmentDTO seg = new SegmentDTO();
             Segment firstSeg = tc.getFirstSegment();
             seg.setId(firstSeg != null && firstSeg.getId() != null ? firstSeg.getId() : "0");
             seg.setContent(OkapiCodeConverter.toFragmentDTO(tc.getFirstContent()));
             segments.add(seg);
         } else {
-            // By default emit only translatable <segment>s. Ignorable parts
-            // (inter-segment whitespace, xliff2 <ignorable>, ICU plural
-            // selectors, …) are never translated and are source-copied by
-            // the write-path applier's COPY_ALL clone, so shipping them to
-            // Go would just bloat the wire — for segmented content that
-            // roughly doubles the part count for no benefit.
-            //
-            // The one exception: when NO segment carries translatable text,
-            // the segment-only view is empty, so Go can't tell the unit
-            // still needs a target for its ignorable content (e.g.
-            // icu_message.xlf2's empty <segment> beside an <ignorable> that
-            // okapi source-copies into the target). For those units only,
-            // send the full part structure — ignorables marked — so Go
-            // produces a target and triggers the applier. The applier strips
-            // the ignorable DTOs again and lets COPY_ALL materialize them.
-            boolean anySegmentHasText = false;
+            // Multiple segments.
             for (Segment okapiSeg : tc.getSegments()) {
-                TextFragment c = okapiSeg.getContent();
-                if (c != null && !c.isEmpty()) {
-                    anySegmentHasText = true;
-                    break;
-                }
-            }
-            if (anySegmentHasText) {
-                for (Segment okapiSeg : tc.getSegments()) {
-                    SegmentDTO seg = new SegmentDTO();
-                    seg.setId(okapiSeg.getId() != null ? okapiSeg.getId() : "");
-                    seg.setContent(OkapiCodeConverter.toFragmentDTO(okapiSeg.getContent()));
-                    segments.add(seg);
-                }
-            } else {
-                for (TextPart part : tc) {
-                    SegmentDTO seg = new SegmentDTO();
-                    if (part.isSegment()) {
-                        String id = ((Segment) part).getId();
-                        seg.setId(id != null ? id : "");
-                    } else {
-                        seg.setId("");
-                        Map<String, String> props = new LinkedHashMap<>();
-                        props.put(SegmentDTO.IGNORABLE_PROPERTY, "true");
-                        seg.setProperties(props);
-                    }
-                    seg.setContent(OkapiCodeConverter.toFragmentDTO(part.getContent()));
-                    segments.add(seg);
-                }
+                SegmentDTO seg = new SegmentDTO();
+                seg.setId(okapiSeg.getId() != null ? okapiSeg.getId() : "");
+                seg.setContent(OkapiCodeConverter.toFragmentDTO(okapiSeg.getContent()));
+                segments.add(seg);
             }
         }
 

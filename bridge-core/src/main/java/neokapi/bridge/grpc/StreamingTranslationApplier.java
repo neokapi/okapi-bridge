@@ -67,16 +67,6 @@ public class StreamingTranslationApplier {
             return event;
         }
 
-        // Go now echoes ignorable parts back alongside segments (so it can
-        // see the unit's full structure on the read path). Drop them here:
-        // the COPY_ALL clone below already source-copies ignorable TextParts,
-        // and the apply loop maps DTOs to getSegments() positionally, so
-        // leaving ignorable DTOs in the list would misalign that mapping.
-        segments = SegmentDTO.translatable(segments);
-        if (segments.isEmpty()) {
-            return event;
-        }
-
         // Apply segments to text unit. Pass the source TextFragment so the
         // converter can preserve code identity (originalId, type, outerData,
         // referenceFlag) when the structural shape matches — writers that

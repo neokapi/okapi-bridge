@@ -1178,11 +1178,6 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                     SegmentDTO dto = new SegmentDTO();
                     dto.setId(seg.getId());
                     dto.setContent(ProtoAdapter.runsToFragment(seg.getRunsList()));
-                    // Preserve segment properties (e.g. the ignorable marker)
-                    // so the applier can tell ignorable DTOs from segments.
-                    if (seg.getPropertiesCount() > 0) {
-                        dto.setProperties(new LinkedHashMap<>(seg.getPropertiesMap()));
-                    }
                     segments.add(dto);
                 }
                 return segments;
@@ -1206,11 +1201,6 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
                     // targets materialized (icu_message.xlf2 scenario).
                     if (seg.getRunsCount() > 0) {
                         dto.setContent(ProtoAdapter.runsToFragment(seg.getRunsList()));
-                    }
-                    // Preserve segment properties (e.g. the ignorable marker)
-                    // so the applier can tell ignorable DTOs from segments.
-                    if (seg.getPropertiesCount() > 0) {
-                        dto.setProperties(new LinkedHashMap<>(seg.getPropertiesMap()));
                     }
                     segments.add(dto);
                 }
