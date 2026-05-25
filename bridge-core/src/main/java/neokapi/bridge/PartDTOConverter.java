@@ -70,7 +70,14 @@ public class PartDTOConverter {
         // OkapiCodeConverter.toTextFragment for why writers depend on it.
         TextContainer sourceContainer = tu.getSource();
         TextContainer existingTarget = tu.getTarget(targetLocale);
-        List<SegmentDTO> targetSegments = matchingTarget.getSegments();
+        // Strip ignorable DTOs (see SegmentDTO.translatable / the
+        // StreamingTranslationApplier counterpart): the clone below
+        // source-copies ignorable TextParts, and the apply loop maps DTOs to
+        // getSegments() positionally, so ignorable DTOs must not be in the list.
+        List<SegmentDTO> targetSegments = SegmentDTO.translatable(matchingTarget.getSegments());
+        if (targetSegments.isEmpty()) {
+            return event;
+        }
 
         TextContainer targetContainer;
         if (targetSegments.size() == 1) {
