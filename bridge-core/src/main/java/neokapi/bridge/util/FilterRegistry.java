@@ -33,6 +33,20 @@ public class FilterRegistry {
     private static boolean initialized = false;
 
     /**
+     * Filter IDs that can extract content but cannot faithfully write it back to
+     * the original format, so they advertise only the "read" capability. Okapi's
+     * PDF filter scrapes text via PDFBox and has no writer that reconstructs a
+     * PDF — advertising "write" would let editing tools overwrite the source with
+     * plain text.
+     */
+    private static final Set<String> READ_ONLY_FILTERS = Collections.singleton("okf_pdf");
+
+    /** @return true if {@code filterId} extracts content but cannot write it back. */
+    static boolean isReadOnly(String filterId) {
+        return READ_ONLY_FILTERS.contains(filterId);
+    }
+
+    /**
      * Discover all filters by scanning the classpath for okapi-filter-* JARs.
      * This approach requires no hardcoded filter lists - any filter JAR on the
      * classpath will be automatically discovered.
@@ -136,15 +150,20 @@ public class FilterRegistry {
             // Derive format ID from class name (e.g., "HTMLFilter" -> "html")
             String formatId = deriveFormatId(clazz.getSimpleName());
 
+            String filterId = "okf_" + formatId;
             FilterInfo info = new FilterInfo(
                     filterClass,
-                    "okf_" + formatId,
+                    filterId,
                     formatId,
                     displayName != null ? displayName : name,
                     Collections.emptyList(),
                     Collections.emptyList()
             );
-            info.setCapabilities(Arrays.asList("read", "write"));
+            // Most Okapi filters round-trip (read + write); a few are
+            // extraction-only and advertise "read" alone (see READ_ONLY_FILTERS).
+            info.setCapabilities(isReadOnly(filterId)
+                    ? Collections.singletonList("read")
+                    : Arrays.asList("read", "write"));
 
             // Extract filter configurations (presets/variants)
             // For compound filters, track which sibling filter handles each configuration

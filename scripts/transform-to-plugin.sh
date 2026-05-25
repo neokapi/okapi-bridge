@@ -183,6 +183,11 @@ def rename_ui_extensions:
 
 FORMAT_CAPS="[]"
 
+# Filters that extract content but cannot faithfully write it back to the
+# original format advertise "read" only. Okapi's PDF filter scrapes text via
+# PDFBox and has no PDF writer (mirrors FilterRegistry.READ_ONLY_FILTERS).
+READ_ONLY_FILTERS=" okf_pdf "
+
 for filter_dir in "$INPUT_DIR"/filters/*/; do
     [ -d "$filter_dir" ] || continue
     filter_id=$(basename "$filter_dir")
@@ -295,17 +300,23 @@ for filter_dir in "$INPUT_DIR"/filters/*/; do
     fi
 
     # Build capability entry for manifest
+    if [[ "$READ_ONLY_FILTERS" == *" $filter_id "* ]]; then
+        caps_json='["read"]'
+    else
+        caps_json='["read", "write"]'
+    fi
     cap=$(jq -n --arg id "$filter_id" \
         --arg schema "formats/${filter_id}/schema.json" \
         --arg doc "formats/${filter_id}/doc.json" \
         --arg presets_dir "formats/${filter_id}/presets/" \
+        --argjson caps "$caps_json" \
         --argjson format_schema "$(cat "$OUTPUT_DIR/formats/${filter_id}/schema.json")" '
         {
             type: "format",
             id: $id,
             name: ($format_schema.formatMeta.id // $id),
             display_name: ($format_schema.title // $id),
-            capabilities: ["read", "write"],
+            capabilities: $caps,
             mime_types: ($format_schema.formatMeta.mimeTypes // []),
             extensions: ($format_schema.formatMeta.extensions // []),
             schema: $schema

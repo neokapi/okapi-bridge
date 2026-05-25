@@ -195,4 +195,18 @@ class FilterRegistryTest {
         assertEquals("properties", format);
         assertEquals("okf_properties", "okf_" + format);
     }
+
+    // ── read-only filters ────────────────────────────────────────────────
+
+    @Test
+    void isReadOnly_pdf_isReadOnly() {
+        // Okapi's PDF filter is extraction-only (PDFBox text scraping, no
+        // writer), so it must advertise "read" without "write".
+        assertTrue(FilterRegistry.isReadOnly("okf_pdf"));
+    }
+
+    @Test
+    void isReadOnly_html_isReadWrite() {
+        assertFalse(FilterRegistry.isReadOnly("okf_html"));
+    }
 }
