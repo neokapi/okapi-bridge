@@ -183,10 +183,24 @@ def rename_ui_extensions:
 
 FORMAT_CAPS="[]"
 
-# Filters that extract content but cannot faithfully write it back to the
-# original format advertise "read" only. Okapi's PDF filter scrapes text via
-# PDFBox and has no PDF writer (mirrors FilterRegistry.READ_ONLY_FILTERS).
-READ_ONLY_FILTERS=" okf_pdf "
+# Capabilities come from the bridge's own --list-filters output, so the v1
+# manifest agrees with the v2 manifest (manifest-gen reads the same source).
+# FilterRegistry is the single source of truth for which filters are read-only
+# (e.g. okf_pdf, which extracts via PDFBox but has no PDF writer). Fall back to
+# read+write only when the version's jar is unavailable.
+CAPS_MAP="{}"
+BRIDGE_JAR=""
+for _j in "okapi-releases/${OKAPI_VERSION}/target/"neokapi-bridge-*-jar-with-dependencies.jar; do
+    [ -f "$_j" ] && BRIDGE_JAR="$_j" && break
+done
+if [ -n "$BRIDGE_JAR" ] && command -v java >/dev/null 2>&1; then
+    CAPS_MAP=$(java -jar "$BRIDGE_JAR" --list-filters 2>/dev/null \
+        | jq -c '[.filters[] | {key: .id, value: .capabilities}] | from_entries' 2>/dev/null) || CAPS_MAP="{}"
+    echo "  Capabilities: sourced from $(basename "$BRIDGE_JAR") --list-filters"
+else
+    echo "  Capabilities: jar not found for ${OKAPI_VERSION}; defaulting filters to read+write" >&2
+fi
+[ -n "$CAPS_MAP" ] || CAPS_MAP="{}"
 
 for filter_dir in "$INPUT_DIR"/filters/*/; do
     [ -d "$filter_dir" ] || continue
@@ -299,12 +313,8 @@ for filter_dir in "$INPUT_DIR"/filters/*/; do
         ' "$filter_dir/doc.json" > "$OUTPUT_DIR/formats/${filter_id}/doc.json"
     fi
 
-    # Build capability entry for manifest
-    if [[ "$READ_ONLY_FILTERS" == *" $filter_id "* ]]; then
-        caps_json='["read"]'
-    else
-        caps_json='["read", "write"]'
-    fi
+    # Build capability entry for manifest (capabilities from --list-filters)
+    caps_json=$(printf '%s' "$CAPS_MAP" | jq -c --arg id "$filter_id" '.[$id] // ["read","write"]')
     cap=$(jq -n --arg id "$filter_id" \
         --arg schema "formats/${filter_id}/schema.json" \
         --arg doc "formats/${filter_id}/doc.json" \
