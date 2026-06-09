@@ -453,6 +453,8 @@ for step_dir in "$INPUT_DIR"/steps/*/; do
             category: ($meta.category // "pipeline"),
             inputs: ($meta.inputs // ["block"]),
             outputs: ($meta.outputs // null),
+            consumes: ($meta.consumes // null),
+            produces: ($meta.produces // null),
             tags: ($meta.tags // null),
             requires: ($meta.requires // null),
             schema: $schema

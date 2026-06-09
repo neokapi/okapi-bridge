@@ -1,7 +1,7 @@
 {
   "b-o-m-conversion": {
     "displayName": "BOM Conversion",
-    "category": "transform",
+    "category": "text-processing",
     "tags": [
       "text-processing"
     ],
@@ -19,7 +19,7 @@
   },
   "batch-tm-leveraging": {
     "displayName": "Simple Batch Leveraging Step",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -31,11 +31,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "batch-translation": {
     "displayName": "Batch Translation",
-    "category": "translate",
+    "category": "translation",
     "tags": [
       "batch",
       "translation"
@@ -47,11 +50,14 @@
     ],
     "inputs": [
       "block"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "char-listing": {
     "displayName": "Used Characters Listing",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -62,11 +68,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "character-count": {
     "displayName": "Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -78,11 +90,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "characters-checker": {
     "displayName": "Characters Quality Check",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -93,11 +111,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "cleanup": {
     "displayName": "Cleanup",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -109,7 +133,7 @@
   },
   "code-simplifier": {
     "displayName": "Inline Codes Simplifier",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -124,7 +148,7 @@
   },
   "codes-removal": {
     "displayName": "Inline Codes Removal",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -139,7 +163,7 @@
   },
   "concordance-character-count": {
     "displayName": "Concordance Character Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -151,11 +175,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "concordance-word-count": {
     "displayName": "Concordance Word Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -167,11 +194,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "convert-segments-to-text-units": {
     "displayName": "Segments to Text Units Converter",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -212,7 +242,7 @@
   },
   "create-target": {
     "displayName": "Create Target",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -227,7 +257,7 @@
   },
   "desegmentation": {
     "displayName": "Desegmentation",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -238,11 +268,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "segmentation@source"
     ]
   },
   "diff-leverage": {
     "displayName": "Diff Leverage",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block",
       "data"
@@ -255,6 +288,9 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "encoding-conversion": {
@@ -289,7 +325,7 @@
   },
   "exact-document-context-match-character-count": {
     "displayName": "Exact Document Context Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -301,11 +337,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-document-context-match-word-count": {
     "displayName": "Exact Document Context Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -317,11 +359,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-local-context-match-character-count": {
     "displayName": "Exact Local Context Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -333,11 +381,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-local-context-match-word-count": {
     "displayName": "Exact Local Context Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -349,11 +403,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-match-character-count": {
     "displayName": "Exact Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -365,11 +425,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-match-word-count": {
     "displayName": "Exact Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -381,11 +447,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-previous-version-match-character-count": {
     "displayName": "Exact Previous Version Match Character Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -397,11 +469,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "exact-previous-version-match-word-count": {
     "displayName": "Exact Previous Version Match Word Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -413,11 +488,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "exact-repaired-character-count": {
     "displayName": "Exact Repaired Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -429,11 +507,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-repaired-word-count": {
     "displayName": "Exact Repaired Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -445,11 +529,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-structural-match-character-count": {
     "displayName": "Exact Structural Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -461,11 +551,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-structural-match-word-count": {
     "displayName": "Exact Structural Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -477,11 +573,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-text-only-character-count": {
     "displayName": "Exact Text Only Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -493,11 +595,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-text-only-previous-version-match-character-count": {
     "displayName": "Exact Text Only Previous Version Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -509,11 +617,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-text-only-previous-version-match-word-count": {
     "displayName": "Exact Text Only Previous Version Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -525,11 +639,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-text-only-unique-id-match-character-count": {
     "displayName": "Exact Text Only Unique Id Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -541,11 +661,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-text-only-unique-id-match-word-count": {
     "displayName": "Exact Text Only Unique Id Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -557,11 +683,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-text-only-word-count": {
     "displayName": "Exact Text Only Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -573,11 +705,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-unique-id-match-character-count": {
     "displayName": "Exact Unique Id Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -588,11 +726,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "exact-unique-id-match-word-count": {
     "displayName": "Exact Unique Id Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -603,6 +747,12 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "external-command": {
@@ -622,7 +772,7 @@
   },
   "extraction": {
     "displayName": "Rainbow Translation Kit Creation",
-    "category": "translate",
+    "category": "translation",
     "tags": [
       "batch",
       "translation"
@@ -637,11 +787,14 @@
     ],
     "inputs": [
       "block"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "extraction-verification": {
     "displayName": "Extraction Verification",
-    "category": "validate",
+    "category": "quality",
     "tags": [
       "quality"
     ],
@@ -652,6 +805,12 @@
     ],
     "inputs": [
       "block"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "filter-events-to-raw-document": {
@@ -716,7 +875,7 @@
   },
   "fuzzy-match-character-count": {
     "displayName": "Fuzzy Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -728,11 +887,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "fuzzy-match-word-count": {
     "displayName": "Fuzzy Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -744,11 +909,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "fuzzy-previous-version-match-character-count": {
     "displayName": "Fuzzy Previous Version Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -759,11 +930,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "fuzzy-previous-version-match-word-count": {
     "displayName": "Fuzzy Previous Version Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -774,11 +951,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "fuzzy-repaired-character-count": {
     "displayName": "Fuzzy Repaired Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -790,11 +973,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "fuzzy-repaired-word-count": {
     "displayName": "Fuzzy Repaired Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -806,11 +995,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "fuzzy-unique-id-match-character-count": {
     "displayName": "Fuzzy Unique Id Match Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -821,11 +1016,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "fuzzy-unique-id-match-word-count": {
     "displayName": "Fuzzy Unique Id Match Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -836,11 +1037,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "g-m-x-alphanumeric-only-text-unit-character-count": {
     "displayName": "GMX Alphanumeric Only Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -852,11 +1059,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "g-m-x-alphanumeric-only-text-unit-word-count": {
     "displayName": "GMX Alphanumeric Only Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -868,11 +1081,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "g-m-x-exact-matched-character-count": {
     "displayName": "GMX Exact Matched Character Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -885,11 +1104,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "g-m-x-exact-matched-word-count": {
     "displayName": "GMX Exact Matched Word Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -902,11 +1124,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "g-m-x-fuzzy-match-character-count": {
     "displayName": "Fuzzy Match Character Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -919,11 +1144,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "g-m-x-fuzzy-match-word-count": {
     "displayName": "Fuzzy Match Word Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -936,11 +1164,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "g-m-x-leveraged-matched-character-count": {
     "displayName": "GMX Leveraged Character Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -953,11 +1184,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "g-m-x-leveraged-matched-word-count": {
     "displayName": "GMX Leveraged Word Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -970,11 +1204,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "g-m-x-measurement-only-text-unit-character-count": {
     "displayName": "GMX Measurement Only Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -986,11 +1223,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "g-m-x-measurement-only-text-unit-word-count": {
     "displayName": "GMX Measurement Only Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1002,11 +1245,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "g-m-x-numeric-only-text-unit-character-count": {
     "displayName": "GMX Numeric Only Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1018,11 +1267,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "g-m-x-numeric-only-text-unit-word-count": {
     "displayName": "GMX Numeric Only Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1034,11 +1289,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "g-m-x-protected-character-count": {
     "displayName": "GMX Protected Character Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1051,11 +1312,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "g-m-x-protected-word-count": {
     "displayName": "GMX Protected Word Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1068,11 +1332,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "g-m-x-repetition-matched-character-count": {
     "displayName": "GMX Repetition Matched Character Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1084,11 +1351,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "g-m-x-repetition-matched-word-count": {
     "displayName": "GMX Repetition Matched Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1100,11 +1373,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "general-checker": {
     "displayName": "General Quality Check",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1115,6 +1394,12 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "id-based-aligner": {
@@ -1164,7 +1449,7 @@
   },
   "inconsistency-check": {
     "displayName": "Inconsistency Check",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1176,11 +1461,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "inline-codes-checker": {
     "displayName": "Inline Codes Quality Check",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1191,11 +1479,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "length-checker": {
     "displayName": "Length Quality Check",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1206,11 +1500,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "leveraging": {
     "displayName": "Leveraging",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1222,6 +1522,9 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "line-break-conversion": {
@@ -1244,7 +1547,7 @@
   },
   "localizable-checker": {
     "displayName": "Localizable Quality Check",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1256,11 +1559,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "m-s-batch-translation": {
     "displayName": "Microsoft Batch Translation",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1273,11 +1582,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "m-t-character-count": {
     "displayName": "MT Character Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1289,11 +1601,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "m-t-word-count": {
     "displayName": "MT Word Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1305,11 +1620,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "merging": {
     "displayName": "Rainbow Translation Kit Merging",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1320,6 +1638,9 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "paragraph-aligner": {
@@ -1340,7 +1661,7 @@
   },
   "patterns-checker": {
     "displayName": "Pattern (regex) Quality Check",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1352,11 +1673,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "phrase-assembled-character-count": {
     "displayName": "Phrase Assembled Character Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1368,11 +1695,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "phrase-assembled-word-count": {
     "displayName": "Phrase Assembled Word Count",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1384,11 +1714,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "post-segmentation-code-simplifier": {
     "displayName": "Post-segmentation Inline Codes Simplifier",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -1399,11 +1732,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "segmentation@source"
     ]
   },
   "quality-check": {
     "displayName": "Quality Check",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1414,11 +1750,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "r-t-f-conversion": {
     "displayName": "RTF Conversion",
-    "category": "transform",
+    "category": "text-processing",
     "tags": [
       "text-processing"
     ],
@@ -1475,7 +1817,7 @@
   },
   "remove-target": {
     "displayName": "Remove Target",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -1490,7 +1832,7 @@
   },
   "repetition-analysis": {
     "displayName": "Repetition Analysis",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1502,11 +1844,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "resource-simplifier": {
     "displayName": "Resource Simplifier",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -1518,7 +1863,7 @@
   },
   "scoping-report": {
     "displayName": "Scoping Report",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1533,11 +1878,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "search-and-replace": {
     "displayName": "Search and Replace",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -1555,7 +1903,7 @@
   },
   "segmentation": {
     "displayName": "Segmentation",
-    "category": "transform",
+    "category": "text-processing",
     "inputs": [
       "block"
     ],
@@ -1566,6 +1914,9 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "segmentation@source"
     ]
   },
   "sentence-aligner": {
@@ -1585,7 +1936,7 @@
   },
   "simple-word-count": {
     "displayName": "Simple Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1598,11 +1949,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "space-check": {
     "displayName": "Space Quality Check",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1613,11 +1970,17 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "t-m-import": {
     "displayName": "TM Import",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1629,6 +1992,9 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "t-t-x-joiner": {
@@ -1645,7 +2011,7 @@
   },
   "t-t-x-splitter": {
     "displayName": "TTX Splitter",
-    "category": "validate",
+    "category": "quality",
     "tags": [
       "analysis"
     ],
@@ -1656,6 +2022,12 @@
     ],
     "inputs": [
       "block"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "term-extraction": {
@@ -1672,7 +2044,7 @@
   },
   "terminology-leveraging": {
     "displayName": "Terminology Leveraging",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1684,6 +2056,9 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "text-modification": {
@@ -1718,7 +2093,7 @@
   },
   "translation-comparison": {
     "displayName": "Translation Comparison",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1730,11 +2105,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "tu-filtering": {
     "displayName": "Text Unit Filtering",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1746,6 +2124,9 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "uri-conversion": {
@@ -1762,7 +2143,7 @@
   },
   "whitespace-correction": {
     "displayName": "Whitespace Correction",
-    "category": "translate",
+    "category": "translation",
     "inputs": [
       "block"
     ],
@@ -1774,11 +2155,14 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "produces": [
+      "target@target"
     ]
   },
   "word-count": {
     "displayName": "Word Count",
-    "category": "validate",
+    "category": "quality",
     "inputs": [
       "block"
     ],
@@ -1790,6 +2174,12 @@
     "requires": [
       "target-language",
       "source-language"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   },
   "x-m-l-analysis": {
@@ -1881,7 +2271,7 @@
   },
   "xliff-w-c-splitter": {
     "displayName": "XLIFF Word-Count Splitter",
-    "category": "validate",
+    "category": "quality",
     "tags": [
       "analysis"
     ],
@@ -1892,6 +2282,12 @@
     ],
     "inputs": [
       "block"
+    ],
+    "consumes": [
+      "target@target"
+    ],
+    "produces": [
+      "qa@target"
     ]
   }
 }
