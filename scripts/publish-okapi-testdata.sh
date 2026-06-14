@@ -149,6 +149,7 @@ gh release create "$RELEASE_TAG" \
     --repo "$GITHUB_REPO" \
     --title "Okapi Test Data v${OKAPI_VERSION}" \
     --notes "$RELEASE_BODY" \
+    --latest=false \
     "$WORK_DIR/$ASSET_NAME"
 
 echo ""
