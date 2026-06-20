@@ -204,10 +204,17 @@ jobs:
       matrix:
         okapi-version: ${{ fromJson(needs.setup.outputs.versions) }}
         target:
-          - { os: linux,   arch: amd64, runner: ubuntu-latest }
-          - { os: linux,   arch: arm64, runner: ubuntu-24.04-arm }
-          - { os: darwin,  arch: arm64, runner: macos-latest }
-          - { os: windows, arch: amd64, runner: windows-latest }
+          - { os: linux,   arch: amd64, runner: ubuntu-latest,    jdk: temurin }
+          - { os: linux,   arch: arm64, runner: ubuntu-24.04-arm, jdk: temurin }
+          - { os: darwin,  arch: arm64, runner: macos-latest,     jdk: temurin }
+          - { os: windows, arch: amd64, runner: windows-latest,   jdk: temurin }
+          # Windows on ARM64 uses the Microsoft Build of OpenJDK, not
+          # Temurin: Eclipse Adoptium publishes no Windows/AArch64 JDK 17
+          # (Temurin's Windows-on-Arm support starts at JDK 21), whereas
+          # Microsoft ships a version-matched Win/arm64 17 LTS and maintains
+          # the upstream Windows-on-Arm OpenJDK port. windows-11-arm is GA
+          # and free on public repos.
+          - { os: windows, arch: arm64, runner: windows-11-arm,   jdk: microsoft }
           # darwin/amd64 (Intel Mac) is intentionally not in the matrix —
           # macos-13 runners are scarce on GitHub Actions and Apple has
           # dropped Intel from new product lines. Apple Silicon users
@@ -226,7 +233,7 @@ jobs:
       - name: Set up JDK 17 (jpackage source + bundled runtime image)
         uses: actions/setup-java@v5
         with:
-          distribution: temurin
+          distribution: ${{ matrix.target.jdk }}
           java-version: '17'
 
       - name: Download JAR for ${{ matrix.okapi-version }}
@@ -333,10 +340,10 @@ jobs:
 
           # Resolve all the per-(okapi,platform) tarballs and their
           # sha256 sidecars from the artifacts dir, then register one
-          # registry entry per Okapi version with its 4 platform rows.
+          # registry entry per Okapi version with its 5 platform rows.
           for okapi_ver in $(ls okapi-releases | sort -V); do
             args=()
-            for plat in linux/amd64 linux/arm64 darwin/arm64 windows/amd64; do
+            for plat in linux/amd64 linux/arm64 darwin/arm64 windows/amd64 windows/arm64; do
               os=${plat%/*}
               arch=${plat#*/}
               file="kapi-okapi-bridge_${okapi_ver}_${os}_${arch}.tar.gz"
