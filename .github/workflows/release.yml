@@ -255,7 +255,26 @@ jobs:
             --arch "$TARGET_ARCH"
 
       - name: Install cosign
+        if: ${{ !(matrix.target.os == 'windows' && matrix.target.arch == 'arm64') }}
         uses: sigstore/cosign-installer@v3
+
+      - name: Install cosign (Windows/arm64, build from source)
+        # sigstore/cosign-installer has no Windows/arm64 cosign binary —
+        # the project publishes none, so the installer aborts with
+        # "unsupported architecture ARM64". cosign is itself a Go program
+        # and Go is already set up above, so build a native arm64 cosign
+        # from source and put it on PATH for the sign step below.
+        # GOTOOLCHAIN=auto lets `go install` fetch the toolchain cosign's
+        # go.mod requires if it's newer than the runner's Go.
+        if: ${{ matrix.target.os == 'windows' && matrix.target.arch == 'arm64' }}
+        shell: bash
+        env:
+          GOTOOLCHAIN: auto
+        run: |
+          go install github.com/sigstore/cosign/v2/cmd/cosign@v2.5.2
+          # setup-go doesn't add GOPATH/bin to PATH; cygpath -w normalizes
+          # to a Windows path so the bash sign step below resolves cosign.
+          cygpath -w "$(go env GOPATH)/bin" >> "$GITHUB_PATH"
 
       - name: Cosign sign-blob (keyless, JSON bundle)
         shell: bash
