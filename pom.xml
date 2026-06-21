@@ -25,8 +25,12 @@
         <gson.version>2.11.0</gson.version>
         <snakeyaml.version>2.2</snakeyaml.version>
         <grpc.version>1.65.1</grpc.version>
-        <netty.version>4.1.110.Final</netty.version>
-        <protobuf.version>3.25.3</protobuf.version>
+        <!-- netty 4.1.135.Final patches GHSA-w573-9ffj-6ff9 (Unix-socket fd
+             receive descriptor leak). The netty-bom below keeps every netty
+             module aligned to this version. -->
+        <netty.version>4.1.135.Final</netty.version>
+        <!-- protobuf 3.25.5 patches GHSA-735f-pc8j-v9w8 (DoS). -->
+        <protobuf.version>3.25.5</protobuf.version>
         <slf4j.version>2.0.16</slf4j.version>
         <junit.version>5.10.2</junit.version>
     </properties>
@@ -134,6 +138,18 @@
 
     <dependencyManagement>
         <dependencies>
+            <!-- Force every transitive netty module (codec-http2, common,
+                 buffer, handler, …) pulled in via grpc-netty to the patched
+                 netty version. Netty requires all its modules at the same
+                 version, so the BOM prevents a split between the explicitly
+                 pinned native transports and grpc's transitive netty deps. -->
+            <dependency>
+                <groupId>io.netty</groupId>
+                <artifactId>netty-bom</artifactId>
+                <version>${netty.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
             <!-- Internal module versions (for cross-module references) -->
             <dependency>
                 <groupId>neokapi</groupId>
