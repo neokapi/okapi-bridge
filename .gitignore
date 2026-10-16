@@ -21,3 +21,6 @@ dist/
 
 # Transient fleet-authoring manifest (per-id gap list)
 .gap-manifest.json
+
+# Parity sandbox (make parity-sandbox)
+.parity/

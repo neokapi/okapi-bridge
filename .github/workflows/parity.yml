@@ -1,0 +1,99 @@
+name: Parity
+
+# Scheduled conformance report: neokapi's Go ports head-to-head against this
+# bridge, using a released kapi and a plugin built from this checkout. The
+# suite lives under parity/ and compiles against a released neokapi module.
+#
+# This workflow reports; it gates nothing. It has no pull_request trigger, so
+# it never blocks a change here, and nothing in neokapi/neokapi consults it.
+#
+# Security: the dispatch inputs are consumed only through env vars, never
+# inlined into `run:` strings.
+
+on:
+  schedule:
+    # Weekly, Monday 05:00 UTC.
+    - cron: "0 5 * * 1"
+  workflow_dispatch:
+    inputs:
+      okapi_version:
+        description: "Okapi Framework version to build the plugin for"
+        required: false
+        default: "1.48.0"
+      kapi_version:
+        description: "kapi release to test ('latest' = newest stable, or e.g. 1.3.0-rc9)"
+        required: false
+        default: "latest"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  parity:
+    name: parity-test
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    env:
+      OKAPI_VERSION: ${{ inputs.okapi_version || '1.48.0' }}
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: maven
+
+      - name: Set up Go
+        uses: actions/setup-go@v6
+        with:
+          go-version-file: parity/go.mod
+          cache-dependency-path: parity/go.sum
+
+      - name: Install a released kapi
+        uses: neokapi/setup-kapi@v1
+        with:
+          version: ${{ inputs.kapi_version || 'latest' }}
+          plugins: ""
+          cache-tm: "false"
+
+      - name: Regenerate the version-specific POM
+        # okapi-releases/<V>/pom.xml references the parent version at the time
+        # it was committed; regenerate so it matches the root POM at HEAD.
+        run: make generate-pom V="$OKAPI_VERSION"
+
+      - name: Install the parent POM into the local Maven repository
+        # The version module declares neokapi:okapi-bridge-parent as its
+        # parent and `mvn package` does not install it first.
+        run: mvn -B install -N -DskipTests -q
+
+      - name: Build the plugin tarball
+        run: |
+          make build V="$OKAPI_VERSION"
+          make plugin-v2 V="$OKAPI_VERSION"
+
+      - name: Run the parity suite
+        run: make parity-test
+
+      - name: Write the per-filter summary
+        if: always()
+        run: |
+          if [ -f .parity/test-comparison.json ]; then
+            cd parity && go run ./cmd/testcompare -in ../.parity/test-comparison.json -out ../.parity/parity-report.json
+          fi
+
+      - name: Upload the parity report
+        if: always()
+        uses: actions/upload-artifact@v6
+        with:
+          name: parity-report
+          path: |
+            .parity/test-comparison.json
+            .parity/parity-report.json
+          if-no-files-found: warn
+          retention-days: 90
