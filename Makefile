@@ -60,6 +60,14 @@ help:
 	@echo "Release:"
 	@echo "  make release              Release current version (bump, tag, push, snapshot)"
 	@echo ""
+	@echo "Parity (parity/, neokapi's Go ports against this bridge):"
+	@echo "  make parity-sandbox       Build .parity/ from a released kapi + a fresh plugin tarball"
+	@echo "  make parity-test          Run the parity suite against the sandbox"
+	@echo "  make parity-publish       Suite + per-filter summary (.parity/parity-report.json)"
+	@echo "  make parity-vet           Compile and vet the suite without a sandbox"
+	@echo "  make parity-clean         Remove the sandbox"
+	@echo "  make regen-okapi-fixtures OKAPI_REPO=...  Re-harvest fixtures from the Okapi Java tests"
+	@echo ""
 	@echo "Supported versions: $(SUPPORTED_VERSIONS)"
 	@echo "Latest version: $(LATEST_VERSION)"
 
@@ -417,3 +425,6 @@ release:
 	@echo "Release complete: v$(CURRENT_VERSION)"
 	@echo "  Tag: v$(CURRENT_VERSION)"
 	@echo "  Next dev: $(NEXT)-SNAPSHOT"
+
+# The parity suite (parity/): neokapi's Go ports against this bridge.
+include parity/parity.mk

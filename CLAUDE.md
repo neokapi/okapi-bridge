@@ -155,3 +155,25 @@ The parent `pom.xml` declares all infrastructure dependencies (gRPC, Gson, Snake
 - Schema `version` is an integer N that increments on content change; `$id` includes the version
 - CI on push to main: regenerates composites and verifies schemas are up-to-date (fails if out of date)
 - CI on tag push: matrix build across all 11 Okapi versions
+
+## Parity suite (`parity/`)
+
+`parity/` is a separate Go module (`github.com/neokapi/okapi-bridge/parity`)
+that runs neokapi's Go ports head-to-head against this bridge. It requires a
+released `github.com/neokapi/neokapi` and nothing from neokapi's `host` or
+`cli` modules; the daemon launcher is the plugin protocol's Mode C handshake
+implemented locally. Format specs (`core/formats/<id>/spec.yaml`) are read from
+that module's source directory (`go list -m`), so specs and readers come from
+one version. Per-fixture divergence annotations live in `parity/annotations/`.
+
+```bash
+make parity-vet        # compile + vet the suite, no sandbox needed
+make parity-test       # sandbox (released kapi + fresh plugin tarball) + full suite
+make parity-publish    # suite + per-filter summary under .parity/
+```
+
+The suite is behind the `parity` build tag, so `make test-go` never runs it.
+`.github/workflows/parity.yml` runs it weekly and on dispatch, installs kapi
+with `neokapi/setup-kapi@v1`, and uploads the report as an artifact. It is a
+report, not a gate: it has no pull_request trigger, and nothing in the neokapi
+repository consults it. See `parity/README.md`.
