@@ -1,6 +1,7 @@
 package neokapi.bridge;
 
 import neokapi.bridge.grpc.BridgeServiceImpl;
+import neokapi.bridge.io.AllowedRoots;
 import neokapi.bridge.io.LocalContentResolver;
 import neokapi.bridge.io.LocalOutputWriter;
 import neokapi.bridge.model.FilterInfo;
@@ -106,8 +107,16 @@ public class OkapiBridgeServer {
         System.err.println("[bridge] Concurrency: " + concurrency + " filter threads");
 
         try {
+            AllowedRoots roots = AllowedRoots.fromEnvironment();
+            if (roots.isEmpty()) {
+                System.err.println("[bridge] Warning: " + AllowedRoots.ENV + " declares no directories; "
+                        + "every request that names a file path will be refused. Update kapi, or set "
+                        + AllowedRoots.ENV + " to the directories the bridge may read and write.");
+            } else {
+                System.err.println("[bridge] Allowed roots: " + roots.roots());
+            }
             BridgeServiceImpl service = new BridgeServiceImpl(
-                    new LocalContentResolver(), new LocalOutputWriter(),
+                    new LocalContentResolver(roots), new LocalOutputWriter(roots),
                     concurrency, idleTimeoutSeconds, stuckTimeoutSeconds);
 
             // Resolve the socket address. In daemon mode (kapi plugin
