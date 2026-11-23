@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"sync"
 	"testing"
@@ -145,6 +146,7 @@ func StartDaemon(ctx context.Context, s *Sandbox) (*DaemonClient, error) {
 	cmd.Env = append(os.Environ(),
 		"KAPI_PLUGIN_DIR="+s.OkapiBridgeDir,
 		"KAPI_PLUGIN_NAME=okapi-bridge",
+		"KAPI_PLUGIN_ROOTS="+strings.Join(bridgeRoots(s), string(os.PathListSeparator)),
 	)
 	stdout, err := cmd.StdoutPipe()
 	if err != nil {
@@ -254,4 +256,25 @@ func dialUnixSocket(ctx context.Context, socket string) (*grpc.ClientConn, error
 			return nil, ctx.Err()
 		}
 	}
+}
+
+// bridgeRoots lists the directories the daemon may read and write: the
+// fixtures in this repository and in the neokapi module, the Okapi test data,
+// the sandbox, and the temporary directory the tests write outputs into. The
+// bridge refuses every file path outside them.
+func bridgeRoots(s *Sandbox) []string {
+	roots := []string{os.TempDir(), s.Root, s.OkapiTestDataDir}
+	if mod, err := ModuleDir(); err == nil {
+		roots = append(roots, filepath.Dir(mod))
+	}
+	if dir, err := NeokapiDir(); err == nil {
+		roots = append(roots, dir)
+	}
+	out := roots[:0]
+	for _, r := range roots {
+		if r != "" {
+			out = append(out, r)
+		}
+	}
+	return out
 }

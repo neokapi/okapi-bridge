@@ -1149,11 +1149,7 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
         OutputRef ref = header.getOutput();
         switch (ref.getDestinationCase()) {
             case PATH:
-                File parent = new File(ref.getPath()).getParentFile();
-                if (parent != null) {
-                    Files.createDirectories(parent.toPath());
-                }
-                return ref.getPath();
+                return outputWriter.resolvePath(ref.getPath());
             case URI:
                 return outputWriter.resolveUri(ref.getUri());
             default:
@@ -1345,9 +1341,17 @@ public class BridgeServiceImpl extends BridgeServiceGrpc.BridgeServiceImplBase {
         }
 
         // Handle configFile: load the entire configuration from a file.
+        // The path is confined like any other input: a refused path fails the
+        // request rather than falling back to the default configuration.
         String configFilePath = params.get("configFile");
         if (configFilePath != null && !configFilePath.isEmpty()) {
-            loadConfigFromFile(filterParameters, configFilePath);
+            File configFile;
+            try {
+                configFile = contentResolver.resolvePath(configFilePath);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("configFile: " + e.getMessage(), e);
+            }
+            loadConfigFromFile(filterParameters, configFile.getPath());
         }
 
         // Handle fprmContent: load native Okapi config from inline content.

@@ -7,10 +7,22 @@ import java.nio.file.Files;
 
 /**
  * Content resolver for local filesystem operations.
- * Handles inline bytes (writes to temp file), local paths (returns File directly),
- * and file:// URIs (converts to local path).
+ * Handles inline bytes (writes to temp file), local paths and file:// URIs.
+ * A path is opened only when it resolves to a regular file inside one of the
+ * {@link AllowedRoots}; the returned File is its real path.
  */
 public class LocalContentResolver implements ContentResolver {
+
+    private final AllowedRoots roots;
+
+    /** A resolver confined to the roots the host declared in the environment. */
+    public LocalContentResolver() {
+        this(AllowedRoots.fromEnvironment());
+    }
+
+    public LocalContentResolver(AllowedRoots roots) {
+        this.roots = roots;
+    }
 
     @Override
     public File resolveInline(byte[] content, String extensionHint) throws IOException {
@@ -23,11 +35,7 @@ public class LocalContentResolver implements ContentResolver {
 
     @Override
     public File resolvePath(String path) throws IOException {
-        File file = new File(path);
-        if (!file.exists()) {
-            throw new IOException("Content file not found: " + path);
-        }
-        return file;
+        return roots.checkInput(path).toFile();
     }
 
     @Override
@@ -51,10 +59,7 @@ public class LocalContentResolver implements ContentResolver {
                     file = new File(parsed.getPath());
                 }
             }
-            if (!file.exists()) {
-                throw new IOException("Content file not found: " + file.getAbsolutePath());
-            }
-            return file;
+            return resolvePath(file.getPath());
         }
 
         throw new IOException("Unsupported URI scheme '" + scheme + "'. " +

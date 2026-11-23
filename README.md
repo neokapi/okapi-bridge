@@ -18,6 +18,23 @@ Download a release from GitHub or use neokapi's plugin installer:
 kapi plugins install okapi-bridge
 ```
 
+### Allowed directories
+
+The bridge opens only files inside the directories its host names in
+`KAPI_PLUGIN_ROOTS` when it starts the bridge, separated by the platform's path
+separator (`:` on macOS and Linux). Every input and output path is resolved to
+its real path, links followed, and refused when it lies outside those
+directories. An input must be a regular file. Missing output directories are
+created only inside them. Content sent inline needs no directory.
+
+When `KAPI_PLUGIN_ROOTS` is unset, the bridge refuses every request that names
+a file path, and the error says so. Update kapi to a release that declares the
+directories, or set the variable yourself:
+
+```bash
+KAPI_PLUGIN_ROOTS="$PWD" kapi pseudo-translate -f okf_html -i page.html -o 'out/{name}_{lang}.{ext}'
+```
+
 ## Project Structure
 
 ```

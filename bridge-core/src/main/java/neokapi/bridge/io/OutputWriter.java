@@ -18,6 +18,15 @@ public interface OutputWriter {
     String writePath(String path, byte[] content) throws IOException;
 
     /**
+     * Resolve a local filesystem path to the path to write, creating its
+     * missing parent directories.
+     *
+     * @param path the absolute filesystem path
+     * @return the resolved local file path
+     */
+    String resolvePath(String path) throws IOException;
+
+    /**
      * Write output content to a URI destination.
      *
      * @param uri     the destination URI

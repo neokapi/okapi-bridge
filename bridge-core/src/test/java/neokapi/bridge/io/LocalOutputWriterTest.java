@@ -1,5 +1,6 @@
 package neokapi.bridge.io;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
@@ -11,10 +12,43 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class LocalOutputWriterTest {
 
-    private final LocalOutputWriter writer = new LocalOutputWriter();
+    @TempDir
+    Path tempDir;
+
+    private LocalOutputWriter writer;
+
+    @BeforeEach
+    void setUp() {
+        writer = new LocalOutputWriter(AllowedRoots.of(tempDir));
+    }
 
     @Test
-    void writePath_writesContent(@TempDir Path tempDir) throws IOException {
+    void writePath_outsideRoot_isRefusedAndCreatesNothing(@TempDir Path elsewhere) {
+        Path outFile = elsewhere.resolve("sub/output.txt");
+        IOException ex = assertThrows(IOException.class, () -> writer.writePath(outFile.toString(), "x".getBytes()));
+        assertTrue(ex.getMessage().contains("outside the directories"));
+        assertFalse(Files.exists(elsewhere.resolve("sub")));
+    }
+
+    @Test
+    void resolvePath_beneathLinkedDirectory_isRefusedAndCreatesNothing(@TempDir Path elsewhere) throws IOException {
+        Path link = Files.createSymbolicLink(tempDir.resolve("linked"), elsewhere);
+        IOException ex = assertThrows(IOException.class,
+                () -> writer.resolvePath(link.resolve("sub/output.txt").toString()));
+        assertTrue(ex.getMessage().contains("outside the directories"));
+        assertFalse(Files.exists(elsewhere.resolve("sub")));
+    }
+
+    @Test
+    void resolvePath_createsParentDirectoriesInsideRoot() throws IOException {
+        Path outFile = tempDir.resolve("a/b/output.txt");
+        String result = writer.resolvePath(outFile.toString());
+        assertEquals(tempDir.toRealPath().resolve("a/b/output.txt").toString(), result);
+        assertTrue(Files.isDirectory(tempDir.resolve("a/b")));
+    }
+
+    @Test
+    void writePath_writesContent() throws IOException {
         Path outFile = tempDir.resolve("output.html");
         byte[] content = "<html>translated</html>".getBytes();
 
@@ -25,7 +59,7 @@ class LocalOutputWriterTest {
     }
 
     @Test
-    void writePath_createsParentDirectories(@TempDir Path tempDir) throws IOException {
+    void writePath_createsParentDirectories() throws IOException {
         Path outFile = tempDir.resolve("sub/dir/output.txt");
         byte[] content = "content".getBytes();
 
@@ -35,7 +69,7 @@ class LocalOutputWriterTest {
     }
 
     @Test
-    void writeUri_fileUri_writesContent(@TempDir Path tempDir) throws IOException {
+    void writeUri_fileUri_writesContent() throws IOException {
         Path outFile = tempDir.resolve("output.xml");
         byte[] content = "<doc>translated</doc>".getBytes();
 
@@ -52,14 +86,14 @@ class LocalOutputWriterTest {
     }
 
     @Test
-    void resolveUri_fileUri_returnsPath(@TempDir Path tempDir) throws IOException {
+    void resolveUri_fileUri_returnsPath() throws IOException {
         Path outFile = tempDir.resolve("output.xml");
         String result = writer.resolveUri(outFile.toUri().toString());
-        assertEquals(outFile.toFile().getAbsolutePath(), result);
+        assertEquals(tempDir.toRealPath().resolve("output.xml").toString(), result);
     }
 
     @Test
-    void resolveUri_createsParentDirectories(@TempDir Path tempDir) throws IOException {
+    void resolveUri_createsParentDirectories() throws IOException {
         Path outFile = tempDir.resolve("sub/dir/output.txt");
         String result = writer.resolveUri(outFile.toUri().toString());
         assertTrue(Files.isDirectory(tempDir.resolve("sub/dir")));
